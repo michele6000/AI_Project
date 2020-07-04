@@ -8,7 +8,7 @@ import {HomeComponent} from './home/home.component';
 import {RegistrationComponent} from './registration/registration.component';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatButtonModule} from "@angular/material/button";
-import {HeaderComponent} from './nav/header/header.component';
+import {HeaderComponent} from './include/header/header.component';
 import {MatCardModule} from "@angular/material/card";
 import {MatInputModule} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
@@ -16,6 +16,11 @@ import {AuthService} from "./auth/auth.service";
 import {HttpClientModule} from "@angular/common/http";
 import { LoginComponent } from './login/login.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import { TableComponent } from './include/table/table.component';
+import {MatTableModule} from "@angular/material/table";
+import {MatSortModule} from "@angular/material/sort";
+import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -23,7 +28,8 @@ import {MatDialogModule} from "@angular/material/dialog";
     HomeComponent,
     RegistrationComponent,
     HeaderComponent,
-    LoginComponent
+    LoginComponent,
+    TableComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +41,11 @@ import {MatDialogModule} from "@angular/material/dialog";
     MatInputModule,
     FormsModule,
     HttpClientModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatCheckboxModule
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {UserModel} from '../models/user.models';
 
 @Component({
   selector: 'app-home',
@@ -7,7 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  data = [
+    {
+      name: 'Mario',
+      email: 'mario@rossi.it'
+    },
+    {
+      name: 'Giovanni',
+      email: 'giovanni@verdi.it'
+    }
+  ];
+  columns = ['name', 'email'];
+
+  constructor() {
+    console.log(this.columns);
+  }
 
   ngOnInit(): void {
   }
