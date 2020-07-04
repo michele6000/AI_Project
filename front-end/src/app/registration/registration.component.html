@@ -1,0 +1,30 @@
+<app-header></app-header>
+
+<div class="container text-center">
+  <h1>Registration</h1>
+  <mat-card-content>
+    <form class="registration-form" (ngSubmit)="register(f)" #f="ngForm">
+      <mat-form-field class="full-width">
+        <mat-label>Nome</mat-label>
+        <input matInput placeholder="Nome" name="nome" required #nome="ngModel" ngModel>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Cognome</mat-label>
+        <input matInput placeholder="Cognome" name="cognome" required #cognome="ngModel" ngModel>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Matricola</mat-label>
+        <input matInput placeholder="Matricola" name="matricola" required #matricola="ngModel" ngModel>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput placeholder="Password" name="password" type="password" required #password="ngModel" ngModel>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Mail</mat-label>
+        <input matInput placeholder="Mail" name="email" type="email" required email #email="ngModel" ngModel>
+      </mat-form-field>
+      <button mat-raised-button color="primary">REGISTER</button>
+    </form>
+  </mat-card-content>
+</div>
