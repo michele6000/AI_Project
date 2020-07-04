@@ -1,0 +1,29 @@
+<app-logged-header (toggleMenu)="toggleMenu()"></app-logged-header>
+<mat-toolbar>
+  {{singoloCorso}}
+</mat-toolbar>
+<mat-sidenav-container>
+  <mat-sidenav routerLink="applicazioni-internet/students" mode="side" opened position>
+    <div class="container">
+      <mat-nav-list>
+        <mat-list-item *ngFor="let corso of corsi" (click)="changeCorso(corso)" >
+          {{corso}}
+        </mat-list-item>
+      </mat-nav-list>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <nav mat-tab-nav-bar>
+      <a mat-tab-link routerLink="applicazioni-internet/students">
+        Students
+      </a>
+      <a mat-tab-link routerLink="applicazioni-internet/vms">
+        VMs
+      </a>
+      <a mat-tab-link routerLink="applicazioni-internet/assignments">
+        Assignments
+      </a>
+    </nav>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
