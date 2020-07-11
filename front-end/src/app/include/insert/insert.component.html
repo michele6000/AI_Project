@@ -1,0 +1,11 @@
+<form class="example-form mleft20">
+  <mat-form-field class="text-input">
+    <input type="text" matInput placeholder="Aggiungi" [formControl]="formControl" [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="optionSelected($event)">
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+        {{option.firstname + " " + option.name + " " + option.id}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <button mat-raised-button color="primary" class="mleft20" (click)="add()">Add</button>
+</form>

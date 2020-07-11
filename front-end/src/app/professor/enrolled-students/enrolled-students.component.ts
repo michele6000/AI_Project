@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {switchMap} from 'rxjs/operators';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {Observable} from 'rxjs';
+import {CourseModel} from "../../models/course.model";
+import {StudentModel} from "../../models/student.model";
 
 @Component({
   selector: 'app-enrolled-students',
@@ -9,15 +11,19 @@ import {Observable} from 'rxjs';
   styleUrls: ['./enrolled-students.component.css']
 })
 export class EnrolledStudentsComponent implements OnInit {
-  columns = ['id', 'nome'];
-  data = [
+  columns = ['email', 'name', 'surname', 'matricola'];
+  data: StudentModel[] = [
     {
-      id: 1,
-      nome: 'Mario'
+      email: 's123456',
+      name: 'Mario',
+      surname: 'Rossi',
+      matricola: '123456'
     },
     {
-      id: 2,
-      nome: 'Paolo'
+      email: 's123456',
+      name: 'Paolo',
+      surname: 'Verdi',
+      matricola: '123456'
     }
   ];
 
@@ -33,6 +39,10 @@ export class EnrolledStudentsComponent implements OnInit {
     );
     console.log(this.course);
      */
+  }
+
+  deleteStudent($event: StudentModel[]) {
+    console.log($event);
   }
 
 }

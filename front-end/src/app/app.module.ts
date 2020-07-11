@@ -11,7 +11,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {HeaderComponent} from './include/header/header.component';
 import {MatCardModule} from '@angular/material/card';
 import {MatInputModule} from '@angular/material/input';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AuthService} from './auth/auth.service';
 import {HttpClientModule} from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
@@ -24,13 +24,17 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { ProfessorComponent } from './professor/professor.component';
 import { LoggedHeaderComponent } from './include/logged-header/logged-header.component';
 import {MatIconModule} from '@angular/material/icon';
-import {MatSidenavModule} from "@angular/material/sidenav";
-import {MatListModule} from "@angular/material/list";
-import {MatTabsModule} from "@angular/material/tabs";
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatListModule} from '@angular/material/list';
+import {MatTabsModule} from '@angular/material/tabs';
 import { EnrolledStudentsComponent } from './professor/enrolled-students/enrolled-students.component';
 import { StudentComponent } from './student/student.component';
 import { VmsComponent } from './professor/vms/vms.component';
 import { AssignmentsComponent } from './professor/assignments/assignments.component';
+import { CoursesComponent } from './professor/courses/courses.component';
+import { InsertComponent } from './include/insert/insert.component';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { CreateCourseComponent } from './dialog/create-course/create-course.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +49,10 @@ import { AssignmentsComponent } from './professor/assignments/assignments.compon
     EnrolledStudentsComponent,
     StudentComponent,
     VmsComponent,
-    AssignmentsComponent
+    AssignmentsComponent,
+    CoursesComponent,
+    InsertComponent,
+    CreateCourseComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +72,9 @@ import { AssignmentsComponent } from './professor/assignments/assignments.compon
     MatIconModule,
     MatSidenavModule,
     MatListModule,
-    MatTabsModule
+    MatTabsModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

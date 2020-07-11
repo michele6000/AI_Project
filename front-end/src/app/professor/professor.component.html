@@ -1,6 +1,8 @@
 <app-logged-header (toggleMenu)="toggleMenu()"></app-logged-header>
 <mat-toolbar>
   {{singoloCorso}}
+  <span class="fill-remaining-space"></span>
+  <button mat-raised-button color="primary" routerLink="/teacher/courses">Manage Courses</button>
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav routerLink="applicazioni-internet/students" mode="side" opened position>

@@ -5,8 +5,9 @@ import {RegistrationComponent} from './registration/registration.component';
 import {ProfessorComponent} from './professor/professor.component';
 import {EnrolledStudentsComponent} from './professor/enrolled-students/enrolled-students.component';
 import {StudentComponent} from './student/student.component';
-import {VmsComponent} from "./professor/vms/vms.component";
-import {AssignmentsComponent} from "./professor/assignments/assignments.component";
+import {VmsComponent} from './professor/vms/vms.component';
+import {AssignmentsComponent} from './professor/assignments/assignments.component';
+import {CoursesComponent} from './professor/courses/courses.component';
 
 
 const routes: Routes = [
@@ -19,7 +20,11 @@ const routes: Routes = [
     component: RegistrationComponent
   },
   {
-    path: 'teacher/course',
+    path: 'teacher/courses',
+    component: CoursesComponent
+  },
+  {
+    path: 'teacher',
     component: ProfessorComponent,
     children: [
       {
@@ -27,11 +32,11 @@ const routes: Routes = [
         component: EnrolledStudentsComponent
       },
       {
-        path: 'applicazioni-internet/vms',
+        path: ':course/vms',
         component: VmsComponent
       },
       {
-        path: 'applicazioni-internet/assignments',
+        path: ':course/assignments',
         component: AssignmentsComponent
       }
     ]
