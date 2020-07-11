@@ -3,7 +3,7 @@
     <input type="text" matInput placeholder="Aggiungi" [formControl]="formControl" [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="optionSelected($event)">
       <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-        {{option.firstname + " " + option.name + " " + option.id}}
+        {{option.name + " " + option.surname + " " + option.matricola}}
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>

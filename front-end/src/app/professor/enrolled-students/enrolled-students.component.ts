@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {switchMap} from 'rxjs/operators';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {Observable} from 'rxjs';
-import {CourseModel} from "../../models/course.model";
-import {StudentModel} from "../../models/student.model";
+import {CourseModel} from '../../models/course.model';
+import {StudentModel} from '../../models/student.model';
+import {MatTable} from '@angular/material/table';
 
 @Component({
   selector: 'app-enrolled-students',
@@ -11,6 +12,10 @@ import {StudentModel} from "../../models/student.model";
   styleUrls: ['./enrolled-students.component.css']
 })
 export class EnrolledStudentsComponent implements OnInit {
+
+  @ViewChild(MatTable)
+  table: MatTable<StudentModel>;
+
   columns = ['email', 'name', 'surname', 'matricola'];
   data: StudentModel[] = [
     {
@@ -45,4 +50,8 @@ export class EnrolledStudentsComponent implements OnInit {
     console.log($event);
   }
 
+  addStudent($event: StudentModel) {
+    console.log($event);
+    // this.table.renderRows();
+  }
 }

@@ -18,3 +18,5 @@ mat-sidenav-container{ margin: 20px;height: 100%; }
 .w-80 {width: 80%;}
 .mb-10 {margin-bottom: 10px !important;}
 .mt-10 {margin-top: 10px !important;}
+.mr-20 {margin-right: 20px !important;}
+.cursor-pointer {cursor: pointer;}

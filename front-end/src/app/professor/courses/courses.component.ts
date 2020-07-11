@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CreateCourseComponent} from '../../dialog/create-course/create-course.component';
-import {CourseModel} from "../../models/course.model";
+import {CourseModel} from '../../models/course.model';
 
 @Component({
   selector: 'app-courses',
@@ -10,6 +10,7 @@ import {CourseModel} from "../../models/course.model";
   styleUrls: ['./courses.component.css']
 })
 export class CoursesComponent implements OnInit {
+  url: any;
   columns = ['identifier', 'name', 'min', 'max'];
   data: CourseModel[] = [
     {
@@ -44,6 +45,11 @@ export class CoursesComponent implements OnInit {
             });
         }
       });
+    if (localStorage.getItem('url_teacher')) {
+      this.url = localStorage.getItem('url_teacher');
+    } else {
+      this.url = '/teacher/';
+    }
   }
 
   deleteCourse($event: CourseModel[]) {

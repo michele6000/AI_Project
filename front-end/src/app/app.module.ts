@@ -35,6 +35,8 @@ import { CoursesComponent } from './professor/courses/courses.component';
 import { InsertComponent } from './include/insert/insert.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { CreateCourseComponent } from './dialog/create-course/create-course.component';
+import { TableExpandableComponent } from './include/table-expandable/table-expandable.component';
+import { EditVmComponent } from './dialog/edit-vm/edit-vm.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +54,10 @@ import { CreateCourseComponent } from './dialog/create-course/create-course.comp
     AssignmentsComponent,
     CoursesComponent,
     InsertComponent,
-    CreateCourseComponent
+    CreateCourseComponent,
+    TableExpandableComponent,
+    TableExpandableComponent,
+    EditVmComponent
   ],
   imports: [
     BrowserModule,

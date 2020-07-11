@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-professor',
@@ -13,7 +14,7 @@ export class ProfessorComponent implements OnInit {
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
 
-  constructor() {
+  constructor(private router: Router) {
   }
 
   ngOnInit(): void {
@@ -25,5 +26,9 @@ export class ProfessorComponent implements OnInit {
 
   toggleMenu() {
     this.sidenav.toggle();
+  }
+
+  manageCourses() {
+    localStorage.setItem('url_teacher', this.router.routerState.snapshot.url);
   }
 }
