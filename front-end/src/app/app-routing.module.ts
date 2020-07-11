@@ -25,18 +25,22 @@ const routes: Routes = [
   },
   {
     path: 'teacher',
+    component: ProfessorComponent
+  },
+  {
+    path: 'teacher/:course',
     component: ProfessorComponent,
     children: [
       {
-        path: ':course/students',
+        path: 'students',
         component: EnrolledStudentsComponent
       },
       {
-        path: ':course/vms',
+        path: 'vms',
         component: VmsComponent
       },
       {
-        path: ':course/assignments',
+        path: 'assignments',
         component: AssignmentsComponent
       }
     ]

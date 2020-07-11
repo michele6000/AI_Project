@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {GroupModel} from '../../models/group.model';
 import {MatDialog} from "@angular/material/dialog";
-import {EditVmComponent} from "../../dialog/edit-vm/edit-vm.component";
+import {EditVmComponent} from '../../dialog/edit-vm/edit-vm.component';
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-vms',
@@ -12,10 +13,12 @@ export class VmsComponent implements OnInit {
   data = [];
   columns = [];
 
-  constructor(private dialog: MatDialog) {
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router) {
+
   }
 
   ngOnInit(): void {
+    console.log(this.router.routerState.snapshot.url.split('/')[2]);
   }
 
   deleteVM($event: any[]) {
