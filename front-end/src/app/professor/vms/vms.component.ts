@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {GroupModel} from '../../models/group.model';
 import {MatDialog} from "@angular/material/dialog";
-import {EditVmComponent} from '../../dialog/edit-vm/edit-vm.component';
+import {EditVmProfessorComponent} from '../../dialog/edit-vm/edit-vm-professor.component';
 import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
@@ -26,7 +26,7 @@ export class VmsComponent implements OnInit {
   }
 
   editGroup(group: GroupModel) {
-    this.dialog.open(EditVmComponent, {data: group})
+    this.dialog.open(EditVmProfessorComponent, {data: group})
       .afterClosed()
       .subscribe(result => {
         console.log(result);

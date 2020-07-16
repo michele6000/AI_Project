@@ -36,10 +36,11 @@ import { InsertComponent } from './include/insert/insert.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { CreateCourseComponent } from './dialog/create-course/create-course.component';
 import { TableExpandableComponent } from './include/table-expandable/table-expandable.component';
-import { EditVmComponent } from './dialog/edit-vm/edit-vm.component';
+import { EditVmProfessorComponent } from './dialog/edit-vm/edit-vm-professor.component';
 import { GroupsComponent } from './student/groups/groups.component';
 import { VmsStudentComponent } from './student/vms-student/vms-student.component';
 import { EditVmStudentComponent } from './dialog/edit-vm-student/edit-vm-student.component';
+import { AssignmentsStudentComponent } from './student/assignments-student/assignments-student.component';
 
 @NgModule({
   declarations: [
@@ -60,10 +61,11 @@ import { EditVmStudentComponent } from './dialog/edit-vm-student/edit-vm-student
     CreateCourseComponent,
     TableExpandableComponent,
     TableExpandableComponent,
-    EditVmComponent,
+    EditVmProfessorComponent,
     GroupsComponent,
     VmsStudentComponent,
-    EditVmStudentComponent
+    EditVmStudentComponent,
+    AssignmentsStudentComponent
   ],
   imports: [
     BrowserModule,

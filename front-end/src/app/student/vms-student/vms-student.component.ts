@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {MatDialog} from "@angular/material/dialog";
-import {EditVmComponent} from "../../dialog/edit-vm/edit-vm.component";
+import {EditVmProfessorComponent} from "../../dialog/edit-vm/edit-vm-professor.component";
 import {EditVmStudentComponent} from "../../dialog/edit-vm-student/edit-vm-student.component";
 
 @Component({
