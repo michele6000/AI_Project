@@ -15,7 +15,6 @@ export class ProfessorComponent implements OnInit {
     {name: 'Big Data', identifier: 'BD', min: 3, max: 4}
   ];
   singoloCorso: CourseModel;
-  nomeCorsoRoute: string;
 
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
@@ -30,7 +29,6 @@ export class ProfessorComponent implements OnInit {
       if (course.length > 0) {
         this.changeCorso(course[0]);
         this.singoloCorso = course[0];
-        this.nomeCorsoRoute = course[0].name;
       } else {
         this.router.navigate(['teacher', this.corsi[0].name.toLowerCase().replace(' ', '-')]);
       }
@@ -39,7 +37,6 @@ export class ProfessorComponent implements OnInit {
 
   changeCorso(corso: CourseModel) {
     this.singoloCorso = corso;
-    this.nomeCorsoRoute = corso.name.toLowerCase().replace(' ', '-');
     this.router.navigate(['teacher', corso.name.toLowerCase().replace(' ', '-'), 'students']).then();
   }
 
