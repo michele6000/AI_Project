@@ -16,13 +16,13 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <nav mat-tab-nav-bar>
-      <a mat-tab-link routerLink="students">
+      <a mat-tab-link routerLink="{{singoloCorso ? singoloCorso.name : ''}}/students">
         Students
       </a>
-      <a mat-tab-link routerLink="vms">
+      <a mat-tab-link routerLink="{{singoloCorso ? singoloCorso.name : ''}}/vms">
         VMs
       </a>
-      <a mat-tab-link routerLink="assignments">
+      <a mat-tab-link routerLink="{{singoloCorso ? singoloCorso.name : ''}}/assignments">
         Assignments
       </a>
     </nav>
