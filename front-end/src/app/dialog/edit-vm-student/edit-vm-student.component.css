@@ -1,12 +1,5 @@
 .dimensioni{
   width: 400px;
-  height: 250px;
+  height: 300px;
 }
-.posizione{
-  width: 90%;
-  margin-bottom: 15px;
-}
-.center{
-  margin-top: 10px;
-  text-align: center;
-}
+

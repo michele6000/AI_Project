@@ -3,21 +3,21 @@
     <mat-card-title>Create VM</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <mat-error class="center" *ngIf="error">
+    <mat-error class="mt-10-center" *ngIf="error">
       Error
     </mat-error>
     <form #f="ngForm"(ngSubmit)="create(f)">
-      <mat-form-field class="posizione">
+      <mat-form-field class="position">
         <mat-label>Number of V-CPU</mat-label>
         <input matInput type="text" #vcpu="ngModel" ngModel required placeholder="Number of V-CPU" name="vcpu" value="">
       </mat-form-field>
       <br>
-      <mat-form-field class="posizione">
+      <mat-form-field class="position">
         <mat-label>RAM</mat-label>
         <input matInput type="text" #ram="ngModel" ngModel required placeholder="RAM" name="ram" value="">
       </mat-form-field>
       <br>
-      <mat-form-field class="posizione">
+      <mat-form-field class="position">
         <mat-label>Disk</mat-label>
         <input matInput type="text" #disk="ngModel" ngModel required placeholder="Disk" name="disk" value="">
       </mat-form-field>

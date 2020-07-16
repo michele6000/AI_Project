@@ -1,9 +1,9 @@
-<mat-card>
+<mat-card class="dimensioni">
   <mat-card-header>
     <mat-card-title>Create VM</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <mat-error class="center" *ngIf="error">
+    <mat-error class="mt-10-center" *ngIf="error">
       Error
     </mat-error>
     <form #f="ngForm" (ngSubmit)="create(f)">
@@ -23,13 +23,13 @@
       </mat-form-field>
       <br>
       <mat-form-field class="position">
-        <mat-label>Maximum number VMs</mat-label>
-        <input matInput type="number" #maxActiveVmSimultaneously="ngModel" ngModel required name="maxActiveVmSimultaneously" value="">
+        <mat-label>Maximum number of VMs</mat-label>
+        <input matInput type="number" #maxVm="ngModel" ngModel required name="maxVm" value="">
       </mat-form-field>
       <br>
       <mat-form-field class="position">
         <mat-label>Maximum number of simultaneously active VMs</mat-label>
-        <input matInput type="number" #maxVm="ngModel" ngModel required name="maxVm" value="">
+        <input matInput type="number" #maxActiveVmSimultaneously="ngModel" ngModel required name="maxActiveVmSimultaneously" value="">
       </mat-form-field>
       <br>
       <mat-card-actions>

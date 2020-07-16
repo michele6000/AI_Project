@@ -22,3 +22,5 @@ mat-sidenav-container{ margin: 20px;height: 100%; }
 .ml-20 {margin-left: 20px !important;}
 .w-500 {width: 500px;}
 .cursor-pointer {cursor: pointer;}
+.position{width: 90%;margin-bottom: 15px;}
+.mt-10-center{margin-top: 10px;text-align: center;}
