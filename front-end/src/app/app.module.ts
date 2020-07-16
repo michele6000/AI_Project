@@ -38,6 +38,8 @@ import { CreateCourseComponent } from './dialog/create-course/create-course.comp
 import { TableExpandableComponent } from './include/table-expandable/table-expandable.component';
 import { EditVmComponent } from './dialog/edit-vm/edit-vm.component';
 import { GroupsComponent } from './student/groups/groups.component';
+import { VmsStudentComponent } from './student/vms-student/vms-student.component';
+import { EditVmStudentComponent } from './dialog/edit-vm-student/edit-vm-student.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +61,9 @@ import { GroupsComponent } from './student/groups/groups.component';
     TableExpandableComponent,
     TableExpandableComponent,
     EditVmComponent,
-    GroupsComponent
+    GroupsComponent,
+    VmsStudentComponent,
+    EditVmStudentComponent
   ],
   imports: [
     BrowserModule,

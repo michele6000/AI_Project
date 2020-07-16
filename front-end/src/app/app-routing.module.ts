@@ -9,6 +9,7 @@ import {VmsComponent} from './professor/vms/vms.component';
 import {AssignmentsComponent} from './professor/assignments/assignments.component';
 import {CoursesComponent} from './professor/courses/courses.component';
 import {GroupsComponent} from './student/groups/groups.component';
+import {VmsStudentComponent} from "./student/vms-student/vms-student.component";
 
 
 const routes: Routes = [
@@ -60,7 +61,7 @@ const routes: Routes = [
       },
       {
         path: 'vms',
-        component: VmsComponent
+        component: VmsStudentComponent
       },
       {
         path: 'assignments',

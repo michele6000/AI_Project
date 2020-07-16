@@ -1,13 +1,14 @@
 <app-logged-header (toggleMenu)="toggleMenu()"></app-logged-header>
 <mat-toolbar>
+  {{singoloCorso ? singoloCorso.name : ''}}
   <span class="fill-remaining-space"></span>
-  <button mat-raised-button color="primary" routerLink=""></button>
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav mode="side" opened position>
     <div class="container">
       <mat-nav-list>
-        <mat-list-item>
+        <mat-list-item *ngFor="let corso of corsi" (click)="changeCorso(corso)">
+          {{corso.name}}
         </mat-list-item>
       </mat-nav-list>
     </div>
