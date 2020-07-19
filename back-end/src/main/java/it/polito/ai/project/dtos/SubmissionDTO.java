@@ -1,4 +1,4 @@
-package it.polito.ai.lab3.dtos;
+package it.polito.ai.project.dtos;
 
 import lombok.Data;
 
