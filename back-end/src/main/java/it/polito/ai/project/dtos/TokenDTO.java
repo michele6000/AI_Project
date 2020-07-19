@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class TokenDTO {
-  String id;
-  Long teamId;
-  Timestamp expiryDate;
+  private String id;
+  private Long teamId;
+  private Timestamp expiryDate;
 }
