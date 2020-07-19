@@ -1,10 +1,10 @@
-package it.polito.ai.lab3.controllers;
+package it.polito.ai.project.controllers;
 
-import it.polito.ai.lab3.dtos.CourseDTO;
-import it.polito.ai.lab3.dtos.StudentDTO;
-import it.polito.ai.lab3.dtos.TeamDTO;
-import it.polito.ai.lab3.exceptions.StudentNotFoundException;
-import it.polito.ai.lab3.services.TeamService;
+import it.polito.ai.project.dtos.CourseDTO;
+import it.polito.ai.project.dtos.StudentDTO;
+import it.polito.ai.project.dtos.TeamDTO;
+import it.polito.ai.project.exceptions.StudentNotFoundException;
+import it.polito.ai.project.services.TeamService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

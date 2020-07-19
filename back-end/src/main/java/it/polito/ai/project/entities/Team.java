@@ -1,10 +1,9 @@
-package it.polito.ai.lab3.entities;
+package it.polito.ai.project.entities;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
-import net.minidev.json.annotate.JsonIgnore;
 
 @Entity
 @Data

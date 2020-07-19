@@ -1,9 +1,9 @@
-package it.polito.ai.lab3.controllers;
+package it.polito.ai.project.controllers;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
-import it.polito.ai.lab3.dtos.CourseDTO;
-import it.polito.ai.lab3.dtos.StudentDTO;
+import it.polito.ai.project.dtos.CourseDTO;
+import it.polito.ai.project.dtos.StudentDTO;
 import org.springframework.hateoas.Link;
 
 public class ModelHelper {

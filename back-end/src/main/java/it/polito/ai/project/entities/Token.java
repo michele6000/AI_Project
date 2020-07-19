@@ -1,4 +1,4 @@
-package it.polito.ai.lab3.entities;
+package it.polito.ai.project.entities;
 
 import java.sql.Timestamp;
 import javax.persistence.Entity;

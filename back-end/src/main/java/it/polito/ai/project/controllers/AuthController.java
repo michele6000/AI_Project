@@ -1,9 +1,9 @@
-package it.polito.ai.lab3.controllers;
+package it.polito.ai.project.controllers;
 
 import static org.springframework.http.ResponseEntity.ok;
 
-import it.polito.ai.lab3.dtos.UserDTO;
-import it.polito.ai.lab3.security.jwt.JwtTokenProvider;
+import it.polito.ai.project.dtos.UserDTO;
+import it.polito.ai.project.security.jwt.JwtTokenProvider;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;

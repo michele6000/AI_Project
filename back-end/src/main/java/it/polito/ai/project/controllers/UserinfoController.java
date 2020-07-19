@@ -1,10 +1,10 @@
-package it.polito.ai.lab3.controllers;
+package it.polito.ai.project.controllers;
 
-import it.polito.ai.lab3.dtos.ProfessorDTO;
-import it.polito.ai.lab3.exceptions.CourseNotFoundException;
-import it.polito.ai.lab3.exceptions.StudentNotFoundException;
-import it.polito.ai.lab3.exceptions.TeamServiceException;
-import it.polito.ai.lab3.services.TeamService;
+import it.polito.ai.project.dtos.ProfessorDTO;
+import it.polito.ai.project.exceptions.CourseNotFoundException;
+import it.polito.ai.project.exceptions.StudentNotFoundException;
+import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.services.TeamService;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;

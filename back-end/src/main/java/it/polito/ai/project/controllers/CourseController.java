@@ -1,21 +1,21 @@
-package it.polito.ai.lab3.controllers;
+package it.polito.ai.project.controllers;
 
-import it.polito.ai.lab3.dtos.CourseDTO;
-import it.polito.ai.lab3.dtos.ProfessorDTO;
-import it.polito.ai.lab3.dtos.StudentDTO;
-import it.polito.ai.lab3.dtos.TeamDTO;
-import it.polito.ai.lab3.exceptions.CourseNotFoundException;
-import it.polito.ai.lab3.exceptions.StudentNotFoundException;
-import it.polito.ai.lab3.exceptions.TeamServiceException;
-import it.polito.ai.lab3.services.NotificationService;
-import it.polito.ai.lab3.services.TeamService;
+import it.polito.ai.project.dtos.CourseDTO;
+import it.polito.ai.project.dtos.ProfessorDTO;
+import it.polito.ai.project.dtos.StudentDTO;
+import it.polito.ai.project.dtos.TeamDTO;
+import it.polito.ai.project.exceptions.CourseNotFoundException;
+import it.polito.ai.project.exceptions.StudentNotFoundException;
+import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.services.NotificationService;
+import it.polito.ai.project.services.TeamService;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

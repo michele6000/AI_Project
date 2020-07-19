@@ -1,7 +1,7 @@
-package it.polito.ai.lab3.controllers;
+package it.polito.ai.project.controllers;
 
-import it.polito.ai.lab3.exceptions.TeamServiceException;
-import it.polito.ai.lab3.services.NotificationService;
+import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

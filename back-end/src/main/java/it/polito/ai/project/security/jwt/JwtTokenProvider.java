@@ -1,4 +1,4 @@
-package it.polito.ai.lab3.security.jwt;
+package it.polito.ai.project.security.jwt;
 
 import io.jsonwebtoken.*;
 import java.util.Base64;
