@@ -1,6 +1,6 @@
-package it.polito.ai.lab3.services;
+package it.polito.ai.project.services;
 
-import it.polito.ai.lab3.dtos.TeamDTO;
+import it.polito.ai.project.dtos.TeamDTO;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 

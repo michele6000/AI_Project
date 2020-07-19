@@ -1,7 +1,7 @@
-package it.polito.ai.lab3.repositories;
+package it.polito.ai.project.repositories;
 
-import it.polito.ai.lab3.entities.Course;
-import it.polito.ai.lab3.entities.Student;
+import it.polito.ai.project.entities.Course;
+import it.polito.ai.project.entities.Student;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

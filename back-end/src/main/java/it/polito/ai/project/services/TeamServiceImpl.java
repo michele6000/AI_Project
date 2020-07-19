@@ -1,16 +1,16 @@
-package it.polito.ai.lab3.services;
+package it.polito.ai.project.services;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import it.polito.ai.lab3.dtos.CourseDTO;
-import it.polito.ai.lab3.dtos.ProfessorDTO;
-import it.polito.ai.lab3.dtos.StudentDTO;
-import it.polito.ai.lab3.dtos.TeamDTO;
-import it.polito.ai.lab3.entities.*;
-import it.polito.ai.lab3.exceptions.CourseNotFoundException;
-import it.polito.ai.lab3.exceptions.StudentNotFoundException;
-import it.polito.ai.lab3.exceptions.TeamServiceException;
-import it.polito.ai.lab3.repositories.*;
+import it.polito.ai.project.dtos.CourseDTO;
+import it.polito.ai.project.dtos.ProfessorDTO;
+import it.polito.ai.project.dtos.StudentDTO;
+import it.polito.ai.project.dtos.TeamDTO;
+import it.polito.ai.project.entities.*;
+import it.polito.ai.project.exceptions.CourseNotFoundException;
+import it.polito.ai.project.exceptions.StudentNotFoundException;
+import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.repositories.*;
 import java.io.Reader;
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,10 +1,10 @@
-package it.polito.ai.lab3;
+package it.polito.ai.project;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Lab3ApplicationTests {
+class ProjectApplicationTests {
 
   @Test
   void contextLoads() {}

@@ -1,9 +1,9 @@
-package it.polito.ai.lab3.services;
+package it.polito.ai.project.services;
 
-import it.polito.ai.lab3.dtos.TeamDTO;
-import it.polito.ai.lab3.entities.Token;
-import it.polito.ai.lab3.exceptions.TeamServiceException;
-import it.polito.ai.lab3.repositories.TokenRepository;
+import it.polito.ai.project.dtos.TeamDTO;
+import it.polito.ai.project.entities.Token;
+import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.repositories.TokenRepository;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;

@@ -1,7 +1,7 @@
-package it.polito.ai.lab3.services;
+package it.polito.ai.project.services;
 
-import it.polito.ai.lab3.entities.User;
-import it.polito.ai.lab3.repositories.UserRepository;
+import it.polito.ai.project.entities.User;
+import it.polito.ai.project.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

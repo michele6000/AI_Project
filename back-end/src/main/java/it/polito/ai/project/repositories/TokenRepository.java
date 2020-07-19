@@ -1,6 +1,6 @@
-package it.polito.ai.lab3.repositories;
+package it.polito.ai.project.repositories;
 
-import it.polito.ai.lab3.entities.Token;
+import it.polito.ai.project.entities.Token;
 import java.sql.Timestamp;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

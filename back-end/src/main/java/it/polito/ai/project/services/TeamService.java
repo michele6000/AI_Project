@@ -1,9 +1,9 @@
-package it.polito.ai.lab3.services;
+package it.polito.ai.project.services;
 
-import it.polito.ai.lab3.dtos.CourseDTO;
-import it.polito.ai.lab3.dtos.ProfessorDTO;
-import it.polito.ai.lab3.dtos.StudentDTO;
-import it.polito.ai.lab3.dtos.TeamDTO;
+import it.polito.ai.project.dtos.CourseDTO;
+import it.polito.ai.project.dtos.ProfessorDTO;
+import it.polito.ai.project.dtos.StudentDTO;
+import it.polito.ai.project.dtos.TeamDTO;
 import java.io.Reader;
 import java.util.List;
 import java.util.Optional;

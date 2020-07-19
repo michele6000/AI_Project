@@ -1,7 +1,7 @@
-package it.polito.ai.lab3.security;
+package it.polito.ai.project.security;
 
-import it.polito.ai.lab3.security.jwt.JwtConfigurer;
-import it.polito.ai.lab3.security.jwt.JwtTokenProvider;
+import it.polito.ai.project.security.jwt.JwtConfigurer;
+import it.polito.ai.project.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

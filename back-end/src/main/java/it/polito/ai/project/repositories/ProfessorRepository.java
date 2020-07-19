@@ -1,6 +1,6 @@
-package it.polito.ai.lab3.repositories;
+package it.polito.ai.project.repositories;
 
-import it.polito.ai.lab3.entities.Professor;
+import it.polito.ai.project.entities.Professor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
