@@ -87,4 +87,11 @@ export class CrudService {
     );
   }
 
+  findCourseByIdentifier(courseIdentifier: string): Observable<CourseModel>{
+    return this.http.get<CourseModel>(API_URL + 'course/' + courseIdentifier)
+      .pipe(
+        response => response
+      );
+  }
+
 }
