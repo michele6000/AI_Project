@@ -1,7 +1,7 @@
 import {Component, ComponentFactoryResolver, OnInit, ViewChild} from '@angular/core';
 import {GroupDirective} from './group.directive';
-import {InfoGroupComponent} from "./info-group/info-group.component";
-import {CreateGroupComponent} from "./create-group/create-group.component";
+import {InfoGroupComponent} from './info-group/info-group.component';
+import {CreateGroupComponent} from './create-group/create-group.component';
 
 @Component({
   selector: 'app-groups',
@@ -16,7 +16,7 @@ export class GroupsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadComponent(1);
+    this.loadComponent(2);
   }
 
   loadComponent(type: number) {

@@ -6,6 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./create-group.component.css']
 })
 export class CreateGroupComponent implements OnInit {
+  studentsColumns = ['Matricola', 'Nome'];
+  studentsData = [];
+  groupsColumns = ['Nome del gruppo', 'Matricola', 'Nome'];
+  groupsData = [];
 
   constructor() { }
 

@@ -10,8 +10,11 @@ mat-sidenav-container{ margin: 20px;height: 100%; }
   margin: 18px 18px;
 }
 
+.d-flex {display: flex;}
+.align-items-center {align-items: center;}
 .full-width {width: 100%;}
 .text-center {text-align: center;}
+.text-right {text-align: right;}
 .margin-auto {margin: 0 auto;}
 .float-right {float: right;}
 .float-left {float: left;}

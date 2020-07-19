@@ -1,1 +1,20 @@
-<p>create-group works!</p>
+<div>
+  <p>In order to propose a group, you have to choose the students, a name and a timeout for your proposal</p>
+  <app-table [columns]="studentsColumns" [data]="studentsData" [showDelete]="false"></app-table>
+  <form class="w-80 mt-10 text-right d-flex align-items-center" #f ngForm (ngSubmit)="proposeGroup(f)">
+    <mat-form-field class="mr-20">
+      <mat-label>Group Name</mat-label>
+      <input matInput type="text" #name="ngModel" ngModel required name="name" value="">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Proposal timeout</mat-label>
+      <input matInput type="number" #timeout="ngModel" ngModel required name="timeout" value="">
+    </mat-form-field>
+    <span class="fill-remaining-space"></span>
+    <button mat-button mat-raised-button color="primary">Propose Group</button>
+  </form>
+</div>
+<div class="mt-10">
+  <p>Richieste ricevute per formare un gruppo</p>
+  <app-table [columns]="groupsColumns" [data]="groupsData" [showDelete]="false"></app-table>
+</div>
