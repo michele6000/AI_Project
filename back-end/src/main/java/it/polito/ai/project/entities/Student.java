@@ -10,9 +10,10 @@ import lombok.Data;
 public class Student {
   @Id
   private String id;
-
   private String name;
   private String firstName;
+  private String email;
+  private String image; //TODO: mettere binary
 
   @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
   @JoinTable(

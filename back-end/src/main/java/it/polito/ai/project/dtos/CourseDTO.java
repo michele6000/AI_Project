@@ -9,4 +9,5 @@ public class CourseDTO extends RepresentationModel<CourseDTO> {
   private int min;
   private int max;
   private boolean enabled;
+
 }

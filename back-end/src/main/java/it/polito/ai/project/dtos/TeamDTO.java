@@ -8,4 +8,12 @@ public class TeamDTO {
   private String name;
   private int status;
   private String courseName;
+
+  // Limitazioni per la VM
+  private String limit_hdd;
+  private String limit_cpu;
+  private String limit_ram;
+  private String limit_instance;
+  private String limit_active_instance;
+
 }

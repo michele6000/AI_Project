@@ -10,9 +10,10 @@ import lombok.Data;
 public class Professor {
   @Id
   String id;
-
   String firstName;
   String name;
+  private String email;
+  private String image; //TODO: mettere binary
 
   @JoinTable(
     name = "professor_course",
