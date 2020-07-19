@@ -7,7 +7,7 @@
       Credenziali errate
     </mat-error>
     <form #f="ngForm" class="login-form" (ngSubmit)="login(f)">
-      <mat-form-field class="position">
+      <mat-form-field class="dialog-position-field">
         <mat-label>Email</mat-label>
         <input matInput type="email" #email="ngModel" ngModel required email placeholder="Email" name="email" value="">
         <mat-error *ngIf="email.invalid">
@@ -18,7 +18,7 @@
         </mat-error>
       </mat-form-field>
       <br>
-      <mat-form-field class="position">
+      <mat-form-field class="dialog-position-field">
         <mat-label>Password</mat-label>
         <input matInput type="password" #password="ngModel" ngModel required minlength="6" name="password" value="">
         <mat-error *ngIf="password.dirty && password.touched">

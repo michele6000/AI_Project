@@ -7,27 +7,27 @@
       Error
     </mat-error>
     <form #f="ngForm" (ngSubmit)="create(f)">
-      <mat-form-field class="position">
+      <mat-form-field class="dialog-position-field">
         <mat-label>Number of V-CPU</mat-label>
         <input matInput type="text" #vcpu="ngModel" ngModel required placeholder="Number of V-CPU" name="vcpu" value="">
       </mat-form-field>
       <br>
-      <mat-form-field class="position">
+      <mat-form-field class="dialog-position-field">
         <mat-label>RAM</mat-label>
         <input matInput type="text" #ram="ngModel" ngModel required placeholder="RAM" name="ram" value="">
       </mat-form-field>
       <br>
-      <mat-form-field class="position">
+      <mat-form-field class="dialog-position-field">
         <mat-label>Disk</mat-label>
         <input matInput type="text" #disk="ngModel" ngModel required placeholder="Disk" name="disk" value="">
       </mat-form-field>
       <br>
-      <mat-form-field class="position">
+      <mat-form-field class="dialog-position-field">
         <mat-label>Maximum number of VMs</mat-label>
         <input matInput type="number" #maxVm="ngModel" ngModel required name="maxVm" value="">
       </mat-form-field>
       <br>
-      <mat-form-field class="position">
+      <mat-form-field class="dialog-position-field">
         <mat-label>Maximum number of simultaneously active VMs</mat-label>
         <input matInput type="number" #maxActiveVmSimultaneously="ngModel" ngModel required name="maxActiveVmSimultaneously" value="">
       </mat-form-field>
