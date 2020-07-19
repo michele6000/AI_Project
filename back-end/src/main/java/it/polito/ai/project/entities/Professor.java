@@ -9,9 +9,9 @@ import lombok.Data;
 @Entity
 public class Professor {
   @Id
-  String id;
-  String firstName;
-  String name;
+  private String id;
+  private String firstName;
+  private String name;
   private String email;
   private String image; //TODO: mettere binary
 

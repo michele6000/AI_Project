@@ -14,4 +14,7 @@ public class StudentDTO extends RepresentationModel<StudentDTO> {
 
   @CsvBindByName
   private String firstName;
+
+  private String email;
+  private String image; //TODO: mettere binary
 }
