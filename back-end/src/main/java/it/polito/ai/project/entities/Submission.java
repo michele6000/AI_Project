@@ -18,6 +18,10 @@ public class Submission {
     private Byte content; //image
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
     private Course course;
+
+    public void setCourse(Course c){
+        course = c;
+        c.getSubmissions().add(this);
+    }
 }

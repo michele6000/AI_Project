@@ -11,6 +11,7 @@ import lombok.Data;
 public class Course {
   @Id
   private String name;
+  private String acronymous;
   private int min;
   private int max;
   private boolean enabled;
@@ -22,10 +23,13 @@ public class Course {
   private List<Student> students = new ArrayList<>();
 
   @OneToMany(mappedBy = "course")
-  private List<Team> teams;
+  private List<Team> teams = new ArrayList<>();
 
   @ManyToMany(mappedBy = "courses")
-  List<Professor> professors = new ArrayList<>();
+  private List<Professor> professors = new ArrayList<>();
+
+  @OneToMany() //AUTO-MAPPING
+  private List<Submission> submissions = new ArrayList<>();
 
   public void addStudent(Student student) {
     students.add(student);
@@ -41,4 +45,11 @@ public class Course {
     professors.add(p);
     p.getCourses().add(this);
   }
+
+  public void addSubmission(Submission s){
+    submissions.add(s);
+    s.setCourse(this);
+  }
 }
+
+

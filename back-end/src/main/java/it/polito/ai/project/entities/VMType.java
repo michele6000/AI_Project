@@ -25,4 +25,18 @@ public class VMType {
     @OneToMany
     private List<Team> teams; //posso avere più team che usano la stessa vm type
 
+    public void addCourse(Course c){
+        courses.add(c);
+        c.setVmType(this);
+    }
+
+    public void addVM(VM v){
+        VMs.add(v);
+        v.setVmType(this);
+    }
+
+    public void addTeam(Team t){
+        teams.add(t);
+        t.setVmType(this);
+    }
 }
