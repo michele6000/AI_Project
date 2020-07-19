@@ -5,6 +5,7 @@ import {CourseModel} from '../models/course.model';
 import {VmModel} from "../models/vm.model";
 import {VmProfessor} from "../models/vm-professor.model";
 import {VmStudent} from "../models/vm-student.model";
+import {Observable} from "rxjs";
 
 const API_URL = 'http://localhost:3000/';
 
@@ -52,6 +53,29 @@ export class CrudService {
       API_URL,
       {
         vm
+      }
+    ).subscribe(
+      (payload: any) => {
+
+      },
+      (error: any) => {
+
+      }
+    );
+  }
+
+  findGroupByStudentId(studentId: string): Observable<any>{
+    return this.http.get<any>(API_URL + "student/" + studentId)
+      .pipe(
+        response => response
+      );
+  }
+
+  proposeGroup(group: any){
+    this.http.post(
+      API_URL + "student/propose-group",
+      {
+        group
       }
     ).subscribe(
       (payload: any) => {
