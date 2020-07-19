@@ -1,4 +1,4 @@
 <div class="container">
   <app-insert [options]="data" (add)="addStudent($event)"></app-insert>
-  <app-table [data]="data" [columns]="columns" (delete)="deleteStudent($event)"></app-table>
+  <app-table [data]="data" [columns]="columns" [showDelete]="true" (delete)="deleteStudent($event)"></app-table>
 </div>

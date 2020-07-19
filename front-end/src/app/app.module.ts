@@ -14,33 +14,36 @@ import {MatInputModule} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AuthService} from './auth/auth.service';
 import {HttpClientModule} from '@angular/common/http';
-import { LoginComponent } from './login/login.component';
+import {LoginComponent} from './login/login.component';
 import {MatDialogModule} from '@angular/material/dialog';
-import { TableComponent } from './include/table/table.component';
+import {TableComponent} from './include/table/table.component';
 import {MatTableModule} from '@angular/material/table';
 import {MatSortModule} from '@angular/material/sort';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import { ProfessorComponent } from './professor/professor.component';
-import { LoggedHeaderComponent } from './include/logged-header/logged-header.component';
+import {ProfessorComponent} from './professor/professor.component';
+import {LoggedHeaderComponent} from './include/logged-header/logged-header.component';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {MatTabsModule} from '@angular/material/tabs';
-import { EnrolledStudentsComponent } from './professor/enrolled-students/enrolled-students.component';
-import { StudentComponent } from './student/student.component';
-import { VmsComponent } from './professor/vms/vms.component';
-import { AssignmentsComponent } from './professor/assignments/assignments.component';
-import { CoursesComponent } from './professor/courses/courses.component';
-import { InsertComponent } from './include/insert/insert.component';
+import {EnrolledStudentsComponent} from './professor/enrolled-students/enrolled-students.component';
+import {StudentComponent} from './student/student.component';
+import {VmsComponent} from './professor/vms/vms.component';
+import {AssignmentsComponent} from './professor/assignments/assignments.component';
+import {CoursesComponent} from './professor/courses/courses.component';
+import {InsertComponent} from './include/insert/insert.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import { CreateCourseComponent } from './dialog/create-course/create-course.component';
-import { TableExpandableComponent } from './include/table-expandable/table-expandable.component';
-import { EditVmProfessorComponent } from './dialog/edit-vm/edit-vm-professor.component';
-import { GroupsComponent } from './student/groups/groups.component';
-import { VmsStudentComponent } from './student/vms-student/vms-student.component';
-import { EditVmStudentComponent } from './dialog/edit-vm-student/edit-vm-student.component';
-import { AssignmentsStudentComponent } from './student/assignments-student/assignments-student.component';
+import {CreateCourseComponent} from './dialog/create-course/create-course.component';
+import {TableExpandableComponent} from './include/table-expandable/table-expandable.component';
+import {EditVmProfessorComponent} from './dialog/edit-vm/edit-vm-professor.component';
+import {GroupsComponent} from './student/groups/groups.component';
+import {VmsStudentComponent} from './student/vms-student/vms-student.component';
+import {EditVmStudentComponent} from './dialog/edit-vm-student/edit-vm-student.component';
+import {AssignmentsStudentComponent} from './student/assignments-student/assignments-student.component';
+import {InfoGroupComponent} from './student/groups/info-group/info-group.component';
+import {CreateGroupComponent} from './student/groups/create-group/create-group.component';
+import {GroupDirective} from './student/groups/group.directive';
 
 @NgModule({
   declarations: [
@@ -65,7 +68,10 @@ import { AssignmentsStudentComponent } from './student/assignments-student/assig
     GroupsComponent,
     VmsStudentComponent,
     EditVmStudentComponent,
-    AssignmentsStudentComponent
+    AssignmentsStudentComponent,
+    InfoGroupComponent,
+    CreateGroupComponent,
+    GroupDirective
   ],
   imports: [
     BrowserModule,

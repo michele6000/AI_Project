@@ -15,6 +15,8 @@ export class TableComponent implements OnInit {
   father: string;
   private checkedObjects: any[] = [];
 
+  @Input() showDelete: boolean;
+
   @Input('data') set data(data) {
     this.dataSource.data = data;
   }
