@@ -1,8 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import {CourseModel} from "../models/course.model";
-import {switchMap} from "rxjs/operators";
+import {CourseModel} from '../models/course.model';
+import {switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-professor',
@@ -28,7 +28,6 @@ export class ProfessorComponent implements OnInit {
       const course = this.corsi.filter(c => c.name.toLowerCase().replace(' ', '-') === courseName);
       if (course.length > 0) {
         this.changeCorso(course[0]);
-        this.singoloCorso = course[0];
       } else {
         this.router.navigate(['teacher', this.corsi[0].name.toLowerCase().replace(' ', '-')]);
       }

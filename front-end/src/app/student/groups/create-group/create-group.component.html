@@ -1,5 +1,6 @@
 <div>
   <p>In order to propose a group, you have to choose the students, a name and a timeout for your proposal</p>
+  <mat-error *ngIf="error" class="mb-10">{{message}}</mat-error>
   <app-table [columns]="studentsColumns" [data]="studentsData" [showDelete]="false" [(checkedObjects)]="selectedStudents"></app-table>
   <form class="w-80 mt-10 text-right d-flex align-items-center" #f="ngForm" (ngSubmit)="proposeGroup(f)">
     <mat-form-field class="mr-20">

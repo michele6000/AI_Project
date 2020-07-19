@@ -3,6 +3,7 @@ import {GroupModel} from '../../models/group.model';
 import {MatDialog} from "@angular/material/dialog";
 import {EditVmProfessorComponent} from '../../dialog/edit-vm/edit-vm-professor.component';
 import {ActivatedRoute, Router} from "@angular/router";
+import {CrudService} from "../../services/crud.service";
 
 @Component({
   selector: 'app-vms',
@@ -13,12 +14,16 @@ export class VmsComponent implements OnInit {
   data = [];
   columns = [];
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router) {
+  courseParam: string;
+
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private crudService: CrudService) {
 
   }
 
   ngOnInit(): void {
-    console.log(this.router.routerState.snapshot.url.split('/')[2]);
+    this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
+
+    // Recupero l'elenco di VM
   }
 
   deleteVM($event: any[]) {

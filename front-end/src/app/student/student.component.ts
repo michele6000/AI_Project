@@ -1,7 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatSidenav} from "@angular/material/sidenav";
-import {CourseModel} from "../models/course.model";
-import {ActivatedRoute, Router} from "@angular/router";
+import {MatSidenav} from '@angular/material/sidenav';
+import {CourseModel} from '../models/course.model';
+import {ActivatedRoute, Router} from '@angular/router';
+import {CrudService} from "../services/crud.service";
 
 @Component({
   selector: 'app-student',
@@ -20,9 +21,19 @@ export class StudentComponent implements OnInit {
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(private route: ActivatedRoute, private router: Router, private crudService: CrudService) {
+  }
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe(param => {
+      const courseName = param.get('course');
+      const course = this.corsi.filter(c => c.name.toLowerCase().replace(' ', '-') === courseName);
+      if (course.length > 0) {
+        this.changeCorso(course[0]);
+      } else {
+        this.router.navigate(['student', this.corsi[0].name.toLowerCase().replace(' ', '-')]);
+      }
+    });
   }
 
   toggleMenu() {

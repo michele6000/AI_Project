@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {CrudService} from '../../../services/crud.service';
 import {StudentModel} from '../../../models/student.model';
+import {ActivatedRoute, Router} from '@angular/router';
+import {CourseModel} from '../../../models/course.model';
 
 @Component({
   selector: 'app-create-group',
@@ -27,24 +29,42 @@ export class CreateGroupComponent implements OnInit {
   groupsColumns = ['Group Name', 'Matricola', 'Name'];
   groupsData = [];
 
-  selectedStudents: StudentModel[] = [];
+  course: CourseModel;
 
-  constructor(private crudService: CrudService) {
+  selectedStudents: StudentModel[] = [];
+  private courseParam: string;
+  error = false;
+  message = '';
+
+  constructor(private route: ActivatedRoute, private router: Router, private crudService: CrudService) {
   }
 
   ngOnInit(): void {
+    this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
+
+    // Recupero i parametri del corso
+    this.course = this.crudService.findCourseByNameUrl(this.courseParam);
+    console.log(this.course);
   }
 
   proposeGroup(f: NgForm) {
-    if (f.valid && this.selectedStudents.length > 0) {
-      const group = {
-        name: '',
-        timeout: 0,
-        students: this.selectedStudents
-      };
-      group.name = f.value.name;
-      group.timeout = f.value.timeout;
-      this.crudService.proposeGroup(group);
+    if (f.valid) {
+      if (this.selectedStudents.length < this.course.min || this.selectedStudents.length > this.course.max) {
+        this.error = true;
+        this.message = 'Vincoli creazione gruppo non rispettati. Minimo ' + this.course.min
+          + ' membri e massimo ' + this.course.max + ' membri.';
+      } else {
+        this.error = false;
+        this.message = '';
+        const group = {
+          name: '',
+          timeout: 0,
+          students: this.selectedStudents
+        };
+        group.name = f.value.name;
+        group.timeout = f.value.timeout;
+        this.crudService.proposeGroup(group);
+      }
     }
   }
 }

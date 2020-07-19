@@ -16,6 +16,7 @@ export class EnrolledStudentsComponent implements OnInit {
   @ViewChild(MatTable)
   table: MatTable<StudentModel>;
 
+  corso: CourseModel;
   columns = ['email', 'name', 'surname', 'matricola'];
   data: StudentModel[] = [
     {
