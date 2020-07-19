@@ -1,7 +1,7 @@
 <div>
   <p>In order to propose a group, you have to choose the students, a name and a timeout for your proposal</p>
-  <app-table [columns]="studentsColumns" [data]="studentsData" [showDelete]="false"></app-table>
-  <form class="w-80 mt-10 text-right d-flex align-items-center" #f ngForm (ngSubmit)="proposeGroup(f)">
+  <app-table [columns]="studentsColumns" [data]="studentsData" [showDelete]="false" [(checkedObjects)]="selectedStudents"></app-table>
+  <form class="w-80 mt-10 text-right d-flex align-items-center" #f="ngForm" (ngSubmit)="proposeGroup(f)">
     <mat-form-field class="mr-20">
       <mat-label>Group Name</mat-label>
       <input matInput type="text" #name="ngModel" ngModel required name="name" value="">
@@ -15,6 +15,6 @@
   </form>
 </div>
 <div class="mt-10">
-  <p>Richieste ricevute per formare un gruppo</p>
-  <app-table [columns]="groupsColumns" [data]="groupsData" [showDelete]="false"></app-table>
+  <p>Received group proposals</p>
+  <app-table-expandable></app-table-expandable>
 </div>

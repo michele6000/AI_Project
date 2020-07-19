@@ -13,7 +13,9 @@ export class TableComponent implements OnInit {
   columnsWithCheckbox = [];
   dataSource = new MatTableDataSource();
   father: string;
-  private checkedObjects: any[] = [];
+
+  @Input() checkedObjects: any[] = [];
+  @Output() checkedObjectsChange = new EventEmitter<any[]>();
 
   @Input() showDelete: boolean;
 

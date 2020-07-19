@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import {UserModel} from '../models/user.models';
 import {HttpClient} from '@angular/common/http';
 import {CourseModel} from '../models/course.model';
-import {VmModel} from "../models/vm.model";
-import {VmProfessor} from "../models/vm-professor.model";
-import {VmStudent} from "../models/vm-student.model";
-import {Observable} from "rxjs";
+import {VmModel} from '../models/vm.model';
+import {VmProfessor} from '../models/vm-professor.model';
+import {VmStudent} from '../models/vm-student.model';
+import {Observable} from 'rxjs';
 
 const API_URL = 'http://localhost:3000/';
 
@@ -65,7 +65,7 @@ export class CrudService {
   }
 
   findGroupByStudentId(studentId: string): Observable<any>{
-    return this.http.get<any>(API_URL + "student/" + studentId)
+    return this.http.get<any>(API_URL + 'student/' + studentId)
       .pipe(
         response => response
       );
@@ -73,7 +73,7 @@ export class CrudService {
 
   proposeGroup(group: any){
     this.http.post(
-      API_URL + "student/propose-group",
+      API_URL + 'student/propose-group',
       {
         group
       }
