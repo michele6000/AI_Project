@@ -49,10 +49,10 @@ export class CreateGroupComponent implements OnInit {
 
   proposeGroup(f: NgForm) {
     if (f.valid) {
-      if (this.selectedStudents.length < this.course.min || this.selectedStudents.length > this.course.max) {
+      if ((this.selectedStudents.length + 1) < this.course.min || (this.selectedStudents.length + 1) > this.course.max) {
         this.error = true;
         this.message = 'Vincoli creazione gruppo non rispettati. Minimo ' + this.course.min
-          + ' membri e massimo ' + this.course.max + ' membri.';
+          + ' membri e massimo ' + this.course.max + ' membri (compreso te stesso).';
       } else {
         this.error = false;
         this.message = '';
