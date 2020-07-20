@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {UserModel} from "../models/user.models";
 
-const API_URL_LOGIN = 'http://localhost:3000/login';
-const API_URL_REGISTER = 'http://localhost:3000/register';
+const API_URL_LOGIN = 'http://localhost:4200/login';
+const API_URL_REGISTER = 'http://localhost:4200/register';
 
 @Injectable({
   providedIn: 'root'

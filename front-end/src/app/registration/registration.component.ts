@@ -10,6 +10,8 @@ import {AuthService} from "../auth/auth.service";
 })
 export class RegistrationComponent implements OnInit {
 
+  error_pw: boolean = false;
+
   constructor(private authService: AuthService) {
   }
 
@@ -17,13 +19,17 @@ export class RegistrationComponent implements OnInit {
   }
 
   register(f: NgForm) {
-    let user = new UserModel();
-    user.nome = f.value.nome;
-    user.cognome = f.value.cognome;
-    user.matricola = f.value.matricola;
-    user.password = f.value.password;
-    user.email = f.value.email;
+    if (f.value.password !== f.value.confirm_password) {
+      this.error_pw = true;
+    } else {
+      let user = new UserModel();
+      user.name = f.value.name;
+      user.surname = f.value.surname;
+      user.matricola = f.value.matricola;
+      user.password = f.value.password;
+      user.email = f.value.email;
 
-    this.authService.register(user);
+      this.authService.register(user);
+    }
   }
 }

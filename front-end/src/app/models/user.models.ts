@@ -1,6 +1,6 @@
 export class UserModel {
-  nome: string;
-  cognome: string;
+  name: string;
+  surname: string;
   matricola: string;
   password: string;
   email: string;
