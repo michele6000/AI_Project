@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {CourseModel} from '../../models/course.model';
 import {StudentModel} from '../../models/student.model';
 import {MatTable} from '@angular/material/table';
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-enrolled-students',
@@ -32,8 +33,10 @@ export class EnrolledStudentsComponent implements OnInit {
       matricola: '123456'
     }
   ];
+  fileAbsent = true;
+  file: any;
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient) {
   }
 
   ngOnInit(): void {
@@ -54,5 +57,24 @@ export class EnrolledStudentsComponent implements OnInit {
   addStudent($event: StudentModel) {
     console.log($event);
     // this.table.renderRows();
+  }
+
+  handleFileSelect($event: any) {
+    console.log($event);
+    this.file = $event.target.files[0];
+    this.fileAbsent = false;
+  }
+
+  sendFile() {
+    const formData: FormData = new FormData();
+    formData.append('uploadFile', this.file, this.file.name);
+    const headers = {
+      'Content-Type': 'multipart/form-data'
+    };
+    this.http.post('http://localhost:4200/api/file', formData, {headers})
+      .subscribe(
+        data => console.log('success'),
+        error => console.log(error)
+      );
   }
 }

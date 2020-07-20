@@ -44,6 +44,8 @@ import {AssignmentsStudentComponent} from './student/assignments-student/assignm
 import {InfoGroupComponent} from './student/groups/info-group/info-group.component';
 import {CreateGroupComponent} from './student/groups/create-group/create-group.component';
 import {GroupDirective} from './student/groups/group.directive';
+import { EditCourseComponent } from './dialog/edit-course/edit-course.component';
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -71,30 +73,32 @@ import {GroupDirective} from './student/groups/group.directive';
     AssignmentsStudentComponent,
     InfoGroupComponent,
     CreateGroupComponent,
-    GroupDirective
+    GroupDirective,
+    EditCourseComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatCardModule,
-    MatInputModule,
-    FormsModule,
-    HttpClientModule,
-    MatDialogModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatCheckboxModule,
-    MatIconModule,
-    MatSidenavModule,
-    MatListModule,
-    MatTabsModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatCardModule,
+        MatInputModule,
+        FormsModule,
+        HttpClientModule,
+        MatDialogModule,
+        MatTableModule,
+        MatSortModule,
+        MatPaginatorModule,
+        MatCheckboxModule,
+        MatIconModule,
+        MatSidenavModule,
+        MatListModule,
+        MatTabsModule,
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+        MatTooltipModule
+    ],
   providers: [AuthService],
   bootstrap: [AppComponent]
 })

@@ -2,8 +2,8 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {GroupModel} from '../../models/group.model';
 import {NgForm} from '@angular/forms';
-import {CrudService} from "../../services/crud.service";
-import {VmProfessor} from "../../models/vm-professor.model";
+import {CrudService} from '../../services/crud.service';
+import {VmProfessor} from '../../models/vm-professor.model';
 
 @Component({
   selector: 'app-edit-vm',
@@ -12,9 +12,10 @@ import {VmProfessor} from "../../models/vm-professor.model";
 })
 export class EditVmProfessorComponent implements OnInit {
   error = false;
+  group: GroupModel;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private crudService: CrudService) {
-    console.log(data.name);
+    this.group = data;
   }
 
   ngOnInit(): void {

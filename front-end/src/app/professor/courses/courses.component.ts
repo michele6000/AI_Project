@@ -3,6 +3,8 @@ import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CreateCourseComponent} from '../../dialog/create-course/create-course.component';
 import {CourseModel} from '../../models/course.model';
+import {EditVmProfessorComponent} from "../../dialog/edit-vm/edit-vm-professor.component";
+import {EditCourseComponent} from "../../dialog/edit-course/edit-course.component";
 
 @Component({
   selector: 'app-courses',
@@ -54,5 +56,13 @@ export class CoursesComponent implements OnInit {
 
   deleteCourse($event: CourseModel[]) {
     console.log($event);
+  }
+
+  editCourse(course: CourseModel) {
+    this.dialog.open(EditCourseComponent, {data: course})
+      .afterClosed()
+      .subscribe(result => {
+
+      });
   }
 }

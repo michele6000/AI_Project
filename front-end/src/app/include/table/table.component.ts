@@ -18,6 +18,7 @@ export class TableComponent implements OnInit {
   @Output() checkedObjectsChange = new EventEmitter<any[]>();
 
   @Input() showDelete: boolean;
+  @Input() showEdit: boolean;
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
@@ -25,10 +26,10 @@ export class TableComponent implements OnInit {
 
   @Input('columns') set columns(columns) {
     this.columnsToDisplay = columns;
-    this.columnsWithCheckbox = ['select', ...columns];
   }
 
   @Output('delete') onDelete: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @Output('edit') onEdit: EventEmitter<any[]> = new EventEmitter<any[]>();
 
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
@@ -40,6 +41,12 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.showEdit) {
+      this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'edit'];
+    } else {
+      this.columnsWithCheckbox = ['select', ...this.columnsToDisplay];
+    }
+
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
   }
@@ -91,5 +98,9 @@ export class TableComponent implements OnInit {
 
   delete() {
     this.onDelete.emit(this.checkedObjects);
+  }
+
+  edit($event: MouseEvent, element: any) {
+    this.onEdit.emit(element);
   }
 }

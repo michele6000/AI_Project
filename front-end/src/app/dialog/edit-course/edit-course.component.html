@@ -1,0 +1,33 @@
+<mat-card class="example-card dimensioni">
+  <mat-card-header>
+    <mat-card-title>Edit Course</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-error class="mt-10-center" *ngIf="error">
+      Error
+    </mat-error>
+    <form #f="ngForm" class="login-form" (ngSubmit)="updateCourse(f)">
+      <mat-form-field class="dialog-position-field">
+        <mat-label>Name</mat-label>
+        <input matInput type="text" #name="ngModel" [ngModel]="course.name" required placeholder="Name" name="name" value="">
+      </mat-form-field>
+      <mat-form-field class="dialog-position-field">
+        <mat-label>Identifier</mat-label>
+        <input matInput type="text" #identifier="ngModel" [ngModel]="course.identifier" required placeholder="Identifier" name="identifier" value="">
+      </mat-form-field>
+      <mat-form-field class="dialog-position-field">
+        <mat-label>Min group size</mat-label>
+        <input matInput type="number" #min="ngModel" [ngModel]="course.min" required placeholder="Min group size" name="min" value="" min="1">
+      </mat-form-field>
+      <mat-form-field class="dialog-position-field">
+        <mat-label>Max group size</mat-label>
+        <input matInput type="number" #max="ngModel" [ngModel]="course.max" required placeholder="Max group size" name="max" value="" min="1">
+      </mat-form-field>
+      <br>
+      <mat-card-actions>
+        <button mat-button [disabled]="!f.valid" mat-raised-button color="primary">Update</button>
+        <button [routerLink]="['/teacher/courses']" mat-button mat-dialog-close>Cancel</button>
+      </mat-card-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

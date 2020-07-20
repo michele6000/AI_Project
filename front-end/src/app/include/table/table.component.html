@@ -16,6 +16,15 @@
     <td mat-cell *matCellDef="let element"> {{element[col]}} </td>
   </ng-container>
 
+  <ng-container matColumnDef="edit" *ngIf="showEdit">
+    <th mat-header-cell *matHeaderCellDef>
+      Modify
+    </th>
+    <td mat-cell *matCellDef="let element">
+      <mat-icon class="cursor-pointer" (click)="edit($event, element)">edit</mat-icon>
+    </td>
+  </ng-container>
+
   <tr mat-header-row *matHeaderRowDef="columnsWithCheckbox"></tr>
   <tr mat-row *matRowDef="let row; columns: columnsWithCheckbox;"></tr>
 
