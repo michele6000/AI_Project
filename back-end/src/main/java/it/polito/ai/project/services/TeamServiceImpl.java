@@ -10,6 +10,7 @@ import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.repositories.*;
 import java.io.Reader;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -514,5 +515,36 @@ public class TeamServiceImpl implements TeamService {
             .map(v -> modelMapper.map(v,VMDTO.class))
             .collect(Collectors.toList())
             ;
+  }
+
+  @Override
+  public boolean setCourseVMlimits(CourseDTO course) {
+    Optional<Course> optionalCourseEntity = courseRepo.findById(course.getName());
+    if (!optionalCourseEntity.isPresent()) {
+      throw new CourseNotFoundException("Course not found!");
+    }
+    optionalCourseEntity.get().setLimit_ram(course.getLimit_ram());
+    optionalCourseEntity.get().setLimit_cpu(course.getLimit_cpu());
+    optionalCourseEntity.get().setLimit_hdd(course.getLimit_hdd());
+    optionalCourseEntity.get().setLimit_instance(course.getLimit_instance());
+    optionalCourseEntity.get().setLimit_active_instance(course.getLimit_active_instance());
+    return true;
+  }
+
+  @Override
+  public String getTeamStat(Long teamId) {
+    Optional<Team> optionalTeamEntity = teamRepo.findById(teamId);
+    if (!optionalTeamEntity.isPresent()) {
+      throw new CourseNotFoundException("team not found!");
+    }
+    AtomicReference<Integer> totalRam = new AtomicReference<>(0);
+    AtomicReference<Integer> totalCPU = new AtomicReference<>(0);
+    AtomicReference<Integer> totalHdd = new AtomicReference<>(0);
+    optionalTeamEntity.get().getVMInstance().forEach(vm -> {
+      totalRam.updateAndGet(v -> v + vm.getRam());
+      totalCPU.updateAndGet(v -> v + vm.getCpu());
+      totalHdd.updateAndGet(v -> v + vm.getHdd());
+    });
+    return "Current usage:\nTotal Ram: "+totalRam.toString()+"\nTotal CPU: "+totalCPU.toString()+"\nTotal Hdd: "+totalHdd.toString();
   }
 }

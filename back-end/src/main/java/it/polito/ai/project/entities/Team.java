@@ -14,13 +14,6 @@ public class Team {
   private String name;
   private int status;
 
-  // Limitazioni per la VM
-  private String limit_hdd;
-  private String limit_cpu;
-  private String limit_ram;
-  private String limit_instance;
-  private String limit_active_instance;
-
   @ManyToOne
   @JoinColumn(name = "VMType_id")
   private VMType vmType;

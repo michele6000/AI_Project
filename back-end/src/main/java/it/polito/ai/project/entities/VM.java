@@ -11,9 +11,9 @@ public class VM {
     private String id;
 
     private String owner;
-    private String cpu;
-    private String ram;
-    private String hdd;
+    private Integer cpu;
+    private Integer ram;
+    private Integer hdd;
     private String status;
     private String accessLink;
 
