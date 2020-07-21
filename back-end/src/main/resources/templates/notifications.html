@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="/style/style.css" rel="stylesheet">
+    <title>Notifications</title>
+</head>
+<body>
+<div class="container">
+    <div class="notification success" th:style="${success}">
+        <h3 class="notification-title">SUCCESS!</h3>
+        <p class="notification-message" th:text="${message}"></p>
+    </div>
+
+    <div class="notification error" th:style="${error}">
+        <h3 class="notification-title">ERROR!</h3>
+        <p class="notification-message" th:text="${message}"></p>
+    </div>
+</div>
+</body>
+
+</html>
