@@ -9,6 +9,7 @@ import javax.persistence.*;
 public class VM {
     @Id
     private String id;
+
     private String owner;
     private Integer cpu;
     private Integer ram;
@@ -17,9 +18,11 @@ public class VM {
     private String accessLink;
 
     @ManyToOne
+    @JoinColumn(name = "VMType_id")
     private VMType vmType;
 
     @ManyToOne
+    @JoinColumn(name = "team_id")
     private Team team;
 
     public void setVmType(VMType t){

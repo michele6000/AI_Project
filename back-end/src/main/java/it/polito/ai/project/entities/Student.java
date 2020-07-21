@@ -26,6 +26,9 @@ public class Student {
   @ManyToMany(mappedBy = "members")
   private List<Team> teams = new ArrayList<>();
 
+  @OneToMany
+  private List<Solution> solutions=new ArrayList<>();
+
   public void addCourse(Course course) {
     courses.add(course);
     course.getStudents().add(this);

@@ -24,6 +24,7 @@ public class Course {
   private Integer limit_active_instance;
 
   @ManyToOne
+  @JoinColumn(name = "VMType_id")
   private VMType vmType;
 
   @ManyToMany(mappedBy = "courses")
