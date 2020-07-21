@@ -1,0 +1,13 @@
+<div class="container">
+  <div class="d-flex w-80 align-items-center">
+    <app-insert [options]="data" (add)="addStudent($event)"></app-insert>
+    <span class="fill-remaining-space"></span>
+    <div class="d-flex align-items-center">
+      <mat-icon matTooltip="Choose CSV file with students' list" class="mr-20" matTooltipPosition="left">info</mat-icon>
+      <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
+      <input hidden (change)="handleFileSelect($event)" accept=".csv" #fileInput type="file" id="file">
+      <button mat-raised-button color="primary" class="ml-20" [disabled]="fileAbsent" (click)="sendFile()">Upload</button>
+    </div>
+  </div>
+  <app-table [data]="data" [columns]="columns" [showDelete]="true" (delete)="deleteStudent($event)"></app-table>
+</div>

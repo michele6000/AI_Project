@@ -1,0 +1,37 @@
+<app-header></app-header>
+
+<div class="container text-center">
+  <h1>Registration</h1>
+  <mat-card-content>
+    <mat-error *ngIf="error_pw">
+      Error. Different password
+    </mat-error>
+    <form class="registration-form" (ngSubmit)="register(f)" #f="ngForm">
+      <mat-form-field class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Name" name="name" required #name="ngModel" ngModel>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Surname</mat-label>
+        <input matInput placeholder="Surname" name="surname" required #surname="ngModel" ngModel>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Matricola</mat-label>
+        <input matInput placeholder="Matricola" name="matricola" required #matricola="ngModel" ngModel>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput placeholder="Password" name="password" type="password" required #password="ngModel" ngModel>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Confirm password</mat-label>
+        <input matInput placeholder="Confirm Password" name="confirm_password" type="password" required #confirm_password="ngModel" ngModel>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Mail" name="email" type="email" required email #email="ngModel" ngModel>
+      </mat-form-field>
+      <button mat-raised-button color="primary" [disabled]="!f.valid">REGISTER</button>
+    </form>
+  </mat-card-content>
+</div>

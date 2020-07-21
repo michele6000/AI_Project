@@ -1,0 +1,8 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <span><a href="home">HOME</a></span>
+    <span class="fill-remaining-space"></span>
+    <a mat-button routerLink="/register">Register</a>
+    <button [routerLink]="['/home']" [queryParams]="{doLogin: 'true'}" mat-raised-button class="float-right" mat-button>Login</button>
+  </mat-toolbar-row>
+</mat-toolbar>
