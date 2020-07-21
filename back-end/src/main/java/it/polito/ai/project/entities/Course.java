@@ -24,7 +24,7 @@ public class Course {
   private Integer limit_active_instance;
 
   @ManyToOne
-  @JoinColumn(name = "VMType_id")
+//  @JoinColumn(name = "VMType_id") //TODO:chiedere a malnati
   private VMType vmType;
 
   @ManyToMany(mappedBy = "courses")

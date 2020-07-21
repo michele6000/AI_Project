@@ -20,10 +20,10 @@ public class Submission {
     private String content; //image
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
+//    @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToMany (mappedBy="solution_id")
+    @OneToMany ()
     private List<Solution> solutions= new ArrayList<>();
 
     public void setCourse(Course c){

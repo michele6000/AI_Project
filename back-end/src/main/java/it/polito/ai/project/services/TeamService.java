@@ -90,7 +90,7 @@ public interface TeamService {
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
   List<VMDTO> getTeamVMs(Long teamId);
 
-  @PreAuthorize("hasAnyRole(ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
   boolean setCourseVMlimits(CourseDTO course);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
