@@ -38,6 +38,13 @@ public class CourseController {
     return courses;
   }
 
+  @GetMapping({ "{/professorId}" })
+  public List<CourseDTO> getProfessorCourses(@PathVariable String professorId) {
+    List<CourseDTO> courses = service.getProfessorCourses(professorId);
+    courses.forEach(ModelHelper::enrich);
+    return courses;
+  }
+
   @GetMapping("/{name}")
   public CourseDTO getOne(@PathVariable String name) {
     Optional<CourseDTO> course = service.getCourse(name);
@@ -48,6 +55,20 @@ public class CourseController {
     ); else {
       CourseDTO courseDTO = course.get();
       return ModelHelper.enrich(courseDTO);
+    }
+  }
+
+  @GetMapping("/{name}/deleteOne")
+  public Boolean deleteOne(@PathVariable String name, @RequestParam String studentId) {
+    try{
+      service.deleteOne(studentId,name);
+      return true;
+    }
+    catch(TeamServiceException e){
+      throw new ResponseStatusException(
+              HttpStatus.BAD_REQUEST,
+              e.getMessage()
+      );
     }
   }
 
@@ -195,15 +216,6 @@ public class CourseController {
       List<StudentDTO> students = service.getStudentsInTeams(courseName);
       return students;
     } catch (CourseNotFoundException e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-    }
-  }
-
-  @GetMapping("/{teamId}/members")
-  public List<StudentDTO> getMembers(@PathVariable Long teamId) {
-    try {
-      return service.getMembers(teamId);
-    } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }

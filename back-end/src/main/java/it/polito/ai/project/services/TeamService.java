@@ -1,9 +1,7 @@
 package it.polito.ai.project.services;
 
-import it.polito.ai.project.dtos.CourseDTO;
-import it.polito.ai.project.dtos.ProfessorDTO;
-import it.polito.ai.project.dtos.StudentDTO;
-import it.polito.ai.project.dtos.TeamDTO;
+import it.polito.ai.project.dtos.*;
+
 import java.io.Reader;
 import java.util.List;
 import java.util.Optional;
@@ -82,4 +80,13 @@ public interface TeamService {
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
   List<ProfessorDTO> getProfessors(String courseName);
+
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  List<CourseDTO> getProfessorCourses(String professorId);
+
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  Boolean deleteOne(String studentId, String courseName);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  List<VMDTO> getTeamVMs(Long teamId);
 }

@@ -2,10 +2,7 @@ package it.polito.ai.project.services;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import it.polito.ai.project.dtos.CourseDTO;
-import it.polito.ai.project.dtos.ProfessorDTO;
-import it.polito.ai.project.dtos.StudentDTO;
-import it.polito.ai.project.dtos.TeamDTO;
+import it.polito.ai.project.dtos.*;
 import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.CourseNotFoundException;
 import it.polito.ai.project.exceptions.StudentNotFoundException;
@@ -46,6 +43,9 @@ public class TeamServiceImpl implements TeamService {
 
   @Autowired
   private NotificationService notification;
+
+  @Autowired
+  private VMRepository vmRepo;
 
   @Override
   public boolean addCourse(CourseDTO course) {
@@ -469,5 +469,50 @@ public class TeamServiceImpl implements TeamService {
       .stream()
       .map(s -> modelMapper.map(s, ProfessorDTO.class))
       .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<CourseDTO> getProfessorCourses(String professorId) {
+    return courseRepo
+            .findAll()
+            .stream()
+            .filter(c ->  c.getProfessors()
+                    .stream()
+                    .map(Professor::getId)
+                    .collect(Collectors.toList())
+                    .contains(professorId)
+            )
+            .map(c -> modelMapper.map(c, CourseDTO.class))
+            .collect(Collectors.toList());
+  }
+
+  @Override
+  public Boolean deleteOne(String studentId, String courseName) {
+    Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
+    Optional<Student> optionalStudentEntity = studentRepo.findById(studentId);
+    if (!optionalCourseEntity.isPresent()) {
+      throw new CourseNotFoundException("Course not found!");
+    }
+    if(!optionalStudentEntity.isPresent()){
+      throw new StudentNotFoundException("Student not found!");
+    }
+    if(!optionalCourseEntity.get().getStudents().stream().map(Student::getId).collect(Collectors.toList()).contains(studentId))
+      throw new StudentNotFoundException("Student not enrolled to this course!");
+
+    optionalCourseEntity.get().deleteStudent(optionalStudentEntity.get());
+    return true;
+  }
+
+  @Override
+  public List<VMDTO> getTeamVMs(Long teamId) {
+    if(!teamRepo.existsById(teamId))
+      throw new TeamServiceException("Team does not exist!");
+
+    return vmRepo.findAll()
+            .stream()
+            .filter(v -> v.getTeam().equals(teamRepo.getOne(teamId)))
+            .map(v -> modelMapper.map(v,VMDTO.class))
+            .collect(Collectors.toList())
+            ;
   }
 }

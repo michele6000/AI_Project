@@ -40,4 +40,9 @@ public class Student {
     teams.remove(team);
     team.getMembers().remove(this);
   }
+
+  public void removeCourse(Course c){
+    courses.remove(c);
+    c.getStudents().remove(this);
+  }
 }

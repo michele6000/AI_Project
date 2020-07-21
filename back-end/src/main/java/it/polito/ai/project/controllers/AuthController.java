@@ -61,4 +61,7 @@ public class AuthController {
       throw new BadCredentialsException("Invalid username/password supplied!");
     }
   }
+
+//  TODO: gestire registrazione
+//  @PostMapping("/register")
 }

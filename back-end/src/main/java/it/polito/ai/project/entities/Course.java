@@ -50,6 +50,11 @@ public class Course {
     submissions.add(s);
     s.setCourse(this);
   }
+
+  public void deleteStudent(Student s){
+    students.remove(s);
+    s.getCourses().remove(this);
+  }
 }
 
 
