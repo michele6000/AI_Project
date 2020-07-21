@@ -39,6 +39,11 @@ public class Student {
     team.getMembers().add(this);
   }
 
+  public void addSolution(Solution solution) {
+    solutions.add(solution);
+    solution.setStudent(this);
+  }
+
   public void removeTeam(Team team) {
     teams.remove(team);
     team.getMembers().remove(this);

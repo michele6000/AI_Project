@@ -30,4 +30,9 @@ public class Submission {
         course = c;
         c.getSubmissions().add(this);
     }
+
+    public void addSolution(Solution solution) {
+        solutions.add(solution);
+        solution.setSubmission(this);
+    }
 }

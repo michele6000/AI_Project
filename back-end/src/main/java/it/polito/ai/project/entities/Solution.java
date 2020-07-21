@@ -22,5 +22,15 @@ public class Solution {
     @JoinColumn(name = "submission_id")
     private Submission submission;
 
+    public void setStudent(Student s){
+        student = s;
+        s.getSolutions().add(this);
+    }
+
+    public void setSubmission(Submission s){
+        submission = s;
+        s.getSolutions().add(this);
+    }
+
 
 }
