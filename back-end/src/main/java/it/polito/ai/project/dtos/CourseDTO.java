@@ -11,4 +11,11 @@ public class CourseDTO extends RepresentationModel<CourseDTO> {
   private int max;
   private boolean enabled;
 
+  // Limitazioni per la VM
+  private Integer limit_hdd;
+  private Integer limit_cpu;
+  private Integer limit_ram;
+  private Integer limit_instance;
+  private Integer limit_active_instance;
+
 }

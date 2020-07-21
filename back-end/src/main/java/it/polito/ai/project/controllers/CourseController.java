@@ -246,4 +246,15 @@ public class CourseController {
       );
     }
   }
+
+  @GetMapping("/{courseName}/setVMlimits")
+  public boolean setCourseVMlimits(@PathVariable String courseName, @RequestParam CourseDTO course) {
+    try {
+      //nel form solo i limiti
+      course.setName(courseName);
+      return service.setCourseVMlimits(course);
+    } catch (CourseNotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+  }
 }

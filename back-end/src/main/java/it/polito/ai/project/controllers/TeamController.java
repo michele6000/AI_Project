@@ -39,5 +39,14 @@ public class TeamController {
         }
     }
 
+    @GetMapping("/{teamId}/stats")
+    public String getTeamStats(@PathVariable Long teamId) {
+        try {
+            return service.getTeamStat(teamId);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
 
 }
