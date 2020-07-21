@@ -191,8 +191,7 @@ public class CourseController {
   @GetMapping("/{courseName}/teams")
   public List<TeamDTO> getTeamsForCourse(@PathVariable String courseName) {
     try {
-      List<TeamDTO> teams = service.getTeamForCourse(courseName);
-      return teams;
+      return service.getTeamForCourse(courseName);
     } catch (CourseNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -203,8 +202,7 @@ public class CourseController {
     @PathVariable String courseName
   ) {
     try {
-      List<StudentDTO> students = service.getAvailableStudents(courseName);
-      return students;
+      return service.getAvailableStudents(courseName);
     } catch (CourseNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -213,8 +211,7 @@ public class CourseController {
   @GetMapping("/{courseName}/studentsInTeams")
   public List<StudentDTO> getStudentsInTeams(@PathVariable String courseName) {
     try {
-      List<StudentDTO> students = service.getStudentsInTeams(courseName);
-      return students;
+      return service.getStudentsInTeams(courseName);
     } catch (CourseNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -226,6 +223,27 @@ public class CourseController {
       return service.getProfessors(courseName);
     } catch (CourseNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{courseName}/addProfessor")
+  public boolean addProfessorToCourse(
+          @PathVariable String courseName,
+          @RequestParam String id
+  ) {
+    try {
+      return service.addProfessorToCourse(id, courseName);
+    } catch (TeamServiceException e) {
+      if (
+              e instanceof StudentNotFoundException ||
+                      e instanceof CourseNotFoundException
+      ) throw new ResponseStatusException(
+              HttpStatus.NOT_FOUND,
+              "Error: " + e.getMessage()
+      ); else throw new ResponseStatusException(
+              HttpStatus.CONFLICT,
+              "Error: " + e.getMessage()
+      );
     }
   }
 }

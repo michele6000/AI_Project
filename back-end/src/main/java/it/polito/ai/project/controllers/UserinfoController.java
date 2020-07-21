@@ -1,6 +1,7 @@
 package it.polito.ai.project.controllers;
 
 import it.polito.ai.project.dtos.ProfessorDTO;
+import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.exceptions.CourseNotFoundException;
 import it.polito.ai.project.exceptions.StudentNotFoundException;
 import it.polito.ai.project.exceptions.TeamServiceException;
@@ -37,36 +38,5 @@ public class UserinfoController {
         .collect(Collectors.toList())
     );
     return ResponseEntity.ok(model);
-  }
-
-  @PostMapping("/addProfessor")
-  public ProfessorDTO addProfessor(@RequestBody ProfessorDTO professor) {
-    if (!service.addProfessor(professor)) throw new ResponseStatusException(
-      HttpStatus.CONFLICT,
-      professor.getId()
-    );
-
-    return professor;
-  }
-
-  @PostMapping("/addProfessor/{courseName}")
-  public boolean addProfessorToCourse(
-    @PathVariable String courseName,
-    @RequestParam String id
-  ) {
-    try {
-      return service.addProfessorToCourse(id, courseName);
-    } catch (TeamServiceException e) {
-      if (
-        e instanceof StudentNotFoundException ||
-        e instanceof CourseNotFoundException
-      ) throw new ResponseStatusException(
-        HttpStatus.NOT_FOUND,
-        "Error: " + e.getMessage()
-      ); else throw new ResponseStatusException(
-        HttpStatus.CONFLICT,
-        "Error: " + e.getMessage()
-      );
-    }
   }
 }
