@@ -22,9 +22,10 @@ public class Team {
   private String limit_active_instance;
 
   @ManyToOne
+  @JoinColumn(name = "VMType_id")
   private VMType vmType;
 
-  @OneToMany
+  @OneToMany(mappedBy = "team")
   private List<VM> VMInstance;
 
   @ManyToOne

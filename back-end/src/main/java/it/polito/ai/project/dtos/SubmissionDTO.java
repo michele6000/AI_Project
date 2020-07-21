@@ -10,6 +10,6 @@ public class SubmissionDTO {
 
     private Timestamp expiryDate;
     private Timestamp releaseDate;
-    private Byte content; //image
+    private String content; //image
 
 }

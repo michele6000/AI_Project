@@ -17,6 +17,7 @@ public class Course {
   private boolean enabled;
 
   @ManyToOne
+  @JoinColumn(name = "VMType_id")
   private VMType vmType;
 
   @ManyToMany(mappedBy = "courses")

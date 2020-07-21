@@ -16,13 +16,13 @@ public class VMType {
     private String id;
     private String dockerFile; // visto come path del dockerfile
 
-    @OneToMany
+    @OneToMany (mappedBy="vmType")
     private List<Course> courses; // una VM_type può essere associata a cpiù corsi ma non viceversa
 
-    @OneToMany
+    @OneToMany (mappedBy="vmType")
     private List<VM> VMs; // posso avere più istanze con lo stesso tipo ma non viceversa
 
-    @OneToMany
+    @OneToMany (mappedBy="vmType")
     private List<Team> teams; //posso avere più team che usano la stessa vm type
 
     public void addCourse(Course c){
