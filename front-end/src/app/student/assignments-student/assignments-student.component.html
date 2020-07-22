@@ -1,1 +1,20 @@
-<p>assignments-student works!</p>
+<div class="w-50 container">
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let consegna of consegne">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <div>
+            {{consegna.name}} - {{consegna.date}}
+          </div>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <input hidden (change)="handleFileSelect($event)" #fileInput type="file" id="file">
+      <button mat-button mat-raised-button color="primary" class="float-right ml-10">Upload solution</button>
+      <button type="button" mat-raised-button (click)="fileInput.click()" class="float-right">Choose file</button>
+      <h2>History</h2>
+      <mat-list>
+        <mat-list-item *ngFor="let a of consegna.history ">{{a.timestamp}} - {{a.status}}</mat-list-item>
+      </mat-list>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
