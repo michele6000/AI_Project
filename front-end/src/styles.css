@@ -5,7 +5,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .fill-remaining-space {flex: 1 1 auto;}
 .pointer {cursor: pointer;}
 .mb-0 {margin-bottom: 0 !important;}
-mat-sidenav-container{ margin: 20px; }
+mat-sidenav-container{ margin: 0px; height: calc(100% - 128px); }
 .container {margin: 18px 18px;}
 .d-flex {display: flex;}
 .align-items-center {align-items: center;}

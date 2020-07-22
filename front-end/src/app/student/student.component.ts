@@ -42,6 +42,6 @@ export class StudentComponent implements OnInit {
 
   changeCorso(corso: CourseModel) {
     this.singoloCorso = corso;
-    this.router.navigate(['student', corso.name.toLowerCase().replace(' ', '-')]).then();
+    this.router.navigate(['student', corso.name.toLowerCase().replace(' ', '-'), 'groups']).then();
   }
 }
