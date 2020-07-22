@@ -1,9 +1,12 @@
 package it.polito.ai.project.controllers;
 
 import it.polito.ai.project.dtos.CourseDTO;
+import it.polito.ai.project.dtos.SolutionDTO;
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.TeamDTO;
 import it.polito.ai.project.exceptions.StudentNotFoundException;
+import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.services.SubmissionService;
 import it.polito.ai.project.services.TeamService;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 public class StudentController {
   @Autowired
   TeamService service;
+
+  @Autowired
+  SubmissionService submissionService;
 
   @GetMapping({ "", "/" })
   public List<StudentDTO> all() {
@@ -77,6 +83,58 @@ public class StudentController {
     }
   }
 
+  @GetMapping("/{studentId}/{submissionId}/solution")
+  public SolutionDTO getSolution(@PathVariable String studentId, @PathVariable Long submissionId) {
+    if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to access this information!"
+    );
+    try {
+      return submissionService.getSolution(studentId,submissionId);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{studentId}/{submissionId}/evaluateSolution")
+  public boolean evaluateSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
+    if (!isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to evaluate a solution!"
+    );
+    try {
+      return submissionService.evaluateSolution(studentId,submissionId, evaluation);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{studentId}/{submissionId}/addSolution")
+  public String addSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
+    if (!isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to add a solution!"
+    );
+    try {
+      return submissionService.addSolution(submissionId, sol, studentId);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+  @PostMapping("/{studentId}/{submissionId}/updateSolution")
+  public String updateSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
+    if (!isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to add a solution!"
+    );
+    try {
+      return submissionService.updateSolution(submissionId, sol, studentId);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+
   private String getCurrentUsername() {
     return SecurityContextHolder
       .getContext()
@@ -101,4 +159,5 @@ public class StudentController {
       !getCurrentRoles().contains("ROLE_STUDENT")
     );
   }
+
 }

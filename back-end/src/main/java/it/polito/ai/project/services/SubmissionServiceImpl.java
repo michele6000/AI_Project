@@ -1,16 +1,17 @@
 package it.polito.ai.project.services;
 
 import it.polito.ai.project.dtos.CourseDTO;
+import it.polito.ai.project.dtos.SolutionDTO;
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.SubmissionDTO;
 import it.polito.ai.project.entities.Course;
+import it.polito.ai.project.entities.Solution;
 import it.polito.ai.project.entities.Student;
 import it.polito.ai.project.entities.Submission;
-import it.polito.ai.project.exceptions.CourseNotFoundException;
-import it.polito.ai.project.exceptions.StudentNotFoundException;
-import it.polito.ai.project.exceptions.SubmissionNotFoundException;
-import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.CourseRepository;
+import it.polito.ai.project.repositories.SolutionRepository;
+import it.polito.ai.project.repositories.StudentRepository;
 import it.polito.ai.project.repositories.SubmissionRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +39,12 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Autowired
     private SubmissionRepository submissionRepo;
+
+    @Autowired
+    private SolutionRepository solutionRepo;
+
+    @Autowired
+    private StudentRepository studentRepo;
 
     @Override
     public String addSubmission(SubmissionDTO submissionDTO, String courseName) {
@@ -118,8 +126,92 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         return modelMapper.map(submissionRepo.getOne(id), SubmissionDTO.class);
 
+    }
+
+    @Override
+    public SolutionDTO getSolution(String studentId, Long submissionId) {
+
+        if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException("Student not found!");
+        if (!submissionRepo.existsById(submissionId)) throw new SubmissionNotFoundException("Submission not found!");
+
+        Course course=submissionRepo.getOne(submissionId).getCourse();
+        if(!studentRepo.getOne(studentId).getCourses().contains(course))
+            throw new StudentNotFoundException("Student not enrolled in this course!");
+
+        if(!course.isEnabled())
+            throw new TeamServiceException("Course not enabled!");
+
+        Optional<Solution> sol=submissionRepo.getOne(submissionId).getSolutions()
+                .stream()
+                .filter(s->s.getStudent().equals(studentRepo.getOne(studentId))).findFirst();
+
+        if(sol.isPresent()){
+            sol.get().setVersion("READ");
+            solutionRepo.save(sol.get());
+            return modelMapper.map(sol, SolutionDTO.class);
         }
 
+        else throw new SolutionNotFoundException("Solution not found!");
+
+
+    }
+
+    @Override
+    public boolean evaluateSolution(String studentId, Long submissionId, Long evaluation) {
+
+        try{
+            SolutionDTO sol=getSolution(studentId,submissionId);
+            modelMapper.map(sol, Solution.class);
+            sol.setEvaluation(evaluation);
+            sol.setVersion("EVALUATED");
+            notification.sendMessage(
+                    studentRepo.getOne(studentId).getEmail(),
+                    "Evaluation",
+                    "The professor has evaluated your solution.\n Final score: "+evaluation
+            );
+            return true;
+        }
+        catch(Exception e){
+            throw e;
+        }
+
+    }
+
+    @Override
+    public String addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId) {
+
+        if (solutionDTO == null) throw new SolutionNotFoundException("Bad request!");
+
+        if(!submissionRepo.existsById(submissionId)) throw new SubmissionNotFoundException("Submission not found!");
+
+        Submission submission=submissionRepo.getOne(submissionId);
+        if(submission.getExpiryDate().before(new Date()))
+            throw new SubmissionExpiredException("This submission expired! You cannot submit solutions now.");
+
+        Solution solution = modelMapper.map(solutionDTO, Solution.class);
+
+        if (studentId.length()==0 || !studentRepo.existsById(studentId)) throw new StudentNotFoundException(
+                "Student not found!"
+        );
+
+        Student s =studentRepo.getOne(studentId);
+
+        if(!studentRepo.getOne(studentId).getCourses().contains(submission.getCourse()))
+            throw new StudentNotFoundException("Student not enrolled in this course!");
+
+        solution.setSubmission(submissionRepo.getOne(submissionId));
+        solution.setVersion("SUBMITTED");
+
+        solutionRepo.save(solution);
+
+        return "Solution successfully created, id = "+solution.getId();
+    }
+
+    @Override
+    public String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId) {
+    return null;
+
+    }
     
 
 }

@@ -1,5 +1,6 @@
 package it.polito.ai.project.services;
 
+import it.polito.ai.project.dtos.SolutionDTO;
 import it.polito.ai.project.dtos.SubmissionDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -19,4 +20,16 @@ public interface SubmissionService {
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     SubmissionDTO getSubmission(String courseName, Long id);
+
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
+    SolutionDTO getSolution(String studentId, Long submissionId);
+
+    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR')")
+    boolean evaluateSolution(String studentId, Long submissionId, Long evaluation);
+
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT')")
+    String addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
+
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT')")
+    String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
 }
