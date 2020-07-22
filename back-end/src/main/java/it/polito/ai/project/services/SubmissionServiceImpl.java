@@ -214,7 +214,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    //TODO: @Scheduled(??)
+    @Scheduled(fixedRate = 600000)
     public void passiveSolutionAfterSubmissionExpiryDate() {
         Solution sol=new Solution();
         sol.setStatus("SUBMITTED");
