@@ -83,7 +83,9 @@ public class StudentController {
     }
   }
 
-  @GetMapping("/{studentId}/{submissionId}/solution")
+//  SOLUTIONS START
+// ???? lista ???
+  @GetMapping("/{studentId}/{submissionId}/getSolution")
   public SolutionDTO getSolution(@PathVariable String studentId, @PathVariable Long submissionId) {
     if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,
@@ -133,6 +135,9 @@ public class StudentController {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
+
+  //  SOLUTIONS END
+
 
 
   private String getCurrentUsername() {

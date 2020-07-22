@@ -262,6 +262,8 @@ public class CourseController {
     }
   }
 
+//  SUBMISSION START
+
   @PostMapping("/{courseName}/addSubmission")
   public String addSubmission(
           @PathVariable String courseName, @RequestBody SubmissionDTO dto
@@ -310,5 +312,7 @@ public class CourseController {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
+
+//  SUBMISSIONS END
   
 }

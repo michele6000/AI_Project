@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface SubmissionService {
 
-    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
     String addSubmission(SubmissionDTO submissionDTO, String courseName);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
@@ -24,12 +24,12 @@ public interface SubmissionService {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     SolutionDTO getSolution(String studentId, Long submissionId);
 
-    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR')")
+    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
     boolean evaluateSolution(String studentId, Long submissionId, Long evaluation);
 
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT')")
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     String addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
 
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT')")
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
 }
