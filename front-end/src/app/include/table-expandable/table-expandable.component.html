@@ -21,7 +21,7 @@
     </td>
   </ng-container>
 
-  <ng-container matColumnDef="modify">
+  <ng-container matColumnDef="modify" *ngIf="showEdit">
     <th mat-header-cell *matHeaderCellDef>
       Modify
     </th>

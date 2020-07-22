@@ -1,4 +1,4 @@
-import {Component, ViewChild, ViewChildren, QueryList, ChangeDetectorRef, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, ViewChild, ViewChildren, QueryList, ChangeDetectorRef, OnInit, Output, EventEmitter, Input} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource, MatTable} from '@angular/material/table';
@@ -35,13 +35,13 @@ export class TableExpandableComponent implements OnInit {
   dataSource: MatTableDataSource<GroupModel>;
   usersData: any[] = [];
   columnsToDisplay = ['id', 'name', 'vcpu', 'ram'];
-  columnsWithEdit = [...this.columnsToDisplay, 'modify'];
+  columnsWithEdit: string[];
   innerDisplayedColumns = ['name', 'state', 'link'];
   expandedElement: GroupModel | null;
 
-  constructor(
-    private cd: ChangeDetectorRef
-  ) {
+  @Input() showEdit = false;
+
+  constructor(private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -55,6 +55,11 @@ export class TableExpandableComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.usersData);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+    if (this.showEdit) {
+      this.columnsWithEdit = [...this.columnsToDisplay, 'modify'];
+    } else {
+      this.columnsWithEdit = [...this.columnsToDisplay];
+    }
   }
 
   toggleRow(element: any) {

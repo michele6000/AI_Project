@@ -16,7 +16,7 @@ export class GroupsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadComponent(1);
+    this.loadComponent(2);
   }
 
   loadComponent(type: number) {
