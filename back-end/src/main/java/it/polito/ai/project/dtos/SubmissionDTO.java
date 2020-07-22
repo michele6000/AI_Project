@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 @Data
 public class SubmissionDTO {
 
+    Long id;
     private Timestamp expiryDate;
     private Timestamp releaseDate;
     private String content; //image

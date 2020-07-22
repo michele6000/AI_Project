@@ -1,13 +1,12 @@
 package it.polito.ai.project.controllers;
 
-import it.polito.ai.project.dtos.CourseDTO;
-import it.polito.ai.project.dtos.ProfessorDTO;
-import it.polito.ai.project.dtos.StudentDTO;
-import it.polito.ai.project.dtos.TeamDTO;
+import it.polito.ai.project.dtos.*;
 import it.polito.ai.project.exceptions.CourseNotFoundException;
 import it.polito.ai.project.exceptions.StudentNotFoundException;
+import it.polito.ai.project.exceptions.SubmissionNotFoundException;
 import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.services.NotificationService;
+import it.polito.ai.project.services.SubmissionService;
 import it.polito.ai.project.services.TeamService;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,6 +29,9 @@ public class CourseController {
 
   @Autowired
   NotificationService notifService;
+
+  @Autowired
+  SubmissionService submissionService;
 
   @GetMapping({ "", "/" })
   public List<CourseDTO> all() {
@@ -247,14 +249,63 @@ public class CourseController {
     }
   }
 
-  @GetMapping("/{courseName}/setVMlimits")
+  @PostMapping("/{courseName}/setVMlimits")
   public boolean setCourseVMlimits(@PathVariable String courseName, @RequestParam CourseDTO course) {
     try {
       //nel form solo i limiti
       course.setName(courseName);
       return service.setCourseVMlimits(course);
     } catch (CourseNotFoundException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
+
+  @PostMapping("/{courseName}/addSubmission")
+  public String addSubmission(
+          @PathVariable String courseName, @RequestBody SubmissionDTO dto
+  ) {
+    try {
+      return submissionService.addSubmission(dto, courseName);
+    } catch (TeamServiceException e) {
+      if (e instanceof CourseNotFoundException) throw new ResponseStatusException(
+              HttpStatus.NOT_FOUND,
+              "Error: " + e.getMessage()
+      ); else throw new ResponseStatusException(
+              HttpStatus.CONFLICT,
+              "Error: " + e.getMessage()
+      );
+    }
+  }
+
+  @GetMapping("/{courseName}/submissions")
+  public List<SubmissionDTO> getAllSubmissions(@PathVariable String courseName) {
+    try {
+      return submissionService.getAllSubmissions(courseName);
+    } catch (TeamServiceException e) {
+      if (e instanceof CourseNotFoundException)
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+      else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+  }
+
+  @GetMapping("/{courseName}/lastSubmission")
+  public SubmissionDTO getLastSubmission(@PathVariable String courseName) {
+    try {
+      return submissionService.getLastSubmission(courseName);
+    } catch (TeamServiceException e) {
+      if (e instanceof CourseNotFoundException || e instanceof SubmissionNotFoundException)
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+      else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+  }
+
+  @GetMapping("/{courseName}/submissions/{id}")
+  public SubmissionDTO getLastSubmission(@PathVariable String courseName, @PathVariable Long id) {
+    try {
+      return submissionService.getSubmission(courseName, id);
+    } catch (TeamServiceException e) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+  }
+
+
 }

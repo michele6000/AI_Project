@@ -87,7 +87,7 @@ public class TeamServiceImpl implements TeamService {
     studentRepo.save(studentEntity);
     notification.sendMessage(
       "paola.caso96@gmail.com",
-      "Nuova Registrazione",
+      "New Registration",
       "Username: " + user.getUsername() + " password: " + password
     );
     return true;
