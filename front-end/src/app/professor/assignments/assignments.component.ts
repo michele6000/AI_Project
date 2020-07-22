@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {EditCourseComponent} from '../../dialog/edit-course/edit-course.component';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {EditHomeworkComponent} from '../../dialog/edit-homework/edit-homework.component';

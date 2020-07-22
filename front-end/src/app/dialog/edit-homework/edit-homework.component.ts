@@ -1,6 +1,7 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {CrudService} from '../../services/crud.service';
+import {NgForm} from '@angular/forms';
 
 @Component({
   selector: 'app-edit-homework',
@@ -13,6 +14,7 @@ export class EditHomeworkComponent implements OnInit {
   fileAbsent: boolean = false;
   file: any;
   assignments: any[];
+  showInputGrade: boolean = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any[], private crudService: CrudService) {
     this.assignments = data;
@@ -28,8 +30,17 @@ export class EditHomeworkComponent implements OnInit {
     this.fileAbsent = false;
   }
 
-  send(){
+  send(f: NgForm){
 
   }
+
+  showGrade($event){
+    if ( $event.value == 0){
+      this.showInputGrade = false;
+    } else {
+      this.showInputGrade = true;
+    }
+  }
+
 
 }

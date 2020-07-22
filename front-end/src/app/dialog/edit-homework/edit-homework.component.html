@@ -14,10 +14,14 @@
         <button type="button" mat-raised-button (click)="fileInput.click()">Choose file</button>
         <input hidden (change)="handleFileSelect($event)" accept="application/pdf" #fileInput type="file" id="file">
       </div>
-      <mat-radio-group aria-label="Select an option" name="last">
+      <mat-radio-group aria-label="Select an option" name="last" (change)="showGrade($event)">
         <mat-radio-button value="0">Wait student revision</mat-radio-button>
         <mat-radio-button value="1">Final Correction</mat-radio-button>
       </mat-radio-group>
+      <mat-form-field class="dialog-position-field mt-20" *ngIf="showInputGrade">
+        <mat-label>Grade</mat-label>
+        <input matInput type="number" #grade="ngModel" ngModel required placeholder="Grade" name="grade" value="">
+      </mat-form-field>
       <br />
       <mat-card-actions class="mt-10">
         <button mat-button [disabled]="!f.valid || fileAbsent" mat-raised-button color="primary" (click)="send()">Send</button>
