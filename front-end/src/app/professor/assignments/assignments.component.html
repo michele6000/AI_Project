@@ -8,7 +8,7 @@
           </div>
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <app-table-filter [data]="consegna.elaborati" [columns]="columnsElaborati"></app-table-filter>
+      <app-table-filter [data]="consegna.elaborati" [columns]="columnsElaborati" (edit)="edit($event)"></app-table-filter>
     </mat-expansion-panel>
   </mat-accordion>
 </div>

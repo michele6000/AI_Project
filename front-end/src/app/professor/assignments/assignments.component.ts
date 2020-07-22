@@ -1,4 +1,8 @@
 import {Component, OnInit} from '@angular/core';
+import {EditCourseComponent} from '../../dialog/edit-course/edit-course.component';
+import {MatDialog} from '@angular/material/dialog';
+import {ActivatedRoute, Router} from '@angular/router';
+import {EditHomeworkComponent} from '../../dialog/edit-homework/edit-homework.component';
 
 @Component({
   selector: 'app-assignments',
@@ -29,10 +33,17 @@ export class AssignmentsComponent implements OnInit {
   ];
   columnsElaborati = ['name', 'surname', 'matricola', 'status', 'timestamp'];
 
-  constructor() {
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
   }
 
+  edit($event: any[]) {
+    this.dialog.open(EditHomeworkComponent, {data: {}})
+      .afterClosed()
+      .subscribe(result => {
+
+      });
+  }
 }

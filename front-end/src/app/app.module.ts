@@ -48,6 +48,7 @@ import { EditCourseComponent } from './dialog/edit-course/edit-course.component'
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatExpansionModule} from "@angular/material/expansion";
 import { TableFilterComponent } from './include/table-filter/table-filter.component';
+import { EditHomeworkComponent } from './dialog/edit-homework/edit-homework.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { TableFilterComponent } from './include/table-filter/table-filter.compon
     CreateGroupComponent,
     GroupDirective,
     EditCourseComponent,
-    TableFilterComponent
+    TableFilterComponent,
+    EditHomeworkComponent
   ],
     imports: [
         BrowserModule,
