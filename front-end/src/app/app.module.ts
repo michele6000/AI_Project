@@ -46,6 +46,8 @@ import {CreateGroupComponent} from './student/groups/create-group/create-group.c
 import {GroupDirective} from './student/groups/group.directive';
 import { EditCourseComponent } from './dialog/edit-course/edit-course.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatExpansionModule} from "@angular/material/expansion";
+import { TableFilterComponent } from './include/table-filter/table-filter.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +76,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     InfoGroupComponent,
     CreateGroupComponent,
     GroupDirective,
-    EditCourseComponent
+    EditCourseComponent,
+    TableFilterComponent
   ],
     imports: [
         BrowserModule,
@@ -97,7 +100,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
         MatTabsModule,
         ReactiveFormsModule,
         MatAutocompleteModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatExpansionModule
     ],
   providers: [AuthService],
   bootstrap: [AppComponent]

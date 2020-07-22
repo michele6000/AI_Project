@@ -1,1 +1,14 @@
-<p>assignments works!</p>
+<div class="w-80 container">
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let consegna of consegne">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <div>
+          {{consegna.name}} - {{consegna.date}}
+          </div>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-table-filter [data]="consegna.elaborati" [columns]="columnsElaborati"></app-table-filter>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

@@ -9,11 +9,16 @@ import {VmsComponent} from './professor/vms/vms.component';
 import {AssignmentsComponent} from './professor/assignments/assignments.component';
 import {CoursesComponent} from './professor/courses/courses.component';
 import {GroupsComponent} from './student/groups/groups.component';
-import {VmsStudentComponent} from "./student/vms-student/vms-student.component";
-import {AssignmentsStudentComponent} from "./student/assignments-student/assignments-student.component";
+import {VmsStudentComponent} from './student/vms-student/vms-student.component';
+import {AssignmentsStudentComponent} from './student/assignments-student/assignments-student.component';
 
 
 const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full'
+  },
   {
     path: 'home',
     component: HomeComponent
