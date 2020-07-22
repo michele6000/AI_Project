@@ -13,6 +13,8 @@ import {VmProfessor} from '../../models/vm-professor.model';
 export class EditVmProfessorComponent implements OnInit {
   error = false;
   group: GroupModel;
+  fileAbsent: boolean = false;
+  file: any;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private crudService: CrudService) {
     this.group = data;
@@ -29,5 +31,11 @@ export class EditVmProfessorComponent implements OnInit {
     vm.maxVm = f.value.maxVm;
     vm.maxActiveVmSimultaneously = f.value.maxActiveVmSimultaneously;
     this.crudService.createVMStudent(vm);
+  }
+
+  handleFileSelect($event: any) {
+    console.log($event);
+    this.file = $event.target.files[0];
+    this.fileAbsent = false;
   }
 }

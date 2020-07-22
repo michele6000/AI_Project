@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {GroupModel} from '../../models/group.model';
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog} from '@angular/material/dialog';
 import {EditVmProfessorComponent} from '../../dialog/edit-vm/edit-vm-professor.component';
-import {ActivatedRoute, Router} from "@angular/router";
-import {CrudService} from "../../services/crud.service";
+import {ActivatedRoute, Router} from '@angular/router';
+import {CrudService} from '../../services/crud.service';
 
 @Component({
   selector: 'app-vms',
@@ -30,8 +30,8 @@ export class VmsComponent implements OnInit {
 
   }
 
-  editGroup(group: GroupModel) {
-    this.dialog.open(EditVmProfessorComponent, {data: group})
+  createVM($event) {
+    this.dialog.open(EditVmProfessorComponent, {})
       .afterClosed()
       .subscribe(result => {
         console.log(result);
