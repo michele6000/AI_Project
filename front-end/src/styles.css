@@ -5,7 +5,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .fill-remaining-space {flex: 1 1 auto;}
 .pointer {cursor: pointer;}
 .mb-0 {margin-bottom: 0 !important;}
-mat-sidenav-container{ margin: 20px;height: 100%; }
+mat-sidenav-container{ margin: 20px; }
 .container {
   margin: 18px 18px;
 }
@@ -18,6 +18,7 @@ mat-sidenav-container{ margin: 20px;height: 100%; }
 .margin-auto {margin: 0 auto;}
 .float-right {float: right;}
 .float-left {float: left;}
+.w-50 {width: 50%;}
 .w-80 {width: 80%;}
 .w-100 {width: 100%;}
 .mb-10 {margin-bottom: 10px !important;}

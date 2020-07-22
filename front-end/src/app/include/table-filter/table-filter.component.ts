@@ -22,6 +22,8 @@ export class TableFilterComponent implements OnInit {
     this.columnsToDisplay = columns;
   }
 
+  @Input() filterColumn: string;
+
   @Output('edit') onEdit: EventEmitter<any[]> = new EventEmitter<any[]>();
 
   @ViewChild(MatPaginator, {static: true})
@@ -39,13 +41,34 @@ export class TableFilterComponent implements OnInit {
 
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+    this.dataSource.filterPredicate =
+      (data: any, filtersJson: string) => {
+        const matchFilter = [];
+        const filters = JSON.parse(filtersJson);
+
+        filters.forEach(filter => {
+          const val = data[filter.id] === null ? '' : data[filter.id];
+          matchFilter.push(val.toLowerCase().includes(filter.value.toLowerCase()));
+        });
+        return matchFilter.every(Boolean);
+      };
+  }
+
+  applyFilter(filterValue: any) {
+    const tableFilters = [];
+    tableFilters.push({
+      id: this.filterColumn,
+      value: filterValue.target.value
+    });
+
+
+    this.dataSource.filter = JSON.stringify(tableFilters);
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   edit($event: MouseEvent, element: any) {
     this.onEdit.emit(element);
-  }
-
-  applyFilter(value: any) {
-
   }
 }
