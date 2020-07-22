@@ -304,8 +304,8 @@ public class CourseController {
     try {
       return submissionService.getSubmission(courseName, id);
     } catch (TeamServiceException e) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
   }
-
 
 }
