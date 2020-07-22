@@ -21,7 +21,7 @@ export class AssignmentsComponent implements OnInit {
           surname: 'Rossi',
           matricola: '223098',
           status: 'Letto',
-          timestamp: ''
+          timestamp: '06/07/2020 16:37:12'
         }
       ]
     },
