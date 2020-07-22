@@ -34,6 +34,14 @@ public class StudentController {
     return students;
   }
 
+//  @PostMapping({ "", "/" })
+//  public StudentDTO addStudent(@RequestBody StudentDTO dto) {
+//    if (!service.addStudent(dto)) throw new ResponseStatusException(
+//            HttpStatus.CONFLICT,
+//            dto.getId()
+//    ); else return ModelHelper.enrich(dto);
+//  }
+
   @GetMapping("/{id}")
   public StudentDTO getOne(@PathVariable String id) {
     Optional<StudentDTO> student = service.getStudent(id);
@@ -47,13 +55,7 @@ public class StudentController {
     }
   }
 
-  @PostMapping({ "", "/" })
-  public StudentDTO addStudent(@RequestBody StudentDTO dto) {
-    if (!service.addStudent(dto)) throw new ResponseStatusException(
-      HttpStatus.CONFLICT,
-      dto.getId()
-    ); else return ModelHelper.enrich(dto);
-  }
+
 
   @GetMapping("/{id}/courses")
   public List<CourseDTO> getCourses(@PathVariable String id) {
@@ -62,8 +64,7 @@ public class StudentController {
       "You are not allowed to access this information!"
     );
     try {
-      List<CourseDTO> courses = service.getCourses(id);
-      return courses;
+      return service.getCourses(id);
     } catch (StudentNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
