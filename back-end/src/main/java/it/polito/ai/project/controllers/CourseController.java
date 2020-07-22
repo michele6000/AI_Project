@@ -249,8 +249,8 @@ public class CourseController {
     }
   }
 
-  @PostMapping("/{courseName}/setVMlimits")
-  public boolean setCourseVMlimits(@PathVariable String courseName, @RequestParam CourseDTO course) {
+  @PostMapping("/{courseName}/setVMLimits")
+  public boolean setCourseVMLimits(@PathVariable String courseName, @RequestParam CourseDTO course) {
     try {
       //nel form solo i limiti
       course.setName(courseName);
