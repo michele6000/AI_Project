@@ -12,8 +12,9 @@ public class Solution {
     private Long id;
 
     private String image; //image of student's solution for the submission
-    private String version=null;
+    private String status =null;
     private Long evaluation;
+    private String version;
 
     @ManyToOne
     @JoinColumn(name = "student_id")

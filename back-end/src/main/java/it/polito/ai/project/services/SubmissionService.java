@@ -32,4 +32,6 @@ public interface SubmissionService {
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
+
+    void passiveSolutionAfterSubmissionExpiryDate();
 }

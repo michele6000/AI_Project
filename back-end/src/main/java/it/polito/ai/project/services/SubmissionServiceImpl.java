@@ -1,8 +1,6 @@
 package it.polito.ai.project.services;
 
-import it.polito.ai.project.dtos.CourseDTO;
 import it.polito.ai.project.dtos.SolutionDTO;
-import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.SubmissionDTO;
 import it.polito.ai.project.entities.Course;
 import it.polito.ai.project.entities.Solution;
@@ -15,6 +13,7 @@ import it.polito.ai.project.repositories.StudentRepository;
 import it.polito.ai.project.repositories.SubmissionRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -22,6 +21,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Service
@@ -146,7 +146,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .filter(s->s.getStudent().equals(studentRepo.getOne(studentId))).findFirst();
 
         if(sol.isPresent()){
-            sol.get().setVersion("READ");
+            sol.get().setStatus("READ");
             solutionRepo.save(sol.get());
             return modelMapper.map(sol, SolutionDTO.class);
         }
@@ -200,7 +200,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new StudentNotFoundException("Student not enrolled in this course!");
 
         solution.setSubmission(submissionRepo.getOne(submissionId));
-        solution.setVersion("SUBMITTED");
+        solution.setStatus("SUBMITTED");
 
         solutionRepo.save(solution);
 
@@ -210,6 +210,31 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId) {
     return null;
+
+    }
+
+    @Override
+    //TODO: @Scheduled(??)
+    public void passiveSolutionAfterSubmissionExpiryDate() {
+        Solution sol=new Solution();
+        sol.setStatus("SUBMITTED");
+        AtomicBoolean found= new AtomicBoolean(false);
+        submissionRepo.findAll()
+                .forEach(
+                        s -> {
+                            if(s.getExpiryDate().before(new Date())) //expirated submission
+                                s.getCourse().getStudents().forEach(stud->{
+                                    found.set(false);
+                                    stud.getSolutions().forEach(solution->{
+                                        if(solution.getSubmission().equals(s))
+                                            found.set(true);
+                                    });
+                                    if(!found.get())
+                                        // student didn't send a solution
+                                        stud.getSolutions().add(sol);
+                                });
+                        }
+                );
 
     }
     
