@@ -21,7 +21,17 @@ export class AssignmentsComponent implements OnInit {
           surname: 'Rossi',
           matricola: '223098',
           status: 'Letto',
-          timestamp: '06/07/2020 16:37:12'
+          timestamp: '06/07/2020 16:37:12',
+          history: [
+            {
+              status: 'Rivisto',
+              timestamp: '06/07/2020 14:57:12'
+            },
+            {
+              status: 'Consegnato',
+              timestamp: '06/07/2020 14:37:12'
+            }
+          ]
         }
       ]
     },
@@ -39,8 +49,8 @@ export class AssignmentsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  edit($event: any[]) {
-    this.dialog.open(EditHomeworkComponent, {data: {}})
+  edit($event: any) {
+    this.dialog.open(EditHomeworkComponent, {data: $event.history})
       .afterClosed()
       .subscribe(result => {
 

@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {CrudService} from '../../services/crud.service';
 
 @Component({
   selector: 'app-edit-homework',
@@ -10,9 +12,14 @@ export class EditHomeworkComponent implements OnInit {
   error: boolean = false;
   fileAbsent: boolean = false;
   file: any;
-  constructor() { }
+  assignments: any[];
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any[], private crudService: CrudService) {
+    this.assignments = data;
+  }
 
   ngOnInit(): void {
+
   }
 
   handleFileSelect($event: any) {

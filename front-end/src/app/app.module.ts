@@ -49,6 +49,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatExpansionModule} from "@angular/material/expansion";
 import { TableFilterComponent } from './include/table-filter/table-filter.component';
 import { EditHomeworkComponent } from './dialog/edit-homework/edit-homework.component';
+import {MatRadioModule} from "@angular/material/radio";
 
 @NgModule({
   declarations: [
@@ -81,30 +82,31 @@ import { EditHomeworkComponent } from './dialog/edit-homework/edit-homework.comp
     TableFilterComponent,
     EditHomeworkComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatToolbarModule,
-        MatButtonModule,
-        MatCardModule,
-        MatInputModule,
-        FormsModule,
-        HttpClientModule,
-        MatDialogModule,
-        MatTableModule,
-        MatSortModule,
-        MatPaginatorModule,
-        MatCheckboxModule,
-        MatIconModule,
-        MatSidenavModule,
-        MatListModule,
-        MatTabsModule,
-        ReactiveFormsModule,
-        MatAutocompleteModule,
-        MatTooltipModule,
-        MatExpansionModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatCardModule,
+    MatInputModule,
+    FormsModule,
+    HttpClientModule,
+    MatDialogModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatListModule,
+    MatTabsModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    MatTooltipModule,
+    MatExpansionModule,
+    MatRadioModule
+  ],
   providers: [AuthService],
   bootstrap: [AppComponent]
 })

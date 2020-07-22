@@ -30,3 +30,6 @@ mat-sidenav-container{ margin: 20px; }
 .cursor-default{cursor: default;}
 .dialog-position-field{width: 90%;margin-bottom: 15px;}
 .mt-10-center{margin-top: 10px;text-align: center;}
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 16px;
+}
