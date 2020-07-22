@@ -33,14 +33,14 @@ public class CourseController {
   @Autowired
   SubmissionService submissionService;
 
-  @GetMapping({ "", "/" })
+  @GetMapping({"", "/"})
   public List<CourseDTO> all() {
     List<CourseDTO> courses = service.getAllCourses();
     courses.forEach(ModelHelper::enrich);
     return courses;
   }
 
-  @GetMapping({ "{/professorId}" })
+  @GetMapping({"{/professorId}"})
   public List<CourseDTO> getProfessorCourses(@PathVariable String professorId) {
     List<CourseDTO> courses = service.getProfessorCourses(professorId);
     courses.forEach(ModelHelper::enrich);
@@ -52,9 +52,10 @@ public class CourseController {
     Optional<CourseDTO> course = service.getCourse(name);
 
     if (!course.isPresent()) throw new ResponseStatusException(
-      HttpStatus.CONFLICT,
-      name
-    ); else {
+            HttpStatus.CONFLICT,
+            name
+    );
+    else {
       CourseDTO courseDTO = course.get();
       return ModelHelper.enrich(courseDTO);
     }
@@ -62,11 +63,10 @@ public class CourseController {
 
   @GetMapping("/{name}/deleteOne")
   public Boolean deleteOne(@PathVariable String name, @RequestParam String studentId) {
-    try{
-      service.deleteOne(studentId,name);
+    try {
+      service.deleteOne(studentId, name);
       return true;
-    }
-    catch(TeamServiceException e){
+    } catch (TeamServiceException e) {
       throw new ResponseStatusException(
               HttpStatus.BAD_REQUEST,
               e.getMessage()
@@ -82,18 +82,19 @@ public class CourseController {
       return students;
     } catch (CourseNotFoundException e) {
       throw new ResponseStatusException(
-        HttpStatus.NOT_FOUND,
-        "Course: " + name + " Error: " + e.getMessage()
+              HttpStatus.NOT_FOUND,
+              "Course: " + name + " Error: " + e.getMessage()
       );
     }
   }
 
-  @PostMapping({ "", "/" })
+  @PostMapping({"", "/"})
   public CourseDTO addCourse(@RequestBody CourseDTO dto) {
     if (!service.addCourse(dto)) throw new ResponseStatusException(
-      HttpStatus.CONFLICT,
-      dto.getName()
-    ); else return ModelHelper.enrich(dto);
+            HttpStatus.CONFLICT,
+            dto.getName()
+    );
+    else return ModelHelper.enrich(dto);
   }
 
   @PostMapping("/{name}/enable")
@@ -118,67 +119,69 @@ public class CourseController {
 
   @PostMapping("/{name}/enrollOne")
   public boolean enrollOne(
-    @PathVariable String name,
-    @RequestBody StudentDTO student
+          @PathVariable String name,
+          @RequestBody StudentDTO student
   ) {
     try {
       if (
-        service.addStudentToCourse(student.getId(), name)
-      ) return true; else throw new ResponseStatusException(
-        HttpStatus.CONFLICT,
-        name + " " + student.getId()
+              service.addStudentToCourse(student.getId(), name)
+      ) return true;
+      else throw new ResponseStatusException(
+              HttpStatus.CONFLICT,
+              name + " " + student.getId()
       );
     } catch (CourseNotFoundException | StudentNotFoundException e) {
       throw new ResponseStatusException(
-        HttpStatus.NOT_FOUND,
-        "Course: " +
-        name +
-        " StudentID: " +
-        student.getId() +
-        " Error: " +
-        e.getMessage()
+              HttpStatus.NOT_FOUND,
+              "Course: " +
+                      name +
+                      " StudentID: " +
+                      student.getId() +
+                      " Error: " +
+                      e.getMessage()
       );
     }
   }
 
   @PostMapping("/{name}/enrollMany")
   public List<Boolean> enrollStudents(
-    @PathVariable String name,
-    @RequestParam("file") MultipartFile file
+          @PathVariable String name,
+          @RequestParam("file") MultipartFile file
   ) {
     if (
-      !Objects.equals(file.getContentType(), "text/csv")
+            !Objects.equals(file.getContentType(), "text/csv")
     ) throw new ResponseStatusException(
-      HttpStatus.UNSUPPORTED_MEDIA_TYPE,
-      "File content type: " +
-      file.getContentType() +
-      " Error: CSV file required!"
+            HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+            "File content type: " +
+                    file.getContentType() +
+                    " Error: CSV file required!"
     );
 
     try {
       Reader reader = new InputStreamReader(file.getInputStream());
       return service.addAndEnroll(reader, name);
     } catch (
-      CourseNotFoundException | StudentNotFoundException | IOException e
+            CourseNotFoundException | StudentNotFoundException | IOException e
     ) {
       if (
-        e instanceof StudentNotFoundException ||
-        e instanceof CourseNotFoundException
+              e instanceof StudentNotFoundException ||
+                      e instanceof CourseNotFoundException
       ) throw new ResponseStatusException(
-        HttpStatus.NOT_FOUND,
-        "Course: " + name + " Error: " + e.getMessage()
-      ); else throw new ResponseStatusException(
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        "Course: " + name + " Error: " + e.getMessage()
+              HttpStatus.NOT_FOUND,
+              "Course: " + name + " Error: " + e.getMessage()
+      );
+      else throw new ResponseStatusException(
+              HttpStatus.INTERNAL_SERVER_ERROR,
+              "Course: " + name + " Error: " + e.getMessage()
       );
     }
   }
 
   @PostMapping("/{courseName}/proposeTeam")
   public boolean proposeTeam(
-    @PathVariable String courseName,
-    @RequestParam String name,
-    @RequestBody List<String> membersIds
+          @PathVariable String courseName,
+          @RequestParam String name,
+          @RequestBody List<String> membersIds
   ) {
     TeamDTO team;
     try {
@@ -201,7 +204,7 @@ public class CourseController {
 
   @GetMapping("/{courseName}/availableStudents")
   public List<StudentDTO> getAvailableStudents(
-    @PathVariable String courseName
+          @PathVariable String courseName
   ) {
     try {
       return service.getAvailableStudents(courseName);
@@ -242,7 +245,8 @@ public class CourseController {
       ) throw new ResponseStatusException(
               HttpStatus.NOT_FOUND,
               "Error: " + e.getMessage()
-      ); else throw new ResponseStatusException(
+      );
+      else throw new ResponseStatusException(
               HttpStatus.CONFLICT,
               "Error: " + e.getMessage()
       );
@@ -270,7 +274,8 @@ public class CourseController {
       if (e instanceof CourseNotFoundException) throw new ResponseStatusException(
               HttpStatus.NOT_FOUND,
               "Error: " + e.getMessage()
-      ); else throw new ResponseStatusException(
+      );
+      else throw new ResponseStatusException(
               HttpStatus.CONFLICT,
               "Error: " + e.getMessage()
       );
@@ -283,7 +288,7 @@ public class CourseController {
       return submissionService.getAllSubmissions(courseName);
     } catch (TeamServiceException e) {
       if (e instanceof CourseNotFoundException)
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
       else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
   }
@@ -304,8 +309,7 @@ public class CourseController {
     try {
       return submissionService.getSubmission(courseName, id);
     } catch (TeamServiceException e) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
   }
-
-
 }
