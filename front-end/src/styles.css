@@ -16,6 +16,8 @@ mat-sidenav-container{ margin: 20px; }
 .float-right {float: right;}
 .float-left {float: left;}
 .w-50 {width: 50%;}
+.w-60 {width: 60%;}
+.w-70 {width: 70%;}
 .w-80 {width: 80%;}
 .w-100 {width: 100%;}
 .mb-10 {margin-bottom: 10px !important;}
