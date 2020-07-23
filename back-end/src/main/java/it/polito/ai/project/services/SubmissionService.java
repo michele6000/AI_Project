@@ -31,9 +31,6 @@ public interface SubmissionService {
     String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
-    Solution getLastSolVersion(Long submissionId, String studentId);
-
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     List<SolutionDTO> getAllSolutionsForStudent(Long submissionId, String studentId);
 
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
@@ -49,4 +46,5 @@ public interface SubmissionService {
     boolean evaluateSolution(Long solutionId, Long evaluation);
 
     void passiveSolutionAfterSubmissionExpiryDate();
+    Solution getLastSolVersion(Long submissionId, String studentId);
 }
