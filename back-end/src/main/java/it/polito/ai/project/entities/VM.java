@@ -3,6 +3,7 @@ package it.polito.ai.project.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -10,7 +11,6 @@ public class VM {
     @Id
     private String id;
 
-    private String owner;
     private Integer cpu;
     private Integer ram;
     private Integer hdd;
@@ -24,6 +24,9 @@ public class VM {
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
+
+    @ManyToMany
+    private List<Student> owners;
 
     public void setVmType(VMType t){
         vmType=t;

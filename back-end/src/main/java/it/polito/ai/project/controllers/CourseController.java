@@ -251,12 +251,21 @@ public class CourseController {
     }
   }
 
-  @PostMapping("/{courseName}/setVMLimits")
-  public boolean setCourseVMLimits(@PathVariable String courseName, @RequestParam CourseDTO course) {
+  @PostMapping("/createVMType")
+  public String setCourseVMLimits(@RequestParam VMTypeDTO vmt){
     try {
-      //nel form solo i limiti
-      course.setName(courseName);
-      return service.setCourseVMlimits(course);
+      //nel form limiti e dockerfile
+      return service.createVMType(vmt);
+    } catch (CourseNotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{courseName}/setVMType")
+  public Boolean setVMType(@RequestParam String vmtId, @PathVariable String courseName){
+    try {
+      service.setVMType(courseName,vmtId);
+      return true;
     } catch (CourseNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }

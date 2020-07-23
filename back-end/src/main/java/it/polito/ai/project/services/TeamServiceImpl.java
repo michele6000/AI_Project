@@ -48,6 +48,9 @@ public class TeamServiceImpl implements TeamService {
   @Autowired
   private VMRepository vmRepo;
 
+  @Autowired
+  private VMTypeRepository vmtRepo;
+
   @Override
   public boolean addCourse(CourseDTO course) {
     if (course == null || course.getName().length() == 0) return false;
@@ -518,17 +521,15 @@ public class TeamServiceImpl implements TeamService {
   }
 
   @Override
-  public boolean setCourseVMlimits(CourseDTO course) {
-    Optional<Course> optionalCourseEntity = courseRepo.findById(course.getName());
-    if (!optionalCourseEntity.isPresent()) {
-      throw new CourseNotFoundException("Course not found!");
-    }
-    optionalCourseEntity.get().setLimit_ram(course.getLimit_ram());
-    optionalCourseEntity.get().setLimit_cpu(course.getLimit_cpu());
-    optionalCourseEntity.get().setLimit_hdd(course.getLimit_hdd());
-    optionalCourseEntity.get().setLimit_instance(course.getLimit_instance());
-    optionalCourseEntity.get().setLimit_active_instance(course.getLimit_active_instance());
-    return true;
+  public String createVMType(VMTypeDTO vmType) {
+    VMType vmt = new VMType();
+    vmt.setDockerFile(vmType.getDockerFile());
+    vmt.setLimit_ram(vmType.getLimit_ram());
+    vmt.setLimit_cpu(vmType.getLimit_cpu());
+    vmt.setLimit_hdd(vmType.getLimit_hdd());
+    vmt.setLimit_instance(vmType.getLimit_instance());
+    vmt.setLimit_active_instance(vmType.getLimit_active_instance());
+    return vmtRepo.save(vmt).getId();
   }
 
   @Override
@@ -546,5 +547,151 @@ public class TeamServiceImpl implements TeamService {
       totalHdd.updateAndGet(v -> v + vm.getHdd());
     });
     return "Current usage:\nTotal Ram: "+totalRam.toString()+"\nTotal CPU: "+totalCPU.toString()+"\nTotal Hdd: "+totalHdd.toString();
+  }
+
+  @Override
+  public Boolean setVMType(String courseName, String vmtId) {
+    Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
+    Optional<VMType> optionalVMTypeEntity = vmtRepo.findById(vmtId);
+    if (!optionalCourseEntity.isPresent()) {
+      throw new CourseNotFoundException("Course not found!");
+    }
+    if (!optionalVMTypeEntity.isPresent()) {
+      throw new TeamServiceException("VMType not found!");
+    }
+
+    optionalCourseEntity.get().setVmType(optionalVMTypeEntity.get());
+    optionalVMTypeEntity.get().getCourses().add(optionalCourseEntity.get());
+
+    return true;
+
+  }
+
+  @Override
+  public VMDTO getVMConfig(String vmId) {
+    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
+    if (!optionalVMEntity.isPresent()) {
+      throw new TeamServiceException("Vm not found!");
+    }
+    return modelMapper.map(optionalVMEntity,VMDTO.class);
+  }
+
+  @Override
+  public Boolean modifyVMConfiguration(String vmId, VMDTO vm) {
+    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
+    if (!optionalVMEntity.isPresent()) {
+      throw new TeamServiceException("VM not found!");
+    }
+    if(!vm.getStatus().equals("poweroff")) return false;
+    if(vm.getRam() > optionalVMEntity.get().getVmType().getLimit_ram()) return false;
+    if(vm.getCpu() > optionalVMEntity.get().getVmType().getLimit_cpu()) return false;
+    if(vm.getHdd() > optionalVMEntity.get().getVmType().getLimit_hdd()) return false;
+
+    optionalVMEntity.get().setRam(vm.getRam());
+    optionalVMEntity.get().setCpu(vm.getCpu());
+    optionalVMEntity.get().setHdd(vm.getHdd());
+    return true;
+  }
+
+  @Override
+  public Boolean modifyVMOwner(String vmId, String studentID) {
+    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
+    Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
+    if (!optionalVMEntity.isPresent()) {
+      throw new TeamServiceException("Vm not found!");
+    }
+    if (!optionalStudentEntity.isPresent()) {
+      throw new TeamServiceException("Student not found!");
+    }
+
+    Student tmp = optionalVMEntity.get().getOwners().get(0);
+    optionalVMEntity.get().getOwners().clear();
+    tmp.getVms().remove(optionalVMEntity.get());
+    optionalVMEntity.get().getOwners().add(optionalStudentEntity.get());
+    optionalStudentEntity.get().getVms().add(optionalVMEntity.get());
+
+    return true;
+  }
+
+  @Override
+  public Boolean addVMOwner(String vmId, String studentID) {
+    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
+    Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
+    if (!optionalVMEntity.isPresent()) {
+      throw new TeamServiceException("Vm not found!");
+    }
+    if (!optionalStudentEntity.isPresent()) {
+      throw new TeamServiceException("Student not found!");
+    }
+    optionalVMEntity.get().getOwners().add(optionalStudentEntity.get());
+    optionalStudentEntity.get().getVms().add(optionalVMEntity.get());
+    return true;
+  }
+
+  @Override
+  public List<StudentDTO> getVMOwners(String vmId) {
+    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
+    if (!optionalVMEntity.isPresent()) {
+      throw new TeamServiceException("Vm not found!");
+    }
+
+    return vmRepo.getOne(vmId)
+            .getOwners()
+            .stream()
+            .map(s -> modelMapper.map(s,StudentDTO.class))
+            .collect(Collectors.toList());
+  }
+
+  @Override
+  public Boolean powerVMOn(String vmId) {
+    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
+    if (!optionalVMEntity.isPresent()) {
+      throw new TeamServiceException("Vm not found!");
+    }
+    Long team = optionalVMEntity.get().getTeam().getId();
+    String type = optionalVMEntity.get().getVmType().getId();
+    int max_instance = optionalVMEntity.get().getVmType().getLimit_active_instance();
+
+    if(optionalVMEntity.get().getStatus().equals("poweroff"))
+      if(vmRepo.findAll()
+              .stream()
+              .filter(vm -> vm.getTeam().getId().equals(team))
+              .filter(vm -> vm.getVmType().getId().equals(type))
+              .count() <= max_instance)
+      {
+        optionalVMEntity.get().setStatus("poweron");
+        return true;
+      }
+
+    return false;
+  }
+
+  @Override
+  public Boolean powerVMOff(String vmId) {
+    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
+    if (!optionalVMEntity.isPresent()) {
+      throw new TeamServiceException("Vm not found!");
+    }
+
+    if (optionalVMEntity.get().getStatus().equals("poweron")) {
+      optionalVMEntity.get().setStatus("poweroff");
+      return true;
+    }
+
+    return false;
+  }
+
+  @Override
+  public Boolean deleteVM(String vmId) {
+    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
+    if (!optionalVMEntity.isPresent()) {
+      throw new TeamServiceException("Vm not found!");
+    }
+
+    optionalVMEntity.get().getTeam().getVMInstance().remove(optionalVMEntity.get());
+    optionalVMEntity.get().getOwners().forEach(student -> student.getVms().remove(optionalVMEntity.get()));
+    optionalVMEntity.get().getVmType().getVMs().remove(optionalVMEntity.get());
+    vmRepo.delete(optionalVMEntity.get());
+    return null;
   }
 }

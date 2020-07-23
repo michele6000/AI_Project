@@ -29,6 +29,14 @@ public class Student {
   @OneToMany
   private List<Solution> solutions=new ArrayList<>();
 
+  @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+  @JoinTable(
+          name = "student_vms",
+          joinColumns = @JoinColumn(name = "student_id"),
+          inverseJoinColumns = @JoinColumn(name = "vm_id")
+  )
+  private List<VM> vms;
+
   public void addCourse(Course course) {
     courses.add(course);
     course.getStudents().add(this);

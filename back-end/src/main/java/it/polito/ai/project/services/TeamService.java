@@ -5,6 +5,8 @@ import it.polito.ai.project.dtos.*;
 import java.io.Reader;
 import java.util.List;
 import java.util.Optional;
+
+import it.polito.ai.project.entities.VM;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface TeamService {
@@ -91,8 +93,35 @@ public interface TeamService {
   List<VMDTO> getTeamVMs(Long teamId);
 
   @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  boolean setCourseVMlimits(CourseDTO course);
+  String createVMType(VMTypeDTO vmType);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
   String getTeamStat(Long teamId);
+
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  Boolean setVMType(String courseName, String vmtId);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  VMDTO getVMConfig(String vmId);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  Boolean modifyVMConfiguration(String vmId, VMDTO vm);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  Boolean modifyVMOwner(String vmId, String studentID);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  Boolean addVMOwner(String vmId, String studentID);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  List<StudentDTO> getVMOwners(String vmId);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  Boolean powerVMOn(String vmId);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  Boolean powerVMOff(String vmId);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  Boolean deleteVM(String vmId);
 }

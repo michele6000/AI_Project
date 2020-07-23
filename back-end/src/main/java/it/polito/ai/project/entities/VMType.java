@@ -16,6 +16,13 @@ public class VMType {
     private String id;
     private String dockerFile; // visto come path del dockerfile
 
+    // Limitazioni per la VM
+    private Integer limit_hdd; // espresso in MB
+    private Integer limit_cpu; // espresso in core
+    private Integer limit_ram; // espresso in MB
+    private Integer limit_instance;
+    private Integer limit_active_instance;
+
     @OneToMany ()
     private List<Course> courses; // una VM_type può essere associata a cpiù corsi ma non viceversa
 
