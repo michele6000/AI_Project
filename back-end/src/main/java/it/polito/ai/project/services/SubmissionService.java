@@ -2,10 +2,10 @@ package it.polito.ai.project.services;
 
 import it.polito.ai.project.dtos.SolutionDTO;
 import it.polito.ai.project.dtos.SubmissionDTO;
+import it.polito.ai.project.entities.Solution;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface SubmissionService {
 
@@ -22,16 +22,31 @@ public interface SubmissionService {
     SubmissionDTO getSubmission(String courseName, Long id);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
-    SolutionDTO getSolution(String studentId, Long submissionId);
-
-    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
-    boolean evaluateSolution(String studentId, Long submissionId, Long evaluation);
+    SolutionDTO getLastSolution(String studentId, Long submissionId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     String addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
+
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
+    Solution getLastSolVersion(Long submissionId, String studentId);
+
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
+    List<SolutionDTO> getAllSolutionsForStudent(Long submissionId, String studentId);
+
+    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
+    List<SolutionDTO> getAllSolutions(Long submissionId);
+
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
+    SolutionDTO getSolution (Long solutionId);
+
+    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
+    boolean evaluateLastSolution(String studentId, Long submissionId, Long evaluation);
+
+    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
+    boolean evaluateSolution(Long solutionId, Long evaluation);
 
     void passiveSolutionAfterSubmissionExpiryDate();
 }

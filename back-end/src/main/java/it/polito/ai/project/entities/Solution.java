@@ -14,7 +14,7 @@ public class Solution {
     private String image; //image of student's solution for the submission
     private String status =null;
     private Long evaluation;
-    private String version;
+    private int version=0; //0 non ancora consegnato, 1 prima consegna, incrementato per ogni nuova versione
 
     @ManyToOne
     @JoinColumn(name = "student_id")

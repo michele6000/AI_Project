@@ -84,28 +84,80 @@ public class StudentController {
   }
 
 //  SOLUTIONS START
-// ???? lista ???
-  @GetMapping("/{studentId}/{submissionId}/getSolution")
-  public SolutionDTO getSolution(@PathVariable String studentId, @PathVariable Long submissionId) {
+
+  @GetMapping("/{studentId}/{submissionId}/solutions")
+  public List<SolutionDTO> getSolutions(@PathVariable String studentId, @PathVariable Long submissionId) {
     if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,
             "You are not allowed to access this information!"
     );
     try {
-      return submissionService.getSolution(studentId,submissionId);
+      return submissionService.getAllSolutions(submissionId);
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
 
-  @PostMapping("/{studentId}/{submissionId}/evaluateSolution")
-  public boolean evaluateSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
+  @GetMapping("/{studentId}/{submissionId}/historySolutions")
+  public List<SolutionDTO> getSolutionsForStudent(@PathVariable String studentId, @PathVariable Long submissionId) {
+    if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to access this information!"
+    );
+    try {
+      return submissionService.getAllSolutionsForStudent(submissionId,studentId);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @GetMapping("/{studentId}/{submissionId}/getLastSolution")
+  public SolutionDTO getLastSolution(@PathVariable String studentId, @PathVariable Long submissionId) {
+    if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to access this information!"
+    );
+    try {
+      return submissionService.getLastSolution(studentId,submissionId);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @GetMapping("/{studentId}/{solutionId}/getSolution")
+  public SolutionDTO getSolution(@PathVariable String studentId, @PathVariable Long solutionId) {
+    if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to access this information!"
+    );
+    try {
+      return submissionService.getSolution(solutionId);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{studentId}/{submissionId}/evaluateLastSolution")
+  public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
     if (!isMe(studentId)) throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,
             "You are not allowed to evaluate a solution!"
     );
     try {
-      return submissionService.evaluateSolution(studentId,submissionId, evaluation);
+      return submissionService.evaluateLastSolution(studentId,submissionId, evaluation);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{studentId}/{solutionId}/evaluateSolution")
+  public boolean evaluateSolution(@PathVariable String studentId, @PathVariable Long solutionId, @RequestParam Long evaluation) {
+    if (!isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to evaluate a solution!"
+    );
+    try {
+      return submissionService.evaluateSolution(solutionId, evaluation);
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }

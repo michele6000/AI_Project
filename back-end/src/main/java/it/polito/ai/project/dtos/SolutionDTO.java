@@ -10,4 +10,5 @@ public class SolutionDTO {
     private String image; //image of student's solution for the submission
     private String version;
     private Long evaluation;
+    private String status;
 }

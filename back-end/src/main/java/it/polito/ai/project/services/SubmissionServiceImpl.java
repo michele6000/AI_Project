@@ -129,7 +129,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public SolutionDTO getSolution(String studentId, Long submissionId) {
+    public SolutionDTO getLastSolution(String studentId, Long submissionId) {
 
         if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException("Student not found!");
         if (!submissionRepo.existsById(submissionId)) throw new SubmissionNotFoundException("Submission not found!");
@@ -141,33 +141,27 @@ public class SubmissionServiceImpl implements SubmissionService {
         if(!course.isEnabled())
             throw new TeamServiceException("Course not enabled!");
 
-        Optional<Solution> sol=submissionRepo.getOne(submissionId).getSolutions()
-                .stream()
-                .filter(s->s.getStudent().equals(studentRepo.getOne(studentId))).findFirst();
+        Solution sol=getLastSolVersion(submissionId,studentId);
 
-        if(sol.isPresent()){
-            sol.get().setStatus("READ");
-            solutionRepo.save(sol.get());
+            sol.setStatus("READ");
+            solutionRepo.save(sol);
             return modelMapper.map(sol, SolutionDTO.class);
-        }
-
-        else throw new SolutionNotFoundException("Solution not found!");
-
 
     }
 
     @Override
-    public boolean evaluateSolution(String studentId, Long submissionId, Long evaluation) {
+    public boolean evaluateLastSolution(String studentId, Long submissionId, Long evaluation) {
 
         try{
-            SolutionDTO sol=getSolution(studentId,submissionId);
+            SolutionDTO sol=getLastSolution(studentId,submissionId);
             modelMapper.map(sol, Solution.class);
             sol.setEvaluation(evaluation);
-            sol.setVersion("EVALUATED");
+            sol.setStatus("EVALUATED");
             notification.sendMessage(
                     studentRepo.getOne(studentId).getEmail(),
                     "Evaluation",
-                    "The professor has evaluated your solution.\n Final score: "+evaluation
+                    "The professor has evaluated your solution.\nSolution_id = "+sol.getId()+
+                            "\n Final score: "+evaluation
             );
             return true;
         }
@@ -196,21 +190,91 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         Student s =studentRepo.getOne(studentId);
 
-        if(!studentRepo.getOne(studentId).getCourses().contains(submission.getCourse()))
+        if(!s.getCourses().contains(submission.getCourse()))
             throw new StudentNotFoundException("Student not enrolled in this course!");
 
         solution.setSubmission(submissionRepo.getOne(submissionId));
         solution.setStatus("SUBMITTED");
+        solution.setVersion(solution.getVersion()+1);
 
         solutionRepo.save(solution);
 
-        return "Solution successfully created, id = "+solution.getId();
+        return "Solution successfully created, id = "+solution.getId()+" Version = "+solution.getVersion();
+    }
+
+    @Override
+    public Solution getLastSolVersion(Long submissionId, String studentId){
+        return submissionRepo.getOne(submissionId).getSolutions()
+                .stream()
+                .filter(s->s.getStudent().equals(studentRepo.getOne(studentId)))
+                .max(Comparator.comparing(Solution::getVersion)).get();
     }
 
     @Override
     public String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId) {
-    return null;
+        try{
+            return addSolution(submissionId,solutionDTO,studentId);
+        }
+        catch(TeamServiceException e){
+            throw e;
+        }
 
+    }
+
+    @Override
+    public List<SolutionDTO> getAllSolutions(Long submissionId){
+        if(!submissionRepo.existsById(submissionId)) throw new SubmissionNotFoundException("Submission not found!");
+
+         submissionRepo.getOne(submissionId).getSolutions().forEach(sol->sol.setStatus("READ"));
+
+         return submissionRepo.getOne(submissionId).getSolutions().stream()
+                .map(s->modelMapper.map(s,SolutionDTO.class))
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<SolutionDTO> getAllSolutionsForStudent(Long submissionId, String studentId){
+        if(!submissionRepo.existsById(submissionId)) throw new SubmissionNotFoundException("Submission not found!");
+        if (studentId.length()==0 || !studentRepo.existsById(studentId)) throw new StudentNotFoundException(
+                "Student not found!"
+        );
+        Student s =studentRepo.getOne(studentId);
+        Submission submission=submissionRepo.getOne(submissionId);
+
+        if(!s.getCourses().contains(submission.getCourse()))
+            throw new StudentNotFoundException("Student not enrolled in this course!");
+
+        s.getSolutions().stream().filter(sol->sol.getSubmission().equals(submission))
+                .forEach(solut->solut.setStatus("READ"));
+        return s.getSolutions().stream().filter(sol->sol.getSubmission().equals(submission))
+                .map(sol->modelMapper.map(sol,SolutionDTO.class))
+                .collect(Collectors.toList());
+
+    }
+
+    @Override //TODO: controllare se il professore che fa la richiesta di valutazione sia prof di quel corso?
+    public boolean evaluateSolution(Long solutionId, Long evaluation){
+        if(!solutionRepo.existsById(solutionId)) throw new SubmissionNotFoundException("Solution not found!");
+
+        Solution sol=solutionRepo.getOne(solutionId);
+        sol.setEvaluation(evaluation);
+        sol.setStatus("EVALUATED");
+        notification.sendMessage(
+                sol.getStudent().getEmail(),
+                "Evaluation",
+                "The professor has evaluated your solution.\nSolution_id = "+sol.getId()+
+                        "\n Final score: "+evaluation
+        );
+        return true;
+
+
+    }
+
+    @Override
+    public SolutionDTO getSolution (Long solutionId){
+        if(!solutionRepo.existsById(solutionId)) throw new SubmissionNotFoundException("Solution not found!");
+        return modelMapper.map(solutionRepo.getOne(solutionId),SolutionDTO.class);
     }
 
     @Override
@@ -218,6 +282,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     public void passiveSolutionAfterSubmissionExpiryDate() {
         Solution sol=new Solution();
         sol.setStatus("SUBMITTED");
+        sol.setVersion(0);
         AtomicBoolean found= new AtomicBoolean(false);
         submissionRepo.findAll()
                 .forEach(
