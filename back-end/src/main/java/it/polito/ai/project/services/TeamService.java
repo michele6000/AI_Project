@@ -124,4 +124,7 @@ public interface TeamService {
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
   Boolean deleteVM(String vmId);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
+  VMDTO createVmInstance(Long teamId, VMDTO vm, String currentUsername);
 }

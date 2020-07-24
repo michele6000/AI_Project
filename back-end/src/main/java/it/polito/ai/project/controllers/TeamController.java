@@ -6,10 +6,8 @@ import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -46,6 +44,23 @@ public class TeamController {
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+    }
+
+    @PostMapping("/{teamId}/createVmInstance")
+    public VMDTO createVmInstance(@PathVariable Long teamId, @RequestParam VMDTO vm) {
+        try {
+            return service.createVmInstance(teamId,vm,getCurrentUsername());
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    private String getCurrentUsername() {
+        return SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName()
+                .split("@")[0];
     }
 
 

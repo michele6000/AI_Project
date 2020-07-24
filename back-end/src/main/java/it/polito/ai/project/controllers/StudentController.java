@@ -85,7 +85,7 @@ public class StudentController {
 
 //  SOLUTIONS START
 
-  @GetMapping("/{studentId}/{submissionId}/solutions")
+  @GetMapping("/{studentId}/{submissionId}/getAllSolutions")
   public List<SolutionDTO> getSolutions(@PathVariable String studentId, @PathVariable Long submissionId) {
     if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,
@@ -98,7 +98,7 @@ public class StudentController {
     }
   }
 
-  @GetMapping("/{studentId}/{submissionId}/historySolutions")
+  @GetMapping("/{studentId}/{submissionId}/getHistorySolutions")
   public List<SolutionDTO> getSolutionsForStudent(@PathVariable String studentId, @PathVariable Long submissionId) {
     if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,
@@ -111,7 +111,7 @@ public class StudentController {
     }
   }
 
-  @GetMapping("/{studentId}/{submissionId}/getLastSolution")
+  @GetMapping("/{studentId}/{submissionId}/getLatestSolution")
   public SolutionDTO getLastSolution(@PathVariable String studentId, @PathVariable Long submissionId) {
     if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,
@@ -137,7 +137,7 @@ public class StudentController {
     }
   }
 
-  @PostMapping("/{studentId}/{submissionId}/evaluateLastSolution")
+  @PostMapping("/{studentId}/{submissionId}/evaluateLatestSolution")
   public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
     if (!isMe(studentId)) throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,

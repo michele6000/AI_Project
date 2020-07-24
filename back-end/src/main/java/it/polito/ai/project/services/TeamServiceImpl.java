@@ -694,4 +694,40 @@ public class TeamServiceImpl implements TeamService {
     vmRepo.delete(optionalVMEntity.get());
     return null;
   }
+
+  @Override
+  public VMDTO createVmInstance(Long teamId, VMDTO vm, String studentID) {
+    Optional<Team> optionalTeamEntity = teamRepo.findById(teamId);
+    if (!optionalTeamEntity.isPresent()) {
+      throw new CourseNotFoundException("team not found!");
+    }
+    Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
+    if (!optionalStudentEntity.isPresent()) {
+      throw new TeamServiceException("Student not found!");
+    }
+
+    VMType vmType = teamRepo.getOne(teamId).getCourse().getVmType();
+
+    if(vm.getRam() > vmType.getLimit_ram()) return null;
+    if(vm.getCpu() > vmType.getLimit_cpu()) return null;
+    if(vm.getHdd() > vmType.getLimit_hdd()) return null;
+    if(vmRepo.findAll().stream()
+            .filter(_vm -> _vm.getTeam().getId().equals(teamId))
+            .filter(_vm -> _vm.getVmType().getId().equals(vmType.getId()))
+      .count() + 1 > vmType.getLimit_instance())
+      return null;
+
+    VM _vm = new VM();
+
+    _vm.setStatus("poweroff");
+    _vm.setTeam(teamRepo.getOne(teamId));
+    _vm.getOwners().add(studentRepo.getOne(studentID));
+    _vm.setHdd(vm.getHdd());
+    _vm.setCpu(vm.getCpu());
+    _vm.setRam(vm.getRam());
+    _vm = vmRepo.save(_vm);
+    // TODO: da controllare che venga generato correttamente
+    _vm.setAccessLink("localhost:4200/genericVmPage/"+teamId+"/"+vmType.getId()+"/"+_vm.getId());
+    return modelMapper.map(_vm,VMDTO.class);
+  }
 }

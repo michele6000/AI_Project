@@ -74,7 +74,7 @@ public class VMController {
         }
     }
 
-    @PostMapping("/{vmId}/powerOn")
+    @PostMapping("/{vmId}/powerOff")
     public Boolean powerOff(@PathVariable String vmId) {
         try {
             return service.powerVMOff(vmId);

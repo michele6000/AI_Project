@@ -8,5 +8,5 @@ public class ProfessorDTO {
   private String firstName;
   private String name;
   private String email;
-  private String image; //TODO: mettere binary
+  private String image; //TODO: metterne binary
 }
