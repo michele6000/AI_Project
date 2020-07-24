@@ -10,7 +10,7 @@ import java.util.List;
 public interface SubmissionService {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
-    String addSubmission(SubmissionDTO submissionDTO, String courseName);
+    String addSubmission(SubmissionDTO submissionDTO, String courseName, String profId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     List<SubmissionDTO> getAllSubmissions(String courseName);
@@ -40,11 +40,9 @@ public interface SubmissionService {
     SolutionDTO getSolution (Long solutionId);
 
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
-    boolean evaluateLastSolution(String studentId, Long submissionId, Long evaluation);
+    boolean evaluateLastSolution(String studentId, Long submissionId, Long evaluation, String profId);
 
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
-    boolean evaluateSolution(Long solutionId, Long evaluation);
+    boolean evaluateSolution(Long solutionId, Long evaluation, String profId);
 
-    void passiveSolutionAfterSubmissionExpiryDate();
-    Solution getLastSolVersion(Long submissionId, String studentId);
 }
