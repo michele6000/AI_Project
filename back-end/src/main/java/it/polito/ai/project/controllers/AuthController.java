@@ -71,10 +71,10 @@ public class AuthController {
 
   @PostMapping("/addProfessor")
   public ProfessorDTO addProfessor(@RequestBody ProfessorDTO professor) {
-//    if(professor.getEmail().endsWith("@polito.it")) throw new ResponseStatusException(
-//            HttpStatus.BAD_REQUEST,
-//            "user not allowed"
-//    );
+    if(!professor.getEmail().endsWith("@polito.it")) throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST,
+            "user not allowed"
+    );
     if (!service.addProfessor(professor)) throw new ResponseStatusException(
             HttpStatus.CONFLICT,
             professor.getId()
@@ -84,7 +84,7 @@ public class AuthController {
 
   @PostMapping("/addStudent")
   public StudentDTO addProfessor(@RequestBody StudentDTO student) {
-    if(student.getEmail().endsWith("@studenti.polito.it")) throw new ResponseStatusException(
+    if(!student.getEmail().endsWith("@studenti.polito.it")) throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST,
             "user not allowed"
     );

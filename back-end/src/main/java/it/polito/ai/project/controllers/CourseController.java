@@ -40,8 +40,10 @@ public class CourseController {
     return courses;
   }
 
-  @GetMapping({"{/professorId}"})
+  @GetMapping({"/{professorId}/getCourses"})
   public List<CourseDTO> getProfessorCourses(@PathVariable String professorId) {
+    System.out.println(professorId);
+    System.out.println("HERE HERE HERE");
     List<CourseDTO> courses = service.getProfessorCourses(professorId);
     courses.forEach(ModelHelper::enrich);
     return courses;
@@ -61,7 +63,7 @@ public class CourseController {
     }
   }
 
-  @GetMapping("/{courseName}/deleteOne")
+  @PostMapping("/{courseName}/deleteOne")
   public Boolean deleteOne(@PathVariable String courseName, @RequestParam String studentId) {
     try {
       service.deleteOne(studentId, courseName);
