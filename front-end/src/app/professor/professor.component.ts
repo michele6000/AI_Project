@@ -29,6 +29,8 @@ export class ProfessorComponent implements OnInit {
         this.changeCorso(course[0]);
       } else if (this.corsi.length > 0) {
         this.router.navigate(['teacher', this.corsi[0].name.toLowerCase().replace(' ', '-')]);
+      } else {
+        this.router.navigate(['teacher', 'courses']);
       }
     });
 
