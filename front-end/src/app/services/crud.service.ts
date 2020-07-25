@@ -23,10 +23,8 @@ export class CrudService {
 
   createCourse(course: CourseModel) {
     this.http.post(
-      API_URL,
-      {
-        course
-      }
+      API_URL + 'courses',
+      course
     ).subscribe(
       (payload: any) => {
 

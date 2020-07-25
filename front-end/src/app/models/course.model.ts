@@ -1,4 +1,4 @@
-export class CourseModel {
+export interface CourseModel {
   name: string;
   acronymous: string;
   min: number;
