@@ -7,6 +7,12 @@
       Error
     </mat-error>
     <form #f="ngForm" (ngSubmit)="create(f)">
+      <div class="dialog-position-field">
+        <span>Dockerfile configuration</span>
+        <button class="ml-20" type="button" mat-raised-button (click)="fileInput.click()">Choose file</button>
+        <input hidden (change)="handleFileSelect($event)" accept="application/pdf" #fileInput type="file" id="file">
+      </div>
+      <br>
       <mat-form-field class="dialog-position-field">
         <mat-label>Number of V-CPU</mat-label>
         <input matInput type="text" #vcpu="ngModel" ngModel required placeholder="Number of V-CPU" name="vcpu" value="">
@@ -31,11 +37,6 @@
         <mat-label>Maximum number of simultaneously active VMs</mat-label>
         <input matInput type="number" #maxActiveVmSimultaneously="ngModel" ngModel required name="maxActiveVmSimultaneously" value="">
       </mat-form-field>
-      <div class="dialog-position-field">
-        <span>Dockerfile configuration</span>
-        <button class="ml-20" type="button" mat-raised-button (click)="fileInput.click()">Choose file</button>
-        <input hidden (change)="handleFileSelect($event)" accept="application/pdf" #fileInput type="file" id="file">
-      </div>
       <br>
       <mat-card-actions>
         <button mat-button [disabled]="!f.valid" mat-raised-button color="primary">Create</button>

@@ -8,7 +8,7 @@
     <mat-error class="mt-10-center" *ngIf="error">
       Error
     </mat-error>
-    <form #f="ngForm" class="mt-10">
+    <form #f="ngForm" class="mt-10" (ngSubmit)="send(f)">
       <h2>Send correction</h2>
       <div class="mt-10 mb-10">
         <button type="button" mat-raised-button (click)="fileInput.click()">Choose file</button>
@@ -24,7 +24,7 @@
       </mat-form-field>
       <br />
       <mat-card-actions class="mt-10">
-        <button mat-button [disabled]="!f.valid || fileAbsent" mat-raised-button color="primary" (click)="send()">Send</button>
+        <button mat-button [disabled]="!f.valid || fileAbsent" mat-raised-button color="primary">Send</button>
         <button mat-button mat-dialog-close>Cancel</button>
       </mat-card-actions>
     </form>
