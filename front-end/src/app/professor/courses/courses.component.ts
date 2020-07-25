@@ -3,8 +3,9 @@ import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CreateCourseComponent} from '../../dialog/create-course/create-course.component';
 import {CourseModel} from '../../models/course.model';
-import {EditVmProfessorComponent} from "../../dialog/edit-vm/edit-vm-professor.component";
-import {EditCourseComponent} from "../../dialog/edit-course/edit-course.component";
+import {EditCourseComponent} from '../../dialog/edit-course/edit-course.component';
+import {CrudService} from "../../services/crud.service";
+import {AuthService} from "../../auth/auth.service";
 
 @Component({
   selector: 'app-courses',
@@ -13,23 +14,24 @@ import {EditCourseComponent} from "../../dialog/edit-course/edit-course.componen
 })
 export class CoursesComponent implements OnInit {
   url: any;
-  columns = ['identifier', 'name', 'min', 'max'];
+  columns = ['acronymous', 'name', 'min', 'max'];
   data: CourseModel[] = [
     {
-      identifier: 'AI',
+      acronymous: 'AI',
       name: 'Applicazioni Internet',
       min: 3,
       max: 4
     },
     {
-      identifier: 'BD',
+      acronymous: 'BD',
       name: 'Big Data',
       min: 2,
       max: 4
     }
   ];
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute) {
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private crudService: CrudService, private authService: AuthService) {
+
   }
 
   ngOnInit(): void {
@@ -52,6 +54,14 @@ export class CoursesComponent implements OnInit {
     } else {
       this.url = '/teacher/';
     }
+
+    this.authService.user.subscribe((user) => {
+      if (user != null) {
+        this.crudService.findCoursesByProfessor('1').subscribe(
+          (courses) => this.data = courses
+        );
+      }
+    });
   }
 
   deleteCourse($event: CourseModel[]) {

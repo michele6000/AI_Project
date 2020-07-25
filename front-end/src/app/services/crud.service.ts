@@ -7,7 +7,7 @@ import {VmProfessor} from '../models/vm-professor.model';
 import {VmStudent} from '../models/vm-student.model';
 import {Observable} from 'rxjs';
 
-const API_URL = 'http://localhost:3000/';
+const API_URL = '/api/API/';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +15,8 @@ const API_URL = 'http://localhost:3000/';
 export class CrudService {
 
   private dataStore: {courses: CourseModel[]} = {courses: [
-      {name: 'Applicazioni Internet', identifier: 'AI', min: 2, max: 4},
-      {name: 'Big Data', identifier: 'BD', min: 3, max: 4}
+      {name: 'Applicazioni Internet', acronymous: 'AI', min: 2, max: 4},
+      {name: 'Big Data', acronymous: 'BD', min: 3, max: 4}
     ]};
 
   constructor(private http: HttpClient) { }
@@ -108,6 +108,15 @@ export class CrudService {
       });
   }
 
+  findCoursesByProfessor(professorId: string): Observable<CourseModel[]>{
+    return this.http.get<CourseModel[]>(API_URL + 'courses/' + professorId + '/getCourses')
+      .pipe(response => {
+        // @todo Migliorare
+        response.subscribe(courses => this.dataStore.courses = courses);
+        return response;
+      });
+  }
+
   // Cerca nell'array locale di corsi il corso dato il path nell'URL
   findCourseByNameUrl(nameUrl: string): CourseModel {
     const filteredCourses = this.dataStore.courses
@@ -115,7 +124,7 @@ export class CrudService {
     if (filteredCourses.length > 0) {
       return filteredCourses[0];
     }
-    else { return {identifier: '', max: 0, min: 0, name: ''}; }
+    else { return {acronymous: '', max: 0, min: 0, name: ''}; }
   }
 
 }

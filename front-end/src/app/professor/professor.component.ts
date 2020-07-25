@@ -3,6 +3,8 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {CourseModel} from '../models/course.model';
 import {switchMap} from 'rxjs/operators';
+import {CrudService} from "../services/crud.service";
+import {AuthService} from "../auth/auth.service";
 
 @Component({
   selector: 'app-professor',
@@ -10,16 +12,13 @@ import {switchMap} from 'rxjs/operators';
   styleUrls: ['./professor.component.css']
 })
 export class ProfessorComponent implements OnInit {
-  corsi: CourseModel[] = [
-    {name: 'Applicazioni Internet', identifier: 'AI', min: 2, max: 4},
-    {name: 'Big Data', identifier: 'BD', min: 3, max: 4}
-  ];
+  corsi: CourseModel[] = [];
   singoloCorso: CourseModel;
 
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService, private crudService: CrudService) {
   }
 
   ngOnInit(): void {
@@ -28,8 +27,16 @@ export class ProfessorComponent implements OnInit {
       const course = this.corsi.filter(c => c.name.toLowerCase().replace(' ', '-') === courseName);
       if (course.length > 0) {
         this.changeCorso(course[0]);
-      } else {
+      } else if (this.corsi.length > 0) {
         this.router.navigate(['teacher', this.corsi[0].name.toLowerCase().replace(' ', '-')]);
+      }
+    });
+
+    this.authService.user.subscribe((user) => {
+      if (user != null) {
+        this.crudService.findCoursesByProfessor('1').subscribe(
+          (courses) => this.corsi = courses
+        );
       }
     });
   }

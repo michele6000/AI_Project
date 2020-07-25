@@ -1,6 +1,6 @@
 export class CourseModel {
   name: string;
-  identifier: string;
+  acronymous: string;
   min: number;
   max: number;
 }

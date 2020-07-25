@@ -20,7 +20,7 @@ export class CreateCourseComponent implements OnInit {
   createCourse(f: NgForm) {
     const course = new CourseModel();
     course.name = f.value.name;
-    course.identifier = f.value.identifier;
+    course.acronymous = f.value.identifier;
     course.min = f.value.min;
     course.max = f.value.max;
     this.crudService.createCourse(course);

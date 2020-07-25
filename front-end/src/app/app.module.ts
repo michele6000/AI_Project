@@ -13,7 +13,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatInputModule} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AuthService} from './auth/auth.service';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {LoginComponent} from './login/login.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {TableComponent} from './include/table/table.component';
@@ -50,6 +50,7 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import { TableFilterComponent } from './include/table-filter/table-filter.component';
 import { EditHomeworkComponent } from './dialog/edit-homework/edit-homework.component';
 import {MatRadioModule} from "@angular/material/radio";
+import {AuthInterceptor} from "./auth/auth.interceptor";
 
 @NgModule({
   declarations: [
@@ -107,7 +108,7 @@ import {MatRadioModule} from "@angular/material/radio";
     MatExpansionModule,
     MatRadioModule
   ],
-  providers: [AuthService],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule {

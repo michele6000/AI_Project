@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {UserModel} from '../models/user.models';
+import {AuthService} from "../auth/auth.service";
 
 @Component({
   selector: 'app-home',
@@ -20,7 +21,7 @@ export class HomeComponent implements OnInit {
   ];
   columns = ['name', 'email'];
 
-  constructor() {
+  constructor(private authService: AuthService) {
     console.log(this.columns);
   }
 

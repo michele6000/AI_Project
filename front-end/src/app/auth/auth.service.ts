@@ -1,47 +1,99 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {UserModel} from "../models/user.models";
+import {HttpClient} from '@angular/common/http';
+import {UserModel} from '../models/user.models';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {shareReplay, tap} from 'rxjs/operators';
+import * as moment from 'moment';
+import {UserLogged} from '../models/user-logged';
+import {Router} from '@angular/router';
 
-const API_URL_LOGIN = 'http://localhost:4200/login';
-const API_URL_REGISTER = 'http://localhost:4200/register';
+const API_URL_LOGIN = '/api/auth/signin';
+const API_URL_REGISTER = 'http://localhost:8080/api/register';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private http: HttpClient) {
+  user: Observable<UserLogged>;
+  private userSubject: BehaviorSubject<UserLogged>;
+  localUser: UserLogged = {
+    id: null, email: undefined, roles: []
+  };
+
+  constructor(private http: HttpClient, private router: Router) {
+    this.userSubject = new BehaviorSubject<UserLogged>(this.localUser);
+    this.user = this.userSubject.asObservable();
+    if (localStorage.getItem('token')) {
+      // this.isUserLoggedIn = true;
+      const tkn = JSON.parse(atob(localStorage.getItem('token').split('.')[1]));
+      this.localUser.email = localStorage.getItem('email');
+      this.localUser.roles = tkn.roles;
+    } else {
+      this.userSubject.next(null);
+    }
+  }
+
+  loginRedirect() {
+    if (this.localUser.roles.filter((value => value === 'ROLE_STUDENT')).length > 0) {
+      this.router.navigate(['student']);
+    } else if (this.localUser.roles.filter((value => value === 'ROLE_PROFESSOR')).length > 0) {
+      this.router.navigate(['teacher']);
+    } else if (this.localUser.roles.filter((value => value === 'ROLE_ADMIN')).length > 0) {
+      this.router.navigate(['teacher']);
+    } else {
+      // @todo Utente loggato ma non ha ruoli
+    }
   }
 
   login(email: string, password: string) {
-    this.http.post(
+    return this.http.post(
       API_URL_LOGIN, {
-        email: email,
-        password: password
+        username: email,
+        password
       }
-    ).subscribe(
-      (payload: any) => {
-        /*
-        this.setSession(payload, email);
-        let user : UserModule = new UserModule();
-        user.email = email;
-        user.accessToken = payload.accessToken;
-        user.isLogged = true;
-        this.userSubject.next(user);
-        this.userLogged.emit(true);
-        */
-      },
-      (error: any) => {
-        // this.userLogged.emit(false);    // propago l'evento se non è andato a buon fine la login -> in login.ts lo ascolto nel costruttore
-      }
-    );
+    ).pipe(
+      tap((payload: any) => {
+          const tkn = JSON.parse(atob(payload.token.split('.')[1]));
+          localStorage.setItem('token', payload.token);
+          localStorage.setItem('expires_at', tkn.exp);
+          localStorage.setItem('email', email);
+
+          this.localUser.roles = tkn.roles;
+
+          // this.isUserLoggedIn = true;
+          this.userSubject.next(this.localUser);
+          /*
+          this.setSession(payload, email);
+          let user : UserModule = new UserModule();
+          user.email = email;
+          user.accessToken = payload.accessToken;
+          user.isLogged = true;
+          this.userSubject.next(user);
+          this.userLogged.emit(true);
+          */
+        },
+        (error: any) => {
+          this.userSubject.next(null);
+          // propago l'evento se non è andato a buon fine la login -> in login.ts lo ascolto nel costruttore
+          // this.userLogged.emit(false);
+        }
+      ), shareReplay());
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('expires_at');
+    localStorage.removeItem('email');
+    // this.isUserLoggedIn = false;
+    this.userSubject.next(null);
   }
 
   register(user: UserModel) {
     this.http.post(
       API_URL_REGISTER,
       {
-        user: user
+        user
       }
     ).subscribe(
       (payload: any) => {
@@ -50,6 +102,13 @@ export class AuthService {
       (error: any) => {
 
       }
-    )
+    );
+  }
+
+  public isLoggedIn() {
+    if (localStorage.getItem('expires_at') == null) {
+      return false;
+    }
+    return moment().isBefore(moment.unix(+localStorage.getItem('expires_at')));
   }
 }

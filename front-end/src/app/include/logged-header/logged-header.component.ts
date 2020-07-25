@@ -1,4 +1,6 @@
 import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {AuthService} from '../../auth/auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-logged-header',
@@ -6,11 +8,24 @@ import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core'
   styleUrls: ['./logged-header.component.css']
 })
 export class LoggedHeaderComponent implements OnInit {
-  email = 'test@mail.com';
+  email = '';
+  isLoggedIn = false;
 
   @Output() toggleMenu: EventEmitter<any> = new EventEmitter<any>();
+  title = 'HOME';
 
-  constructor() {
+  constructor(private authService: AuthService, private router: Router) {
+    this.authService.user.subscribe(next => {
+      if (next != null) {
+        this.email = next.email;
+        this.isLoggedIn = true;
+        this.title = 'VIRTUAL LABS';
+      } else {
+        this.isLoggedIn = false;
+        this.title = 'HOME';
+        this.router.navigate(['home']);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -21,6 +36,6 @@ export class LoggedHeaderComponent implements OnInit {
   }
 
   logout() {
-
+    this.authService.logout();
   }
 }
