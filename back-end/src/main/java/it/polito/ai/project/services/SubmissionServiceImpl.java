@@ -7,14 +7,13 @@ import it.polito.ai.project.entities.Solution;
 import it.polito.ai.project.entities.Student;
 import it.polito.ai.project.entities.Submission;
 import it.polito.ai.project.exceptions.*;
-import it.polito.ai.project.repositories.CourseRepository;
-import it.polito.ai.project.repositories.SolutionRepository;
-import it.polito.ai.project.repositories.StudentRepository;
-import it.polito.ai.project.repositories.SubmissionRepository;
+import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.Comparator;
@@ -46,8 +45,11 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Autowired
     private StudentRepository studentRepo;
 
+    @Autowired
+    private ProfessorRepository profRepo;
+
     @Override
-    public String addSubmission(SubmissionDTO submissionDTO, String courseName) {
+    public String addSubmission(SubmissionDTO submissionDTO, String courseName, String profId) {
 
         if (submissionDTO == null) throw new SubmissionNotFoundException("Bad request!");
 
@@ -66,6 +68,11 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         course.addSubmission(submissionEntity);
         submissionRepo.save(submissionEntity);
+
+        if(!isProfessorCourseSubmission(submissionEntity.getId(), profId)) {
+            submissionRepo.delete(submissionEntity);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+        }
 
         for(Student s: course.getStudents())
         notification.sendMessage(
@@ -150,10 +157,12 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public boolean evaluateLastSolution(String studentId, Long submissionId, Long evaluation) {
+    public boolean evaluateLastSolution(String studentId, Long submissionId, Long evaluation, String profId) {
 
         try{
             SolutionDTO sol=getLastSolution(studentId,submissionId);
+            if(!isProfessorCourseSubmission(submissionId, profId))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You are not a professor of this course!");
             modelMapper.map(sol, Solution.class);
             sol.setEvaluation(evaluation);
             sol.setStatus("EVALUATED");
@@ -202,8 +211,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         return "Solution successfully created, id = "+solution.getId()+" Version = "+solution.getVersion();
     }
 
-    @Override
-    public Solution getLastSolVersion(Long submissionId, String studentId){
+    private Solution getLastSolVersion(Long submissionId, String studentId){
         return submissionRepo.getOne(submissionId).getSolutions()
                 .stream()
                 .filter(s->s.getStudent().equals(studentRepo.getOne(studentId)))
@@ -254,8 +262,11 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override //TODO: controllare se il professore che fa la richiesta di valutazione sia prof di quel corso?
-    public boolean evaluateSolution(Long solutionId, Long evaluation){
+    public boolean evaluateSolution(Long solutionId, Long evaluation, String profId){
         if(!solutionRepo.existsById(solutionId)) throw new SubmissionNotFoundException("Solution not found!");
+
+        if(!isProfessorCourseSolution(solutionId, profId))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You are not a professor of this course!");
 
         Solution sol=solutionRepo.getOne(solutionId);
         sol.setEvaluation(evaluation);
@@ -277,9 +288,8 @@ public class SubmissionServiceImpl implements SubmissionService {
         return modelMapper.map(solutionRepo.getOne(solutionId),SolutionDTO.class);
     }
 
-    @Override
     @Scheduled(fixedRate = 600000)
-    public void passiveSolutionAfterSubmissionExpiryDate() {
+    private void passiveSolutionAfterSubmissionExpiryDate() {
         Solution sol=new Solution();
         sol.setStatus("SUBMITTED");
         sol.setVersion(0);
@@ -301,6 +311,15 @@ public class SubmissionServiceImpl implements SubmissionService {
                         }
                 );
 
+    }
+
+    private boolean isProfessorCourseSolution(Long solutionId, String profId){
+        return solutionRepo.getOne(solutionId).getSubmission().getCourse().getProfessors()
+                .contains(profRepo.getOne(profId));
+    }
+
+    private boolean isProfessorCourseSubmission(Long submissionId, String profId){
+        return submissionRepo.getOne(submissionId).getCourse().getProfessors().contains(profRepo.getOne(profId));
     }
     
 

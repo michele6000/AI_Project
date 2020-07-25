@@ -139,27 +139,31 @@ public class StudentController {
 
   @PostMapping("/{studentId}/{submissionId}/evaluateLatestSolution")
   public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
-    if (!isMe(studentId)) throw new ResponseStatusException(
+    if (!getCurrentRoles().contains("PROFESSOR"))  throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,
             "You are not allowed to evaluate a solution!"
     );
     try {
-      return submissionService.evaluateLastSolution(studentId,submissionId, evaluation);
-    } catch (TeamServiceException e) {
+      return submissionService.evaluateLastSolution(studentId,submissionId, evaluation, getCurrentUsername());
+    } catch (Exception e) {
+      if(e instanceof TeamServiceException)
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+      else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
     }
   }
 
   @PostMapping("/{studentId}/{solutionId}/evaluateSolution")
   public boolean evaluateSolution(@PathVariable String studentId, @PathVariable Long solutionId, @RequestParam Long evaluation) {
-    if (!isMe(studentId)) throw new ResponseStatusException(
+    if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,
             "You are not allowed to evaluate a solution!"
     );
     try {
-      return submissionService.evaluateSolution(solutionId, evaluation);
-    } catch (TeamServiceException e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+      return submissionService.evaluateSolution(solutionId, evaluation, getCurrentUsername());
+    } catch (Exception e) {
+      if(e instanceof TeamServiceException)
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+      else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
     }
   }
 
@@ -189,8 +193,6 @@ public class StudentController {
   }
 
   //  SOLUTIONS END
-
-
 
   private String getCurrentUsername() {
     return SecurityContextHolder

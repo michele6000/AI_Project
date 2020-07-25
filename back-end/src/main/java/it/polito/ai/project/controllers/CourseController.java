@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -280,9 +281,17 @@ public class CourseController {
           @PathVariable String courseName, @RequestBody SubmissionDTO dto
   ) {
     try {
-      return submissionService.addSubmission(dto, courseName);
-    } catch (TeamServiceException e) {
-      if (e instanceof CourseNotFoundException) throw new ResponseStatusException(
+      String profId= SecurityContextHolder
+              .getContext()
+              .getAuthentication()
+              .getName()
+              .split("@")[0];
+      return submissionService.addSubmission(dto, courseName, profId);
+    } catch (Exception e) {
+      if (e instanceof ResponseStatusException)
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: "+e.getMessage());
+      
+      else if (e instanceof CourseNotFoundException) throw new ResponseStatusException(
               HttpStatus.NOT_FOUND,
               "Error: " + e.getMessage()
       );
