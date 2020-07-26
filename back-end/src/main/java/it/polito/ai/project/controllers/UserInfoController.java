@@ -32,6 +32,7 @@ public class UserInfoController {
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList())
         );
+        model.put("myId",userDetails.getUsername().split("@")[0]);
         return ResponseEntity.ok(model);
     }
 }
