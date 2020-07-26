@@ -1,5 +1,7 @@
 package it.polito.ai.project;
 
+import it.polito.ai.project.entities.Course;
+import it.polito.ai.project.entities.Professor;
 import it.polito.ai.project.entities.User;
 import it.polito.ai.project.repositories.UserRepository;
 import java.util.Collections;

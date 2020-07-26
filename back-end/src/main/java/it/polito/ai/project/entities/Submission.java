@@ -20,7 +20,7 @@ public class Submission {
     private String content; //image
 
     @ManyToOne
-//    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "course_id")
     private Course course;
 
     @OneToMany ()

@@ -287,10 +287,11 @@ public class CourseController {
               .getName()
               .split("@")[0];
       return submissionService.addSubmission(dto, courseName, profId);
-    } catch (Exception e) {
+    }
+    catch (Exception e) { //TODO: sbagliato cosi catcha tutto e non va bene
       if (e instanceof ResponseStatusException)
         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: "+e.getMessage());
-      
+
       else if (e instanceof CourseNotFoundException) throw new ResponseStatusException(
               HttpStatus.NOT_FOUND,
               "Error: " + e.getMessage()

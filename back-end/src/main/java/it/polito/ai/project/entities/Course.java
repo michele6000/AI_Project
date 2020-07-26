@@ -30,7 +30,7 @@ public class Course {
   @ManyToMany(mappedBy = "courses")
   private List<Professor> professors = new ArrayList<>();
 
-  @OneToMany() //AUTO-MAPPING
+  @OneToMany(mappedBy = "course")
   private List<Submission> submissions = new ArrayList<>();
 
   public void addStudent(Student student) {
