@@ -5,7 +5,8 @@ import {Observable} from 'rxjs';
 import {CourseModel} from '../../models/course.model';
 import {StudentModel} from '../../models/student.model';
 import {MatTable} from '@angular/material/table';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient} from '@angular/common/http';
+import {CrudService} from "../../services/crud.service";
 
 @Component({
   selector: 'app-enrolled-students',
@@ -19,27 +20,22 @@ export class EnrolledStudentsComponent implements OnInit {
 
   corso: CourseModel;
   columns = ['email', 'name', 'surname', 'matricola'];
-  data: StudentModel[] = [
-    {
-      email: 's123456',
-      name: 'Mario',
-      surname: 'Rossi',
-      matricola: '123456'
-    },
-    {
-      email: 's123456',
-      name: 'Paolo',
-      surname: 'Verdi',
-      matricola: '123456'
-    }
-  ];
+  data: StudentModel[] = [];
   fileAbsent = true;
   file: any;
+  courseParam: string;
 
-  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient) {
+  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private crudService: CrudService) {
   }
 
   ngOnInit(): void {
+    this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
+
+    this.corso = this.crudService.findCourseByNameUrl(this.courseParam);
+
+    this.crudService.getEnrolledStudents(this.corso.name).subscribe(
+      (res) => this.data = res
+    );
     /*
     this.route.paramMap.pipe(
       switchMap((params: ParamMap) =>

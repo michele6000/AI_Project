@@ -3,4 +3,5 @@ export interface CourseModel {
   acronymous: string;
   min: number;
   max: number;
+  enabled: boolean;
 }

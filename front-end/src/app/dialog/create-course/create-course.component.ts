@@ -22,9 +22,9 @@ export class CreateCourseComponent implements OnInit {
       name: f.value.name,
       acronymous: f.value.identifier,
       min: f.value.min,
-      max: f.value.max
+      max: f.value.max,
+      enabled: true
     };
-    console.log(course);
     this.crudService.createCourse(course);
   }
 }

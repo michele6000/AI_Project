@@ -14,7 +14,7 @@ import {AuthService} from "../../auth/auth.service";
 })
 export class CoursesComponent implements OnInit {
   url: any;
-  columns = ['acronymous', 'name', 'min', 'max'];
+  columns = ['acronymous', 'name', 'enabled', 'min', 'max'];
   data: CourseModel[] = [];
 
   constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private crudService: CrudService, private authService: AuthService) {
@@ -44,8 +44,14 @@ export class CoursesComponent implements OnInit {
 
     this.authService.user.subscribe((user) => {
       if (user != null) {
-        this.crudService.findCoursesByProfessor('1').subscribe(
-          (courses) => this.data = courses
+        this.crudService.courses.subscribe(
+          (courses) => {
+            if (courses) {
+              this.data = courses;
+            } else {
+              this.data = [];
+            }
+          }
         );
       }
     });

@@ -11,10 +11,7 @@ import {CrudService} from "../services/crud.service";
 })
 export class StudentComponent implements OnInit {
 
-  corsi: CourseModel[] = [
-    {name: 'Applicazioni Internet', acronymous: 'AI', min: 2, max: 4},
-    {name: 'Big Data', acronymous: 'BD', min: 3, max: 4}
-  ];
+  corsi: CourseModel[] = [];
 
   singoloCorso: CourseModel;
 

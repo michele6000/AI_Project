@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {UserModel} from '../models/user.models';
 import {HttpClient} from '@angular/common/http';
 import {CourseModel} from '../models/course.model';
 import {VmModel} from '../models/vm.model';
 import {VmProfessor} from '../models/vm-professor.model';
 import {VmStudent} from '../models/vm-student.model';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
+import {StudentModel} from "../models/student.model";
 
 const API_URL = '/api/API/';
 
@@ -14,20 +15,38 @@ const API_URL = '/api/API/';
 })
 export class CrudService {
 
-  private dataStore: {courses: CourseModel[]} = {courses: [
-      {name: 'Applicazioni Internet', acronymous: 'AI', min: 2, max: 4},
-      {name: 'Big Data', acronymous: 'BD', min: 3, max: 4}
-    ]};
+  // private dataStore: {courses: CourseModel[]} = {courses: null};
 
-  constructor(private http: HttpClient) { }
+  courses: Observable<CourseModel[]>;
+  private coursesSubject: BehaviorSubject<CourseModel[]>;
+
+  constructor(private http: HttpClient) {
+    this.coursesSubject = new BehaviorSubject<CourseModel[]>(null);
+    this.courses = this.coursesSubject.asObservable();
+  }
 
   createCourse(course: CourseModel) {
-    this.http.post(
+    return this.http.post(
       API_URL + 'courses',
       course
     ).subscribe(
       (payload: any) => {
+        // @todo Remove after API change
+        this.addProfessorToCourse(course.name, '1');
+        // this.findCoursesByProfessor('1');
+      },
+      (error: any) => {
 
+      }
+    );
+  }
+
+  addProfessorToCourse(courseName: string, teacherMatricola: string) {
+    return this.http.post(
+      API_URL + 'courses/' + courseName + '/addProfessor?id=' + teacherMatricola, {}
+    ).subscribe(
+      (payload: any) => {
+        this.findCoursesByProfessor('1');
       },
       (error: any) => {
 
@@ -67,14 +86,18 @@ export class CrudService {
     );
   }
 
-  findGroupByStudentId(studentId: string): Observable<any>{
+  getEnrolledStudents(courseName: string): Observable<StudentModel[]> {
+    return this.http.get<StudentModel[]>(API_URL + 'courses/' + courseName + '/enrolled');
+  }
+
+  findGroupByStudentId(studentId: string): Observable<any> {
     return this.http.get<any>(API_URL + 'student/' + studentId)
       .pipe(
         response => response
       );
   }
 
-  proposeGroup(group: any){
+  proposeGroup(group: any) {
     this.http.post(
       API_URL + 'student/propose-group',
       {
@@ -90,39 +113,45 @@ export class CrudService {
     );
   }
 
-  findCourseByIdentifier(courseIdentifier: string): Observable<CourseModel>{
+  findCourseByIdentifier(courseIdentifier: string): Observable<CourseModel> {
     return this.http.get<CourseModel>(API_URL + 'course/' + courseIdentifier)
       .pipe(
         response => response
       );
   }
 
-  findCoursesByStudent(studentId: string): Observable<CourseModel[]>{
+  findCoursesByStudent(studentId: string): Observable<CourseModel[]> {
     return this.http.get<CourseModel[]>(API_URL + 'student/' + studentId + '/courses')
       .pipe(response => {
         // @todo Migliorare
-        response.subscribe(courses => this.dataStore.courses = courses);
+        response.subscribe(courses => this.coursesSubject.next(courses));
         return response;
       });
   }
 
-  findCoursesByProfessor(professorId: string): Observable<CourseModel[]>{
-    return this.http.get<CourseModel[]>(API_URL + 'courses/' + professorId + '/getCourses')
-      .pipe(response => {
-        // @todo Migliorare
-        response.subscribe(courses => this.dataStore.courses = courses);
-        return response;
-      });
+  // Richiede l'elenco dei corsi al server se non ancora noti,
+  //  altrimenti li recupera dalla variabile locale
+  findCoursesByProfessor(professorId: string) {
+    if (this.coursesSubject.value !== undefined) {
+      return this.http.get<CourseModel[]>(API_URL + 'courses/' + professorId + '/getCourses')
+        .subscribe(response => {
+          // @todo Migliorare
+          this.coursesSubject.next(response);
+        });
+    } else {
+      this.coursesSubject.next(this.coursesSubject.value);
+    }
   }
 
   // Cerca nell'array locale di corsi il corso dato il path nell'URL
   findCourseByNameUrl(nameUrl: string): CourseModel {
-    const filteredCourses = this.dataStore.courses
+    const filteredCourses = this.coursesSubject.value
       .filter((c) => c.name.replace(' ', '-').toLowerCase() === nameUrl);
     if (filteredCourses.length > 0) {
       return filteredCourses[0];
+    } else {
+      return {acronymous: '', max: 0, min: 0, name: '', enabled: false};
     }
-    else { return {acronymous: '', max: 0, min: 0, name: ''}; }
   }
 
 }
