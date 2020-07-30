@@ -5,7 +5,9 @@
 </mat-toolbar>
 <div class="container">
   <div class="w-80">
-    <button mat-raised-button color="primary" class="mleft20 float-right mt-10" [routerLink]="['/teacher/courses']" [queryParams]="{doCreate: 'true'}">+ Add</button>
+    <button mat-raised-button color="primary" class="mleft20 float-right mt-10"
+            [routerLink]="['/teacher/courses']" [queryParams]="{doCreate: 'true'}">+ Add</button>
   </div>
-  <app-table [showDelete]="true" [data]="data" [columns]="columns" (delete)="deleteCourse($event)" [showEdit]="true" (edit)="editCourse($event)" [showChangeStatus]="true"></app-table>
+  <app-table [showDelete]="true" [data]="data" [columns]="columns" (delete)="deleteCourse($event)"
+             [showEdit]="true" (edit)="editCourse($event)" [showChangeStatus]="true" (changeActive)="changeActive($event)"></app-table>
 </div>

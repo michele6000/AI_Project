@@ -112,7 +112,7 @@ export class TableComponent implements OnInit {
   }
 
   enableDisable(row: any) {
-
+    this.onChangeActive.emit(row);
   }
 
   isEnabled(element: any) {
