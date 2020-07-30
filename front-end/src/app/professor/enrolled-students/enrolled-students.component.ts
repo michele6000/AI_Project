@@ -83,6 +83,10 @@ export class EnrolledStudentsComponent implements OnInit {
     this.crudService.enrollStudent(this.corso.name, $event.id).subscribe((res) => {
       if (res) {
         this.crudService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
+
+        this.snackBar.open('Student added successfully.', 'OK', {
+          duration: 5000
+        });
       }
     });
   }
@@ -95,14 +99,29 @@ export class EnrolledStudentsComponent implements OnInit {
 
   sendFile() {
     const formData: FormData = new FormData();
-    formData.append('uploadFile', this.file, this.file.name);
+    formData.append('file', new Blob([this.file], {type: 'text/csv'}), this.file.name);
     const headers = {
       'Content-Type': 'multipart/form-data'
     };
-    this.http.post('http://localhost:4200/api/file', formData, {headers})
+    this.http.post('/api/API/courses/' + this.corso.name + '/enrollMany', formData)
       .subscribe(
-        data => console.log('success'),
-        error => console.log(error)
+        (result: boolean[]) => {
+          if (result.filter((r) => !r).length > 0) {
+            // Almeno un caricamento fallito
+            this.snackBar.open('Error while uploading ' + result.filter((r) => !r).length + ' student(s). Try again.', 'OK', {
+              duration: 5000
+            });
+          } else {
+            this.snackBar.open(result.length + ' students added successfully.', 'OK', {
+              duration: 5000
+            });
+          }
+        },
+        error => {
+          this.snackBar.open('Error while uploading student list. Incorrect format.', 'OK', {
+            duration: 5000
+          });
+        }
       );
   }
 }
