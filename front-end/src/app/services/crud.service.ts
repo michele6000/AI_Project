@@ -20,9 +20,14 @@ export class CrudService {
   courses: Observable<CourseModel[]>;
   private coursesSubject: BehaviorSubject<CourseModel[]>;
 
+  students: Observable<StudentModel[]>;
+  private studentsSubject: BehaviorSubject<StudentModel[]>;
+
   constructor(private http: HttpClient) {
     this.coursesSubject = new BehaviorSubject<CourseModel[]>(null);
     this.courses = this.coursesSubject.asObservable();
+    this.studentsSubject = new BehaviorSubject<StudentModel[]>(null);
+    this.students = this.studentsSubject.asObservable();
   }
 
   createCourse(course: CourseModel) {
@@ -84,6 +89,20 @@ export class CrudService {
 
       }
     );
+  }
+
+  // Richiede l'elenco degli studenti al server se non ancora noti,
+  //  altrimenti li recupera dalla variabile locale
+  getStudents(refresh = false) {
+    if (this.studentsSubject.value !== undefined || refresh) {
+      this.http.get<StudentModel[]>(API_URL + 'students')
+        .subscribe(response => {
+          this.studentsSubject.next(response);
+        });
+    } else {
+      this.studentsSubject.next(this.studentsSubject.value);
+    }
+    return this.students;
   }
 
   getEnrolledStudents(courseName: string): Observable<StudentModel[]> {
