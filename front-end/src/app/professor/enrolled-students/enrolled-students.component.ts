@@ -19,11 +19,12 @@ export class EnrolledStudentsComponent implements OnInit {
   table: MatTable<StudentModel>;
 
   corso: CourseModel;
-  columns = ['email', 'name', 'surname', 'matricola'];
+  columns = ['email', 'firstName', 'name', 'id'];
   data: StudentModel[] = [];
   fileAbsent = true;
   file: any;
   courseParam: string;
+  students: StudentModel[] = [];
 
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private crudService: CrudService) {
   }
@@ -35,6 +36,16 @@ export class EnrolledStudentsComponent implements OnInit {
 
     this.crudService.getEnrolledStudents(this.corso.name).subscribe(
       (res) => this.data = res
+    );
+
+    this.crudService.getStudents().subscribe(
+      (students) => {
+        if (students) {
+          this.students = students;
+        } else {
+          this.students = [];
+        }
+      }
     );
     /*
     this.route.paramMap.pipe(
@@ -51,8 +62,11 @@ export class EnrolledStudentsComponent implements OnInit {
   }
 
   addStudent($event: StudentModel) {
-    console.log($event);
-    // this.table.renderRows();
+    this.crudService.enrollStudent($event).subscribe((res) => {
+      if (res) {
+        this.crudService.getStudents(true);
+      }
+    });
   }
 
   handleFileSelect($event: any) {
