@@ -71,13 +71,13 @@ export class CoursesComponent implements OnInit {
 
   changeActive($event: CourseModel) {
     if ($event.enabled) {
-      this.crudService.enableCourse($event.name).subscribe(result => {
+      this.crudService.disableCourse($event.name).subscribe(result => {
 
       });
     } else {
-      this.crudService.disableCourse($event.name).subscribe(result => {
+      this.crudService.enableCourse($event.name).subscribe(result => {
 
-      })
+      });
     }
   }
 }
