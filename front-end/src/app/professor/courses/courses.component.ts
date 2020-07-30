@@ -70,14 +70,19 @@ export class CoursesComponent implements OnInit {
   }
 
   changeActive($event: CourseModel) {
+    let res;
     if ($event.enabled) {
       this.crudService.disableCourse($event.name).subscribe(result => {
-
+        res = result;
       });
     } else {
       this.crudService.enableCourse($event.name).subscribe(result => {
-
+        res = result;
       });
+    }
+
+    if (res){
+      this.crudService.findCourseByIdentifier($event.acronymous);
     }
   }
 }
