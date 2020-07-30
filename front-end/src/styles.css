@@ -21,6 +21,7 @@ mat-sidenav-container{ margin: 0px; height: calc(100% - 128px); }
 .w-80 {width: 80%;}
 .w-100 {width: 100%;}
 .mb-10 {margin-bottom: 10px !important;}
+.mb-20 {margin-bottom: 20px !important;}
 .mt-10 {margin-top: 10px !important;}
 .mt-20 {margin-top: 20px !important;}
 .mr-20 {margin-right: 20px !important;}
@@ -31,6 +32,4 @@ mat-sidenav-container{ margin: 0px; height: calc(100% - 128px); }
 .cursor-default{cursor: default;}
 .dialog-position-field{width: 90%;margin-bottom: 15px;}
 .mt-10-center{margin-top: 10px;text-align: center;}
-.mat-radio-button ~ .mat-radio-button {
-  margin-left: 16px;
-}
+.mat-radio-button ~ .mat-radio-button {margin-left: 16px;}

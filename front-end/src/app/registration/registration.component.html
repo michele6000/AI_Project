@@ -3,8 +3,11 @@
 <div class="container text-center">
   <h1>Registration</h1>
   <mat-card-content>
-    <mat-error *ngIf="error_pw">
+    <mat-error class="mb-20" *ngIf="errorPw">
       Error. Different password
+    </mat-error>
+    <mat-error class="mb-20" *ngIf="notValidDomain">
+      You must have an email that belongs to university domain (eg. @polito.it)
     </mat-error>
     <form class="registration-form" (ngSubmit)="register(f)" #f="ngForm">
       <mat-form-field class="full-width">

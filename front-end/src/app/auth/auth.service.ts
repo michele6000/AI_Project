@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {UserModel} from '../models/user.models';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {shareReplay, tap} from 'rxjs/operators';
 import * as moment from 'moment';
 import {UserLogged} from '../models/user-logged';
@@ -9,7 +9,9 @@ import {Router} from '@angular/router';
 import {CrudService} from '../services/crud.service';
 
 const API_URL_LOGIN = '/api/auth/signin';
-const API_URL_REGISTER = 'http://localhost:8080/api/register';
+const API_URL_REGISTER = '/api/auth/';
+const DOMINIO_PROFESSOR = '@polito.it';
+const DOMINIO_STUDENT = '@studenti.polito.it';
 
 @Injectable({
   providedIn: 'root'
@@ -94,19 +96,24 @@ export class AuthService {
   }
 
   register(user: UserModel) {
-    this.http.post(
-      API_URL_REGISTER,
-      {
-        user
-      }
-    ).subscribe(
-      (payload: any) => {
+    const email = user.email;
+    let url = '';
+    if (email.includes(DOMINIO_PROFESSOR)){
+      url = 'addProfessor';
+    } else if (email.includes(DOMINIO_STUDENT)){
+      url = 'addStudent';
+    }
 
-      },
-      (error: any) => {
-
-      }
-    );
+    if (url !== '') {
+      return this.http.post(
+        API_URL_REGISTER + url,
+        {
+          user
+        }
+      );
+    } else {
+      return of(false);
+    }
   }
 
   public isLoggedIn() {
