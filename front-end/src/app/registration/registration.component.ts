@@ -25,9 +25,9 @@ export class RegistrationComponent implements OnInit {
       this.errorPw = true;
     } else {
       let user = new UserModel();
-      user.name = f.value.name;
-      user.surname = f.value.surname;
-      user.matricola = f.value.matricola;
+      user.firstName = f.value.name;
+      user.name = f.value.surname;
+      user.id = f.value.matricola;
       user.password = f.value.password;
       user.email = f.value.email;
 

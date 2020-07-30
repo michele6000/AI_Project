@@ -13,7 +13,16 @@
 
   <ng-container *ngFor="let col of columnsToDisplay" [matColumnDef]="col">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{col | titlecase}}</th>
-    <td mat-cell *matCellDef="let element"> {{element[col] == true ? 'Yes' : (element[col] == false ? 'No' : element[col])}} </td>
+    <td mat-cell *matCellDef="let element"> {{element[col]}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="enabled">
+    <th mat-header-cell *matHeaderCellDef>
+      Enable / Disable
+    </th>
+    <td mat-cell *matCellDef="let element">
+      <mat-checkbox [checked]="isEnabled(element)" (change)="enableDisable(element)"></mat-checkbox>
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="edit" *ngIf="showEdit">

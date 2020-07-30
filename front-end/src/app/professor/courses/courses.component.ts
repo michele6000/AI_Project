@@ -14,7 +14,7 @@ import {AuthService} from "../../auth/auth.service";
 })
 export class CoursesComponent implements OnInit {
   url: any;
-  columns = ['acronymous', 'name', 'enabled', 'min', 'max'];
+  columns = ['acronymous', 'name', 'min', 'max'];
   data: CourseModel[] = [];
 
   constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private crudService: CrudService, private authService: AuthService) {

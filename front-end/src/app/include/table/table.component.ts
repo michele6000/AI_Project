@@ -19,6 +19,7 @@ export class TableComponent implements OnInit {
 
   @Input() showDelete: boolean;
   @Input() showEdit: boolean;
+  @Input() showChangeStatus: boolean;
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
@@ -29,7 +30,9 @@ export class TableComponent implements OnInit {
   }
 
   @Output('delete') onDelete: EventEmitter<any[]> = new EventEmitter<any[]>();
-  @Output('edit') onEdit: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output('changeActive') onChangeActive: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
@@ -42,7 +45,11 @@ export class TableComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.showEdit) {
-      this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'edit'];
+      if (this.showChangeStatus) {
+        this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'enabled', 'edit'];
+      } else {
+        this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'edit'];
+      }
     } else {
       this.columnsWithCheckbox = ['select', ...this.columnsToDisplay];
     }
@@ -102,5 +109,13 @@ export class TableComponent implements OnInit {
 
   edit($event: MouseEvent, element: any) {
     this.onEdit.emit(element);
+  }
+
+  enableDisable(row: any) {
+
+  }
+
+  isEnabled(element: any) {
+    return element.enabled;
   }
 }

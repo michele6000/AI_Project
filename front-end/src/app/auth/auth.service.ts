@@ -107,9 +107,7 @@ export class AuthService {
     if (url !== '') {
       return this.http.post(
         API_URL_REGISTER + url,
-        {
           user
-        }
       );
     } else {
       return of(false);
