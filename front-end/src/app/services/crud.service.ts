@@ -154,4 +154,16 @@ export class CrudService {
     }
   }
 
+  enableCourse(courseName: string){
+    return this.http.post(
+      API_URL + 'courses/' + courseName + '/enable', {}
+    );
+  }
+
+  disableCourse(courseName: string){
+    return this.http.post(
+      API_URL + 'courses/' + courseName + '/disable', {}
+    );
+  }
+
 }
