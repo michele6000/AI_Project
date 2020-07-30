@@ -1,12 +1,13 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {switchMap} from 'rxjs/operators';
+import {concatMap, switchMap, toArray} from 'rxjs/operators';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {CourseModel} from '../../models/course.model';
 import {StudentModel} from '../../models/student.model';
 import {MatTable} from '@angular/material/table';
 import {HttpClient} from '@angular/common/http';
 import {CrudService} from "../../services/crud.service";
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-enrolled-students',
@@ -15,8 +16,6 @@ import {CrudService} from "../../services/crud.service";
 })
 export class EnrolledStudentsComponent implements OnInit {
 
-  @ViewChild(MatTable)
-  table: MatTable<StudentModel>;
 
   corso: CourseModel;
   columns = ['email', 'firstName', 'name', 'id'];
@@ -26,7 +25,7 @@ export class EnrolledStudentsComponent implements OnInit {
   courseParam: string;
   students: StudentModel[] = [];
 
-  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private crudService: CrudService) {
+  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private crudService: CrudService, private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
@@ -35,7 +34,9 @@ export class EnrolledStudentsComponent implements OnInit {
     this.corso = this.crudService.findCourseByNameUrl(this.courseParam);
 
     this.crudService.getEnrolledStudents(this.corso.name).subscribe(
-      (res) => this.data = res
+      (res) => {
+        this.data = res;
+      }
     );
 
     this.crudService.getStudents().subscribe(
@@ -58,13 +59,30 @@ export class EnrolledStudentsComponent implements OnInit {
   }
 
   deleteStudent($event: StudentModel[]) {
-    console.log($event);
+    const res = from($event).pipe(
+      concatMap(s => {
+        return this.crudService.deleteStudent(this.corso.name, s.id);
+      }),
+      toArray()
+    );
+
+    res.subscribe((result: boolean[]) => {
+      this.crudService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
+      if (result.filter(e => !e).length > 0) {
+        // Almeno una ha fallito
+      } else {
+        // Tutte a buon fine
+        this.snackBar.open('Students deleted successfully.', 'OK', {
+          duration: 5000
+        });
+      }
+    });
   }
 
   addStudent($event: StudentModel) {
-    this.crudService.enrollStudent(this.corso.name, $event).subscribe((res) => {
+    this.crudService.enrollStudent(this.corso.name, $event.id).subscribe((res) => {
       if (res) {
-        this.crudService.getStudents(true);
+        this.crudService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
       }
     });
   }

@@ -105,6 +105,12 @@ export class CrudService {
     return this.students;
   }
 
+  deleteStudent(courseName: string, studentId: string){
+    return this.http.post(
+      API_URL + 'courses/' + courseName + '/deleteOne?studentId=' + studentId,{}
+    );
+  }
+
   getEnrolledStudents(courseName: string): Observable<StudentModel[]> {
     return this.http.get<StudentModel[]>(API_URL + 'courses/' + courseName + '/enrolled');
   }
@@ -184,9 +190,9 @@ export class CrudService {
     );
   }
 
-  enrollStudent(courseName: string, studentModel: StudentModel){
+  enrollStudent(courseName: string, studentId: string){
     return this.http.post(
-      API_URL + 'courses/' + courseName + '/enrollOne', {studentModel}
+      API_URL + 'courses/' + courseName + '/enrollOne', {id: studentId}
     );
   }
 

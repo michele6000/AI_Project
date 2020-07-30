@@ -1,7 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
+import {MatTable, MatTableDataSource} from '@angular/material/table';
+import {StudentModel} from "../../models/student.model";
 
 @Component({
   selector: 'app-table',
@@ -14,6 +15,9 @@ export class TableComponent implements OnInit {
   dataSource = new MatTableDataSource();
   father: string;
 
+  @ViewChild(MatTable)
+  table: MatTable<any>;
+
   @Input() checkedObjects: any[] = [];
   @Output() checkedObjectsChange = new EventEmitter<any[]>();
 
@@ -23,6 +27,11 @@ export class TableComponent implements OnInit {
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
+    console.log(data);
+    if (this.table) {
+      console.log('Table ok');
+      this.table.renderRows();
+    }
   }
 
   @Input('columns') set columns(columns) {

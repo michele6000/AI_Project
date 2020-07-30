@@ -51,6 +51,7 @@ import { TableFilterComponent } from './include/table-filter/table-filter.compon
 import { EditHomeworkComponent } from './dialog/edit-homework/edit-homework.component';
 import {MatRadioModule} from "@angular/material/radio";
 import {AuthInterceptor} from "./auth/auth.interceptor";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -106,7 +107,8 @@ import {AuthInterceptor} from "./auth/auth.interceptor";
     MatAutocompleteModule,
     MatTooltipModule,
     MatExpansionModule,
-    MatRadioModule
+    MatRadioModule,
+    MatSnackBarModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]

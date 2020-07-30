@@ -14,16 +14,16 @@ export class CreateGroupComponent implements OnInit {
   studentsColumns = ['email', 'name', 'surname', 'matricola'];
   studentsData: StudentModel[] = [
     {
-      email: 's123456',
-      name: 'Mario',
-      surname: 'Rossi',
-      matricola: '123456'
+      email: 's123456@studenti.polito.it',
+      firstName: 'Mario',
+      name: 'Rossi',
+      id: 's123456@studenti.polito.it'
     },
     {
-      email: 's123456',
-      name: 'Paolo',
-      surname: 'Verdi',
-      matricola: '123456'
+      email: 's123456@studenti.polito.it',
+      firstName: 'Paolo',
+      name: 'Verdi',
+      id: 's123456'
     }
   ];
   groupsColumns = ['Group Name', 'Matricola', 'Name'];
