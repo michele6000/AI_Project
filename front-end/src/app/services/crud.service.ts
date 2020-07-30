@@ -131,11 +131,10 @@ export class CrudService {
 
   // Richiede l'elenco dei corsi al server se non ancora noti,
   //  altrimenti li recupera dalla variabile locale
-  findCoursesByProfessor(professorId: string) {
-    if (this.coursesSubject.value !== undefined) {
+  findCoursesByProfessor(professorId: string, refresh = false) {
+    if (this.coursesSubject.value !== undefined || refresh) {
       return this.http.get<CourseModel[]>(API_URL + 'courses/' + professorId + '/getCourses')
         .subscribe(response => {
-          // @todo Migliorare
           this.coursesSubject.next(response);
         });
     } else {

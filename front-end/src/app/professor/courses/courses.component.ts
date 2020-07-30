@@ -70,19 +70,16 @@ export class CoursesComponent implements OnInit {
   }
 
   changeActive($event: CourseModel) {
-    let res;
     if ($event.enabled) {
-      this.crudService.disableCourse($event.name).subscribe(result => {
-        res = result;
-      });
+      this.crudService.disableCourse($event.name).subscribe((result) => this.onChangeActiveCompleted(result, $event.acronymous));
     } else {
-      this.crudService.enableCourse($event.name).subscribe(result => {
-        res = result;
-      });
+      this.crudService.enableCourse($event.name).subscribe((result) => this.onChangeActiveCompleted(result, $event.acronymous));
     }
+  }
 
-    if (res){
-      this.crudService.findCourseByIdentifier($event.acronymous);
+  onChangeActiveCompleted(result: any, acronymous: string) {
+    if (result){
+      this.crudService.findCoursesByProfessor('1', true);
     }
   }
 }
