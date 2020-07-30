@@ -165,4 +165,10 @@ export class CrudService {
     );
   }
 
+  enrollStudent(courseName: string, studentModel: StudentModel){
+    return this.http.post(
+      API_URL + 'courses/' + courseName + '/enrollOne', {studentModel}
+    );
+  }
+
 }
