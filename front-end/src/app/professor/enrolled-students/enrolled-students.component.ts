@@ -62,7 +62,7 @@ export class EnrolledStudentsComponent implements OnInit {
   }
 
   addStudent($event: StudentModel) {
-    this.crudService.enrollStudent($event).subscribe((res) => {
+    this.crudService.enrollStudent(this.corso.name, $event).subscribe((res) => {
       if (res) {
         this.crudService.getStudents(true);
       }
