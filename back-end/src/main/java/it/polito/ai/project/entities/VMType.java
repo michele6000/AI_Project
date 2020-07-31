@@ -13,7 +13,7 @@ import java.util.List;
 public class VMType {
     @Id
     @GeneratedValue
-    private String id;
+    private Long id;
     private String dockerFile; // visto come path del dockerfile
 
     // Limitazioni per la VM
@@ -26,7 +26,7 @@ public class VMType {
     @OneToMany ()
     private List<Course> courses; // una VM_type può essere associata a cpiù corsi ma non viceversa
 
-    @OneToMany ()
+    @OneToMany (mappedBy = "vmType")
     private List<VM> VMs; // posso avere più istanze con lo stesso tipo ma non viceversa
 
     @OneToMany ()

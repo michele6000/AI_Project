@@ -6,7 +6,7 @@ import javax.persistence.Id;
 
 @Data
 public class SolutionDTO {
-    private String id;
+    private Long id;
     private String image; //image of student's solution for the submission
     private String version;
     private Long evaluation;

@@ -139,10 +139,10 @@ public class StudentController {
 
   @PostMapping("/{studentId}/{submissionId}/evaluateLatestSolution")
   public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
-    if (!getCurrentRoles().contains("PROFESSOR"))  throw new ResponseStatusException(
-            HttpStatus.FORBIDDEN,
-            "You are not allowed to evaluate a solution!"
-    );
+//    if (!getCurrentRoles().contains("PROFESSOR"))  throw new ResponseStatusException(
+//            HttpStatus.FORBIDDEN,
+//            "You are not allowed to evaluate a solution!"
+//    );
     try {
       return submissionService.evaluateLastSolution(studentId,submissionId, evaluation, getCurrentUsername());
     } catch (Exception e) {
@@ -154,10 +154,10 @@ public class StudentController {
 
   @PostMapping("/{studentId}/{solutionId}/evaluateSolution")
   public boolean evaluateSolution(@PathVariable String studentId, @PathVariable Long solutionId, @RequestParam Long evaluation) {
-    if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
-            HttpStatus.FORBIDDEN,
-            "You are not allowed to evaluate a solution!"
-    );
+//    if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
+//            HttpStatus.FORBIDDEN,
+//            "You are not allowed to evaluate a solution!"
+//    );
     try {
       return submissionService.evaluateSolution(solutionId, evaluation, getCurrentUsername());
     } catch (Exception e) {

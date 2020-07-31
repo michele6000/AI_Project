@@ -93,13 +93,13 @@ public interface TeamService {
   List<VMDTO> getTeamVMs(Long teamId);
 
   @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  String createVMType(VMTypeDTO vmType);
+  Long createVMType(VMTypeDTO vmType);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
   String getTeamStat(Long teamId);
 
   @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  Boolean setVMType(String courseName, String vmtId);
+  Boolean setVMType(String courseName, Long vmtId);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
   VMDTO getVMConfig(String vmId);

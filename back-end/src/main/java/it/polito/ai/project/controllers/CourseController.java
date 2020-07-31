@@ -255,7 +255,7 @@ public class CourseController {
   }
 
   @PostMapping("/createVMType")
-  public String setCourseVMLimits(@RequestParam VMTypeDTO vmt){
+  public Long createVMType(@RequestBody VMTypeDTO vmt){
     try {
       //nel form limiti e dockerfile
       return service.createVMType(vmt);
@@ -265,7 +265,7 @@ public class CourseController {
   }
 
   @PostMapping("/{courseName}/setVMType")
-  public Boolean setVMType(@RequestParam String vmtId, @PathVariable String courseName){
+  public Boolean setVMType(@RequestParam Long vmtId, @PathVariable String courseName){
     try {
       service.setVMType(courseName,vmtId);
       return true;
@@ -328,6 +328,7 @@ public class CourseController {
   @GetMapping("/{courseName}/submissions/{id}")
   public SubmissionDTO getSubmissionById(@PathVariable String courseName, @PathVariable Long id) {
     try {
+      System.out.println("sub: "+id);
       return submissionService.getSubmission(courseName, id);
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

@@ -18,7 +18,7 @@ public class Team {
   @JoinColumn(name = "VMType_id")
   private VMType vmType;
 
-  @OneToMany()
+  @OneToMany(mappedBy = "team")
   private List<VM> VMInstance;
 
   @ManyToOne

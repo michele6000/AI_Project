@@ -164,17 +164,17 @@ public class SubmissionServiceImpl implements SubmissionService {
             SolutionDTO sol = getLastSolution(studentId, submissionId);
             if (!isProfessorCourseSubmission(submissionId, profId))
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
-            modelMapper.map(sol, Solution.class);
-            sol.setEvaluation(evaluation);
-            sol.setStatus("EVALUATED");
+            solutionRepo.getOne(sol.getId()).setEvaluation(evaluation);
+            solutionRepo.getOne(sol.getId()).setStatus("EVALUATED");
             notification.sendMessage(
                     studentRepo.getOne(studentId).getEmail(),
                     "Evaluation",
                     "The professor has evaluated your solution.\nSolution_id = " + sol.getId() +
                             "\n Final score: " + evaluation
             );
+
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) { // ma che è sta cafonata?
             throw e;
         }
 
@@ -202,11 +202,19 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (!s.getCourses().contains(submission.getCourse()))
             throw new StudentNotFoundException("Student not enrolled in this course!");
 
+        long version = solutionRepo.findAll()
+                .stream()
+                .filter(sol -> sol.getStudent().getId().equals(studentId))
+                .filter(sol -> sol.getSubmission().getId().equals(submissionId))
+                .count();
+
         solution.setSubmission(submissionRepo.getOne(submissionId));
         solution.setStatus("SUBMITTED");
-        solution.setVersion(solution.getVersion() + 1);
+        solution.setStudent(studentRepo.getOne(studentId));
+        solution.setVersion((int) (version+1L));
 
         solutionRepo.save(solution);
+//        studentRepo.getOne(studentId).addSolution(solution);
 
         return "Solution successfully created, id = " + solution.getId() + " Version = " + solution.getVersion();
     }

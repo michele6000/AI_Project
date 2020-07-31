@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class VMTypeDTO {
-    private String id;
+    private Long id;
     private String dockerFile; // visto come path del dockerfile
 
     // Limitazioni per la VM

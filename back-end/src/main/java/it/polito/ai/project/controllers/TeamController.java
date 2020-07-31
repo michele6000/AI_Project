@@ -47,7 +47,7 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/createVmInstance")
-    public VMDTO createVmInstance(@PathVariable Long teamId, @RequestParam VMDTO vm) {
+    public VMDTO createVmInstance(@PathVariable Long teamId, @RequestBody VMDTO vm) {
         try {
             return service.createVmInstance(teamId,vm,getCurrentUsername());
         } catch (TeamServiceException e) {

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class VMDTO {
-    private String id;
+    private Long id;
     private String owner;
     private Integer cpu;
     private Integer ram;
