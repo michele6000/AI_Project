@@ -102,28 +102,28 @@ public interface TeamService {
   Boolean setVMType(String courseName, Long vmtId);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  VMDTO getVMConfig(String vmId);
+  VMDTO getVMConfig(Long vmId);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  Boolean modifyVMConfiguration(String vmId, VMDTO vm);
+  Boolean modifyVMConfiguration(Long vmId, VMDTO vm);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  Boolean modifyVMOwner(String vmId, String studentID);
+  Boolean modifyVMOwner(Long vmId, String studentID);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  Boolean addVMOwner(String vmId, String studentID);
+  Boolean addVMOwner(Long vmId, String studentID);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  List<StudentDTO> getVMOwners(String vmId);
+  List<StudentDTO> getVMOwners(Long vmId);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  Boolean powerVMOn(String vmId);
+  Boolean powerVMOn(Long vmId);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  Boolean powerVMOff(String vmId);
+  Boolean powerVMOff(Long vmId);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-  Boolean deleteVM(String vmId);
+  Boolean deleteVM(Long vmId);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
   VMDTO createVmInstance(Long teamId, VMDTO vm, String currentUsername);

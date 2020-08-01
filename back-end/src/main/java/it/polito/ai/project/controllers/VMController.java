@@ -20,7 +20,7 @@ public class VMController {
     TeamService service;
 
     @GetMapping("/{vmId}/getCurrentConfiguration")
-    public VMDTO getVMConfig(@PathVariable String vmId) {
+    public VMDTO getVMConfig(@PathVariable Long vmId) {
         try {
             return service.getVMConfig(vmId);
         } catch (TeamServiceException e) {
@@ -29,7 +29,7 @@ public class VMController {
     }
 
     @PostMapping("/{vmId}/modifyConfiguration")
-    public Boolean modifyConfiguration(@PathVariable String vmId, @RequestParam VMDTO vm) {
+    public Boolean modifyConfiguration(@PathVariable Long vmId, @RequestBody VMDTO vm) {
         try {
             return service.modifyVMConfiguration(vmId,vm);
         } catch (TeamServiceException e) {
@@ -39,7 +39,7 @@ public class VMController {
 
     //in caso di "cessione" dell'ownership
     @PostMapping("/{vmId}/modifyOwner")
-    public Boolean modifyOwner(@PathVariable String vmId, @RequestParam String studentID) {
+    public Boolean modifyOwner(@PathVariable Long vmId, @RequestBody String studentID) {
         try {
             return service.modifyVMOwner(vmId,studentID);
         } catch (TeamServiceException e) {
@@ -48,7 +48,7 @@ public class VMController {
     }
 
     @PostMapping("/{vmId}/addOwner")
-    public Boolean addOwner(@PathVariable String vmId, @RequestParam String studentID) {
+    public Boolean addOwner(@PathVariable Long vmId, @RequestBody String studentID) {
         try {
             return service.addVMOwner(vmId,studentID);
         } catch (TeamServiceException e) {
@@ -57,7 +57,7 @@ public class VMController {
     }
 
     @GetMapping("/{vmId}/getOwners")
-    public List<StudentDTO> getOwners(@PathVariable String vmId) {
+    public List<StudentDTO> getOwners(@PathVariable Long vmId) {
         try {
             return service.getVMOwners(vmId);
         } catch (TeamServiceException e) {
@@ -66,7 +66,7 @@ public class VMController {
     }
 
     @PostMapping("/{vmId}/powerOn")
-    public Boolean powerOn(@PathVariable String vmId) {
+    public Boolean powerOn(@PathVariable Long vmId) {
         try {
             return service.powerVMOn(vmId);
         } catch (TeamServiceException e) {
@@ -75,7 +75,7 @@ public class VMController {
     }
 
     @PostMapping("/{vmId}/powerOff")
-    public Boolean powerOff(@PathVariable String vmId) {
+    public Boolean powerOff(@PathVariable Long vmId) {
         try {
             return service.powerVMOff(vmId);
         } catch (TeamServiceException e) {
@@ -85,7 +85,7 @@ public class VMController {
 
 
     @PostMapping("{vmId}/delete")
-    public Boolean delete(@PathVariable String vmId) {
+    public Boolean delete(@PathVariable Long vmId) {
         try {
             return service.deleteVM(vmId);
         } catch (TeamServiceException e) {

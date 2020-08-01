@@ -569,21 +569,21 @@ public class TeamServiceImpl implements TeamService {
   }
 
   @Override
-  public VMDTO getVMConfig(String vmId) {
+  public VMDTO getVMConfig(Long vmId) {
     Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
     if (!optionalVMEntity.isPresent()) {
       throw new TeamServiceException("Vm not found!");
     }
-    return modelMapper.map(optionalVMEntity,VMDTO.class);
+    return modelMapper.map(optionalVMEntity.get(),VMDTO.class);
   }
 
   @Override
-  public Boolean modifyVMConfiguration(String vmId, VMDTO vm) {
+  public Boolean modifyVMConfiguration(Long vmId, VMDTO vm) {
     Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
     if (!optionalVMEntity.isPresent()) {
       throw new TeamServiceException("VM not found!");
     }
-    if(!vm.getStatus().equals("poweroff")) return false;
+    if(!optionalVMEntity.get().getStatus().equals("poweroff")) return false;
     if(vm.getRam() > optionalVMEntity.get().getVmType().getLimit_ram()) return false;
     if(vm.getCpu() > optionalVMEntity.get().getVmType().getLimit_cpu()) return false;
     if(vm.getHdd() > optionalVMEntity.get().getVmType().getLimit_hdd()) return false;
@@ -595,9 +595,11 @@ public class TeamServiceImpl implements TeamService {
   }
 
   @Override
-  public Boolean modifyVMOwner(String vmId, String studentID) {
+  public Boolean modifyVMOwner(Long vmId, String studentID) {
     Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
     Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
+
+    System.out.println(studentID);
     if (!optionalVMEntity.isPresent()) {
       throw new TeamServiceException("Vm not found!");
     }
@@ -615,7 +617,7 @@ public class TeamServiceImpl implements TeamService {
   }
 
   @Override
-  public Boolean addVMOwner(String vmId, String studentID) {
+  public Boolean addVMOwner(Long vmId, String studentID) {
     Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
     Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
     if (!optionalVMEntity.isPresent()) {
@@ -630,7 +632,7 @@ public class TeamServiceImpl implements TeamService {
   }
 
   @Override
-  public List<StudentDTO> getVMOwners(String vmId) {
+  public List<StudentDTO> getVMOwners(Long vmId) {
     Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
     if (!optionalVMEntity.isPresent()) {
       throw new TeamServiceException("Vm not found!");
@@ -644,7 +646,7 @@ public class TeamServiceImpl implements TeamService {
   }
 
   @Override
-  public Boolean powerVMOn(String vmId) {
+  public Boolean powerVMOn(Long vmId) {
     Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
     if (!optionalVMEntity.isPresent()) {
       throw new TeamServiceException("Vm not found!");
@@ -658,6 +660,7 @@ public class TeamServiceImpl implements TeamService {
               .stream()
               .filter(vm -> vm.getTeam().getId().equals(team))
               .filter(vm -> vm.getVmType().getId().equals(type))
+              .filter(vm -> vm.getStatus().equals("poweron"))
               .count() <= max_instance)
       {
         optionalVMEntity.get().setStatus("poweron");
@@ -668,7 +671,7 @@ public class TeamServiceImpl implements TeamService {
   }
 
   @Override
-  public Boolean powerVMOff(String vmId) {
+  public Boolean powerVMOff(Long vmId) {
     Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
     if (!optionalVMEntity.isPresent()) {
       throw new TeamServiceException("Vm not found!");
@@ -683,7 +686,7 @@ public class TeamServiceImpl implements TeamService {
   }
 
   @Override
-  public Boolean deleteVM(String vmId) {
+  public Boolean deleteVM(Long vmId) {
     Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
     if (!optionalVMEntity.isPresent()) {
       throw new TeamServiceException("Vm not found!");
@@ -693,7 +696,7 @@ public class TeamServiceImpl implements TeamService {
     optionalVMEntity.get().getOwners().forEach(student -> student.getVms().remove(optionalVMEntity.get()));
     optionalVMEntity.get().getVmType().getVMs().remove(optionalVMEntity.get());
     vmRepo.delete(optionalVMEntity.get());
-    return null;
+    return true;
   }
 
   @Override
