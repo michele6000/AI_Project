@@ -16,7 +16,7 @@ export class EditVmProfessorComponent implements OnInit {
   fileAbsent: boolean = false;
   file: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private professorService: ProfessorService) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private professorService: ProfessorService) {
     this.group = data;
   }
 

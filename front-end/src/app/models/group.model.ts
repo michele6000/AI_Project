@@ -1,12 +1,9 @@
-import {VmModel} from './vm.model';
+import {StudentModel} from './student.model';
 
 export class GroupModel {
   id: number;
   name: string;
-  vcpu: number;
-  ram: number;
-  disk: number;
-  maxActiveVmSimultaneously: number;
-  maxVm: number;
-  vms?: VmModel[];
+  status: number;
+  courseName: string;
+  members: StudentModel[];
 }

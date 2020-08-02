@@ -25,7 +25,8 @@ export class AuthService {
     id: null, email: undefined, roles: []
   };
 
-  constructor(private http: HttpClient, private router: Router, private professorService: ProfessorService, private studentService: StudentService) {
+  constructor(private http: HttpClient, private router: Router,
+              private professorService: ProfessorService, private studentService: StudentService) {
     this.userSubject = new BehaviorSubject<UserLogged>(this.localUser);
     this.user = this.userSubject.asObservable();
     if (localStorage.getItem('token')) {
@@ -44,6 +45,7 @@ export class AuthService {
   loginRedirect() {
     if (this.localUser.roles.filter((value => value === 'ROLE_STUDENT')).length > 0) {
       this.studentService.findCoursesByStudent(this.localUser.id);
+      this.studentService.findTeamsByStudent(this.localUser.id);
       this.router.navigate(['student']);
     } else if (this.localUser.roles.filter((value => value === 'ROLE_PROFESSOR')).length > 0) {
       this.professorService.findCoursesByProfessor(this.localUser.id);
@@ -72,6 +74,7 @@ export class AuthService {
 
           this.localUser.roles = tkn.roles;
           this.localUser.id = email.split('@')[0];
+          this.localUser.email = email;
 
           // this.isUserLoggedIn = true;
           this.userSubject.next(this.localUser);

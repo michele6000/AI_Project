@@ -21,6 +21,7 @@ export class LoggedHeaderComponent implements OnInit {
         this.isLoggedIn = true;
         this.title = 'VIRTUAL LABS';
       } else {
+        this.email = '';
         this.isLoggedIn = false;
         this.title = 'HOME';
       }

@@ -5,6 +5,7 @@ import {MatTableDataSource, MatTable} from '@angular/material/table';
 import {MatPaginator} from "@angular/material/paginator";
 import {GroupModel} from "../../models/group.model";
 import {VmModel} from "../../models/vm.model";
+import {StudentModel} from "../../models/student.model";
 
 /**
  * @title Table with expandable rows
@@ -27,30 +28,51 @@ export class TableExpandableComponent implements OnInit {
   @ViewChildren('innerSort') innerSort: QueryList<MatSort>;
   @ViewChildren('innerTables') innerTables: QueryList<MatTable<VmModel>>;
 
+  @ViewChild(MatTable)
+  table: MatTable<any>;
+
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
 
-  @Output('edit') onEdit: EventEmitter<GroupModel> = new EventEmitter<GroupModel>();
+  @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
 
-  dataSource: MatTableDataSource<GroupModel>;
+  dataSource: MatTableDataSource<any>;
   usersData: any[] = [];
+
+  @Input() set columns(columns) {
+    this.columnsToDisplay = columns;
+  }
+
+  @Input() set innerColumns(columns) {
+    this.innerDisplayedColumns = columns;
+  }
+
   columnsToDisplay = ['id', 'name', 'vcpu', 'ram'];
   columnsWithEdit: string[];
   innerDisplayedColumns = ['name', 'state', 'link'];
-  expandedElement: GroupModel | null;
+  expandedElement: any | null;
 
   @Input() showEdit = false;
+
+  @Input('data') set data(data) {
+    this.usersData = [];
+    data.forEach(group => {
+      this.prepareData(group);
+    });
+    this.dataSource = new MatTableDataSource(this.usersData);
+    console.log(data);
+    if (this.table) {
+      console.log('Table ok');
+      this.table.renderRows();
+    }
+  }
 
   constructor(private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {
-    GROUPS.forEach(group => {
-      if (group.vms && Array.isArray(group.vms) && group.vms.length) {
-        this.usersData = [...this.usersData, {...group, vms: new MatTableDataSource(group.vms)}];
-      } else {
-        this.usersData = [...this.usersData, group];
-      }
+    this.data?.forEach(group => {
+      this.prepareData(group);
     });
     this.dataSource = new MatTableDataSource(this.usersData);
     this.dataSource.sort = this.sort;
@@ -62,8 +84,20 @@ export class TableExpandableComponent implements OnInit {
     }
   }
 
+  prepareData(group: any) {
+    if (group.vms && Array.isArray(group.vms) && group.vms.length) {
+      this.usersData = [...this.usersData, {...group, vms: new MatTableDataSource(group.vms)}];
+    } else if (group.members && Array.isArray(group.members) && group.members.length) {
+      this.usersData = [...this.usersData, {...group, vms: new MatTableDataSource(group.members)}];
+    } else {
+      this.usersData = [...this.usersData, group];
+    }
+  }
+
   toggleRow(element: any) {
     if (element.vms && (element.vms as MatTableDataSource<VmModel>).data.length) {
+      this.expandedElement = this.expandedElement === element ? null : element;
+    } else if (element.members && (element.members as MatTableDataSource<StudentModel>).data.length) {
       this.expandedElement = this.expandedElement === element ? null : element;
     }
     this.cd.detectChanges();
@@ -80,7 +114,7 @@ export class TableExpandableComponent implements OnInit {
   }
 }
 
-const GROUPS: GroupModel[] = [
+const GROUPS = [
   {
     name: 'Gruppo 1',
     id: 1,
