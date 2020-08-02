@@ -11,6 +11,7 @@ import {CoursesComponent} from './professor/courses/courses.component';
 import {GroupsComponent} from './student/groups/groups.component';
 import {VmsStudentComponent} from './student/vms-student/vms-student.component';
 import {AssignmentsStudentComponent} from './student/assignments-student/assignments-student.component';
+import {RouteGuardService} from './auth/route-guard.service';
 
 
 const routes: Routes = [
@@ -29,15 +30,27 @@ const routes: Routes = [
   },
   {
     path: 'teacher/courses',
-    component: CoursesComponent
+    component: CoursesComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: 'ROLE_PROFESSOR'
+    }
   },
   {
     path: 'teacher',
-    component: ProfessorComponent
+    component: ProfessorComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: 'ROLE_PROFESSOR'
+    }
   },
   {
     path: 'teacher/:course',
     component: ProfessorComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: 'ROLE_PROFESSOR'
+    },
     children: [
       {
         path: 'students',
@@ -55,11 +68,19 @@ const routes: Routes = [
   },
   {
     path: 'student',
-    component: StudentComponent
+    component: StudentComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: 'ROLE_STUDENT'
+    }
   },
   {
     path: 'student/:course',
     component: StudentComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: 'ROLE_STUDENT'
+    },
     children: [
       {
         path: 'groups',

@@ -16,6 +16,7 @@ export class CoursesComponent implements OnInit {
   url: any;
   columns = ['acronymous', 'name', 'min', 'max'];
   data: CourseModel[] = [];
+  id: string = null;
 
   constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private crudService: CrudService, private authService: AuthService) {
 
@@ -44,6 +45,7 @@ export class CoursesComponent implements OnInit {
 
     this.authService.user.subscribe((user) => {
       if (user != null) {
+        this.id = user.id;
         this.crudService.courses.subscribe(
           (courses) => {
             if (courses) {
@@ -79,7 +81,7 @@ export class CoursesComponent implements OnInit {
 
   onChangeActiveCompleted(result: any, acronymous: string) {
     if (result){
-      this.crudService.findCoursesByProfessor('1', true);
+      this.crudService.findCoursesByProfessor(this.id, true);
     }
   }
 }

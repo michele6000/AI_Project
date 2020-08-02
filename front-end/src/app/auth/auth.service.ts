@@ -32,6 +32,7 @@ export class AuthService {
       const tkn = JSON.parse(atob(localStorage.getItem('token').split('.')[1]));
       this.localUser.email = localStorage.getItem('email');
       this.localUser.roles = tkn.roles;
+      this.localUser.id = localStorage.getItem('email').split('@')[0];
       // Verificare
       this.loginRedirect();
     } else {
@@ -43,10 +44,10 @@ export class AuthService {
     if (this.localUser.roles.filter((value => value === 'ROLE_STUDENT')).length > 0) {
       this.router.navigate(['student']);
     } else if (this.localUser.roles.filter((value => value === 'ROLE_PROFESSOR')).length > 0) {
-      this.crudService.findCoursesByProfessor('1');
+      this.crudService.findCoursesByProfessor(this.localUser.id);
       this.router.navigate(['teacher']);
     } else if (this.localUser.roles.filter((value => value === 'ROLE_ADMIN')).length > 0) {
-      this.router.navigate(['teacher']);
+      this.router.navigate(['home']);
     } else {
       // @todo Utente loggato ma non ha ruoli
     }
@@ -64,8 +65,11 @@ export class AuthService {
           localStorage.setItem('token', payload.token);
           localStorage.setItem('expires_at', tkn.exp);
           localStorage.setItem('email', email);
+          localStorage.setItem('id', email.split('@')[0]);
+          localStorage.setItem('roles', tkn.roles);
 
           this.localUser.roles = tkn.roles;
+          this.localUser.id = email.split('@')[0];
 
           // this.isUserLoggedIn = true;
           this.userSubject.next(this.localUser);
@@ -91,23 +95,26 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('expires_at');
     localStorage.removeItem('email');
-    // this.isUserLoggedIn = false;
+    localStorage.removeItem('id');
+    localStorage.removeItem('roles');
+
     this.userSubject.next(null);
+    this.router.navigate(['home']);
   }
 
   register(user: UserModel) {
     const email = user.email;
     let url = '';
-    if (email.includes(DOMINIO_PROFESSOR)){
+    if (email.includes(DOMINIO_PROFESSOR)) {
       url = 'addProfessor';
-    } else if (email.includes(DOMINIO_STUDENT)){
+    } else if (email.includes(DOMINIO_STUDENT)) {
       url = 'addStudent';
     }
 
     if (url !== '') {
       return this.http.post(
         API_URL_REGISTER + url,
-          user
+        user
       );
     } else {
       return of(false);

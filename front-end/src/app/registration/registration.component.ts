@@ -35,7 +35,7 @@ export class RegistrationComponent implements OnInit {
         if (result === false){
           this.notValidDomain = true;
         } else {
-          this.router.navigate(['home?doLogin=true']);
+          this.router.navigate(['home'], {queryParams: {doLogin: 'true'}});
         }
       });
     }

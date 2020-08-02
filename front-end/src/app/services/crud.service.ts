@@ -37,7 +37,11 @@ export class CrudService {
     ).subscribe(
       (payload: any) => {
         // @todo Remove after API change
-        this.addProfessorToCourse(course.name, '1');
+        if (localStorage.getItem('id')) {
+          this.addProfessorToCourse(course.name, localStorage.getItem('id'));
+        } else {
+          // @todo Redirect a pagina 500
+        }
         // this.findCoursesByProfessor('1');
       },
       (error: any) => {
@@ -51,7 +55,11 @@ export class CrudService {
       API_URL + 'courses/' + courseName + '/addProfessor?id=' + teacherMatricola, {}
     ).subscribe(
       (payload: any) => {
-        this.findCoursesByProfessor('1');
+        if (localStorage.getItem('id')) {
+          this.findCoursesByProfessor(localStorage.getItem('id'));
+        } else {
+          // @todo Redirect a pagina 500
+        }
       },
       (error: any) => {
 

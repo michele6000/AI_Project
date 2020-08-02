@@ -23,7 +23,6 @@ export class LoggedHeaderComponent implements OnInit {
       } else {
         this.isLoggedIn = false;
         this.title = 'HOME';
-        this.router.navigate(['home']);
       }
     });
   }
