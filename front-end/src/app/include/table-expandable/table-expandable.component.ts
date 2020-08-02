@@ -59,10 +59,8 @@ export class TableExpandableComponent implements OnInit {
     data.forEach(group => {
       this.prepareData(group);
     });
-    this.dataSource = new MatTableDataSource(this.usersData);
-    console.log(data);
+    this.dataSource.data = this.usersData;
     if (this.table) {
-      console.log('Table ok');
       this.table.renderRows();
     }
   }
