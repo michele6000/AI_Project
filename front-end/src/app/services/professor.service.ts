@@ -6,14 +6,14 @@ import {VmModel} from '../models/vm.model';
 import {VmProfessor} from '../models/vm-professor.model';
 import {VmStudent} from '../models/vm-student.model';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {StudentModel} from "../models/student.model";
+import {StudentModel} from '../models/student.model';
 
 const API_URL = '/api/API/';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CrudService {
+export class ProfessorService {
 
   // private dataStore: {courses: CourseModel[]} = {courses: null};
 
@@ -83,22 +83,6 @@ export class CrudService {
     );
   }
 
-  createVMStudent(vm: VmStudent) {
-    this.http.post(
-      API_URL,
-      {
-        vm
-      }
-    ).subscribe(
-      (payload: any) => {
-
-      },
-      (error: any) => {
-
-      }
-    );
-  }
-
   // Richiede l'elenco degli studenti al server se non ancora noti,
   //  altrimenti li recupera dalla variabile locale
   getStudents(refresh = false) {
@@ -115,7 +99,7 @@ export class CrudService {
 
   deleteStudent(courseName: string, studentId: string){
     return this.http.post(
-      API_URL + 'courses/' + courseName + '/deleteOne?studentId=' + studentId,{}
+      API_URL + 'courses/' + courseName + '/deleteOne?studentId=' + studentId, {}
     );
   }
 
@@ -123,43 +107,11 @@ export class CrudService {
     return this.http.get<StudentModel[]>(API_URL + 'courses/' + courseName + '/enrolled');
   }
 
-  findGroupByStudentId(studentId: string): Observable<any> {
-    return this.http.get<any>(API_URL + 'student/' + studentId)
-      .pipe(
-        response => response
-      );
-  }
-
-  proposeGroup(group: any) {
-    this.http.post(
-      API_URL + 'student/propose-group',
-      {
-        group
-      }
-    ).subscribe(
-      (payload: any) => {
-
-      },
-      (error: any) => {
-
-      }
-    );
-  }
-
   findCourseByIdentifier(courseIdentifier: string): Observable<CourseModel> {
     return this.http.get<CourseModel>(API_URL + 'course/' + courseIdentifier)
       .pipe(
         response => response
       );
-  }
-
-  findCoursesByStudent(studentId: string): Observable<CourseModel[]> {
-    return this.http.get<CourseModel[]>(API_URL + 'student/' + studentId + '/courses')
-      .pipe(response => {
-        // @todo Migliorare
-        response.subscribe(courses => this.coursesSubject.next(courses));
-        return response;
-      });
   }
 
   // Richiede l'elenco dei corsi al server se non ancora noti,

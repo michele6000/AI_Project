@@ -6,7 +6,8 @@ import {shareReplay, tap} from 'rxjs/operators';
 import * as moment from 'moment';
 import {UserLogged} from '../models/user-logged';
 import {Router} from '@angular/router';
-import {CrudService} from '../services/crud.service';
+import {ProfessorService} from '../services/professor.service';
+import {StudentService} from "../services/student.service";
 
 const API_URL_LOGIN = '/api/auth/signin';
 const API_URL_REGISTER = '/api/auth/';
@@ -24,7 +25,7 @@ export class AuthService {
     id: null, email: undefined, roles: []
   };
 
-  constructor(private http: HttpClient, private router: Router, private crudService: CrudService) {
+  constructor(private http: HttpClient, private router: Router, private professorService: ProfessorService, private studentService: StudentService) {
     this.userSubject = new BehaviorSubject<UserLogged>(this.localUser);
     this.user = this.userSubject.asObservable();
     if (localStorage.getItem('token')) {
@@ -42,9 +43,10 @@ export class AuthService {
 
   loginRedirect() {
     if (this.localUser.roles.filter((value => value === 'ROLE_STUDENT')).length > 0) {
+      this.studentService.findCoursesByStudent(this.localUser.id);
       this.router.navigate(['student']);
     } else if (this.localUser.roles.filter((value => value === 'ROLE_PROFESSOR')).length > 0) {
-      this.crudService.findCoursesByProfessor(this.localUser.id);
+      this.professorService.findCoursesByProfessor(this.localUser.id);
       this.router.navigate(['teacher']);
     } else if (this.localUser.roles.filter((value => value === 'ROLE_ADMIN')).length > 0) {
       this.router.navigate(['home']);

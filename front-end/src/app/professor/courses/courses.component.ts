@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {CreateCourseComponent} from '../../dialog/create-course/create-course.component';
 import {CourseModel} from '../../models/course.model';
 import {EditCourseComponent} from '../../dialog/edit-course/edit-course.component';
-import {CrudService} from "../../services/crud.service";
+import {ProfessorService} from "../../services/professor.service";
 import {AuthService} from "../../auth/auth.service";
 
 @Component({
@@ -18,7 +18,7 @@ export class CoursesComponent implements OnInit {
   data: CourseModel[] = [];
   id: string = null;
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private crudService: CrudService, private authService: AuthService) {
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService) {
 
   }
 
@@ -46,7 +46,7 @@ export class CoursesComponent implements OnInit {
     this.authService.user.subscribe((user) => {
       if (user != null) {
         this.id = user.id;
-        this.crudService.courses.subscribe(
+        this.professorService.courses.subscribe(
           (courses) => {
             if (courses) {
               this.data = courses;
@@ -73,15 +73,15 @@ export class CoursesComponent implements OnInit {
 
   changeActive($event: CourseModel) {
     if ($event.enabled) {
-      this.crudService.disableCourse($event.name).subscribe((result) => this.onChangeActiveCompleted(result, $event.acronymous));
+      this.professorService.disableCourse($event.name).subscribe((result) => this.onChangeActiveCompleted(result, $event.acronymous));
     } else {
-      this.crudService.enableCourse($event.name).subscribe((result) => this.onChangeActiveCompleted(result, $event.acronymous));
+      this.professorService.enableCourse($event.name).subscribe((result) => this.onChangeActiveCompleted(result, $event.acronymous));
     }
   }
 
   onChangeActiveCompleted(result: any, acronymous: string) {
     if (result){
-      this.crudService.findCoursesByProfessor(this.id, true);
+      this.professorService.findCoursesByProfessor(this.id, true);
     }
   }
 }

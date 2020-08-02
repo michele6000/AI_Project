@@ -3,7 +3,7 @@ import {GroupModel} from '../../models/group.model';
 import {MatDialog} from '@angular/material/dialog';
 import {EditVmProfessorComponent} from '../../dialog/edit-vm/edit-vm-professor.component';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CrudService} from '../../services/crud.service';
+import {ProfessorService} from '../../services/professor.service';
 
 @Component({
   selector: 'app-vms',
@@ -16,7 +16,7 @@ export class VmsComponent implements OnInit {
 
   courseParam: string;
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private crudService: CrudService) {
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService) {
 
   }
 

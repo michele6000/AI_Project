@@ -3,7 +3,7 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {CourseModel} from '../models/course.model';
 import {switchMap} from 'rxjs/operators';
-import {CrudService} from "../services/crud.service";
+import {ProfessorService} from "../services/professor.service";
 import {AuthService} from "../auth/auth.service";
 import {Subscription} from "rxjs";
 
@@ -21,8 +21,8 @@ export class ProfessorComponent implements OnInit, OnDestroy {
 
   s1: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService, private crudService: CrudService) {
-    this.s1 = this.crudService.courses.subscribe((next) => {
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService, private professorService: ProfessorService) {
+    this.s1 = this.professorService.courses.subscribe((next) => {
       if (next) {
         this.corsi = next;
         this.checkUrl();

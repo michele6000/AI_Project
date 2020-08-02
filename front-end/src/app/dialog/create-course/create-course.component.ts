@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
-import {CrudService} from '../../services/crud.service';
+import {ProfessorService} from '../../services/professor.service';
 import {CourseModel} from '../../models/course.model';
 
 @Component({
@@ -11,7 +11,7 @@ import {CourseModel} from '../../models/course.model';
 export class CreateCourseComponent implements OnInit {
   error = false;
 
-  constructor(private crudService: CrudService) {
+  constructor(private professorService: ProfessorService) {
   }
 
   ngOnInit(): void {
@@ -25,6 +25,6 @@ export class CreateCourseComponent implements OnInit {
       max: f.value.max,
       enabled: true
     };
-    this.crudService.createCourse(course);
+    this.professorService.createCourse(course);
   }
 }

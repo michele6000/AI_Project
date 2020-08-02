@@ -2,7 +2,9 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
 import {CourseModel} from '../models/course.model';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CrudService} from "../services/crud.service";
+import {ProfessorService} from "../services/professor.service";
+import {StudentService} from "../services/student.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-student',
@@ -18,17 +20,32 @@ export class StudentComponent implements OnInit {
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
 
-  constructor(private route: ActivatedRoute, private router: Router, private crudService: CrudService) {
+  s1: Subscription;
+
+  constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService) {
+    this.s1 = this.studentService.courses.subscribe((next) => {
+      if (next) {
+        this.corsi = next;
+        this.checkUrl();
+      } else {
+        this.corsi = [];
+      }
+    });
   }
 
   ngOnInit(): void {
+  }
+
+  checkUrl() {
     this.route.paramMap.subscribe(param => {
       const courseName = param.get('course');
       const course = this.corsi.filter(c => c.name.toLowerCase().replace(' ', '-') === courseName);
       if (course.length > 0) {
         this.changeCorso(course[0]);
-      } else {
+      } else if (this.corsi.length > 0) {
         this.router.navigate(['student', this.corsi[0].name.toLowerCase().replace(' ', '-')]);
+      } else {
+        console.log('Nessun corso!');
       }
     });
   }

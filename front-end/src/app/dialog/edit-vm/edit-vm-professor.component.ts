@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {GroupModel} from '../../models/group.model';
 import {NgForm} from '@angular/forms';
-import {CrudService} from '../../services/crud.service';
+import {ProfessorService} from '../../services/professor.service';
 import {VmProfessor} from '../../models/vm-professor.model';
 
 @Component({
@@ -16,7 +16,7 @@ export class EditVmProfessorComponent implements OnInit {
   fileAbsent: boolean = false;
   file: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private crudService: CrudService) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private professorService: ProfessorService) {
     this.group = data;
   }
 
@@ -30,7 +30,7 @@ export class EditVmProfessorComponent implements OnInit {
     vm.disk = f.value.disk;
     vm.maxVm = f.value.maxVm;
     vm.maxActiveVmSimultaneously = f.value.maxActiveVmSimultaneously;
-    this.crudService.createVMStudent(vm);
+    this.professorService.createVMTeacher(vm);
   }
 
   handleFileSelect($event: any) {

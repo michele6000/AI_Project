@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
-import {CrudService} from '../../../services/crud.service';
+import {ProfessorService} from '../../../services/professor.service';
 import {StudentModel} from '../../../models/student.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CourseModel} from '../../../models/course.model';
+import {StudentService} from "../../../services/student.service";
 
 @Component({
   selector: 'app-create-group',
@@ -36,14 +37,14 @@ export class CreateGroupComponent implements OnInit {
   error = false;
   message = '';
 
-  constructor(private route: ActivatedRoute, private router: Router, private crudService: CrudService) {
+  constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService) {
   }
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
 
     // Recupero i parametri del corso
-    this.course = this.crudService.findCourseByNameUrl(this.courseParam);
+    this.course = this.studentService.findCourseByNameUrl(this.courseParam);
     console.log(this.course);
   }
 
@@ -63,7 +64,7 @@ export class CreateGroupComponent implements OnInit {
         };
         group.name = f.value.name;
         group.timeout = f.value.timeout;
-        this.crudService.proposeGroup(group);
+        this.studentService.proposeGroup(group);
       }
     }
   }

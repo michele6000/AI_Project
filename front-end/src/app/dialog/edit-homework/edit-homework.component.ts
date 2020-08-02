@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {CrudService} from '../../services/crud.service';
+import {ProfessorService} from '../../services/professor.service';
 import {NgForm} from '@angular/forms';
 
 @Component({
@@ -16,7 +16,7 @@ export class EditHomeworkComponent implements OnInit {
   assignments: any[];
   showInputGrade: boolean = false;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any[], private crudService: CrudService) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any[], private professorService: ProfessorService) {
     this.assignments = data;
   }
 

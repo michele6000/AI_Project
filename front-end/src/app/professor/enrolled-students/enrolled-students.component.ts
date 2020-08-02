@@ -6,7 +6,7 @@ import {CourseModel} from '../../models/course.model';
 import {StudentModel} from '../../models/student.model';
 import {MatTable} from '@angular/material/table';
 import {HttpClient} from '@angular/common/http';
-import {CrudService} from "../../services/crud.service";
+import {ProfessorService} from "../../services/professor.service";
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
@@ -25,21 +25,21 @@ export class EnrolledStudentsComponent implements OnInit {
   courseParam: string;
   students: StudentModel[] = [];
 
-  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private crudService: CrudService, private snackBar: MatSnackBar) {
+  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private professorService: ProfessorService, private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
 
-    this.corso = this.crudService.findCourseByNameUrl(this.courseParam);
+    this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
 
-    this.crudService.getEnrolledStudents(this.corso.name).subscribe(
+    this.professorService.getEnrolledStudents(this.corso.name).subscribe(
       (res) => {
         this.data = res;
       }
     );
 
-    this.crudService.getStudents().subscribe(
+    this.professorService.getStudents().subscribe(
       (students) => {
         if (students) {
           this.students = students;
@@ -61,13 +61,13 @@ export class EnrolledStudentsComponent implements OnInit {
   deleteStudent($event: StudentModel[]) {
     const res = from($event).pipe(
       concatMap(s => {
-        return this.crudService.deleteStudent(this.corso.name, s.id);
+        return this.professorService.deleteStudent(this.corso.name, s.id);
       }),
       toArray()
     );
 
     res.subscribe((result: boolean[]) => {
-      this.crudService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
+      this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
       if (result.filter(e => !e).length > 0) {
         // Almeno una ha fallito
       } else {
@@ -80,9 +80,9 @@ export class EnrolledStudentsComponent implements OnInit {
   }
 
   addStudent($event: StudentModel) {
-    this.crudService.enrollStudent(this.corso.name, $event.id).subscribe((res) => {
+    this.professorService.enrollStudent(this.corso.name, $event.id).subscribe((res) => {
       if (res) {
-        this.crudService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
+        this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
 
         this.snackBar.open('Student added successfully.', 'OK', {
           duration: 5000
