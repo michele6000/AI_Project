@@ -29,7 +29,7 @@ export class GroupsComponent implements OnInit {
     this.studentService.teams.subscribe((teams) => {
       if (teams && teams.filter(t => t.status === 1 && t.courseName === this.corso.name).length > 0) {
         this.loadComponent(1);
-      } else {
+      } else if (teams) {
         this.loadComponent(2);
       }
     });

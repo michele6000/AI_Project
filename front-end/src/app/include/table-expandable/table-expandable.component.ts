@@ -26,7 +26,7 @@ export class TableExpandableComponent implements OnInit {
 
   @ViewChild('outerSort', {static: true}) sort: MatSort;
   @ViewChildren('innerSort') innerSort: QueryList<MatSort>;
-  @ViewChildren('innerTables') innerTables: QueryList<MatTable<VmModel>>;
+  @ViewChildren('innerTables') innerTables: QueryList<MatTable<any>>;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -59,7 +59,9 @@ export class TableExpandableComponent implements OnInit {
     data.forEach(group => {
       this.prepareData(group);
     });
-    this.dataSource.data = this.usersData;
+    if (this.dataSource) {
+      this.dataSource.data = this.usersData;
+    }
     if (this.table) {
       this.table.renderRows();
     }
@@ -69,8 +71,8 @@ export class TableExpandableComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.data?.forEach(group => {
-      this.prepareData(group);
+    this.data?.forEach(row => {
+      this.prepareData(row);
     });
     this.dataSource = new MatTableDataSource(this.usersData);
     this.dataSource.sort = this.sort;
@@ -82,28 +84,28 @@ export class TableExpandableComponent implements OnInit {
     }
   }
 
-  prepareData(group: any) {
-    if (group.vms && Array.isArray(group.vms) && group.vms.length) {
-      this.usersData = [...this.usersData, {...group, vms: new MatTableDataSource(group.vms)}];
-    } else if (group.members && Array.isArray(group.members) && group.members.length) {
-      this.usersData = [...this.usersData, {...group, vms: new MatTableDataSource(group.members)}];
+  prepareData(row: any) {
+    if (row.vms && Array.isArray(row.vms) && row.vms.length) {
+      this.usersData = [...this.usersData, {...row, nestedData: new MatTableDataSource(row.vms)}];
+    } else if (row.members && Array.isArray(row.members) && row.members.length) {
+      this.usersData = [...this.usersData, {...row, nestedData: new MatTableDataSource(row.members)}];
     } else {
-      this.usersData = [...this.usersData, group];
+      this.usersData = [...this.usersData, row];
     }
   }
 
   toggleRow(element: any) {
-    if (element.vms && (element.vms as MatTableDataSource<VmModel>).data.length) {
-      this.expandedElement = this.expandedElement === element ? null : element;
-    } else if (element.members && (element.members as MatTableDataSource<StudentModel>).data.length) {
+    if (element.nestedData && (element.nestedData as MatTableDataSource<any>).data.length) {
       this.expandedElement = this.expandedElement === element ? null : element;
     }
     this.cd.detectChanges();
-    this.innerTables.forEach((table, index) => (table.dataSource as MatTableDataSource<VmModel>).sort = this.innerSort.toArray()[index]);
+    this.innerTables.forEach(
+      (table, index) => (table.dataSource as MatTableDataSource<any>).sort = this.innerSort.toArray()[index]
+    );
   }
 
   applyFilter(filterValue: string) {
-    this.innerTables.forEach((table, index) => (table.dataSource as MatTableDataSource<VmModel>).filter = filterValue.trim().toLowerCase());
+    this.innerTables.forEach((table, index) => (table.dataSource as MatTableDataSource<any>).filter = filterValue.trim().toLowerCase());
   }
 
   editGroup($event, element: GroupModel) {
@@ -111,40 +113,3 @@ export class TableExpandableComponent implements OnInit {
     this.onEdit.emit(element);
   }
 }
-
-const GROUPS = [
-  {
-    name: 'Gruppo 1',
-    id: 1,
-    ram: 8,
-    disk: 250,
-    vcpu: 1,
-    vms: [
-      {
-        groupId: 1,
-        link: 'https://www.google.com',
-        name: 'Ubuntu 20.04',
-        ownerId: 1,
-        state: true
-      },
-      {
-        groupId: 1,
-        link: 'https://www.amazon.com',
-        name: 'Ubuntu 20.04',
-        ownerId: 1,
-        state: true
-      }
-    ],
-    maxVm: 2,
-    maxActiveVmSimultaneously: 1
-  },
-  {
-    name: 'Gruppo 2',
-    id: 1,
-    ram: 8,
-    disk: 250,
-    vcpu: 1,
-    maxActiveVmSimultaneously: 1,
-    maxVm: 2
-  },
-];

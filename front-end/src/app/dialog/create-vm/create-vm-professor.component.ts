@@ -6,11 +6,11 @@ import {ProfessorService} from '../../services/professor.service';
 import {VmProfessor} from '../../models/vm-professor.model';
 
 @Component({
-  selector: 'app-edit-vm',
-  templateUrl: './edit-vm-professor.component.html',
-  styleUrls: ['./edit-vm-professor.component.css']
+  selector: 'app-create-vm',
+  templateUrl: './create-vm-professor.component.html',
+  styleUrls: ['./create-vm-professor.component.css']
 })
-export class EditVmProfessorComponent implements OnInit {
+export class CreateVmProfessorComponent implements OnInit {
   error = false;
   group: GroupModel;
   fileAbsent: boolean = false;

@@ -7,6 +7,7 @@ import {VmProfessor} from '../models/vm-professor.model';
 import {VmStudent} from '../models/vm-student.model';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {StudentModel} from '../models/student.model';
+import {GroupModel} from "../models/group.model";
 
 const API_URL = '/api/API/';
 
@@ -29,6 +30,8 @@ export class ProfessorService {
     this.studentsSubject = new BehaviorSubject<StudentModel[]>(null);
     this.students = this.studentsSubject.asObservable();
   }
+
+  /* COURSES */
 
   createCourse(course: CourseModel) {
     return this.http.post(
@@ -67,46 +70,6 @@ export class ProfessorService {
     );
   }
 
-  createVMTeacher(vm: VmProfessor) {
-    this.http.post(
-      API_URL,
-      {
-        vm
-      }
-    ).subscribe(
-      (payload: any) => {
-
-      },
-      (error: any) => {
-
-      }
-    );
-  }
-
-  // Richiede l'elenco degli studenti al server se non ancora noti,
-  //  altrimenti li recupera dalla variabile locale
-  getStudents(refresh = false) {
-    if (this.studentsSubject.value !== undefined || refresh) {
-      this.http.get<StudentModel[]>(API_URL + 'students')
-        .subscribe(response => {
-          this.studentsSubject.next(response);
-        });
-    } else {
-      this.studentsSubject.next(this.studentsSubject.value);
-    }
-    return this.students;
-  }
-
-  deleteStudent(courseName: string, studentId: string){
-    return this.http.post(
-      API_URL + 'courses/' + courseName + '/deleteOne?studentId=' + studentId, {}
-    );
-  }
-
-  getEnrolledStudents(courseName: string): Observable<StudentModel[]> {
-    return this.http.get<StudentModel[]>(API_URL + 'courses/' + courseName + '/enrolled');
-  }
-
   findCourseByIdentifier(courseIdentifier: string): Observable<CourseModel> {
     return this.http.get<CourseModel>(API_URL + 'course/' + courseIdentifier)
       .pipe(
@@ -138,22 +101,74 @@ export class ProfessorService {
     }
   }
 
-  enableCourse(courseName: string){
+  enableCourse(courseName: string) {
     return this.http.post(
       API_URL + 'courses/' + courseName + '/enable', {}
     );
   }
 
-  disableCourse(courseName: string){
+  disableCourse(courseName: string) {
     return this.http.post(
       API_URL + 'courses/' + courseName + '/disable', {}
     );
   }
 
-  enrollStudent(courseName: string, studentId: string){
+  /* VMs */
+
+  createVMTeacher(vm: VmProfessor) {
+    this.http.post(
+      API_URL,
+      {
+        vm
+      }
+    ).subscribe(
+      (payload: any) => {
+
+      },
+      (error: any) => {
+
+      }
+    );
+  }
+
+  findVmsByTeam(teamId: number) {
+    return this.http.get<VmModel[]>(API_URL + 'team/' + teamId + '/vms');
+  }
+
+  /* STUDENTS */
+
+  // Richiede l'elenco degli studenti al server se non ancora noti,
+  //  altrimenti li recupera dalla variabile locale
+  getStudents(refresh = false) {
+    if (this.studentsSubject.value !== undefined || refresh) {
+      this.http.get<StudentModel[]>(API_URL + 'students')
+        .subscribe(response => {
+          this.studentsSubject.next(response);
+        });
+    } else {
+      this.studentsSubject.next(this.studentsSubject.value);
+    }
+    return this.students;
+  }
+
+  deleteStudent(courseName: string, studentId: string) {
+    return this.http.post(
+      API_URL + 'courses/' + courseName + '/deleteOne?studentId=' + studentId, {}
+    );
+  }
+
+  getEnrolledStudents(courseName: string): Observable<StudentModel[]> {
+    return this.http.get<StudentModel[]>(API_URL + 'courses/' + courseName + '/enrolled');
+  }
+
+  enrollStudent(courseName: string, studentId: string) {
     return this.http.post(
       API_URL + 'courses/' + courseName + '/enrollOne', {id: studentId}
     );
   }
 
+  /* TEAMS */
+  findTeamsByCourse(courseName: string) {
+    return this.http.get<GroupModel[]>(API_URL + 'courses/' + courseName + '/teams');
+  }
 }

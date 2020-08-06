@@ -2,5 +2,5 @@
   <div class="text-right w-80 mb-10">
     <button class="mb-10" mat-raised-button color="primary" (click)="createVM($event)">Create VM</button>
   </div>
-  <app-table-expandable></app-table-expandable>
+  <app-table-expandable [data]="groupsData" [columns]="groupsColumns" [innerColumns]="innerGroupColumns" [showEdit]="true" (edit)="modifyGroup($event)"></app-table-expandable>
 </div>

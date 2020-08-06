@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {VmStudent} from '../models/vm-student.model';
 import {StudentModel} from "../models/student.model";
 import {GroupModel} from "../models/group.model";
+import {VmModel} from "../models/vm.model";
 
 const API_URL = '/api/API/';
 
@@ -29,24 +30,26 @@ export class StudentService {
 
   findCoursesByStudent(studentId: string, refresh = false) {
     if (this.coursesSubject.value !== undefined || refresh) {
-      return this.http.get<CourseModel[]>(API_URL + 'students/' + studentId + '/courses')
+      this.http.get<CourseModel[]>(API_URL + 'students/' + studentId + '/courses')
         .subscribe(response => {
           this.coursesSubject.next(response);
         });
     } else {
       this.coursesSubject.next(this.coursesSubject.value);
     }
+    return this.courses;
   }
 
   findTeamsByStudent(studentId: string, refresh = false) {
     if (this.teamsSubject.value !== undefined || refresh) {
-      return this.http.get<GroupModel[]>(API_URL + 'students/' + studentId + '/teams')
+      this.http.get<GroupModel[]>(API_URL + 'students/' + studentId + '/teams')
         .subscribe(response => {
           this.teamsSubject.next(response);
         });
     } else {
       this.teamsSubject.next(this.teamsSubject.value);
     }
+    return this.teams;
   }
 
   // Cerca nell'array locale di corsi il corso dato il path nell'URL
@@ -99,6 +102,22 @@ export class StudentService {
   }
 
   findMembersByTeamId(teamId: number) {
-    return this.http.get<any[]>(API_URL + 'team/' + teamId + '/members');
+    return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/members');
+  }
+
+  findVmsByTeam(teamId: number) {
+    return this.http.get<VmModel[]>(API_URL + 'team/' + teamId + '/vms');
+  }
+
+  powerOnVm(vmId: number) {
+    return this.http.post<boolean>(API_URL + 'vm/' + vmId + '/powerOn', {});
+  }
+
+  powerOffVm(vmId: number) {
+    return this.http.post<boolean>(API_URL + 'vm/' + vmId + '/powerOff', {});
+  }
+
+  deleteVm(vmId: number) {
+    return this.http.post<boolean>(API_URL + 'vm/' + vmId + '/delete', {});
   }
 }

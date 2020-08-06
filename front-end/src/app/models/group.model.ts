@@ -1,4 +1,5 @@
 import {StudentModel} from './student.model';
+import {VmModel} from './vm.model';
 
 export class GroupModel {
   id: number;
@@ -6,4 +7,5 @@ export class GroupModel {
   status: number;
   courseName: string;
   members: StudentModel[];
+  vms: VmModel[];
 }

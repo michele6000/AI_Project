@@ -24,6 +24,7 @@ export class TableComponent implements OnInit {
   @Input() showDelete: boolean;
   @Input() showEdit: boolean;
   @Input() showChangeStatus: boolean;
+  @Input() showCheckbox = true;
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
@@ -59,8 +60,10 @@ export class TableComponent implements OnInit {
       } else {
         this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'edit'];
       }
-    } else {
+    } else if (this.showCheckbox) {
       this.columnsWithCheckbox = ['select', ...this.columnsToDisplay];
+    } else {
+      this.columnsWithCheckbox = [...this.columnsToDisplay];
     }
 
     this.dataSource.sort = this.sort;

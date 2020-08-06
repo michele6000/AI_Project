@@ -36,7 +36,7 @@ import {InsertComponent} from './include/insert/insert.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {CreateCourseComponent} from './dialog/create-course/create-course.component';
 import {TableExpandableComponent} from './include/table-expandable/table-expandable.component';
-import {EditVmProfessorComponent} from './dialog/edit-vm/edit-vm-professor.component';
+import {CreateVmProfessorComponent} from './dialog/create-vm/create-vm-professor.component';
 import {GroupsComponent} from './student/groups/groups.component';
 import {VmsStudentComponent} from './student/vms-student/vms-student.component';
 import {EditVmStudentComponent} from './dialog/edit-vm-student/edit-vm-student.component';
@@ -52,6 +52,9 @@ import { EditHomeworkComponent } from './dialog/edit-homework/edit-homework.comp
 import {MatRadioModule} from "@angular/material/radio";
 import {AuthInterceptor} from "./auth/auth.interceptor";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import { EditVmProfessorComponent } from './dialog/edit-vm-professor/edit-vm-professor.component';
+import { VmsTableComponent } from './student/vms-student/vms-table/vms-table.component';
+import { DialogDeleteVmComponent } from './student/vms-student/dialog-delete-vm/dialog-delete-vm.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +75,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     CreateCourseComponent,
     TableExpandableComponent,
     TableExpandableComponent,
-    EditVmProfessorComponent,
+    CreateVmProfessorComponent,
     GroupsComponent,
     VmsStudentComponent,
     EditVmStudentComponent,
@@ -82,7 +85,11 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     GroupDirective,
     EditCourseComponent,
     TableFilterComponent,
-    EditHomeworkComponent
+    EditHomeworkComponent,
+    EditVmProfessorComponent,
+    VmsTableComponent,
+    VmsTableComponent,
+    DialogDeleteVmComponent
   ],
   imports: [
     BrowserModule,
