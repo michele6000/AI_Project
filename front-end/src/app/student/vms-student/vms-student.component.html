@@ -1,6 +1,6 @@
 <div class="container">
   <div class="text-right w-80">
-    <button mat-raised-button color="primary" class="float-right" (click)="createVM()">Create VM</button>
+    <button mat-raised-button color="primary" class="float-right mb-20" (click)="createVM()">Create VM</button>
   </div>
   <app-vms-table [data]="data" [columns]="columns" (delete)="deleteVm($event)"></app-vms-table>
 </div>
