@@ -84,6 +84,20 @@ public class TeamController {
         }
     }
 
+    @PostMapping("/{teamId}/evictTeam")
+    //TODO: chi può farlo oltre al professore? Può essere usata dallo studente per annullare vecchie proposte, ma come?
+    public void evictTeam(@PathVariable Long teamId) {
+        try {
+//            if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
+//                    HttpStatus.FORBIDDEN,
+//                    "You are not allowed to evict this team!"
+//            );
+            service.evictTeam(teamId);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @PostMapping("/{teamId}/createVmInstance")
     public VMDTO createVmInstance(@PathVariable Long teamId, @RequestBody VMDTO vm) {
         try {
