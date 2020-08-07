@@ -90,10 +90,10 @@ public class TeamController {
         }
     }
 
-    @PostMapping("/{teamId}/addMember")
+    @PostMapping("/{teamId}/{studentId}/addMember")
     public void addMember(
             @PathVariable Long teamId,
-            @RequestParam String studentId
+            @PathVariable String studentId
     ) {
         List<String>students=new ArrayList<>();
         try {
