@@ -3,6 +3,7 @@ package it.polito.ai.project.controllers;
 import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,12 @@ public class NotificationController {
   @GetMapping("/confirm/{token}")
   public String confirm(@PathVariable String token, Model model) {
     try {
-      if (service.confirm(token)) {
+      String username= SecurityContextHolder
+              .getContext()
+              .getAuthentication()
+              .getName()
+              .split("@")[0];
+      if (service.confirm(token,username)) {
         model.addAttribute("error", "display:none;");
         model.addAttribute("message", "You joined the team!\nTEAM ACTIVATED!");
       } else {

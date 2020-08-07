@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Optional;
 
+import it.polito.ai.project.entities.Team;
 import it.polito.ai.project.entities.VM;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -57,6 +58,12 @@ public interface TeamService {
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
   List<StudentDTO> getMembers(Long teamId);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  List<StudentDTO> getConfirmedStudents(Long teamId);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+  List<StudentDTO> getPendentStudents(Long teamId);
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
   TeamDTO proposeTeam(String courseId, String name, List<String> membersIds);
@@ -127,4 +134,7 @@ public interface TeamService {
 
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
   VMDTO createVmInstance(Long teamId, VMDTO vm, String currentUsername);
+
+  @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_PROFESSOR','ROLE_ADMIN')")
+  Team getTeam(Long teamId);
 }

@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public interface NotificationService {
   void sendMessage(String address, String subject, String body);
 
-  boolean confirm(String token);
+  boolean confirm(String token, String username);
 
   boolean reject(String token);
 

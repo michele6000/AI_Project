@@ -3,6 +3,7 @@ package it.polito.ai.project.services;
 import it.polito.ai.project.dtos.TeamDTO;
 import it.polito.ai.project.entities.Token;
 import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.repositories.StudentRepository;
 import it.polito.ai.project.repositories.TokenRepository;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -30,6 +31,9 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Autowired
   private TokenRepository tokenRepo;
+
+  @Autowired
+  private StudentRepository studentRepo;
 
   @Autowired
   private TeamService teamService;
@@ -61,7 +65,7 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
-  public boolean confirm(String token) {
+  public boolean confirm(String token, String username) {
     everythingOk.set(false);
 
     //token not existent
@@ -90,6 +94,7 @@ public class NotificationServiceImpl implements NotificationService {
         throw e;
       }
     } else everythingOk.set(true);
+    teamService.getTeam(teamId).confirmStudent(studentRepo.getOne(username));
     return false;
   }
 

@@ -285,6 +285,34 @@ public class TeamServiceImpl implements TeamService {
   }
 
   @Override
+  public List<StudentDTO> getConfirmedStudents(Long teamId) {
+    if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+            "Team not found!"
+    );
+
+    return teamRepo
+            .getOne(teamId)
+            .getConfirmedStudents()
+            .stream()
+            .map(s -> modelMapper.map(s, StudentDTO.class))
+            .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<StudentDTO> getPendentStudents(Long teamId) {
+    if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+            "Team not found!"
+    );
+
+    return teamRepo
+            .getOne(teamId)
+            .getPendentStudents()
+            .stream()
+            .map(s -> modelMapper.map(s, StudentDTO.class))
+            .collect(Collectors.toList());
+  }
+
+  @Override
   public TeamDTO proposeTeam(
     String courseId,
     String name,
@@ -409,6 +437,16 @@ public class TeamServiceImpl implements TeamService {
       .getMembers()
       .forEach(s -> teamRepo.getOne(teamId).removeMember(s));
     teamRepo.deleteById(teamId);
+  }
+
+  @Override
+  public Team getTeam(Long teamId) {
+    if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+            "Team not found!"
+    );
+
+    return teamRepo
+            .getOne(teamId);
   }
 
   @Override

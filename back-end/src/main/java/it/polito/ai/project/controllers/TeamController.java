@@ -46,6 +46,24 @@ public class TeamController {
         }
     }
 
+    @GetMapping("/{teamId}/confirmedStudents")
+    public List<StudentDTO> getTeamConfirmedStudents(@PathVariable Long teamId) {
+        try {
+            return service.getConfirmedStudents(teamId);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @GetMapping("/{teamId}/pendentStudents")
+    public List<StudentDTO> getTeamPendentStudents(@PathVariable Long teamId) {
+        try {
+            return service.getPendentStudents(teamId);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @PostMapping("/{teamId}/createVmInstance")
     public VMDTO createVmInstance(@PathVariable Long teamId, @RequestBody VMDTO vm) {
         try {
