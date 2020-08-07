@@ -504,8 +504,8 @@ public class TeamServiceImpl implements TeamService {
         teamRepo
                 .getOne(teamId)
                 .removeMember(studentRepo.getOne(studentId));
-        if (teamRepo.getOne(teamId).getMembers().size()==0)
-            teamRepo.deleteById(teamId);
+        if (teamRepo.getOne(teamId).getMembers().size()<teamRepo.getOne(teamId).getCourse().getMin())
+            evictTeam(teamId);
     }
 
     @Override
