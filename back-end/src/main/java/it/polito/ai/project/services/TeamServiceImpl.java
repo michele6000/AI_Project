@@ -166,9 +166,16 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void enableCourse(String courseName) {
-        if (courseRepo.existsById(courseName)) courseRepo
-                .getOne(courseName)
-                .setEnabled(true);
+        if (courseRepo.existsById(courseName)) {
+            courseRepo
+                    .getOne(courseName)
+                    .setEnabled(true);
+            courseRepo.getOne(courseName).getTeams().forEach(t->{
+                if(t.getMembers().size()==t.getConfirmedStudents().size())
+                    setActive(t.getId());
+            });
+
+        }
         else throw new CourseNotFoundException(
                 "Course not found!"
         );
@@ -176,9 +183,15 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void disableCourse(String courseName) {
-        if (courseRepo.existsById(courseName)) courseRepo
-                .getOne(courseName)
-                .setEnabled(false);
+        if (courseRepo.existsById(courseName))
+        {
+            courseRepo
+                    .getOne(courseName)
+                    .setEnabled(false);
+            courseRepo.getOne(courseName).getTeams().forEach(t->t.setStatus(0));
+            courseRepo.getOne(courseName).getStudents().forEach(s->notification.sendMessage(s.getEmail(),"Course disabled",
+                    "We inform you that the course "+courseName+" has been disabled."));
+        }
         else throw new CourseNotFoundException(
                 "Course not found!"
         );
@@ -219,7 +232,7 @@ public class TeamServiceImpl implements TeamService {
 
         List<String> studentIds = students
                 .stream()
-                .map(s -> s.getId())
+                .map(StudentDTO::getId)
                 .collect(Collectors.toList());
         try {
             List<Boolean> enrolled = enrollAll(studentIds, courseName);
