@@ -64,9 +64,8 @@ public class Team {
   public void removeMember(Student student) {
     members.remove(student);
     student.getTeams().remove(this);
-    if(pendentStudents.contains(student))
-       pendentStudents.remove(student);
-    else confirmedStudents.remove(student);
+    pendentStudents.remove(student);
+    confirmedStudents.remove(student);
   }
 
   public void confirmStudent(Student student) {

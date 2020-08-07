@@ -66,6 +66,9 @@ public interface TeamService {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     List<StudentDTO> getPendentStudents(Long teamId);
 
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    void deleteMember(Long teamId, String studentId);
+
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     TeamDTO proposeTeam(String courseId, String name, List<String> membersIds);
 

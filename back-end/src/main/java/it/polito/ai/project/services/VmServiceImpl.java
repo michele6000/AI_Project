@@ -68,7 +68,7 @@ public class VmServiceImpl implements VmService {
     public String getTeamStat(Long teamId) {
         Optional<Team> optionalTeamEntity = teamRepo.findById(teamId);
         if (!optionalTeamEntity.isPresent()) {
-            throw new CourseNotFoundException("team not found!");
+            throw new CourseNotFoundException("Team not found!");
         }
         AtomicReference<Integer> totalRam = new AtomicReference<>(0);
         AtomicReference<Integer> totalCPU = new AtomicReference<>(0);
@@ -112,7 +112,7 @@ public class VmServiceImpl implements VmService {
     public Boolean modifyVMConfiguration(Long vmId, VMDTO vm) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         if (!optionalVMEntity.isPresent()) {
-            throw new TeamServiceException("VM not found!");
+            throw new TeamServiceException("Vm not found!");
         }
         if (!optionalVMEntity.get().getStatus().equals("poweroff")) return false;
         if (vm.getRam() > optionalVMEntity.get().getVmType().getLimit_ram()) return false;
@@ -233,7 +233,7 @@ public class VmServiceImpl implements VmService {
     public VMDTO createVmInstance(Long teamId, VMDTO vm, String studentID) {
         Optional<Team> optionalTeamEntity = teamRepo.findById(teamId);
         if (!optionalTeamEntity.isPresent()) {
-            throw new CourseNotFoundException("team not found!");
+            throw new CourseNotFoundException("Team not found!");
         }
 
         Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);

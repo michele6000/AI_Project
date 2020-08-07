@@ -434,10 +434,30 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public void deleteMember(Long teamId, String studentId) {
+        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+                "Team not found!"
+        );
+
+        if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
+                "Student not found!"
+        );
+
+        if (!teamRepo.getOne(teamId).getMembers().contains(studentRepo.getOne(studentId))) throw new StudentNotFoundException(
+                "Student is not a member of this team!"
+        );
+
+        teamRepo
+                .getOne(teamId)
+                .removeMember(studentRepo.getOne(studentId));
+    }
+
+    @Override
     public Team getTeam(Long teamId) {
         if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
                 "Team not found!"
         );
+
 
         return teamRepo
                 .getOne(teamId);
