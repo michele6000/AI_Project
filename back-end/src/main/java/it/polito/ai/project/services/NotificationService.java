@@ -1,19 +1,20 @@
 package it.polito.ai.project.services;
 
 import it.polito.ai.project.dtos.TeamDTO;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public interface NotificationService {
-  void sendMessage(String address, String subject, String body);
+    void sendMessage(String address, String subject, String body);
 
-  boolean confirm(String token, String username);
+    boolean confirm(String token, String username);
 
-  boolean reject(String token);
+    boolean reject(String token);
 
-  void notifyTeam(TeamDTO dto, List<String> memberIds);
+    void notifyTeam(TeamDTO dto, List<String> memberIds);
 
-  void deleteExpiredTokens();
+    void deleteExpiredTokens();
 
-  AtomicBoolean isEverythingOk();
+    AtomicBoolean isEverythingOk();
 }

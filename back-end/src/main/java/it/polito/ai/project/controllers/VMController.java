@@ -5,6 +5,7 @@ import it.polito.ai.project.dtos.VMDTO;
 import it.polito.ai.project.entities.VM;
 import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.services.TeamService;
+import it.polito.ai.project.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,13 @@ public class VMController {
     @Autowired
     TeamService service;
 
+    @Autowired
+    VmService vmService;
+
     @GetMapping("/{vmId}/getCurrentConfiguration")
     public VMDTO getVMConfig(@PathVariable Long vmId) {
         try {
-            return service.getVMConfig(vmId);
+            return vmService.getVMConfig(vmId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -31,7 +35,7 @@ public class VMController {
     @PostMapping("/{vmId}/modifyConfiguration")
     public Boolean modifyConfiguration(@PathVariable Long vmId, @RequestBody VMDTO vm) {
         try {
-            return service.modifyVMConfiguration(vmId,vm);
+            return vmService.modifyVMConfiguration(vmId,vm);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -41,7 +45,7 @@ public class VMController {
     @PostMapping("/{vmId}/modifyOwner")
     public Boolean modifyOwner(@PathVariable Long vmId, @RequestBody String studentID) {
         try {
-            return service.modifyVMOwner(vmId,studentID);
+            return vmService.modifyVMOwner(vmId,studentID);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -50,7 +54,7 @@ public class VMController {
     @PostMapping("/{vmId}/addOwner")
     public Boolean addOwner(@PathVariable Long vmId, @RequestBody String studentID) {
         try {
-            return service.addVMOwner(vmId,studentID);
+            return vmService.addVMOwner(vmId,studentID);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -59,7 +63,7 @@ public class VMController {
     @GetMapping("/{vmId}/getOwners")
     public List<StudentDTO> getOwners(@PathVariable Long vmId) {
         try {
-            return service.getVMOwners(vmId);
+            return vmService.getVMOwners(vmId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -68,7 +72,7 @@ public class VMController {
     @PostMapping("/{vmId}/powerOn")
     public Boolean powerOn(@PathVariable Long vmId) {
         try {
-            return service.powerVMOn(vmId);
+            return vmService.powerVMOn(vmId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -77,7 +81,7 @@ public class VMController {
     @PostMapping("/{vmId}/powerOff")
     public Boolean powerOff(@PathVariable Long vmId) {
         try {
-            return service.powerVMOff(vmId);
+            return vmService.powerVMOff(vmId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -87,7 +91,7 @@ public class VMController {
     @PostMapping("{vmId}/delete")
     public Boolean delete(@PathVariable Long vmId) {
         try {
-            return service.deleteVM(vmId);
+            return vmService.deleteVM(vmId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

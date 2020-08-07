@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import it.polito.ai.project.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +28,9 @@ import org.springframework.web.server.ResponseStatusException;
 public class CourseController {
   @Autowired
   TeamService service;
+
+  @Autowired
+  VmService vmService;
 
   @Autowired
   NotificationService notifyService;
@@ -258,7 +262,7 @@ public class CourseController {
   public Long createVMType(@RequestBody VMTypeDTO vmt){
     try {
       //nel form limiti e dockerfile
-      return service.createVMType(vmt);
+      return vmService.createVMType(vmt);
     } catch (CourseNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -267,7 +271,7 @@ public class CourseController {
   @PostMapping("/{courseName}/setVMType")
   public Boolean setVMType(@RequestParam Long vmtId, @PathVariable String courseName){
     try {
-      service.setVMType(courseName,vmtId);
+      vmService.setVMType(courseName,vmtId);
       return true;
     } catch (CourseNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

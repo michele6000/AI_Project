@@ -4,6 +4,7 @@ import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.VMDTO;
 import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.services.TeamService;
+import it.polito.ai.project.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,9 @@ public class TeamController {
     @Autowired
     TeamService service;
 
+    @Autowired
+    VmService vmService;
+
     @GetMapping("/{teamId}/members")
     public List<StudentDTO> getMembers(@PathVariable Long teamId) {
         try {
@@ -31,7 +35,7 @@ public class TeamController {
     @GetMapping("/{teamId}/vms")
     public List<VMDTO> getTeamVMs(@PathVariable Long teamId) {
         try {
-            return service.getTeamVMs(teamId);
+            return vmService.getTeamVMs(teamId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -40,7 +44,7 @@ public class TeamController {
     @GetMapping("/{teamId}/stats")
     public String getTeamStats(@PathVariable Long teamId) {
         try {
-            return service.getTeamStat(teamId);
+            return vmService.getTeamStat(teamId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -67,7 +71,7 @@ public class TeamController {
     @PostMapping("/{teamId}/createVmInstance")
     public VMDTO createVmInstance(@PathVariable Long teamId, @RequestBody VMDTO vm) {
         try {
-            return service.createVmInstance(teamId,vm,getCurrentUsername());
+            return vmService.createVmInstance(teamId,vm,getCurrentUsername());
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

@@ -2,764 +2,533 @@ package it.polito.ai.project.services;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import it.polito.ai.project.dtos.*;
+import it.polito.ai.project.dtos.CourseDTO;
+import it.polito.ai.project.dtos.ProfessorDTO;
+import it.polito.ai.project.dtos.StudentDTO;
+import it.polito.ai.project.dtos.TeamDTO;
 import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.CourseNotFoundException;
 import it.polito.ai.project.exceptions.StudentNotFoundException;
 import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.repositories.*;
-import java.io.Reader;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 public class TeamServiceImpl implements TeamService {
-  @Autowired
-  private ModelMapper modelMapper;
+    @Autowired
+    private ModelMapper modelMapper;
 
-  @Autowired
-  private CourseRepository courseRepo;
+    @Autowired
+    private CourseRepository courseRepo;
 
-  @Autowired
-  private StudentRepository studentRepo;
+    @Autowired
+    private StudentRepository studentRepo;
 
-  @Autowired
-  private TeamRepository teamRepo;
+    @Autowired
+    private TeamRepository teamRepo;
 
-  @Autowired
-  private UserRepository userRepo;
+    @Autowired
+    private UserRepository userRepo;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-  @Autowired
-  private ProfessorRepository profRepo;
+    @Autowired
+    private ProfessorRepository profRepo;
 
-  @Autowired
-  private NotificationService notification;
+    @Autowired
+    private NotificationService notification;
 
-  @Autowired
-  private VMRepository vmRepo;
 
-  @Autowired
-  private VMTypeRepository vmtRepo;
-
-  @Override
-  public boolean addCourse(CourseDTO course) {
-    if (course == null || course.getName().length() == 0) return false;
-    Course courseEntity = modelMapper.map(course, Course.class);
-    if (courseRepo.existsById(courseEntity.getName())) return false;
-    courseRepo.save(courseEntity);
-    return true;
-  }
-
-  @Override
-  public boolean addStudent(StudentDTO student) {
-    if (
-      student == null ||
-      student.getId().length() == 0 ||
-      student.getName().length() == 0 ||
-      student.getFirstName().length() == 0
-    ) return false;
-    Student studentEntity = modelMapper.map(student, Student.class);
-    if (studentRepo.existsById(studentEntity.getId())) return false;
-
-    User user = new User();
-    user.setUsername(student.getId() + "@studenti.polito.it");
-    user.setPassword(passwordEncoder.encode(student.getPassword()));
-    user.setRoles(Collections.singletonList("ROLE_STUDENT"));
-    User u = userRepo.save(modelMapper.map(user, User.class));
-
-    studentRepo.save(studentEntity);
-    notification.sendMessage(
-      "paola.caso96@gmail.com",
-      "New Registration",
-      "Username: " + user.getUsername() + " password: " + student.getPassword()
-    );
-    return true;
-  }
-
-  @Override
-  public boolean addStudentToCourse(String studentId, String courseName) {
-    if (studentId.length() == 0 || courseName.length() == 0) return false;
-    if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
-      "Student not found!"
-    );
-    if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
-      "Course not found!"
-    );
-
-    Course course = courseRepo.getOne(courseName);
-    Student student = studentRepo.getOne(studentId);
-
-    if (!course.isEnabled()) return false;
-
-    Optional<Student> found = course
-      .getStudents()
-      .stream()
-      .filter(s -> s.getId().equals(studentId))
-      .findFirst();
-    if (found.isPresent()) return false;
-
-    course.addStudent(student);
-
-    return true;
-  }
-
-  @Override
-  public Optional<CourseDTO> getCourse(String name) {
-    if (!courseRepo.existsById(name)) return Optional.empty();
-
-    return Optional.of(
-      modelMapper.map(courseRepo.getOne(name), CourseDTO.class)
-    );
-  }
-
-  @Override
-  public List<CourseDTO> getAllCourses() {
-    return courseRepo
-      .findAll()
-      .stream()
-      .map(c -> modelMapper.map(c, CourseDTO.class))
-      .collect(Collectors.toList());
-  }
-
-  @Override
-  public Optional<StudentDTO> getStudent(String studentId) {
-    if (!studentRepo.existsById(studentId)) return Optional.empty();
-
-    return Optional.of(
-      modelMapper.map(studentRepo.getOne(studentId), StudentDTO.class)
-    );
-  }
-
-  @Override
-  public List<StudentDTO> getAllStudents() {
-    return studentRepo
-      .findAll()
-      .stream()
-      .map(s -> modelMapper.map(s, StudentDTO.class))
-      .collect(Collectors.toList());
-  }
-
-  @Override
-  public List<StudentDTO> getEnrolledStudents(String courseName) {
-    if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
-      "Course not found!"
-    );
-
-    return courseRepo
-      .getOne(courseName)
-      .getStudents()
-      .stream()
-      .map(s -> modelMapper.map(s, StudentDTO.class))
-      .collect(Collectors.toList());
-  }
-
-  @Override
-  public void enableCourse(String courseName) {
-    if (courseRepo.existsById(courseName)) courseRepo
-      .getOne(courseName)
-      .setEnabled(true); else throw new CourseNotFoundException(
-      "Course not found!"
-    );
-  }
-
-  @Override
-  public void disableCourse(String courseName) {
-    if (courseRepo.existsById(courseName)) courseRepo
-      .getOne(courseName)
-      .setEnabled(false); else throw new CourseNotFoundException(
-      "Course not found!"
-    );
-  }
-
-  @Override
-  public List<Boolean> addAll(List<StudentDTO> students) {
-    List<Boolean> studentsAdded = new ArrayList<>();
-    students.forEach(s -> studentsAdded.add(addStudent(s)));
-    return studentsAdded;
-  }
-
-  @Override
-  public List<Boolean> enrollAll(List<String> studentIds, String courseName) {
-    List<Boolean> studentsEnrolled = new ArrayList<>();
-    studentIds.forEach(
-      s -> {
-        try {
-          studentsEnrolled.add(addStudentToCourse(s, courseName));
-        } catch (StudentNotFoundException | CourseNotFoundException e) {
-          throw e;
-        }
-      }
-    );
-    return studentsEnrolled;
-  }
-
-  @Override
-  public List<Boolean> addAndEnroll(Reader r, String courseName) {
-    CsvToBean<StudentDTO> csvToBean = new CsvToBeanBuilder<StudentDTO>(r)
-      .withType(StudentDTO.class)
-      .withIgnoreLeadingWhiteSpace(true)
-      .build();
-
-    List<StudentDTO> students = csvToBean.parse();
-
-    List<Boolean> added = addAll(students);
-
-    List<String> studentIds = students
-      .stream()
-      .map(s -> s.getId())
-      .collect(Collectors.toList());
-    try {
-      List<Boolean> enrolled = enrollAll(studentIds, courseName);
-      List<Boolean> addedAndEnrolled = new ArrayList<>();
-
-      for (int i = 0; i < added.size(); i++) addedAndEnrolled.add(
-        added.get(i) || enrolled.get(i)
-      );
-
-      return addedAndEnrolled;
-    } catch (StudentNotFoundException | CourseNotFoundException e) {
-      throw e;
+    @Override
+    public boolean addCourse(CourseDTO course) {
+        if (course == null || course.getName().length() == 0) return false;
+        Course courseEntity = modelMapper.map(course, Course.class);
+        if (courseRepo.existsById(courseEntity.getName())) return false;
+        courseRepo.save(courseEntity);
+        return true;
     }
-  }
 
-  @Override
-  public List<CourseDTO> getCourses(String studentId) {
-    if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
-      "Student not found!"
-    );
+    @Override
+    public boolean addStudent(StudentDTO student) {
+        if (
+                student == null ||
+                        student.getId().length() == 0 ||
+                        student.getName().length() == 0 ||
+                        student.getFirstName().length() == 0
+        ) return false;
+        Student studentEntity = modelMapper.map(student, Student.class);
+        if (studentRepo.existsById(studentEntity.getId())) return false;
 
-    return studentRepo
-      .getOne(studentId)
-      .getCourses()
-      .stream()
-      .map(c -> modelMapper.map(c, CourseDTO.class))
-      .collect(Collectors.toList());
-  }
+        User user = new User();
+        user.setUsername(student.getId() + "@studenti.polito.it");
+        user.setPassword(passwordEncoder.encode(student.getPassword()));
+        user.setRoles(Collections.singletonList("ROLE_STUDENT"));
+        User u = userRepo.save(modelMapper.map(user, User.class));
 
-  @Override
-  public List<TeamDTO> getTeamsForStudent(String studentId) {
-    if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
-      "Student not found!"
-    );
+        studentRepo.save(studentEntity);
+        notification.sendMessage(
+                "paola.caso96@gmail.com",
+                "New Registration",
+                "Username: " + user.getUsername() + " password: " + student.getPassword()
+        );
+        return true;
+    }
 
-    return studentRepo
-      .getOne(studentId)
-      .getTeams()
-      .stream()
-      .map(t -> modelMapper.map(t, TeamDTO.class))
-      .collect(Collectors.toList());
-  }
+    @Override
+    public boolean addStudentToCourse(String studentId, String courseName) {
+        if (studentId.length() == 0 || courseName.length() == 0) return false;
+        if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
+                "Student not found!"
+        );
+        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
+                "Course not found!"
+        );
 
-  @Override
-  public List<StudentDTO> getMembers(Long teamId) {
-    if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
-      "Team not found!"
-    );
+        Course course = courseRepo.getOne(courseName);
+        Student student = studentRepo.getOne(studentId);
 
-    return teamRepo
-      .getOne(teamId)
-      .getMembers()
-      .stream()
-      .map(s -> modelMapper.map(s, StudentDTO.class))
-      .collect(Collectors.toList());
-  }
+        if (!course.isEnabled()) return false;
 
-  @Override
-  public List<StudentDTO> getConfirmedStudents(Long teamId) {
-    if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
-            "Team not found!"
-    );
+        Optional<Student> found = course
+                .getStudents()
+                .stream()
+                .filter(s -> s.getId().equals(studentId))
+                .findFirst();
+        if (found.isPresent()) return false;
 
-    return teamRepo
-            .getOne(teamId)
-            .getConfirmedStudents()
-            .stream()
-            .map(s -> modelMapper.map(s, StudentDTO.class))
-            .collect(Collectors.toList());
-  }
+        course.addStudent(student);
 
-  @Override
-  public List<StudentDTO> getPendentStudents(Long teamId) {
-    if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
-            "Team not found!"
-    );
+        return true;
+    }
 
-    return teamRepo
-            .getOne(teamId)
-            .getPendentStudents()
-            .stream()
-            .map(s -> modelMapper.map(s, StudentDTO.class))
-            .collect(Collectors.toList());
-  }
+    @Override
+    public Optional<CourseDTO> getCourse(String name) {
+        if (!courseRepo.existsById(name)) return Optional.empty();
 
-  @Override
-  public TeamDTO proposeTeam(
-    String courseId,
-    String name,
-    List<String> membersIds
-  ) {
-    if (!courseRepo.existsById(courseId)) throw new CourseNotFoundException(
-      "Course not found!"
-    );
-    if (
-      !courseRepo.getOne(courseId).isEnabled()
-    ) throw new TeamServiceException("Course not enabled!");
-    if (
-      membersIds.size() > courseRepo.getOne(courseId).getMax()
-    ) throw new TeamServiceException("Too many members for this team!");
-    if (
-      membersIds.size() < courseRepo.getOne(courseId).getMin()
-    ) throw new TeamServiceException("Too few members for this team!");
-
-    if (
-      membersIds.size() > membersIds.stream().distinct().count()
-    ) throw new TeamServiceException("Duplicated members in team proposal!");
-
-    for (String m : membersIds) {
-      if (!studentRepo.existsById(m)) throw new StudentNotFoundException(
-        "Student not found!"
-      );
-      if (
-        !courseRepo
-          .getOne(courseId)
-          .getStudents()
-          .contains(studentRepo.getOne(m))
-      ) throw new TeamServiceException("Student not enrolled in this course!");
-      courseRepo
-        .getOne(courseId)
-        .getTeams()
-        .forEach(
-          t -> {
-            if (
-              t.getMembers().contains(studentRepo.getOne(m))
-            ) throw new TeamServiceException(
-              "Student " +
-              m +
-              " is already member of a team (" +
-              t.getName() +
-              ") for this course!"
-            );
-          }
+        return Optional.of(
+                modelMapper.map(courseRepo.getOne(name), CourseDTO.class)
         );
     }
 
-    Team team = new Team();
-    team.setName(name);
-    membersIds.forEach(
-      m -> {
-        team.addMember(studentRepo.getOne(m));
-      }
-    );
-    team.setCourse(courseRepo.getOne(courseId));
-    team.setId((teamRepo.save(team).getId()));
-
-    return modelMapper.map(team, TeamDTO.class);
-  }
-
-  @Override
-  public List<TeamDTO> getTeamForCourse(String courseName) {
-    if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
-      "Course not found!"
-    );
-
-    return courseRepo
-      .getOne(courseName)
-      .getTeams()
-      .stream()
-      .map(t -> modelMapper.map(t, TeamDTO.class))
-      .collect(Collectors.toList());
-  }
-
-  @Override
-  public List<StudentDTO> getStudentsInTeams(String courseName) {
-    if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
-      "Course not found!"
-    );
-
-    return courseRepo
-      .getStudentsInTeams(courseName)
-      .stream()
-      .map(s -> modelMapper.map(s, StudentDTO.class))
-      .collect(Collectors.toList());
-  }
-
-  @Override
-  public List<StudentDTO> getAvailableStudents(String courseName) {
-    if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
-      "Course not found!"
-    );
-
-    return courseRepo
-      .getStudentsNotInTeams(courseName)
-      .stream()
-      .map(s -> modelMapper.map(s, StudentDTO.class))
-      .collect(Collectors.toList());
-  }
-
-  @Override
-  public void setActive(Long teamId) {
-    if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
-      "Team not found!"
-    );
-
-    teamRepo.getOne(teamId).setStatus(1);
-    teamRepo.getOne(teamId).setVmType(teamRepo.getOne(teamId).getCourse().getVmType());
-  }
-
-  @Override
-  public void evictTeam(Long teamId) {
-    if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
-      "Team not found!"
-    );
-
-    teamRepo
-      .getOne(teamId)
-      .getMembers()
-      .forEach(s -> teamRepo.getOne(teamId).removeMember(s));
-    teamRepo.deleteById(teamId);
-  }
-
-  @Override
-  public Team getTeam(Long teamId) {
-    if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
-            "Team not found!"
-    );
-
-    return teamRepo
-            .getOne(teamId);
-  }
-
-  @Override
-  public boolean addProfessor(ProfessorDTO professor) {
-    if (professor == null) {
-      return false;
-    }
-    String id = professor.getId();
-    if (profRepo.findById(id).isPresent()) {
-      return false;
-    }
-    User user = new User();
-    user.setUsername(id + "@polito.it");
-    user.setPassword(passwordEncoder.encode(professor.getPassword()));
-    user.setRoles(Collections.singletonList("ROLE_PROFESSOR"));
-    userRepo.save(modelMapper.map(user, User.class));
-    profRepo.save(modelMapper.map(professor, Professor.class));
-    notification.sendMessage(
-      user.getUsername(),
-      "New user",
-      "Username: " + user.getUsername() + "\nPassword: " + professor.getPassword()
-    );
-    return true;
-  }
-
-  @Override
-  public boolean addProfessorToCourse(String professorId, String courseName) {
-    Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
-    if (!optionalCourseEntity.isPresent()) {
-      throw new CourseNotFoundException("Course not found!");
-    }
-    Optional<Professor> optionalProfessorEntity = profRepo.findById(
-      professorId
-    );
-    if (!optionalProfessorEntity.isPresent()) {
-      throw new StudentNotFoundException("Professor not found!");
-    }
-    if (optionalCourseEntity.get().isEnabled()) {
-      optionalCourseEntity.get().addProfessor(optionalProfessorEntity.get());
-      return true;
-    } else throw new TeamServiceException("Course not enabled");
-  }
-
-  @Override
-  public List<ProfessorDTO> getProfessors(String courseName) {
-    Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
-    if (!optionalCourseEntity.isPresent()) {
-      throw new CourseNotFoundException("Course not found!");
-    }
-    return courseRepo
-      .getOne(courseName)
-      .getProfessors()
-      .stream()
-      .map(s -> modelMapper.map(s, ProfessorDTO.class))
-      .collect(Collectors.toList());
-  }
-
-  @Override
-  public List<CourseDTO> getProfessorCourses(String professorId) {
-    return courseRepo
-            .findAll()
-            .stream()
-            .filter(c ->  c.getProfessors()
-                    .stream()
-                    .map(Professor::getId)
-                    .collect(Collectors.toList())
-                    .contains(professorId)
-            )
-            .map(c -> modelMapper.map(c, CourseDTO.class))
-            .collect(Collectors.toList());
-  }
-
-  @Override
-  public Boolean deleteOne(String studentId, String courseName) {
-    Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
-    Optional<Student> optionalStudentEntity = studentRepo.findById(studentId);
-    if (!optionalCourseEntity.isPresent()) {
-      throw new CourseNotFoundException("Course not found!");
-    }
-    if(!optionalStudentEntity.isPresent()){
-      throw new StudentNotFoundException("Student not found!");
-    }
-    if(!optionalCourseEntity.get().getStudents().stream().map(Student::getId).collect(Collectors.toList()).contains(studentId))
-      throw new StudentNotFoundException("Student not enrolled to this course!");
-
-    optionalCourseEntity.get().deleteStudent(optionalStudentEntity.get());
-    return true;
-  }
-
-  @Override
-  public List<VMDTO> getTeamVMs(Long teamId) {
-    if(!teamRepo.existsById(teamId))
-      throw new TeamServiceException("Team does not exist!");
-
-    return vmRepo.findAll()
-            .stream()
-            .filter(v -> v.getTeam().equals(teamRepo.getOne(teamId)))
-            .map(v -> modelMapper.map(v,VMDTO.class))
-            .collect(Collectors.toList())
-            ;
-  }
-
-  @Override
-  public Long createVMType(VMTypeDTO vmType) {
-    VMType vmt = new VMType();
-    vmt.setDockerFile(vmType.getDockerFile());
-    vmt.setLimit_ram(vmType.getLimit_ram());
-    vmt.setLimit_cpu(vmType.getLimit_cpu());
-    vmt.setLimit_hdd(vmType.getLimit_hdd());
-    vmt.setLimit_instance(vmType.getLimit_instance());
-    vmt.setLimit_active_instance(vmType.getLimit_active_instance());
-    return vmtRepo.save(vmt).getId();
-  }
-
-  @Override
-  public String getTeamStat(Long teamId) {
-    Optional<Team> optionalTeamEntity = teamRepo.findById(teamId);
-    if (!optionalTeamEntity.isPresent()) {
-      throw new CourseNotFoundException("team not found!");
-    }
-    AtomicReference<Integer> totalRam = new AtomicReference<>(0);
-    AtomicReference<Integer> totalCPU = new AtomicReference<>(0);
-    AtomicReference<Integer> totalHdd = new AtomicReference<>(0);
-    optionalTeamEntity.get().getVMInstance().forEach(vm -> {
-      totalRam.updateAndGet(v -> v + vm.getRam());
-      totalCPU.updateAndGet(v -> v + vm.getCpu());
-      totalHdd.updateAndGet(v -> v + vm.getHdd());
-    });
-    return "Current usage:\nTotal Ram: "+totalRam.toString()+"\nTotal CPU: "+totalCPU.toString()+"\nTotal Hdd: "+totalHdd.toString();
-  }
-
-  @Override
-  public Boolean setVMType(String courseName, Long vmtId) {
-    Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
-    Optional<VMType> optionalVMTypeEntity = vmtRepo.findById(vmtId);
-    if (!optionalCourseEntity.isPresent()) {
-      throw new CourseNotFoundException("Course not found!");
-    }
-    if (!optionalVMTypeEntity.isPresent()) {
-      throw new TeamServiceException("VMType not found!");
+    @Override
+    public List<CourseDTO> getAllCourses() {
+        return courseRepo
+                .findAll()
+                .stream()
+                .map(c -> modelMapper.map(c, CourseDTO.class))
+                .collect(Collectors.toList());
     }
 
-    optionalCourseEntity.get().setVmType(optionalVMTypeEntity.get());
-    optionalVMTypeEntity.get().getCourses().add(optionalCourseEntity.get());
+    @Override
+    public Optional<StudentDTO> getStudent(String studentId) {
+        if (!studentRepo.existsById(studentId)) return Optional.empty();
 
-    return true;
-
-  }
-
-  @Override
-  public VMDTO getVMConfig(Long vmId) {
-    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
-    if (!optionalVMEntity.isPresent()) {
-      throw new TeamServiceException("Vm not found!");
-    }
-    return modelMapper.map(optionalVMEntity.get(),VMDTO.class);
-  }
-
-  @Override
-  public Boolean modifyVMConfiguration(Long vmId, VMDTO vm) {
-    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
-    if (!optionalVMEntity.isPresent()) {
-      throw new TeamServiceException("VM not found!");
-    }
-    if(!optionalVMEntity.get().getStatus().equals("poweroff")) return false;
-    if(vm.getRam() > optionalVMEntity.get().getVmType().getLimit_ram()) return false;
-    if(vm.getCpu() > optionalVMEntity.get().getVmType().getLimit_cpu()) return false;
-    if(vm.getHdd() > optionalVMEntity.get().getVmType().getLimit_hdd()) return false;
-
-    optionalVMEntity.get().setRam(vm.getRam());
-    optionalVMEntity.get().setCpu(vm.getCpu());
-    optionalVMEntity.get().setHdd(vm.getHdd());
-    return true;
-  }
-
-  @Override
-  public Boolean modifyVMOwner(Long vmId, String studentID) {
-    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
-    Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
-
-    System.out.println(studentID);
-    if (!optionalVMEntity.isPresent()) {
-      throw new TeamServiceException("Vm not found!");
-    }
-    if (!optionalStudentEntity.isPresent()) {
-      throw new TeamServiceException("Student not found!");
+        return Optional.of(
+                modelMapper.map(studentRepo.getOne(studentId), StudentDTO.class)
+        );
     }
 
-    Student tmp = optionalVMEntity.get().getOwners().get(0);
-    optionalVMEntity.get().getOwners().clear();
-    tmp.getVms().remove(optionalVMEntity.get());
-    optionalVMEntity.get().getOwners().add(optionalStudentEntity.get());
-    optionalStudentEntity.get().getVms().add(optionalVMEntity.get());
-
-    return true;
-  }
-
-  @Override
-  public Boolean addVMOwner(Long vmId, String studentID) {
-    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
-    Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
-    if (!optionalVMEntity.isPresent()) {
-      throw new TeamServiceException("Vm not found!");
-    }
-    if (!optionalStudentEntity.isPresent()) {
-      throw new TeamServiceException("Student not found!");
-    }
-    optionalVMEntity.get().getOwners().add(optionalStudentEntity.get());
-    optionalStudentEntity.get().getVms().add(optionalVMEntity.get());
-    return true;
-  }
-
-  @Override
-  public List<StudentDTO> getVMOwners(Long vmId) {
-    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
-    if (!optionalVMEntity.isPresent()) {
-      throw new TeamServiceException("Vm not found!");
+    @Override
+    public List<StudentDTO> getAllStudents() {
+        return studentRepo
+                .findAll()
+                .stream()
+                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .collect(Collectors.toList());
     }
 
-    return vmRepo.getOne(vmId)
-            .getOwners()
-            .stream()
-            .map(s -> modelMapper.map(s,StudentDTO.class))
-            .collect(Collectors.toList());
-  }
+    @Override
+    public List<StudentDTO> getEnrolledStudents(String courseName) {
+        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
+                "Course not found!"
+        );
 
-  @Override
-  public Boolean powerVMOn(Long vmId) {
-    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
-    if (!optionalVMEntity.isPresent()) {
-      throw new TeamServiceException("Vm not found!");
+        return courseRepo
+                .getOne(courseName)
+                .getStudents()
+                .stream()
+                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .collect(Collectors.toList());
     }
-    Long team = optionalVMEntity.get().getTeam().getId();
-    Long type = optionalVMEntity.get().getVmType().getId();
-    int max_instance = optionalVMEntity.get().getVmType().getLimit_active_instance();
 
-    if(optionalVMEntity.get().getStatus().equals("poweroff"))
-      if(vmRepo.findAll()
-              .stream()
-              .filter(vm -> vm.getTeam().getId().equals(team))
-              .filter(vm -> vm.getVmType().getId().equals(type))
-              .filter(vm -> vm.getStatus().equals("poweron"))
-              .count() <= max_instance)
-      {
-        optionalVMEntity.get().setStatus("poweron");
+    @Override
+    public void enableCourse(String courseName) {
+        if (courseRepo.existsById(courseName)) courseRepo
+                .getOne(courseName)
+                .setEnabled(true);
+        else throw new CourseNotFoundException(
+                "Course not found!"
+        );
+    }
+
+    @Override
+    public void disableCourse(String courseName) {
+        if (courseRepo.existsById(courseName)) courseRepo
+                .getOne(courseName)
+                .setEnabled(false);
+        else throw new CourseNotFoundException(
+                "Course not found!"
+        );
+    }
+
+    @Override
+    public List<Boolean> addAll(List<StudentDTO> students) {
+        List<Boolean> studentsAdded = new ArrayList<>();
+        students.forEach(s -> studentsAdded.add(addStudent(s)));
+        return studentsAdded;
+    }
+
+    @Override
+    public List<Boolean> enrollAll(List<String> studentIds, String courseName) {
+        List<Boolean> studentsEnrolled = new ArrayList<>();
+        studentIds.forEach(
+                s -> {
+                    try {
+                        studentsEnrolled.add(addStudentToCourse(s, courseName));
+                    } catch (StudentNotFoundException | CourseNotFoundException e) {
+                        throw e;
+                    }
+                }
+        );
+        return studentsEnrolled;
+    }
+
+    @Override
+    public List<Boolean> addAndEnroll(Reader r, String courseName) {
+        CsvToBean<StudentDTO> csvToBean = new CsvToBeanBuilder<StudentDTO>(r)
+                .withType(StudentDTO.class)
+                .withIgnoreLeadingWhiteSpace(true)
+                .build();
+
+        List<StudentDTO> students = csvToBean.parse();
+
+        List<Boolean> added = addAll(students);
+
+        List<String> studentIds = students
+                .stream()
+                .map(s -> s.getId())
+                .collect(Collectors.toList());
+        try {
+            List<Boolean> enrolled = enrollAll(studentIds, courseName);
+            List<Boolean> addedAndEnrolled = new ArrayList<>();
+
+            for (int i = 0; i < added.size(); i++)
+                addedAndEnrolled.add(
+                        added.get(i) || enrolled.get(i)
+                );
+
+            return addedAndEnrolled;
+        } catch (StudentNotFoundException | CourseNotFoundException e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public List<CourseDTO> getCourses(String studentId) {
+        if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
+                "Student not found!"
+        );
+
+        return studentRepo
+                .getOne(studentId)
+                .getCourses()
+                .stream()
+                .map(c -> modelMapper.map(c, CourseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TeamDTO> getTeamsForStudent(String studentId) {
+        if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
+                "Student not found!"
+        );
+
+        return studentRepo
+                .getOne(studentId)
+                .getTeams()
+                .stream()
+                .map(t -> modelMapper.map(t, TeamDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StudentDTO> getMembers(Long teamId) {
+        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+                "Team not found!"
+        );
+
+        return teamRepo
+                .getOne(teamId)
+                .getMembers()
+                .stream()
+                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StudentDTO> getConfirmedStudents(Long teamId) {
+        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+                "Team not found!"
+        );
+
+        return teamRepo
+                .getOne(teamId)
+                .getConfirmedStudents()
+                .stream()
+                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StudentDTO> getPendentStudents(Long teamId) {
+        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+                "Team not found!"
+        );
+
+        return teamRepo
+                .getOne(teamId)
+                .getPendentStudents()
+                .stream()
+                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public TeamDTO proposeTeam(
+            String courseId,
+            String name,
+            List<String> membersIds
+    ) {
+        if (!courseRepo.existsById(courseId)) throw new CourseNotFoundException(
+                "Course not found!"
+        );
+        if (
+                !courseRepo.getOne(courseId).isEnabled()
+        ) throw new TeamServiceException("Course not enabled!");
+        if (
+                membersIds.size() > courseRepo.getOne(courseId).getMax()
+        ) throw new TeamServiceException("Too many members for this team!");
+        if (
+                membersIds.size() < courseRepo.getOne(courseId).getMin()
+        ) throw new TeamServiceException("Too few members for this team!");
+
+        if (
+                membersIds.size() > membersIds.stream().distinct().count()
+        ) throw new TeamServiceException("Duplicated members in team proposal!");
+
+        for (String m : membersIds) {
+            if (!studentRepo.existsById(m)) throw new StudentNotFoundException(
+                    "Student not found!"
+            );
+            if (
+                    !courseRepo
+                            .getOne(courseId)
+                            .getStudents()
+                            .contains(studentRepo.getOne(m))
+            ) throw new TeamServiceException("Student not enrolled in this course!");
+            courseRepo
+                    .getOne(courseId)
+                    .getTeams()
+                    .forEach(
+                            t -> {
+                                if (
+                                        t.getMembers().contains(studentRepo.getOne(m))
+                                ) throw new TeamServiceException(
+                                        "Student " +
+                                                m +
+                                                " is already member of a team (" +
+                                                t.getName() +
+                                                ") for this course!"
+                                );
+                            }
+                    );
+        }
+
+        Team team = new Team();
+        team.setName(name);
+        membersIds.forEach(
+                m -> {
+                    team.addMember(studentRepo.getOne(m));
+                }
+        );
+        team.setCourse(courseRepo.getOne(courseId));
+        team.setId((teamRepo.save(team).getId()));
+
+        return modelMapper.map(team, TeamDTO.class);
+    }
+
+    @Override
+    public List<TeamDTO> getTeamForCourse(String courseName) {
+        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
+                "Course not found!"
+        );
+
+        return courseRepo
+                .getOne(courseName)
+                .getTeams()
+                .stream()
+                .map(t -> modelMapper.map(t, TeamDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StudentDTO> getStudentsInTeams(String courseName) {
+        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
+                "Course not found!"
+        );
+
+        return courseRepo
+                .getStudentsInTeams(courseName)
+                .stream()
+                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StudentDTO> getAvailableStudents(String courseName) {
+        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
+                "Course not found!"
+        );
+
+        return courseRepo
+                .getStudentsNotInTeams(courseName)
+                .stream()
+                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setActive(Long teamId) {
+        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+                "Team not found!"
+        );
+
+        teamRepo.getOne(teamId).setStatus(1);
+        teamRepo.getOne(teamId).setVmType(teamRepo.getOne(teamId).getCourse().getVmType());
+    }
+
+    @Override
+    public void evictTeam(Long teamId) {
+        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+                "Team not found!"
+        );
+
+        teamRepo
+                .getOne(teamId)
+                .getMembers()
+                .forEach(s -> teamRepo.getOne(teamId).removeMember(s));
+        teamRepo.deleteById(teamId);
+    }
+
+    @Override
+    public Team getTeam(Long teamId) {
+        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+                "Team not found!"
+        );
+
+        return teamRepo
+                .getOne(teamId);
+    }
+
+    @Override
+    public boolean addProfessor(ProfessorDTO professor) {
+        if (professor == null) {
+            return false;
+        }
+        String id = professor.getId();
+        if (profRepo.findById(id).isPresent()) {
+            return false;
+        }
+        User user = new User();
+        user.setUsername(id + "@polito.it");
+        user.setPassword(passwordEncoder.encode(professor.getPassword()));
+        user.setRoles(Collections.singletonList("ROLE_PROFESSOR"));
+        userRepo.save(modelMapper.map(user, User.class));
+        profRepo.save(modelMapper.map(professor, Professor.class));
+        notification.sendMessage(
+                user.getUsername(),
+                "New user",
+                "Username: " + user.getUsername() + "\nPassword: " + professor.getPassword()
+        );
         return true;
-      }
-
-    return false;
-  }
-
-  @Override
-  public Boolean powerVMOff(Long vmId) {
-    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
-    if (!optionalVMEntity.isPresent()) {
-      throw new TeamServiceException("Vm not found!");
     }
 
-    if (optionalVMEntity.get().getStatus().equals("poweron")) {
-      optionalVMEntity.get().setStatus("poweroff");
-      return true;
+    @Override
+    public boolean addProfessorToCourse(String professorId, String courseName) {
+        Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
+        if (!optionalCourseEntity.isPresent()) {
+            throw new CourseNotFoundException("Course not found!");
+        }
+        Optional<Professor> optionalProfessorEntity = profRepo.findById(
+                professorId
+        );
+        if (!optionalProfessorEntity.isPresent()) {
+            throw new StudentNotFoundException("Professor not found!");
+        }
+        if (optionalCourseEntity.get().isEnabled()) {
+            optionalCourseEntity.get().addProfessor(optionalProfessorEntity.get());
+            return true;
+        } else throw new TeamServiceException("Course not enabled");
     }
 
-    return false;
-  }
-
-  @Override
-  public Boolean deleteVM(Long vmId) {
-    Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
-    if (!optionalVMEntity.isPresent()) {
-      throw new TeamServiceException("Vm not found!");
+    @Override
+    public List<ProfessorDTO> getProfessors(String courseName) {
+        Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
+        if (!optionalCourseEntity.isPresent()) {
+            throw new CourseNotFoundException("Course not found!");
+        }
+        return courseRepo
+                .getOne(courseName)
+                .getProfessors()
+                .stream()
+                .map(s -> modelMapper.map(s, ProfessorDTO.class))
+                .collect(Collectors.toList());
     }
 
-    optionalVMEntity.get().getTeam().getVMInstance().remove(optionalVMEntity.get());
-    optionalVMEntity.get().getOwners().forEach(student -> student.getVms().remove(optionalVMEntity.get()));
-    optionalVMEntity.get().getVmType().getVMs().remove(optionalVMEntity.get());
-    vmRepo.delete(optionalVMEntity.get());
-    return true;
-  }
-
-  @Override
-  public VMDTO createVmInstance(Long teamId, VMDTO vm, String studentID) {
-    Optional<Team> optionalTeamEntity = teamRepo.findById(teamId);
-    if (!optionalTeamEntity.isPresent()) {
-      throw new CourseNotFoundException("team not found!");
+    @Override
+    public List<CourseDTO> getProfessorCourses(String professorId) {
+        return courseRepo
+                .findAll()
+                .stream()
+                .filter(c -> c.getProfessors()
+                        .stream()
+                        .map(Professor::getId)
+                        .collect(Collectors.toList())
+                        .contains(professorId)
+                )
+                .map(c -> modelMapper.map(c, CourseDTO.class))
+                .collect(Collectors.toList());
     }
 
-    Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
-    if (!optionalStudentEntity.isPresent()) {
-      throw new TeamServiceException("Student not found!");
+    @Override
+    public Boolean deleteOne(String studentId, String courseName) {
+        Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
+        Optional<Student> optionalStudentEntity = studentRepo.findById(studentId);
+        if (!optionalCourseEntity.isPresent()) {
+            throw new CourseNotFoundException("Course not found!");
+        }
+        if (!optionalStudentEntity.isPresent()) {
+            throw new StudentNotFoundException("Student not found!");
+        }
+        if (!optionalCourseEntity.get().getStudents().stream().map(Student::getId).collect(Collectors.toList()).contains(studentId))
+            throw new StudentNotFoundException("Student not enrolled to this course!");
+
+        optionalCourseEntity.get().deleteStudent(optionalStudentEntity.get());
+        return true;
     }
-    VMType vmType = optionalTeamEntity.get().getVmType();
 
-    boolean quota = false;
-    if(vm.getRam() > vmType.getLimit_ram()) quota=true;
-    if(vm.getCpu() > vmType.getLimit_cpu()) quota=true;
-    if(vm.getHdd() > vmType.getLimit_hdd()) quota=true;
-    if(vmRepo.findAll().stream()
-            .filter(_vm -> _vm.getTeam().getId().equals(teamId))
-            .filter(_vm -> _vm.getVmType().getId().equals(vmType.getId()))
-      .count() + 1 > vmType.getLimit_instance())
-      quota=true;
 
-    if (quota)
-      throw new TeamServiceException("Quota excedeed!");
-
-    VM _vm = new VM();
-    _vm.setStatus("poweroff");
-
-    vmType.getVMs().add(_vm);
-    _vm.setVmType(vmType);
-
-    optionalTeamEntity.get().getVMInstance().add(_vm);
-    _vm.setTeam(optionalTeamEntity.get());
-
-    _vm.getOwners().add(optionalStudentEntity.get());
-    optionalStudentEntity.get().getVms().add(_vm);
-
-    _vm.setHdd(vm.getHdd());
-    _vm.setCpu(vm.getCpu());
-    _vm.setRam(vm.getRam());
-    _vm.setAccessLink("localhost:4200/genericVmPage/"+teamId+"/"+vmType.getId());
-
-    return modelMapper.map(vmRepo.save(_vm),VMDTO.class);
-  }
 }

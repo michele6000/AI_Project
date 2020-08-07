@@ -211,7 +211,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         solution.setSubmission(submissionRepo.getOne(submissionId));
         solution.setStatus("SUBMITTED");
         solution.setStudent(studentRepo.getOne(studentId));
-        solution.setVersion((int) (version+1L));
+        solution.setVersion((int) (version + 1L));
 
         solutionRepo.save(solution);
 //        studentRepo.getOne(studentId).addSolution(solution);
