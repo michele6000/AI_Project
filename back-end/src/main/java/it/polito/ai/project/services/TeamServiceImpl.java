@@ -370,6 +370,60 @@ public class TeamServiceImpl implements TeamService {
         return modelMapper.map(team, TeamDTO.class);
     }
 
+
+    @Override
+    public void addMember(
+            Long teamId,
+            String studentId
+    ) {
+        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+                "Team not found!"
+        );
+        if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
+                "Team not found!"
+        );
+
+        Team team=teamRepo.getOne(teamId);
+        Course course=team.getCourse();
+        Student student=studentRepo.getOne(studentId);
+
+        if (
+                !course.isEnabled()
+        ) throw new TeamServiceException("Course not enabled!");
+        if (
+                team.getMembers().size() == course.getMax()
+        ) throw new TeamServiceException("Too many members for this team!");
+
+        if (
+                team.getMembers().contains(student)
+        ) throw new TeamServiceException("Student is already a member of this team!");
+
+
+        if (
+                    !course
+                            .getStudents()
+                            .contains(studentRepo.getOne(studentId))
+            ) throw new TeamServiceException("Student not enrolled in this course!");
+            course.getTeams()
+                    .forEach(
+                            t -> {
+                                if (
+                                        t.getMembers().contains(studentRepo.getOne(studentId))
+                                ) throw new TeamServiceException(
+                                        "Student " +
+                                                student.getId() +
+                                                " is already member of a team (" +
+                                                t.getName() +
+                                                ") for this course!"
+                                );
+                            }
+                    );
+
+            team.addMember(studentRepo.getOne(studentId));
+        teamRepo.save(team);
+    }
+
+
     @Override
     public List<TeamDTO> getTeamForCourse(String courseName) {
         if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
@@ -453,14 +507,14 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Team getTeam(Long teamId) {
+    public TeamDTO getTeam(Long teamId) {
         if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
                 "Team not found!"
         );
 
 
-        return teamRepo
-                .getOne(teamId);
+        return modelMapper.map(teamRepo
+                .getOne(teamId),TeamDTO.class);
     }
 
     @Override

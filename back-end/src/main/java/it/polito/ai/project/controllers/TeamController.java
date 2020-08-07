@@ -1,8 +1,10 @@
 package it.polito.ai.project.controllers;
 
 import it.polito.ai.project.dtos.StudentDTO;
+import it.polito.ai.project.dtos.TeamDTO;
 import it.polito.ai.project.dtos.VMDTO;
 import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.services.NotificationService;
 import it.polito.ai.project.services.TeamService;
 import it.polito.ai.project.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,9 @@ public class TeamController {
 
     @Autowired
     TeamService service;
+
+    @Autowired
+    NotificationService notifyService;
 
     @Autowired
     VmService vmService;
@@ -81,6 +87,21 @@ public class TeamController {
             service.deleteMember(teamId,studentId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @PostMapping("/{teamId}/addMember")
+    public void addMember(
+            @PathVariable Long teamId,
+            @RequestParam String studentId
+    ) {
+        List<String>students=new ArrayList<>();
+        try {
+            service.addMember(teamId,studentId);
+            students.add(studentId);
+            notifyService.notifyTeam(service.getTeam(teamId), students);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 

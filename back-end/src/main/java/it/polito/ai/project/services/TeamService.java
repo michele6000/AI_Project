@@ -4,7 +4,6 @@ import it.polito.ai.project.dtos.CourseDTO;
 import it.polito.ai.project.dtos.ProfessorDTO;
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.TeamDTO;
-import it.polito.ai.project.entities.Team;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.io.Reader;
@@ -69,8 +68,11 @@ public interface TeamService {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     void deleteMember(Long teamId, String studentId);
 
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     TeamDTO proposeTeam(String courseId, String name, List<String> membersIds);
+
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    void addMember(Long teamId, String studentId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     List<TeamDTO> getTeamForCourse(String courseName);
@@ -101,6 +103,6 @@ public interface TeamService {
     Boolean deleteOne(String studentId, String courseName);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_PROFESSOR','ROLE_ADMIN')")
-    Team getTeam(Long teamId);
+    TeamDTO getTeam(Long teamId);
 
 }
