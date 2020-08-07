@@ -13,6 +13,7 @@ public class Professor {
   private String firstName;
   private String name;
   private String email;
+  private String password;
   private String image; //TODO: mettere binary
 
   @JoinTable(

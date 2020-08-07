@@ -8,5 +8,6 @@ public class ProfessorDTO {
   private String firstName;
   private String name;
   private String email;
+  private String password;
   private String image; //TODO: metterne binary
 }

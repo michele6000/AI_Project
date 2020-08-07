@@ -16,5 +16,6 @@ public class StudentDTO extends RepresentationModel<StudentDTO> {
   private String firstName;
 
   private String email;
+  private String password;
   private String image; //TODO: mettere binary
 }

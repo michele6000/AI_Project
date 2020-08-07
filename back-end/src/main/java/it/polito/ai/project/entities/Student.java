@@ -13,6 +13,7 @@ public class Student {
   private String name;
   private String firstName;
   private String email;
+  private String password;
   private String image; //TODO: mettere binary
 
   @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

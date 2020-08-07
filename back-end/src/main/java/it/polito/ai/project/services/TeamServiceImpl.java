@@ -72,18 +72,8 @@ public class TeamServiceImpl implements TeamService {
     if (studentRepo.existsById(studentEntity.getId())) return false;
 
     User user = new User();
-    Random random = new Random();
-    String password = random
-      .ints(97, 122)
-      .limit(8)
-      .collect(
-        StringBuilder::new,
-        StringBuilder::appendCodePoint,
-        StringBuilder::append
-      )
-      .toString();
     user.setUsername(student.getId() + "@studenti.polito.it");
-    user.setPassword(passwordEncoder.encode(password));
+    user.setPassword(passwordEncoder.encode(student.getPassword()));
     user.setRoles(Collections.singletonList("ROLE_STUDENT"));
     User u = userRepo.save(modelMapper.map(user, User.class));
 
@@ -91,7 +81,7 @@ public class TeamServiceImpl implements TeamService {
     notification.sendMessage(
       "paola.caso96@gmail.com",
       "New Registration",
-      "Username: " + user.getUsername() + " password: " + password
+      "Username: " + user.getUsername() + " password: " + student.getPassword()
     );
     return true;
   }
@@ -459,25 +449,15 @@ public class TeamServiceImpl implements TeamService {
       return false;
     }
     User user = new User();
-    Random random = new Random();
-    String password = random
-      .ints(97, 122)
-      .limit(8)
-      .collect(
-        StringBuilder::new,
-        StringBuilder::appendCodePoint,
-        StringBuilder::append
-      )
-      .toString();
     user.setUsername(id + "@polito.it");
-    user.setPassword(passwordEncoder.encode(password));
+    user.setPassword(passwordEncoder.encode(professor.getPassword()));
     user.setRoles(Collections.singletonList("ROLE_PROFESSOR"));
     userRepo.save(modelMapper.map(user, User.class));
     profRepo.save(modelMapper.map(professor, Professor.class));
     notification.sendMessage(
       user.getUsername(),
       "New user",
-      "Username: " + user.getUsername() + "\nPassword: " + password
+      "Username: " + user.getUsername() + "\nPassword: " + professor.getPassword()
     );
     return true;
   }
