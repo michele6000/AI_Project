@@ -20,7 +20,7 @@ public interface TeamService {
   @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
   List<CourseDTO> getAllCourses();
 
-  @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+//  @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
   boolean addStudent(StudentDTO student);
 
   @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
@@ -81,7 +81,7 @@ public interface TeamService {
 
   void evictTeam(Long id);
 
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
+//  @PreAuthorize("hasRole('ROLE_ADMIN')")
   boolean addProfessor(ProfessorDTO professor);
 
   @PreAuthorize("hasRole('ROLE_ADMIN')")
