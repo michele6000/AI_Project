@@ -7,9 +7,7 @@ import it.polito.ai.project.dtos.ProfessorDTO;
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.TeamDTO;
 import it.polito.ai.project.entities.*;
-import it.polito.ai.project.exceptions.CourseNotFoundException;
-import it.polito.ai.project.exceptions.StudentNotFoundException;
-import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -279,7 +277,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getMembers(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -293,7 +291,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getConfirmedStudents(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -307,7 +305,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getPendentStudents(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -330,7 +328,7 @@ public class TeamServiceImpl implements TeamService {
         );
         if (
                 !courseRepo.getOne(courseId).isEnabled()
-        ) throw new TeamServiceException("Course not enabled!");
+        ) throw new CourseDisabledException("Course not enabled!");
         if (
                 membersIds.size() > courseRepo.getOne(courseId).getMax()
         ) throw new TeamServiceException("Too many members for this team!");
@@ -340,7 +338,7 @@ public class TeamServiceImpl implements TeamService {
 
         if (
                 membersIds.size() > membersIds.stream().distinct().count()
-        ) throw new TeamServiceException("Duplicated members in team proposal!");
+        ) throw new DuplicatedStudentException("Duplicated members in team proposal!");
 
         for (String m : membersIds) {
             if (!studentRepo.existsById(m)) throw new StudentNotFoundException(
@@ -351,7 +349,7 @@ public class TeamServiceImpl implements TeamService {
                             .getOne(courseId)
                             .getStudents()
                             .contains(studentRepo.getOne(m))
-            ) throw new TeamServiceException("Student not enrolled in this course!");
+            ) throw new StudentNotFoundException("Student not enrolled in this course!");
             courseRepo
                     .getOne(courseId)
                     .getTeams()
@@ -359,7 +357,7 @@ public class TeamServiceImpl implements TeamService {
                             t -> {
                                 if (
                                         t.getMembers().contains(studentRepo.getOne(m))
-                                ) throw new TeamServiceException(
+                                ) throw new DuplicatedStudentException(
                                         "Student " +
                                                 m +
                                                 " is already member of a team (" +
@@ -389,7 +387,7 @@ public class TeamServiceImpl implements TeamService {
             Long teamId,
             String studentId
     ) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
         if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
@@ -402,27 +400,27 @@ public class TeamServiceImpl implements TeamService {
 
         if (
                 !course.isEnabled()
-        ) throw new TeamServiceException("Course not enabled!");
+        ) throw new CourseDisabledException("Course not enabled!");
         if (
                 team.getMembers().size() == course.getMax()
         ) throw new TeamServiceException("Too many members for this team!");
 
         if (
                 team.getMembers().contains(student)
-        ) throw new TeamServiceException("Student is already a member of this team!");
+        ) throw new DuplicatedStudentException("Student is already a member of this team!");
 
 
         if (
                     !course
                             .getStudents()
                             .contains(studentRepo.getOne(studentId))
-            ) throw new TeamServiceException("Student not enrolled in this course!");
+            ) throw new StudentNotFoundException("Student not enrolled in this course!");
             course.getTeams()
                     .forEach(
                             t -> {
                                 if (
                                         t.getMembers().contains(studentRepo.getOne(studentId))
-                                ) throw new TeamServiceException(
+                                ) throw new DuplicatedStudentException(
                                         "Student " +
                                                 student.getId() +
                                                 " is already member of a team (" +
@@ -479,7 +477,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void setActive(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -489,7 +487,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void evictTeam(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -502,7 +500,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void deleteMember(Long teamId, String studentId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -523,7 +521,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDTO getTeam(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -570,7 +568,7 @@ public class TeamServiceImpl implements TeamService {
         if (optionalCourseEntity.get().isEnabled()) {
             optionalCourseEntity.get().addProfessor(optionalProfessorEntity.get());
             return true;
-        } else throw new TeamServiceException("Course not enabled");
+        } else throw new CourseDisabledException("Course not enabled");
     }
 
     @Override

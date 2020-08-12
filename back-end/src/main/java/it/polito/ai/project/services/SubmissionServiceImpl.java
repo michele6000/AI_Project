@@ -63,7 +63,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         Course course = courseRepo.getOne(courseName);
 
         if (!course.isEnabled())
-            throw new TeamServiceException("Course not enabled!");
+            throw new CourseDisabledException("Course not enabled!");
 
         if (!courseRepo.getOne(courseName).getProfessors().contains(profRepo.getOne(profId))) { //l'altro non andava bene va fatto prima di fare le modifiche sul repo, e non avendo l'id quello non andava bene
             submissionRepo.delete(submissionEntity);
@@ -92,7 +92,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                 "Course not found!"
         );
 
-        if (!courseRepo.getOne(courseName).isEnabled()) throw new TeamServiceException(
+        if (!courseRepo.getOne(courseName).isEnabled()) throw new CourseDisabledException(
                 "Course not enabled!"
         );
 
@@ -111,7 +111,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                 "Course not found!"
         );
 
-        if (!courseRepo.getOne(courseName).isEnabled()) throw new TeamServiceException(
+        if (!courseRepo.getOne(courseName).isEnabled()) throw new CourseDisabledException(
                 "Course not enabled!"
         );
 
@@ -147,7 +147,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new StudentNotFoundException("Student not enrolled in this course!");
 
         if (!course.isEnabled())
-            throw new TeamServiceException("Course not enabled!");
+            throw new CourseDisabledException("Course not enabled!");
 
         Solution sol = getLastSolVersion(submissionId, studentId);
 
