@@ -292,7 +292,7 @@ public class CourseController {
               .split("@")[0];
       return submissionService.addSubmission(dto, courseName, profId);
     }
-    catch (Exception e) { //TODO: sbagliato cosi catcha tutto e non va bene
+    catch (TeamServiceException | ResponseStatusException e) {
       if (e instanceof ResponseStatusException)
         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: "+e.getMessage());
 
@@ -310,7 +310,7 @@ public class CourseController {
   @GetMapping("/{courseName}/getAllSubmissions")
   public List<SubmissionDTO> getAllSubmissions(@PathVariable String courseName) {
     try {
-      return submissionService.getAllSubmissions(courseName);
+      return submissionService.getAllSubmissions(courseName, getCurrentUsername());
     } catch (TeamServiceException e) {
       if (e instanceof CourseNotFoundException)
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -321,7 +321,7 @@ public class CourseController {
   @GetMapping("/{courseName}/getLastSubmission")
   public SubmissionDTO getLastSubmission(@PathVariable String courseName) {
     try {
-      return submissionService.getLastSubmission(courseName);
+      return submissionService.getLastSubmission(courseName, getCurrentUsername());
     } catch (TeamServiceException e) {
       if (e instanceof CourseNotFoundException || e instanceof SubmissionNotFoundException)
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -333,12 +333,21 @@ public class CourseController {
   public SubmissionDTO getSubmissionById(@PathVariable String courseName, @PathVariable Long id) {
     try {
       System.out.println("sub: "+id);
-      return submissionService.getSubmission(courseName, id);
+      return submissionService.getSubmission(courseName, id, getCurrentUsername());
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
 
 //  SUBMISSIONS END
+
+private String getCurrentUsername() {
+  return SecurityContextHolder
+          .getContext()
+          .getAuthentication()
+          .getName()
+          .split("@")[0];
+}
+
   
 }
