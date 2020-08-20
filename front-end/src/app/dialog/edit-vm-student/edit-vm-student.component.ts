@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {NgForm} from '@angular/forms';
-import {VmProfessor} from '../../models/vm-professor.model';
+import {VmType} from '../../models/vm-type.model';
 import {VmStudent} from '../../models/vm-student.model';
 import {ProfessorService} from '../../services/professor.service';
 import {StudentService} from '../../services/student.service';

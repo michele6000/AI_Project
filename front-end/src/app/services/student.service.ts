@@ -79,20 +79,14 @@ export class StudentService {
       );
   }
 
-  createVM(vm: VmStudent) {
-    this.http.post(
-      API_URL,
-      {
-        vm
-      }
-    ).subscribe(
-      (payload: any) => {
+  /* VMs */
 
-      },
-      (error: any) => {
+  createVM(teamId: number, vm: VmStudent) {
+    return this.http.post(API_URL + 'team/' + teamId + '/createVmInstance', {vm});
+  }
 
-      }
-    );
+  getVmConfiguration(vmId: number) {
+    return this.http.get(API_URL + 'vm/' + vmId + '/getCurrentConfiguration');
   }
 
   findAvailableStudentsByCourseName(courseName: string) {

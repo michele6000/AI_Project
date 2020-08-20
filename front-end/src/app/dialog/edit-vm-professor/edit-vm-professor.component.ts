@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {GroupModel} from '../../models/group.model';
 import {NgForm} from '@angular/forms';
 import {ProfessorService} from '../../services/professor.service';
-import {VmProfessor} from '../../models/vm-professor.model';
+import {VmType} from '../../models/vm-type.model';
 
 @Component({
   selector: 'app-edit-vm',
@@ -22,13 +22,14 @@ export class EditVmProfessorComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  create(f: NgForm) {
-    const vm = new VmProfessor();
-    vm.ram = f.value.ram;
-    vm.vcpu = f.value.vcpu;
-    vm.disk = f.value.disk;
-    vm.maxVm = f.value.maxVm;
-    vm.maxActiveVmSimultaneously = f.value.maxActiveVmSimultaneously;
-    this.professorService.createVMTeacher(vm);
+  modify(f: NgForm) {
+    const vm = new VmType();
+    vm.dockerFile = '/var/docker/vm' + Math.random() + '.docker';
+    vm.limit_ram = f.value.ram;
+    vm.limit_cpu = f.value.vcpu;
+    vm.limit_hdd = f.value.disk;
+    vm.limit_instance = f.value.maxVm;
+    vm.limit_active_instance = f.value.maxActiveVmSimultaneously;
+    this.professorService.updateVMType(vm);
   }
 }

@@ -67,7 +67,6 @@ export class VmsComponent implements OnInit {
   }
 
   modifyGroup($event: GroupModel) {
-
     this.dialog.open(EditVmProfessorComponent, {data: $event})
       .afterClosed()
       .subscribe(result => {

@@ -3,7 +3,7 @@ import {UserModel} from '../models/user.models';
 import {HttpClient} from '@angular/common/http';
 import {CourseModel} from '../models/course.model';
 import {VmModel} from '../models/vm.model';
-import {VmProfessor} from '../models/vm-professor.model';
+import {VmType} from '../models/vm-type.model';
 import {VmStudent} from '../models/vm-student.model';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {StudentModel} from '../models/student.model';
@@ -115,20 +115,16 @@ export class ProfessorService {
 
   /* VMs */
 
-  createVMTeacher(vm: VmProfessor) {
-    this.http.post(
-      API_URL,
-      {
-        vm
-      }
-    ).subscribe(
-      (payload: any) => {
+  createVMType(vm: VmType) {
+    return this.http.post<string>(API_URL + 'courses/createVMType', {vm});
+  }
 
-      },
-      (error: any) => {
+  setVMType(courseName: string, vmtId: string) {
+    return this.http.post(API_URL + 'courses/' + courseName + '/setVMType?vmtId=' + vmtId, {});
+  }
 
-      }
-    );
+  updateVMType(vm: VmType) {
+
   }
 
   findVmsByTeam(teamId: number) {
