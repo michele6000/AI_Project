@@ -4,8 +4,7 @@ import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.VMDTO;
 import it.polito.ai.project.dtos.VMTypeDTO;
 import it.polito.ai.project.entities.*;
-import it.polito.ai.project.exceptions.CourseNotFoundException;
-import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class VmServiceImpl implements VmService {
     @Override
     public List<VMDTO> getTeamVMs(Long teamId) {
         if (!teamRepo.existsById(teamId))
-            throw new TeamServiceException("Team does not exist!");
+            throw new TeamNotFoundException("Team not found!");
 
         return vmRepo.findAll()
                 .stream()
@@ -68,7 +67,7 @@ public class VmServiceImpl implements VmService {
     public String getTeamStat(Long teamId) {
         Optional<Team> optionalTeamEntity = teamRepo.findById(teamId);
         if (!optionalTeamEntity.isPresent()) {
-            throw new CourseNotFoundException("team not found!");
+            throw new TeamNotFoundException("Team not found!");
         }
         AtomicReference<Integer> totalRam = new AtomicReference<>(0);
         AtomicReference<Integer> totalCPU = new AtomicReference<>(0);
@@ -89,7 +88,7 @@ public class VmServiceImpl implements VmService {
             throw new CourseNotFoundException("Course not found!");
         }
         if (!optionalVMTypeEntity.isPresent()) {
-            throw new TeamServiceException("VMType not found!");
+            throw new VmNotFoundException("VMType not found!");
         }
 
         optionalCourseEntity.get().setVmType(optionalVMTypeEntity.get());
@@ -103,7 +102,7 @@ public class VmServiceImpl implements VmService {
     public VMDTO getVMConfig(Long vmId) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         if (!optionalVMEntity.isPresent()) {
-            throw new TeamServiceException("Vm not found!");
+            throw new VmNotFoundException("Vm not found!");
         }
         return modelMapper.map(optionalVMEntity.get(), VMDTO.class);
     }
@@ -112,7 +111,7 @@ public class VmServiceImpl implements VmService {
     public Boolean modifyVMConfiguration(Long vmId, VMDTO vm) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         if (!optionalVMEntity.isPresent()) {
-            throw new TeamServiceException("VM not found!");
+            throw new VmNotFoundException("Vm not found!");
         }
         if (!optionalVMEntity.get().getStatus().equals("poweroff")) return false;
         if (vm.getRam() > optionalVMEntity.get().getVmType().getLimit_ram()) return false;
@@ -132,10 +131,10 @@ public class VmServiceImpl implements VmService {
 
         System.out.println(studentID);
         if (!optionalVMEntity.isPresent()) {
-            throw new TeamServiceException("Vm not found!");
+            throw new VmNotFoundException("Vm not found!");
         }
         if (!optionalStudentEntity.isPresent()) {
-            throw new TeamServiceException("Student not found!");
+            throw new StudentNotFoundException("Student not found!");
         }
 
         Student tmp = optionalVMEntity.get().getOwners().get(0);
@@ -152,10 +151,10 @@ public class VmServiceImpl implements VmService {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
         if (!optionalVMEntity.isPresent()) {
-            throw new TeamServiceException("Vm not found!");
+            throw new VmNotFoundException("Vm not found!");
         }
         if (!optionalStudentEntity.isPresent()) {
-            throw new TeamServiceException("Student not found!");
+            throw new StudentNotFoundException("Student not found!");
         }
         optionalVMEntity.get().getOwners().add(optionalStudentEntity.get());
         optionalStudentEntity.get().getVms().add(optionalVMEntity.get());
@@ -166,7 +165,7 @@ public class VmServiceImpl implements VmService {
     public List<StudentDTO> getVMOwners(Long vmId) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         if (!optionalVMEntity.isPresent()) {
-            throw new TeamServiceException("Vm not found!");
+            throw new VmNotFoundException("Vm not found!");
         }
 
         return vmRepo.getOne(vmId)
@@ -180,7 +179,7 @@ public class VmServiceImpl implements VmService {
     public Boolean powerVMOn(Long vmId) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         if (!optionalVMEntity.isPresent()) {
-            throw new TeamServiceException("Vm not found!");
+            throw new VmNotFoundException("Vm not found!");
         }
         Long team = optionalVMEntity.get().getTeam().getId();
         Long type = optionalVMEntity.get().getVmType().getId();
@@ -204,7 +203,7 @@ public class VmServiceImpl implements VmService {
     public Boolean powerVMOff(Long vmId) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         if (!optionalVMEntity.isPresent()) {
-            throw new TeamServiceException("Vm not found!");
+            throw new VmNotFoundException("Vm not found!");
         }
 
         if (optionalVMEntity.get().getStatus().equals("poweron")) {
@@ -219,7 +218,7 @@ public class VmServiceImpl implements VmService {
     public Boolean deleteVM(Long vmId) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         if (!optionalVMEntity.isPresent()) {
-            throw new TeamServiceException("Vm not found!");
+            throw new VmNotFoundException("Vm not found!");
         }
 
         optionalVMEntity.get().getTeam().getVMInstance().remove(optionalVMEntity.get());
@@ -233,12 +232,12 @@ public class VmServiceImpl implements VmService {
     public VMDTO createVmInstance(Long teamId, VMDTO vm, String studentID) {
         Optional<Team> optionalTeamEntity = teamRepo.findById(teamId);
         if (!optionalTeamEntity.isPresent()) {
-            throw new CourseNotFoundException("team not found!");
+            throw new TeamNotFoundException("Team not found!");
         }
 
         Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
         if (!optionalStudentEntity.isPresent()) {
-            throw new TeamServiceException("Student not found!");
+            throw new StudentNotFoundException("Student not found!");
         }
         VMType vmType = optionalTeamEntity.get().getVmType();
 

@@ -92,7 +92,7 @@ public class StudentController {
             "You are not allowed to access this information!"
     );
     try {
-      return submissionService.getAllSolutions(submissionId);
+      return submissionService.getAllSolutions(submissionId, getCurrentUsername());
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -105,7 +105,7 @@ public class StudentController {
             "You are not allowed to access this information!"
     );
     try {
-      return submissionService.getAllSolutionsForStudent(submissionId,studentId);
+      return submissionService.getAllSolutionsForStudent(submissionId,studentId, getCurrentUsername());
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -118,7 +118,7 @@ public class StudentController {
             "You are not allowed to access this information!"
     );
     try {
-      return submissionService.getLastSolution(studentId,submissionId);
+      return submissionService.getLastSolution(studentId,submissionId, getCurrentUsername());
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -131,7 +131,7 @@ public class StudentController {
             "You are not allowed to access this information!"
     );
     try {
-      return submissionService.getSolution(solutionId);
+      return submissionService.getSolution(solutionId, getCurrentUsername());
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -145,7 +145,7 @@ public class StudentController {
 //    );
     try {
       return submissionService.evaluateLastSolution(studentId,submissionId, evaluation, getCurrentUsername());
-    } catch (Exception e) {
+    } catch (TeamServiceException| ResponseStatusException e) {
       if(e instanceof TeamServiceException)
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
       else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
@@ -160,7 +160,7 @@ public class StudentController {
 //    );
     try {
       return submissionService.evaluateSolution(solutionId, evaluation, getCurrentUsername());
-    } catch (Exception e) {
+    } catch (TeamServiceException| ResponseStatusException e) {
       if(e instanceof TeamServiceException)
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
       else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
@@ -187,6 +187,15 @@ public class StudentController {
     );
     try {
       return submissionService.updateSolution(submissionId, sol, studentId);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{submissionId}/stopRevisions")
+  public void stopRevisions(@PathVariable Long submissionId) {
+    try {
+      submissionService.stopRevisions(submissionId, getCurrentUsername());
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }

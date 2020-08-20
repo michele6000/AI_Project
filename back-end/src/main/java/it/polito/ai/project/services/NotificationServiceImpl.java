@@ -4,6 +4,7 @@ import it.polito.ai.project.dtos.TeamDTO;
 import it.polito.ai.project.entities.Token;
 import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.repositories.StudentRepository;
+import it.polito.ai.project.repositories.TeamRepository;
 import it.polito.ai.project.repositories.TokenRepository;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     private StudentRepository studentRepo;
+
+    @Autowired
+    private TeamRepository teamRepo;
 
     @Autowired
     private TeamService teamService;
@@ -92,7 +96,7 @@ public class NotificationServiceImpl implements NotificationService {
                 throw e;
             }
         } else everythingOk.set(true);
-        teamService.getTeam(teamId).confirmStudent(studentRepo.getOne(username));
+        teamRepo.getOne(teamId).confirmStudent(studentRepo.getOne(username));
         return false;
     }
 

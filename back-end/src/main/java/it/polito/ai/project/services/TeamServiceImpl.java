@@ -7,9 +7,7 @@ import it.polito.ai.project.dtos.ProfessorDTO;
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.TeamDTO;
 import it.polito.ai.project.entities.*;
-import it.polito.ai.project.exceptions.CourseNotFoundException;
-import it.polito.ai.project.exceptions.StudentNotFoundException;
-import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,9 +164,16 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void enableCourse(String courseName) {
-        if (courseRepo.existsById(courseName)) courseRepo
-                .getOne(courseName)
-                .setEnabled(true);
+        if (courseRepo.existsById(courseName)) {
+            courseRepo
+                    .getOne(courseName)
+                    .setEnabled(true);
+            courseRepo.getOne(courseName).getTeams().forEach(t->{
+                if(t.getMembers().size()==t.getConfirmedStudents().size())
+                    setActive(t.getId());
+            });
+
+        }
         else throw new CourseNotFoundException(
                 "Course not found!"
         );
@@ -176,9 +181,15 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void disableCourse(String courseName) {
-        if (courseRepo.existsById(courseName)) courseRepo
-                .getOne(courseName)
-                .setEnabled(false);
+        if (courseRepo.existsById(courseName))
+        {
+            courseRepo
+                    .getOne(courseName)
+                    .setEnabled(false);
+            courseRepo.getOne(courseName).getTeams().forEach(t->t.setStatus(0));
+            courseRepo.getOne(courseName).getStudents().forEach(s->notification.sendMessage(s.getEmail(),"Course disabled",
+                    "We inform you that the course "+courseName+" has been disabled."));
+        }
         else throw new CourseNotFoundException(
                 "Course not found!"
         );
@@ -219,7 +230,7 @@ public class TeamServiceImpl implements TeamService {
 
         List<String> studentIds = students
                 .stream()
-                .map(s -> s.getId())
+                .map(StudentDTO::getId)
                 .collect(Collectors.toList());
         try {
             List<Boolean> enrolled = enrollAll(studentIds, courseName);
@@ -266,7 +277,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getMembers(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -280,7 +291,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getConfirmedStudents(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -294,7 +305,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getPendentStudents(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -317,7 +328,7 @@ public class TeamServiceImpl implements TeamService {
         );
         if (
                 !courseRepo.getOne(courseId).isEnabled()
-        ) throw new TeamServiceException("Course not enabled!");
+        ) throw new CourseDisabledException("Course not enabled!");
         if (
                 membersIds.size() > courseRepo.getOne(courseId).getMax()
         ) throw new TeamServiceException("Too many members for this team!");
@@ -327,7 +338,7 @@ public class TeamServiceImpl implements TeamService {
 
         if (
                 membersIds.size() > membersIds.stream().distinct().count()
-        ) throw new TeamServiceException("Duplicated members in team proposal!");
+        ) throw new DuplicatedStudentException("Duplicated members in team proposal!");
 
         for (String m : membersIds) {
             if (!studentRepo.existsById(m)) throw new StudentNotFoundException(
@@ -338,7 +349,7 @@ public class TeamServiceImpl implements TeamService {
                             .getOne(courseId)
                             .getStudents()
                             .contains(studentRepo.getOne(m))
-            ) throw new TeamServiceException("Student not enrolled in this course!");
+            ) throw new StudentNotFoundException("Student not enrolled in this course!");
             courseRepo
                     .getOne(courseId)
                     .getTeams()
@@ -346,7 +357,7 @@ public class TeamServiceImpl implements TeamService {
                             t -> {
                                 if (
                                         t.getMembers().contains(studentRepo.getOne(m))
-                                ) throw new TeamServiceException(
+                                ) throw new DuplicatedStudentException(
                                         "Student " +
                                                 m +
                                                 " is already member of a team (" +
@@ -369,6 +380,60 @@ public class TeamServiceImpl implements TeamService {
 
         return modelMapper.map(team, TeamDTO.class);
     }
+
+
+    @Override
+    public void addMember(
+            Long teamId,
+            String studentId
+    ) {
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
+                "Team not found!"
+        );
+        if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
+                "Team not found!"
+        );
+
+        Team team=teamRepo.getOne(teamId);
+        Course course=team.getCourse();
+        Student student=studentRepo.getOne(studentId);
+
+        if (
+                !course.isEnabled()
+        ) throw new CourseDisabledException("Course not enabled!");
+        if (
+                team.getMembers().size() == course.getMax()
+        ) throw new TeamServiceException("Too many members for this team!");
+
+        if (
+                team.getMembers().contains(student)
+        ) throw new DuplicatedStudentException("Student is already a member of this team!");
+
+
+        if (
+                    !course
+                            .getStudents()
+                            .contains(studentRepo.getOne(studentId))
+            ) throw new StudentNotFoundException("Student not enrolled in this course!");
+            course.getTeams()
+                    .forEach(
+                            t -> {
+                                if (
+                                        t.getMembers().contains(studentRepo.getOne(studentId))
+                                ) throw new DuplicatedStudentException(
+                                        "Student " +
+                                                student.getId() +
+                                                " is already member of a team (" +
+                                                t.getName() +
+                                                ") for this course!"
+                                );
+                            }
+                    );
+
+            team.addMember(studentRepo.getOne(studentId));
+        teamRepo.save(team);
+    }
+
 
     @Override
     public List<TeamDTO> getTeamForCourse(String courseName) {
@@ -412,7 +477,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void setActive(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -422,7 +487,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void evictTeam(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
@@ -434,13 +499,35 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Team getTeam(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamServiceException(
+    public void deleteMember(Long teamId, String studentId) {
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
                 "Team not found!"
         );
 
-        return teamRepo
-                .getOne(teamId);
+        if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException(
+                "Student not found!"
+        );
+
+        if (!teamRepo.getOne(teamId).getMembers().contains(studentRepo.getOne(studentId))) throw new StudentNotFoundException(
+                "Student is not a member of this team!"
+        );
+
+        teamRepo
+                .getOne(teamId)
+                .removeMember(studentRepo.getOne(studentId));
+        if (teamRepo.getOne(teamId).getMembers().size()<teamRepo.getOne(teamId).getCourse().getMin())
+            evictTeam(teamId);
+    }
+
+    @Override
+    public TeamDTO getTeam(Long teamId) {
+        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException(
+                "Team not found!"
+        );
+
+
+        return modelMapper.map(teamRepo
+                .getOne(teamId),TeamDTO.class);
     }
 
     @Override
@@ -481,7 +568,7 @@ public class TeamServiceImpl implements TeamService {
         if (optionalCourseEntity.get().isEnabled()) {
             optionalCourseEntity.get().addProfessor(optionalProfessorEntity.get());
             return true;
-        } else throw new TeamServiceException("Course not enabled");
+        } else throw new CourseDisabledException("Course not enabled");
     }
 
     @Override

@@ -11,4 +11,5 @@ public class SolutionDTO {
     private String version;
     private Long evaluation;
     private String status;
+    private boolean isRevisable; //flag
 }
