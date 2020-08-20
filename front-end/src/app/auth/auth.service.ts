@@ -7,7 +7,7 @@ import * as moment from 'moment';
 import {UserLogged} from '../models/user-logged';
 import {Router} from '@angular/router';
 import {ProfessorService} from '../services/professor.service';
-import {StudentService} from "../services/student.service";
+import {StudentService} from '../services/student.service';
 
 const API_URL_LOGIN = '/api/auth/signin';
 const API_URL_REGISTER = '/api/auth/';
@@ -25,10 +25,15 @@ export class AuthService {
     id: null, email: undefined, roles: []
   };
 
+  tokenExpired: Observable<boolean> = new Observable<boolean>();
+  private tokenExpiredSubject: BehaviorSubject<boolean>;
+
   constructor(private http: HttpClient, private router: Router,
               private professorService: ProfessorService, private studentService: StudentService) {
     this.userSubject = new BehaviorSubject<UserLogged>(this.localUser);
     this.user = this.userSubject.asObservable();
+    this.tokenExpiredSubject = new BehaviorSubject<boolean>(false);
+    this.tokenExpired = this.tokenExpiredSubject.asObservable();
     if (localStorage.getItem('token')) {
       // this.isUserLoggedIn = true;
       const tkn = JSON.parse(atob(localStorage.getItem('token').split('.')[1]));
@@ -96,12 +101,16 @@ export class AuthService {
       ), shareReplay());
   }
 
-  logout() {
+  clearStorage() {
     localStorage.removeItem('token');
     localStorage.removeItem('expires_at');
     localStorage.removeItem('email');
     localStorage.removeItem('id');
     localStorage.removeItem('roles');
+  }
+
+  logout() {
+    this.clearStorage();
 
     this.userSubject.next(null);
     this.router.navigate(['home']);
@@ -130,6 +139,18 @@ export class AuthService {
     if (localStorage.getItem('expires_at') == null) {
       return false;
     }
-    return moment().isBefore(moment.unix(+localStorage.getItem('expires_at')));
+    if (!moment().isBefore(moment.unix(+localStorage.getItem('expires_at')))) {
+      // Il token non è più valido
+      this.clearStorage();
+      this.userSubject.next(null);
+
+      // @todo Valutare altra soluzione
+      this.tokenExpiredSubject.next(true);
+      this.tokenExpiredSubject.next(false);
+
+      return false;
+    } else {
+      return true;
+    }
   }
 }

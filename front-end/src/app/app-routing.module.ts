@@ -54,15 +54,27 @@ const routes: Routes = [
     children: [
       {
         path: 'students',
-        component: EnrolledStudentsComponent
+        component: EnrolledStudentsComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_PROFESSOR'
+        }
       },
       {
         path: 'vms',
-        component: VmsComponent
+        component: VmsComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_PROFESSOR'
+        }
       },
       {
         path: 'assignments',
-        component: AssignmentsComponent
+        component: AssignmentsComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_PROFESSOR'
+        }
       }
     ]
   },
@@ -84,15 +96,27 @@ const routes: Routes = [
     children: [
       {
         path: 'groups',
-        component: GroupsComponent
+        component: GroupsComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_STUDENT'
+        }
       },
       {
         path: 'vms',
-        component: VmsStudentComponent
+        component: VmsStudentComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_STUDENT'
+        }
       },
       {
         path: 'assignments',
-        component: AssignmentsStudentComponent
+        component: AssignmentsStudentComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_STUDENT'
+        }
       }
     ]
   },

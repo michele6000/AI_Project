@@ -105,6 +105,14 @@ export class StudentService {
     return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/members');
   }
 
+  findConfirmedStudentsByTeamId(teamId: number) {
+    return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/confirmedStudents');
+  }
+
+  findPendentStudentsByTeamId(teamId: number) {
+    return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/pendentStudents');
+  }
+
   findVmsByTeam(teamId: number) {
     return this.http.get<VmModel[]>(API_URL + 'team/' + teamId + '/vms');
   }
