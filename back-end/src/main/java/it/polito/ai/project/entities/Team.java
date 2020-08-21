@@ -14,17 +14,11 @@ public class Team {
   private String name;
   private int status;
 
-  // Limitazioni per la VM
-  private String limit_hdd;
-  private String limit_cpu;
-  private String limit_ram;
-  private String limit_instance;
-  private String limit_active_instance;
-
   @ManyToOne
+  @JoinColumn(name = "VMType_id")
   private VMType vmType;
 
-  @OneToMany
+  @OneToMany(mappedBy = "team")
   private List<VM> VMInstance;
 
   @ManyToOne
@@ -35,9 +29,22 @@ public class Team {
   @JoinTable(
     name = "team_students",
     joinColumns = @JoinColumn(name = "team_id"),
-    inverseJoinColumns = @JoinColumn(name = "student_id")
-  )
+    inverseJoinColumns = @JoinColumn(name = "student_id"))
   private List<Student> members = new ArrayList<>();
+
+  @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+  @JoinTable(
+          name = "team_students",
+          joinColumns = @JoinColumn(name = "team_id"),
+          inverseJoinColumns = @JoinColumn(name = "student_id"))
+  private List<Student> pendentStudents = members;
+
+  @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+  @JoinTable(
+          name = "team_students",
+          joinColumns = @JoinColumn(name = "team_id"),
+          inverseJoinColumns = @JoinColumn(name = "student_id"))
+  private List<Student> confirmedStudents = new ArrayList<>();
 
   public void setCourse(Course course) {
     if (course != null) {
@@ -57,5 +64,12 @@ public class Team {
   public void removeMember(Student student) {
     members.remove(student);
     student.getTeams().remove(this);
+    pendentStudents.remove(student);
+    confirmedStudents.remove(student);
+  }
+
+  public void confirmStudent(Student student) {
+    pendentStudents.remove(student);
+    confirmedStudents.add(student);
   }
 }

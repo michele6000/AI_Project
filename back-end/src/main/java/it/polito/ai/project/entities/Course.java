@@ -16,7 +16,9 @@ public class Course {
   private int max;
   private boolean enabled;
 
+
   @ManyToOne
+//  @JoinColumn(name = "VMType_id") //TODO:chiedere a malnati
   private VMType vmType;
 
   @ManyToMany(mappedBy = "courses")
@@ -28,7 +30,7 @@ public class Course {
   @ManyToMany(mappedBy = "courses")
   private List<Professor> professors = new ArrayList<>();
 
-  @OneToMany() //AUTO-MAPPING
+  @OneToMany(mappedBy = "course")
   private List<Submission> submissions = new ArrayList<>();
 
   public void addStudent(Student student) {

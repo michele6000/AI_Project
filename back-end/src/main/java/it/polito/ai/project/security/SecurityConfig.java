@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .permitAll()
       .antMatchers("/API/notifications/**")
       .permitAll()
-      .antMatchers("/auth/signin")
+      .antMatchers("/auth/**")
       .permitAll()
       .antMatchers(HttpMethod.GET, "/API/**")
       .authenticated()

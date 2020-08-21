@@ -1,9 +1,12 @@
 package it.polito.ai.project.controllers;
 
 import it.polito.ai.project.dtos.CourseDTO;
+import it.polito.ai.project.dtos.SolutionDTO;
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.TeamDTO;
 import it.polito.ai.project.exceptions.StudentNotFoundException;
+import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.services.SubmissionService;
 import it.polito.ai.project.services.TeamService;
 import java.util.List;
 import java.util.Optional;
@@ -21,12 +24,23 @@ public class StudentController {
   @Autowired
   TeamService service;
 
+  @Autowired
+  SubmissionService submissionService;
+
   @GetMapping({ "", "/" })
   public List<StudentDTO> all() {
     List<StudentDTO> students = service.getAllStudents();
     students.forEach(ModelHelper::enrich);
     return students;
   }
+
+//  @PostMapping({ "", "/" })
+//  public StudentDTO addStudent(@RequestBody StudentDTO dto) {
+//    if (!service.addStudent(dto)) throw new ResponseStatusException(
+//            HttpStatus.CONFLICT,
+//            dto.getId()
+//    ); else return ModelHelper.enrich(dto);
+//  }
 
   @GetMapping("/{id}")
   public StudentDTO getOne(@PathVariable String id) {
@@ -41,13 +55,7 @@ public class StudentController {
     }
   }
 
-  @PostMapping({ "", "/" })
-  public StudentDTO addStudent(@RequestBody StudentDTO dto) {
-    if (!service.addStudent(dto)) throw new ResponseStatusException(
-      HttpStatus.CONFLICT,
-      dto.getId()
-    ); else return ModelHelper.enrich(dto);
-  }
+
 
   @GetMapping("/{id}/courses")
   public List<CourseDTO> getCourses(@PathVariable String id) {
@@ -56,8 +64,7 @@ public class StudentController {
       "You are not allowed to access this information!"
     );
     try {
-      List<CourseDTO> courses = service.getCourses(id);
-      return courses;
+      return service.getCourses(id);
     } catch (StudentNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -75,6 +82,126 @@ public class StudentController {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
+
+//  SOLUTIONS START
+
+  @GetMapping("/{studentId}/{submissionId}/getAllSolutions")
+  public List<SolutionDTO> getSolutions(@PathVariable String studentId, @PathVariable Long submissionId) {
+    if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to access this information!"
+    );
+    try {
+      return submissionService.getAllSolutions(submissionId, getCurrentUsername());
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @GetMapping("/{studentId}/{submissionId}/getHistorySolutions")
+  public List<SolutionDTO> getSolutionsForStudent(@PathVariable String studentId, @PathVariable Long submissionId) {
+    if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to access this information!"
+    );
+    try {
+      return submissionService.getAllSolutionsForStudent(submissionId,studentId, getCurrentUsername());
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @GetMapping("/{studentId}/{submissionId}/getLatestSolution")
+  public SolutionDTO getLastSolution(@PathVariable String studentId, @PathVariable Long submissionId) {
+    if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to access this information!"
+    );
+    try {
+      return submissionService.getLastSolution(studentId,submissionId, getCurrentUsername());
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @GetMapping("/{studentId}/{solutionId}/getSolution")
+  public SolutionDTO getSolution(@PathVariable String studentId, @PathVariable Long solutionId) {
+    if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to access this information!"
+    );
+    try {
+      return submissionService.getSolution(solutionId, getCurrentUsername());
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{studentId}/{submissionId}/evaluateLatestSolution")
+  public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
+//    if (!getCurrentRoles().contains("PROFESSOR"))  throw new ResponseStatusException(
+//            HttpStatus.FORBIDDEN,
+//            "You are not allowed to evaluate a solution!"
+//    );
+    try {
+      return submissionService.evaluateLastSolution(studentId,submissionId, evaluation, getCurrentUsername());
+    } catch (TeamServiceException| ResponseStatusException e) {
+      if(e instanceof TeamServiceException)
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+      else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{studentId}/{solutionId}/evaluateSolution")
+  public boolean evaluateSolution(@PathVariable String studentId, @PathVariable Long solutionId, @RequestParam Long evaluation) {
+//    if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
+//            HttpStatus.FORBIDDEN,
+//            "You are not allowed to evaluate a solution!"
+//    );
+    try {
+      return submissionService.evaluateSolution(solutionId, evaluation, getCurrentUsername());
+    } catch (TeamServiceException| ResponseStatusException e) {
+      if(e instanceof TeamServiceException)
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+      else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{studentId}/{submissionId}/addSolution")
+  public String addSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
+    if (!isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to add a solution!"
+    );
+    try {
+      return submissionService.addSolution(submissionId, sol, studentId);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+  @PostMapping("/{studentId}/{submissionId}/updateSolution")
+  public String updateSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
+    if (!isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to add a solution!"
+    );
+    try {
+      return submissionService.updateSolution(submissionId, sol, studentId);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{submissionId}/stopRevisions")
+  public void stopRevisions(@PathVariable Long submissionId) {
+    try {
+      submissionService.stopRevisions(submissionId, getCurrentUsername());
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  //  SOLUTIONS END
 
   private String getCurrentUsername() {
     return SecurityContextHolder
@@ -100,4 +227,5 @@ public class StudentController {
       !getCurrentRoles().contains("ROLE_STUDENT")
     );
   }
+
 }

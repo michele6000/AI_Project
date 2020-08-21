@@ -13,16 +13,23 @@ import java.util.List;
 public class VMType {
     @Id
     @GeneratedValue
-    private String id;
+    private Long id;
     private String dockerFile; // visto come path del dockerfile
 
-    @OneToMany
+    // Limitazioni per la VM
+    private Integer limit_hdd; // espresso in MB
+    private Integer limit_cpu; // espresso in core
+    private Integer limit_ram; // espresso in MB
+    private Integer limit_instance;
+    private Integer limit_active_instance;
+
+    @OneToMany ()
     private List<Course> courses; // una VM_type può essere associata a cpiù corsi ma non viceversa
 
-    @OneToMany
+    @OneToMany (mappedBy = "vmType")
     private List<VM> VMs; // posso avere più istanze con lo stesso tipo ma non viceversa
 
-    @OneToMany
+    @OneToMany ()
     private List<Team> teams; //posso avere più team che usano la stessa vm type
 
     public void addCourse(Course c){

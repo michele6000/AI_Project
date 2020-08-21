@@ -13,6 +13,7 @@ public class Student {
   private String name;
   private String firstName;
   private String email;
+  private String password;
   private String image; //TODO: mettere binary
 
   @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -26,6 +27,17 @@ public class Student {
   @ManyToMany(mappedBy = "members")
   private List<Team> teams = new ArrayList<>();
 
+  @OneToMany
+  private List<Solution> solutions=new ArrayList<>();
+
+  @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+  @JoinTable(
+          name = "student_vms",
+          joinColumns = @JoinColumn(name = "student_id"),
+          inverseJoinColumns = @JoinColumn(name = "vm_id")
+  )
+  private List<VM> vms;
+
   public void addCourse(Course course) {
     courses.add(course);
     course.getStudents().add(this);
@@ -34,6 +46,11 @@ public class Student {
   public void addTeam(Team team) {
     teams.add(team);
     team.getMembers().add(this);
+  }
+
+  public void addSolution(Solution solution) {
+    solutions.add(solution);
+    solution.setStudent(this);
   }
 
   public void removeTeam(Team team) {

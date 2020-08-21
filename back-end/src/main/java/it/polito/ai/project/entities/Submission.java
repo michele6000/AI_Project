@@ -4,6 +4,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -15,13 +17,22 @@ public class Submission {
 
     private Timestamp expiryDate;
     private Timestamp releaseDate;
-    private Byte content; //image
+    private String content; //image
 
     @ManyToOne
+    @JoinColumn(name = "course_id")
     private Course course;
+
+    @OneToMany ()
+    private List<Solution> solutions= new ArrayList<>();
 
     public void setCourse(Course c){
         course = c;
         c.getSubmissions().add(this);
+    }
+
+    public void addSolution(Solution solution) {
+        solutions.add(solution);
+        solution.setSubmission(this);
     }
 }
