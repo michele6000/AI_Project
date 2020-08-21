@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {NgForm} from "@angular/forms";
 import {UserModel} from "../models/user.models";
 import {AuthService} from "../auth/auth.service";
+import {Router} from '@angular/router';
+import {register} from 'ts-node';
 
 @Component({
   selector: 'app-registration',
@@ -10,26 +12,32 @@ import {AuthService} from "../auth/auth.service";
 })
 export class RegistrationComponent implements OnInit {
 
-  error_pw: boolean = false;
+  errorPw = false;
+  notValidDomain = false;
 
-  constructor(private authService: AuthService) {
-  }
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
   }
 
   register(f: NgForm) {
     if (f.value.password !== f.value.confirm_password) {
-      this.error_pw = true;
+      this.errorPw = true;
     } else {
       let user = new UserModel();
-      user.name = f.value.name;
-      user.surname = f.value.surname;
-      user.matricola = f.value.matricola;
+      user.firstName = f.value.name;
+      user.name = f.value.surname;
+      user.id = f.value.matricola;
       user.password = f.value.password;
       user.email = f.value.email;
 
-      this.authService.register(user);
+      this.authService.register(user).subscribe(result => {
+        if (result === false){
+          this.notValidDomain = true;
+        } else {
+          this.router.navigate(['home'], {queryParams: {doLogin: 'true'}});
+        }
+      });
     }
   }
 }

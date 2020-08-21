@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from "./auth/auth.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
@@ -9,7 +9,7 @@ import {LoginComponent} from "./login/login.component";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'front-end';
 
   constructor(private authService: AuthService, private router: Router, private activeRoute: ActivatedRoute, private dialog: MatDialog) {
@@ -18,11 +18,11 @@ export class AppComponent {
   ngOnInit() {
     this.activeRoute.queryParamMap
       .subscribe(params => {
-        if (params.has("doLogin") && params.get("doLogin") === 'true') {
+        if (params.has('doLogin') && params.get('doLogin') === 'true') {
           this.dialog.open(LoginComponent, {disableClose: true})
             .afterClosed()              // dopo la chiusura del dialog faccio le redirect
             .subscribe(result => {
-              if(result) {              // se result è false => click su CANCEL -> redirect a HOME
+              if (result) {              // se result è false => click su CANCEL -> redirect a HOME
                 /* let myurl = this.authService.getLastUrl();
                 if(myurl != null){
                   this.authService.deleteUrl();
@@ -30,7 +30,7 @@ export class AppComponent {
                 } else {
                   this.router.navigate(['home']);
                 }*/
-                this.router.navigate(['home']);
+                this.authService.loginRedirect();
               } else {
                 this.router.navigate(['home']);
               }

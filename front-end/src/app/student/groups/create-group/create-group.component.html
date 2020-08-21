@@ -1,5 +1,10 @@
 <div>
-  <p>In order to propose a group, you have to choose the students, a name and a timeout for your proposal</p>
+  <p>In order to propose a group, you have to choose the students, a name and a timeout for your proposal.</p>
+  <p>Constraint for this course ({{course.name}}):</p>
+  <ul>
+    <li>Minimum <b>{{course.min}}</b> student(s)</li>
+    <li>Maximum <b>{{course.max}}</b> student(s)</li>
+  </ul>
   <mat-error *ngIf="error" class="mb-10">{{message}}</mat-error>
   <app-table [columns]="studentsColumns" [data]="studentsData" [showDelete]="false" [(checkedObjects)]="selectedStudents"></app-table>
   <form class="w-80 mt-10 text-right d-flex align-items-center" #f="ngForm" (ngSubmit)="proposeGroup(f)">
@@ -17,5 +22,5 @@
 </div>
 <div class="mt-10">
   <p>Received group proposals</p>
-  <app-table-expandable></app-table-expandable>
+  <app-table-expandable [data]="groupsData" [columns]="groupsColumns" [innerColumns]="innerGroupColumns" [showEdit]="false"></app-table-expandable>
 </div>

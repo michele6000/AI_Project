@@ -14,7 +14,7 @@ import {map, startWith} from "rxjs/operators";
 export class InsertComponent implements OnInit {
   formControl = new FormControl();
   filteredOptions: Observable<StudentModel[]>;
-  selected : StudentModel;
+  selected: StudentModel;
 
   @Input('options') options: StudentModel[] = [];
 
@@ -22,9 +22,9 @@ export class InsertComponent implements OnInit {
 
   private _filter(name: string): any[] {
     const filterValue = name.toLowerCase();
-    return this.options.filter(option => option.matricola.toLowerCase().indexOf(filterValue) === 0
-    || option.name.toLowerCase().indexOf(filterValue) === 0
-    || option.surname.toLowerCase().indexOf(filterValue) === 0);
+    return this.options.filter(option => option.id.toLowerCase().indexOf(filterValue) === 0
+    || option.firstName.toLowerCase().indexOf(filterValue) === 0
+    || option.name.toLowerCase().indexOf(filterValue) === 0);
   }
 
   constructor() {
@@ -48,6 +48,6 @@ export class InsertComponent implements OnInit {
   }
 
   displayFn(studentModel: StudentModel): string {
-    return studentModel ? studentModel.name + ' ' + studentModel.surname + ' ' + studentModel.matricola : '';
+    return studentModel ? studentModel.firstName + ' ' + studentModel.name + ' ' + studentModel.id : '';
   }
 }

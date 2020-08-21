@@ -3,7 +3,7 @@
     <mat-card-title>Add Course</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <mat-error class="center" *ngIf="error">
+    <mat-error class="mt-10-center" *ngIf="error">
       Error
     </mat-error>
     <form #f="ngForm" class="login-form" (ngSubmit)="createCourse(f)">

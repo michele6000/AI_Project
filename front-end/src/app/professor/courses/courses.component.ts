@@ -3,8 +3,9 @@ import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CreateCourseComponent} from '../../dialog/create-course/create-course.component';
 import {CourseModel} from '../../models/course.model';
-import {EditVmProfessorComponent} from "../../dialog/edit-vm/edit-vm-professor.component";
-import {EditCourseComponent} from "../../dialog/edit-course/edit-course.component";
+import {EditCourseComponent} from '../../dialog/edit-course/edit-course.component';
+import {ProfessorService} from "../../services/professor.service";
+import {AuthService} from "../../auth/auth.service";
 
 @Component({
   selector: 'app-courses',
@@ -13,23 +14,12 @@ import {EditCourseComponent} from "../../dialog/edit-course/edit-course.componen
 })
 export class CoursesComponent implements OnInit {
   url: any;
-  columns = ['identifier', 'name', 'min', 'max'];
-  data: CourseModel[] = [
-    {
-      identifier: 'AI',
-      name: 'Applicazioni Internet',
-      min: 3,
-      max: 4
-    },
-    {
-      identifier: 'BD',
-      name: 'Big Data',
-      min: 2,
-      max: 4
-    }
-  ];
+  columns = ['acronymous', 'name', 'min', 'max'];
+  data: CourseModel[] = [];
+  id: string = null;
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute) {
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService) {
+
   }
 
   ngOnInit(): void {
@@ -52,6 +42,21 @@ export class CoursesComponent implements OnInit {
     } else {
       this.url = '/teacher/';
     }
+
+    this.authService.user.subscribe((user) => {
+      if (user != null) {
+        this.id = user.id;
+        this.professorService.courses.subscribe(
+          (courses) => {
+            if (courses) {
+              this.data = courses;
+            } else {
+              this.data = [];
+            }
+          }
+        );
+      }
+    });
   }
 
   deleteCourse($event: CourseModel[]) {
@@ -64,5 +69,19 @@ export class CoursesComponent implements OnInit {
       .subscribe(result => {
 
       });
+  }
+
+  changeActive($event: CourseModel) {
+    if ($event.enabled) {
+      this.professorService.disableCourse($event.name).subscribe((result) => this.onChangeActiveCompleted(result, $event.acronymous));
+    } else {
+      this.professorService.enableCourse($event.name).subscribe((result) => this.onChangeActiveCompleted(result, $event.acronymous));
+    }
+  }
+
+  onChangeActiveCompleted(result: any, acronymous: string) {
+    if (result){
+      this.professorService.findCoursesByProfessor(this.id, true);
+    }
   }
 }

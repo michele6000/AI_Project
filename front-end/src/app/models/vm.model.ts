@@ -1,6 +1,7 @@
 export class VmModel {
+  id: number;
   name: string;
-  state: boolean;
+  status: string;
   groupId: number;
   ownerId: number;
   link: string;

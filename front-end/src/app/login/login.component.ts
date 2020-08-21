@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import {AuthService} from "../auth/auth.service";
-import {NgForm} from "@angular/forms";
+import {Component, OnInit} from '@angular/core';
+import {AuthService} from '../auth/auth.service';
+import {NgForm} from '@angular/forms';
+import {MatDialogRef} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -8,14 +10,25 @@ import {NgForm} from "@angular/forms";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  error: boolean = false;
+  error = false;
 
-  constructor(private authService: AuthService) { }
-
-  ngOnInit(): void {
+  constructor(private dialogRef: MatDialogRef<LoginComponent>, private authService: AuthService, private snackBar: MatSnackBar) {
   }
 
-  login(form: NgForm){
-    this.authService.login(form.value.email, form.value.password);
+  ngOnInit(): void {
+    this.authService.tokenExpired.subscribe((expired) => {
+      if (expired) {
+        this.snackBar.open('Token expired, please sign in again.', 'OK', {
+          duration: 5000
+        });
+      }
+    });
+  }
+
+  login(form: NgForm) {
+    this.authService.login(form.value.email, form.value.password).subscribe(
+      (res) => this.dialogRef.close(res),
+      (error) => this.error = true
+    );
   }
 }
