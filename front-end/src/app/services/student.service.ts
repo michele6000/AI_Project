@@ -6,6 +6,7 @@ import {VmStudent} from '../models/vm-student.model';
 import {StudentModel} from "../models/student.model";
 import {GroupModel} from "../models/group.model";
 import {VmModel} from "../models/vm.model";
+import {SubmissionModel} from "../models/submission.model";
 
 const API_URL = '/api/API/';
 
@@ -122,4 +123,14 @@ export class StudentService {
   deleteVm(vmId: number) {
     return this.http.post<boolean>(API_URL + 'vm/' + vmId + '/delete', {});
   }
+
+  /* SUBMISSIONS */
+  findSubmissions(courseName: string) {
+    return this.http.get<any[]>(API_URL + 'courses/' + courseName + '/getAllSubmissions');
+  }
+
+  getHistorySolutions(studentId: string, submissionId: number) {
+    return this.http.get<any[]>(API_URL + 'students/' + studentId + '/' + submissionId + '/getHistorySolution');
+  }
+
 }
