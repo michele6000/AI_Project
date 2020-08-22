@@ -55,6 +55,9 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { EditVmProfessorComponent } from './dialog/edit-vm-professor/edit-vm-professor.component';
 import { VmsTableComponent } from './student/vms-student/vms-table/vms-table.component';
 import { DialogDeleteVmComponent } from './student/vms-student/dialog-delete-vm/dialog-delete-vm.component';
+import { CreateAssignmentComponent } from './dialog/create-assignment/create-assignment.component';
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
 
 @NgModule({
   declarations: [
@@ -89,7 +92,8 @@ import { DialogDeleteVmComponent } from './student/vms-student/dialog-delete-vm/
     EditVmProfessorComponent,
     VmsTableComponent,
     VmsTableComponent,
-    DialogDeleteVmComponent
+    DialogDeleteVmComponent,
+    CreateAssignmentComponent
   ],
   imports: [
     BrowserModule,
@@ -115,9 +119,11 @@ import { DialogDeleteVmComponent } from './student/vms-student/dialog-delete-vm/
     MatTooltipModule,
     MatExpansionModule,
     MatRadioModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, {provide: MAT_DATE_LOCALE, useValue: 'en-GB'}],
   bootstrap: [AppComponent]
 })
 export class AppModule {

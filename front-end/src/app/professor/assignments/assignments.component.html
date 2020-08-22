@@ -1,13 +1,13 @@
 <div class="w-70 container">
   <div class="text-right">
-    <button class="mb-10" mat-raised-button color="primary">Create Assignment</button>
+    <button class="mb-10" mat-raised-button color="primary" (click)="createAssignment($event)">Create Assignment</button>
   </div>
   <mat-accordion>
     <mat-expansion-panel *ngFor="let consegna of consegne">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <div>
-          {{consegna.name}} - {{consegna.date}}
+          {{consegna.content}} - Released at {{consegna.releaseString}} - Expires at {{consegna.expiryString}}
           </div>
         </mat-panel-title>
       </mat-expansion-panel-header>

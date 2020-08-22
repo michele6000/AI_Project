@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {GroupModel} from '../../models/group.model';
 import {NgForm} from '@angular/forms';
 import {ProfessorService} from '../../services/professor.service';
@@ -24,7 +24,8 @@ export class CreateVmProfessorComponent implements OnInit {
   // @todo Se non ho ancora un VM Type associato al corso visualizzo il bottone di creazione
   // altrimenti quello di modifica
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private professorService: ProfessorService, private snackBar: MatSnackBar, private router: Router) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private professorService: ProfessorService,
+              private snackBar: MatSnackBar, private router: Router, private dialogRef: MatDialogRef<CreateVmProfessorComponent>) {
     this.group = data;
   }
 
@@ -73,5 +74,9 @@ export class CreateVmProfessorComponent implements OnInit {
     console.log($event);
     this.file = $event.target.files[0];
     this.fileAbsent = false;
+  }
+
+  closeDialog() {
+    this.dialogRef.close(false);
   }
 }
