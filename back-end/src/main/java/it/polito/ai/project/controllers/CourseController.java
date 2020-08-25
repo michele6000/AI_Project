@@ -339,6 +339,15 @@ public class CourseController {
     }
   }
 
+  @PostMapping("/{submissionId}/stopRevisions")
+  public void stopRevisions(@PathVariable Long submissionId) {
+    try {
+      submissionService.stopRevisions(submissionId, getCurrentUsername());
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
 //  SUBMISSIONS END
 
 private String getCurrentUsername() {
