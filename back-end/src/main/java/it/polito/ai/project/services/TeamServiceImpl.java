@@ -371,9 +371,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = new Team();
         team.setName(name);
         membersIds.forEach(
-                m -> {
-                    team.addMember(studentRepo.getOne(m));
-                }
+                m -> team.addMember(studentRepo.getOne(m))
         );
         team.setCourse(courseRepo.getOne(courseId));
         team.setId((teamRepo.save(team).getId()));

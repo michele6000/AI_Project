@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -98,11 +95,9 @@ public class SubmissionServiceImpl implements SubmissionService {
 
 
 
-        List<Submission> submissions=courseRepo
+        List<Submission> submissions= new ArrayList<>(courseRepo
                 .getOne(courseName)
-                .getSubmissions()
-                .stream()
-                .collect(Collectors.toList());
+                .getSubmissions());
 
         submissions.forEach(sub->{
             if(!profRepo.existsById(username)) { //a student is requiring submission

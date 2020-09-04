@@ -1,6 +1,7 @@
 package it.polito.ai.project.services;
 
 import it.polito.ai.project.dtos.StudentDTO;
+import it.polito.ai.project.dtos.TeamDTO;
 import it.polito.ai.project.dtos.VMDTO;
 import it.polito.ai.project.dtos.VMTypeDTO;
 import it.polito.ai.project.entities.*;
@@ -55,11 +56,6 @@ public class VmServiceImpl implements VmService {
     public Long createVMType(VMTypeDTO vmType) {
         VMType vmt = new VMType();
         vmt.setDockerFile(vmType.getDockerFile());
-        vmt.setLimit_ram(vmType.getLimit_ram());
-        vmt.setLimit_cpu(vmType.getLimit_cpu());
-        vmt.setLimit_hdd(vmType.getLimit_hdd());
-        vmt.setLimit_instance(vmType.getLimit_instance());
-        vmt.setLimit_active_instance(vmType.getLimit_active_instance());
         return vmtRepo.save(vmt).getId();
     }
 
@@ -113,10 +109,17 @@ public class VmServiceImpl implements VmService {
         if (!optionalVMEntity.isPresent()) {
             throw new VmNotFoundException("Vm not found!");
         }
+
+
+        Optional<Team> optionalTeamEntity = teamRepo.findById(optionalVMEntity.get().getTeam().getId());
+        if (!optionalTeamEntity.isPresent()) {
+            throw new TeamNotFoundException("Team not found!");
+        }
+
         if (!optionalVMEntity.get().getStatus().equals("poweroff")) return false;
-        if (vm.getRam() > optionalVMEntity.get().getVmType().getLimit_ram()) return false;
-        if (vm.getCpu() > optionalVMEntity.get().getVmType().getLimit_cpu()) return false;
-        if (vm.getHdd() > optionalVMEntity.get().getVmType().getLimit_hdd()) return false;
+        if (vm.getRam() > optionalTeamEntity.get().getLimit_ram()) return false;
+        if (vm.getCpu() > optionalTeamEntity.get().getLimit_cpu()) return false;
+        if (vm.getHdd() > optionalTeamEntity.get().getLimit_hdd()) return false;
 
         optionalVMEntity.get().setRam(vm.getRam());
         optionalVMEntity.get().setCpu(vm.getCpu());
@@ -181,9 +184,16 @@ public class VmServiceImpl implements VmService {
         if (!optionalVMEntity.isPresent()) {
             throw new VmNotFoundException("Vm not found!");
         }
+
+        Optional<Team> optionalTeamEntity = teamRepo.findById(optionalVMEntity.get().getTeam().getId());
+        if (!optionalTeamEntity.isPresent()) {
+            throw new TeamNotFoundException("Team not found!");
+        }
+
+
         Long team = optionalVMEntity.get().getTeam().getId();
         Long type = optionalVMEntity.get().getVmType().getId();
-        int max_instance = optionalVMEntity.get().getVmType().getLimit_active_instance();
+        int max_instance = optionalTeamEntity.get().getLimit_active_instance();
 
         if (optionalVMEntity.get().getStatus().equals("poweroff"))
             if (vmRepo.findAll()
@@ -242,13 +252,13 @@ public class VmServiceImpl implements VmService {
         VMType vmType = optionalTeamEntity.get().getVmType();
 
         boolean quota = false;
-        if (vm.getRam() > vmType.getLimit_ram()) quota = true;
-        if (vm.getCpu() > vmType.getLimit_cpu()) quota = true;
-        if (vm.getHdd() > vmType.getLimit_hdd()) quota = true;
+        if (vm.getRam() > optionalTeamEntity.get().getLimit_ram()) quota = true;
+        if (vm.getCpu() > optionalTeamEntity.get().getLimit_cpu()) quota = true;
+        if (vm.getHdd() > optionalTeamEntity.get().getLimit_hdd()) quota = true;
         if (vmRepo.findAll().stream()
                 .filter(_vm -> _vm.getTeam().getId().equals(teamId))
                 .filter(_vm -> _vm.getVmType().getId().equals(vmType.getId()))
-                .count() + 1 > vmType.getLimit_instance())
+                .count() + 1 > optionalTeamEntity.get().getLimit_instance())
             quota = true;
 
         if (quota)
@@ -272,5 +282,20 @@ public class VmServiceImpl implements VmService {
         _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + vmType.getId());
 
         return modelMapper.map(vmRepo.save(_vm), VMDTO.class);
+    }
+
+    @Override
+    public TeamDTO setTeamLimit(TeamDTO team) {
+        Optional<Team> optionalTeamEntity = teamRepo.findById(team.getId());
+        if (!optionalTeamEntity.isPresent()) {
+            throw new TeamNotFoundException("Team not found!");
+        }
+
+        optionalTeamEntity.get().setLimit_ram(team.getLimit_ram());
+        optionalTeamEntity.get().setLimit_cpu(team.getLimit_cpu());
+        optionalTeamEntity.get().setLimit_hdd(team.getLimit_hdd());
+        optionalTeamEntity.get().setLimit_instance(team.getLimit_instance());
+        optionalTeamEntity.get().setLimit_active_instance(team.getLimit_active_instance());
+        return team;
     }
 }
