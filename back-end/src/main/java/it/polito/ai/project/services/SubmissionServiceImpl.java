@@ -95,29 +95,6 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .map(s -> modelMapper.map(s, SubmissionDTO.class)).collect(Collectors.toList());
     }
 
-
-        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException("Course not found!");
-        if (!courseRepo.getOne(courseName).isEnabled()) throw new CourseDisabledException("Course not enabled!");
-
-        Optional<SubmissionDTO> optSubmission = courseRepo
-                .getOne(courseName)
-                .getSubmissions()
-                .stream()
-                .map(s -> modelMapper.map(s, SubmissionDTO.class))
-                .max(Comparator.comparing(SubmissionDTO::getReleaseDate));
-
-        if (optSubmission.isPresent()) {
-            if (!profRepo.existsById(username)) { //a student is requiring submission
-                if (studentRepo.getOne(username).getSolutions().stream().noneMatch(sol -> sol.getSubmission().getId()
-                        .equals(optSubmission.get().getId()))) {
-                    //no solution for this submission and this student-->create an empty solution with status "READ"
-                    createNewSol(username);
-                }
-            }
-            return optSubmission.get();
-        } else throw new SubmissionNotFoundException("There are no submissions for this course!");
-    }
-
     @Override
     public SubmissionDTO getSubmission(String courseName, Long id, String username) {
 
