@@ -85,27 +85,28 @@ public class StudentController {
 
 //  SOLUTIONS START
 
-  @GetMapping("/{studentId}/{submissionId}/getAllSolutions")
-  public List<SolutionDTO> getSolutions(@PathVariable String studentId, @PathVariable Long submissionId) {
+  @Deprecated
+  @GetMapping("/{studentId}/{courseName}/getAllSolutions")
+  public List<SolutionDTO> getAllSolutionsForStudentsForCourse(@PathVariable String studentId, @PathVariable String courseName) {
     if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,
             "You are not allowed to access this information!"
     );
     try {
-      return submissionService.getAllSolutions(submissionId);
+      return submissionService.getAllSolutionsForStudentForCourse(studentId, courseName);
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
 
   @GetMapping("/{studentId}/{submissionId}/getHistorySolutions")
-  public List<SolutionDTO> getSolutionsForStudent(@PathVariable String studentId, @PathVariable Long submissionId) {
+  public List<SolutionDTO> getSolutionsForStudentForSubmission(@PathVariable String studentId, @PathVariable Long submissionId) {
     if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
             HttpStatus.FORBIDDEN,
             "You are not allowed to access this information!"
     );
     try {
-      return submissionService.getAllSolutionsForStudent(submissionId,studentId);
+      return submissionService.getAllSolutionsForStudentForSubmission(submissionId,studentId);
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -137,20 +138,6 @@ public class StudentController {
     }
   }
 
-  @PostMapping("/{studentId}/{submissionId}/evaluateLatestSolution")
-  public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
-//    if (!getCurrentRoles().contains("PROFESSOR"))  throw new ResponseStatusException(
-//            HttpStatus.FORBIDDEN,
-//            "You are not allowed to evaluate a solution!"
-//    );
-    try {
-      return submissionService.evaluateLastSolution(studentId,submissionId, evaluation, getCurrentUsername());
-    } catch (TeamServiceException| ResponseStatusException e) {
-      if(e instanceof TeamServiceException)
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-      else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
-    }
-  }
 
   @PostMapping("/{studentId}/{solutionId}/evaluateSolution")
   public boolean evaluateSolution(@PathVariable String studentId, @PathVariable Long solutionId, @RequestParam Long evaluation) {
@@ -192,9 +179,24 @@ public class StudentController {
     }
   }
 
+  @GetMapping("/{studentId}/{submissionId}/getAllSolutions") //All solutions of all students (only last version)
+  public List<SolutionDTO> getAllSolutions(@PathVariable String studentId, @PathVariable Long submissionId) {
+    if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId)) throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "You are not allowed to access this information!"
+    );
+    try {
+      return submissionService.getAllSolutions(submissionId);
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
 
   //  SOLUTIONS END
 
+
+  /* PRIVATE METHODS */
   private String getCurrentUsername() {
     return SecurityContextHolder
       .getContext()
@@ -218,6 +220,25 @@ public class StudentController {
       id.equals(getCurrentUsername()) ||
       !getCurrentRoles().contains("ROLE_STUDENT")
     );
+  }
+
+
+  /* DEPRECATED END-POINTS */
+
+  @Deprecated
+  @PostMapping("/{studentId}/{submissionId}/evaluateLatestSolution")
+  public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
+//    if (!getCurrentRoles().contains("PROFESSOR"))  throw new ResponseStatusException(
+//            HttpStatus.FORBIDDEN,
+//            "You are not allowed to evaluate a solution!"
+//    );
+    try {
+      return submissionService.evaluateLastSolution(studentId,submissionId, evaluation, getCurrentUsername());
+    } catch (TeamServiceException| ResponseStatusException e) {
+      if(e instanceof TeamServiceException)
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+      else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+    }
   }
 
 }
