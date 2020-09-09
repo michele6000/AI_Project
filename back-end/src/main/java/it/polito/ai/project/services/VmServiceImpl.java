@@ -53,6 +53,7 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+//    TODO: chiamare setType e da controller ricevo anche il courseName
     public Long createVMType(VMTypeDTO vmType) {
         VMType vmt = new VMType();
         vmt.setDockerFile(vmType.getDockerFile());
@@ -240,6 +241,7 @@ public class VmServiceImpl implements VmService {
 
     @Override
     public VMDTO createVmInstance(Long teamId, VMDTO vm, String studentID) {
+        // TODO: assicurarsi che siano stati settati i limiti, banalmente settarli tutti a zero quando creo il team.
         Optional<Team> optionalTeamEntity = teamRepo.findById(teamId);
         if (!optionalTeamEntity.isPresent()) {
             throw new TeamNotFoundException("Team not found!");
@@ -285,6 +287,7 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    //TODO: aggiungere chiamata API da parte del docente
     public TeamDTO setTeamLimit(TeamDTO team) {
         Optional<Team> optionalTeamEntity = teamRepo.findById(team.getId());
         if (!optionalTeamEntity.isPresent()) {
