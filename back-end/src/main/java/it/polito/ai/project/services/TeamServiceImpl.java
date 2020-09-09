@@ -369,6 +369,11 @@ public class TeamServiceImpl implements TeamService {
         }
 
         Team team = new Team();
+        team.setLimit_active_instance(0);
+        team.setLimit_instance(0);
+        team.setLimit_cpu(0);
+        team.setLimit_hdd(0);
+        team.setLimit_ram(0);
         team.setName(name);
         membersIds.forEach(
                 m -> team.addMember(studentRepo.getOne(m))

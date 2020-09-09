@@ -258,11 +258,10 @@ public class CourseController {
     }
   }
 
-  @PostMapping("/createVMType")
-  public Long createVMType(@RequestBody VMTypeDTO vmt){
+  @PostMapping("/{courseName}/createVMType")
+  public Long createVMType(@RequestBody VMTypeDTO vmt, @PathVariable String courseName){
     try {
-      //nel form limiti e dockerfile
-      return vmService.createVMType(vmt);
+      return vmService.createVMType(vmt,courseName);
     } catch (CourseNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -279,9 +278,8 @@ public class CourseController {
   }
 
 //  SUBMISSION START
-//TODO: ritornare sumbission DTO doopo aver caricato il sumbission id
   @PostMapping("/{courseName}/addSubmission")
-  public String addSubmission(
+  public SubmissionDTO addSubmission(
           @PathVariable String courseName, @RequestBody SubmissionDTO dto
   ) {
     try {

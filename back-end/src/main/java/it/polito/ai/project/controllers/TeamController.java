@@ -109,10 +109,10 @@ public class TeamController {
     //TODO: chi può farlo oltre al professore? Può essere usata dallo studente per annullare vecchie proposte, ma come?
     public void evictTeam(@PathVariable Long teamId) {
         try {
-//            if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
-//                    HttpStatus.FORBIDDEN,
-//                    "You are not allowed to evict this team!"
-//            );
+            if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not allowed to evict this team!"
+            );
             service.evictTeam(teamId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -123,6 +123,19 @@ public class TeamController {
     public VMDTO createVmInstance(@PathVariable Long teamId, @RequestBody VMDTO vm) {
         try {
             return vmService.createVmInstance(teamId,vm,getCurrentUsername());
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @PostMapping("/{teamId}/setTeamLimits")
+    public TeamDTO createVmInstance(@PathVariable Long teamId, @RequestBody TeamDTO team) {
+        try {
+            if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not allowed set limits of this team!"
+            );
+            return vmService.setTeamLimit(team);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

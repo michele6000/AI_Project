@@ -46,7 +46,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     private ProfessorRepository profRepo;
 
     @Override
-    public String addSubmission(SubmissionDTO submissionDTO, String courseName, String profId) {
+    public SubmissionDTO addSubmission(SubmissionDTO submissionDTO, String courseName, String profId) {
 
         if (submissionDTO == null)
             throw new SubmissionNotFoundException("Bad request!");
@@ -68,7 +68,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         }
 
         submissionEntity.setCourse(course);
-        submissionRepo.save(submissionEntity);
+        submissionEntity = submissionRepo.save(submissionEntity);
         course.addSubmission(submissionEntity);
 
 
@@ -79,7 +79,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                     "The professor created a new submission for you.\nSubmission id:" + submissionEntity.getId() + "\nExpiry date: " + submissionEntity.getExpiryDate()
             );
 
-        return "Submission successfully created, id = " + submissionEntity.getId();
+        return modelMapper.map(submissionEntity,SubmissionDTO.class);
     }
 
     @Override

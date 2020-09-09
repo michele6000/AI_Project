@@ -9,7 +9,7 @@ import java.util.List;
 public interface SubmissionService {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
-    String addSubmission(SubmissionDTO submissionDTO, String courseName, String profId);
+    SubmissionDTO addSubmission(SubmissionDTO submissionDTO, String courseName, String profId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     List<SubmissionDTO> getAllSubmissions(String courseName, String username);

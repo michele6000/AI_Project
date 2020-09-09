@@ -10,7 +10,7 @@ public interface VmService {
     List<VMDTO> getTeamVMs(Long teamId);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    Long createVMType(VMTypeDTO vmType);
+    Long createVMType(VMTypeDTO vmType, String courseName);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     String getTeamStat(Long teamId);
@@ -45,7 +45,7 @@ public interface VmService {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     VMDTO createVmInstance(Long teamId, VMDTO vm, String currentUsername);
 
-//    TODO: manca il pezzo del controller!
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     TeamDTO setTeamLimit(TeamDTO team);
 
 
