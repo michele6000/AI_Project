@@ -85,14 +85,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public List<SubmissionDTO> getAllSubmissions(String courseName, String username) {
 
-        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
-                "Course not found!"
-        );
-
-        if (!courseRepo.getOne(courseName).isEnabled()) throw new CourseDisabledException(
-                "Course not enabled!"
-        );
-
+        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException("Course not found!");
+        if (!courseRepo.getOne(courseName).isEnabled()) throw new CourseDisabledException("Course not enabled!");
 
         return courseRepo
                 .getOne(courseName)
@@ -104,13 +98,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionDTO getLastSubmission(String courseName, String username) {
 
-        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException(
-                "Course not found!"
-        );
-
-        if (!courseRepo.getOne(courseName).isEnabled()) throw new CourseDisabledException(
-                "Course not enabled!"
-        );
+        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException("Course not found!");
+        if (!courseRepo.getOne(courseName).isEnabled()) throw new CourseDisabledException("Course not enabled!");
 
         Optional<SubmissionDTO> optSubmission = courseRepo
                 .getOne(courseName)
@@ -119,7 +108,6 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .map(s -> modelMapper.map(s, SubmissionDTO.class))
                 .max(Comparator.comparing(SubmissionDTO::getReleaseDate));
 
-//
         if (optSubmission.isPresent()) {
             if (!profRepo.existsById(username)) { //a student is requiring submission
                 if (studentRepo.getOne(username).getSolutions().stream().noneMatch(sol -> sol.getSubmission().getId()
@@ -146,7 +134,6 @@ public class SubmissionServiceImpl implements SubmissionService {
         }
 
         return modelMapper.map(submissionRepo.getOne(id), SubmissionDTO.class);
-
     }
 
     @Override
