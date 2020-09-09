@@ -30,10 +30,10 @@ public interface SubmissionService {
     String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
-    List<SolutionDTO> getAllSolutionsForStudent(Long submissionId, String studentId, String username);
+    List<SolutionDTO> getAllSolutionsForStudent(Long submissionId, String studentId);
 
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
-    List<SolutionDTO> getAllSolutions(Long submissionId, String username);
+    List<SolutionDTO> getAllSolutions(Long submissionId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     SolutionDTO getSolution(Long solutionId, String username);
