@@ -92,7 +92,7 @@ public class StudentController {
             "You are not allowed to access this information!"
     );
     try {
-      return submissionService.getAllSolutions(submissionId, getCurrentUsername());
+      return submissionService.getAllSolutions(submissionId);
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -105,7 +105,7 @@ public class StudentController {
             "You are not allowed to access this information!"
     );
     try {
-      return submissionService.getAllSolutionsForStudent(submissionId,studentId, getCurrentUsername());
+      return submissionService.getAllSolutionsForStudent(submissionId,studentId);
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }

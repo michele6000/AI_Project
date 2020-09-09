@@ -281,7 +281,7 @@ public class CourseController {
 //  SUBMISSION START
 //TODO: ritornare sumbission DTO doopo aver caricato il sumbission id
   @PostMapping("/{courseName}/addSubmission")
-  public String addSubmission(
+  public SubmissionDTO addSubmission(
           @PathVariable String courseName, @RequestBody SubmissionDTO dto
   ) {
     try {
