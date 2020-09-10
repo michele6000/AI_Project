@@ -8,6 +8,7 @@ import {VmStudent} from '../models/vm-student.model';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {StudentModel} from '../models/student.model';
 import {GroupModel} from "../models/group.model";
+import {SubmissionModel} from "../models/submission.model";
 
 const API_URL = '/api/API/';
 
@@ -166,5 +167,14 @@ export class ProfessorService {
   /* TEAMS */
   findTeamsByCourse(courseName: string) {
     return this.http.get<GroupModel[]>(API_URL + 'courses/' + courseName + '/teams');
+  }
+
+  /* SUBMISSIONS */
+  createAssignment(courseName: string, submission: SubmissionModel) {
+    return this.http.post(API_URL + 'courses/' + courseName + '/addSubmission', submission);
+  }
+
+  findAssignmentsByCourse(courseName: string) {
+    return this.http.get<any[]>(API_URL + 'courses/' + courseName + '/getAllSubmissions');
   }
 }

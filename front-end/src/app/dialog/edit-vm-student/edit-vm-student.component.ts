@@ -23,6 +23,6 @@ export class EditVmStudentComponent implements OnInit {
     vm.ram = f.value.ram;
     vm.vcpu = f.value.vcpu;
     vm.disk = f.value.disk;
-    this.studentService.createVM(vm);
+    this.studentService.createVM(-1, vm);
   }
 }
