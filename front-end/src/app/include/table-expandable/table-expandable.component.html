@@ -6,9 +6,9 @@
 
   <ng-container matColumnDef="expandedDetail">
     <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
-      <div class="example-element-detail" *ngIf="element.vms?.data.length" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+      <div class="example-element-detail" *ngIf="element.nestedData?.data.length" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
         <div class="inner-table mat-elevation-z8" *ngIf="expandedElement">
-          <table #innerTables mat-table #innerSort="matSort" [dataSource]="element.vms" matSort>
+          <table #innerTables mat-table #innerSort="matSort" [dataSource]="element.nestedData" matSort class="w-100">
             <ng-container matColumnDef="{{innerColumn}}" *ngFor="let innerColumn of innerDisplayedColumns">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> {{innerColumn}} </th>
               <td mat-cell *matCellDef="let element"> {{element[innerColumn]}} </td>
@@ -21,7 +21,7 @@
     </td>
   </ng-container>
 
-  <ng-container matColumnDef="modify">
+  <ng-container matColumnDef="modify" *ngIf="showEdit">
     <th mat-header-cell *matHeaderCellDef>
       Modify
     </th>
@@ -31,7 +31,7 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="columnsWithEdit"></tr>
-  <tr mat-row *matRowDef="let element; columns: columnsWithEdit;" [class.example-element-row]="element.vms?.data.length"
+  <tr mat-row *matRowDef="let element; columns: columnsWithEdit;" [class.example-element-row]="element.nestedData?.data.length"
       [class.example-expanded-row]="expandedElement === element" (click)="toggleRow(element)">
   </tr>
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>

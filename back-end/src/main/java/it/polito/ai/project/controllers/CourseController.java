@@ -258,11 +258,10 @@ public class CourseController {
     }
   }
 
-  @PostMapping("/createVMType")
-  public Long createVMType(@RequestBody VMTypeDTO vmt){
+  @PostMapping("/{courseName}/createVMType")
+  public Long createVMType(@RequestBody VMTypeDTO vmt, @PathVariable String courseName){
     try {
-      //nel form limiti e dockerfile
-      return vmService.createVMType(vmt);
+      return vmService.createVMType(vmt,courseName);
     } catch (CourseNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -279,9 +278,8 @@ public class CourseController {
   }
 
 //  SUBMISSION START
-
   @PostMapping("/{courseName}/addSubmission")
-  public String addSubmission(
+  public SubmissionDTO addSubmission(
           @PathVariable String courseName, @RequestBody SubmissionDTO dto
   ) {
     try {
@@ -292,7 +290,7 @@ public class CourseController {
               .split("@")[0];
       return submissionService.addSubmission(dto, courseName, profId);
     }
-    catch (Exception e) { //TODO: sbagliato cosi catcha tutto e non va bene
+    catch (TeamServiceException | ResponseStatusException e) {
       if (e instanceof ResponseStatusException)
         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: "+e.getMessage());
 
@@ -310,20 +308,9 @@ public class CourseController {
   @GetMapping("/{courseName}/getAllSubmissions")
   public List<SubmissionDTO> getAllSubmissions(@PathVariable String courseName) {
     try {
-      return submissionService.getAllSubmissions(courseName);
+      return submissionService.getAllSubmissions(courseName, getCurrentUsername());
     } catch (TeamServiceException e) {
       if (e instanceof CourseNotFoundException)
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-      else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-    }
-  }
-
-  @GetMapping("/{courseName}/getLastSubmission")
-  public SubmissionDTO getLastSubmission(@PathVariable String courseName) {
-    try {
-      return submissionService.getLastSubmission(courseName);
-    } catch (TeamServiceException e) {
-      if (e instanceof CourseNotFoundException || e instanceof SubmissionNotFoundException)
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
       else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
@@ -333,12 +320,45 @@ public class CourseController {
   public SubmissionDTO getSubmissionById(@PathVariable String courseName, @PathVariable Long id) {
     try {
       System.out.println("sub: "+id);
-      return submissionService.getSubmission(courseName, id);
+      return submissionService.getSubmission(courseName, id, getCurrentUsername());
+    } catch (TeamServiceException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @PostMapping("/{submissionId}/stopRevisions")
+  public void stopRevisions(@PathVariable Long submissionId) {
+    try {
+      submissionService.stopRevisions(submissionId, getCurrentUsername());
     } catch (TeamServiceException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
 
 //  SUBMISSIONS END
+
+  /* PRIVATE METHODS */
+private String getCurrentUsername() {
+  return SecurityContextHolder
+          .getContext()
+          .getAuthentication()
+          .getName()
+          .split("@")[0];
+}
+
+
+/* DEPRECATED END-POINTS */
+  @Deprecated
+@GetMapping("/{courseName}/getLastSubmission")
+public SubmissionDTO getLastSubmission(@PathVariable String courseName) {
+  try {
+    return submissionService.getLastSubmission(courseName, getCurrentUsername());
+  } catch (TeamServiceException e) {
+    if (e instanceof CourseNotFoundException || e instanceof SubmissionNotFoundException)
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+  }
+}
+
   
 }

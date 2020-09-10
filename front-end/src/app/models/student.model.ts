@@ -1,6 +1,6 @@
 export class StudentModel {
+  firstName: string;
   name: string;
-  surname: string;
   email: string;
-  matricola: string;
+  id: string;
 }

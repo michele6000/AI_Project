@@ -1,8 +1,6 @@
 package it.polito.ai.project.services;
 
-import it.polito.ai.project.dtos.StudentDTO;
-import it.polito.ai.project.dtos.VMDTO;
-import it.polito.ai.project.dtos.VMTypeDTO;
+import it.polito.ai.project.dtos.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
@@ -12,7 +10,7 @@ public interface VmService {
     List<VMDTO> getTeamVMs(Long teamId);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    Long createVMType(VMTypeDTO vmType);
+    Long createVMType(VMTypeDTO vmType, String courseName);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     String getTeamStat(Long teamId);
@@ -46,6 +44,9 @@ public interface VmService {
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     VMDTO createVmInstance(Long teamId, VMDTO vm, String currentUsername);
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    TeamDTO setTeamLimit(TeamDTO team);
 
 
 }

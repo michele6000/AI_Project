@@ -15,6 +15,7 @@ public class Solution {
     private String status =null;
     private Long evaluation;
     private int version=0; //0 non ancora consegnato, 1 prima consegna, incrementato per ogni nuova versione
+    private boolean isRevisable=true;
 
     @ManyToOne
     @JoinColumn(name = "student_id")

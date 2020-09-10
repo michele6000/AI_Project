@@ -1,4 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {ActivatedRoute, Router} from '@angular/router';
+import {EditHomeworkComponent} from '../../dialog/edit-homework/edit-homework.component';
+import {CreateVmProfessorComponent} from '../../dialog/create-vm/create-vm-professor.component';
+import {CreateAssignmentComponent} from '../../dialog/create-assignment/create-assignment.component';
+import {CourseModel} from '../../models/course.model';
+import {ProfessorService} from '../../services/professor.service';
+import {SubmissionModel} from "../../models/submission.model";
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-assignments',
@@ -7,9 +16,88 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AssignmentsComponent implements OnInit {
 
-  constructor() { }
+  consegne: any[];
 
-  ngOnInit(): void {
+  /*
+  consegne = [
+    {
+      name: 'Lab 1',
+      date: '06/07/2020',
+      elaborati: [
+        {
+          name: 'Mario',
+          surname: 'Rossi',
+          matricola: '223098',
+          status: 'Letto',
+          timestamp: '06/07/2020 16:37:12',
+          history: [
+            {
+              status: 'Rivisto',
+              timestamp: '06/07/2020 14:57:12'
+            },
+            {
+              status: 'Consegnato',
+              timestamp: '06/07/2020 14:37:12'
+            }
+          ]
+        }
+      ]
+    },
+    {
+      name: 'Lab 2',
+      date: '12/07/2020',
+      elaborati: []
+    }
+  ];
+   */
+
+  columnsElaborati = ['name', 'surname', 'matricola', 'status', 'timestamp'];
+
+  private courseParam: string;
+  private corso: CourseModel;
+
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService) {
   }
 
+  ngOnInit(): void {
+    this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
+    this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
+
+    // Ottengo l'elenco di consegne per questo corso
+    this.professorService.findAssignmentsByCourse(this.corso.name).subscribe(
+      (res) => {
+        const consegne = [];
+        res.forEach((c) => {
+          c.expiryString = moment(c.expiryDate).format('L');
+          c.releaseString = moment(c.releaseDate).format('L');
+
+          // @todo Riempire con l'ultimo elaborato per ogni studente
+          c.elaborati = [];
+          consegne.push(c);
+        });
+        this.consegne = consegne;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+
+    // Per ogni consegna richiedo l'elenco di elaborati
+  }
+
+  edit($event: any) {
+    this.dialog.open(EditHomeworkComponent, {data: $event.history})
+      .afterClosed()
+      .subscribe(result => {
+
+      });
+  }
+
+  createAssignment($event) {
+    this.dialog.open(CreateAssignmentComponent, {})
+      .afterClosed()
+      .subscribe(result => {
+        console.log(result);
+      });
+  }
 }

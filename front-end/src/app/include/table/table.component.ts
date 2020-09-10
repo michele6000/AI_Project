@@ -1,7 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
+import {MatTable, MatTableDataSource} from '@angular/material/table';
+import {StudentModel} from "../../models/student.model";
 
 @Component({
   selector: 'app-table',
@@ -14,14 +15,24 @@ export class TableComponent implements OnInit {
   dataSource = new MatTableDataSource();
   father: string;
 
+  @ViewChild(MatTable)
+  table: MatTable<any>;
+
   @Input() checkedObjects: any[] = [];
   @Output() checkedObjectsChange = new EventEmitter<any[]>();
 
   @Input() showDelete: boolean;
   @Input() showEdit: boolean;
+  @Input() showChangeStatus: boolean;
+  @Input() showCheckbox = true;
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
+    console.log(data);
+    if (this.table) {
+      console.log('Table ok');
+      this.table.renderRows();
+    }
   }
 
   @Input('columns') set columns(columns) {
@@ -29,7 +40,9 @@ export class TableComponent implements OnInit {
   }
 
   @Output('delete') onDelete: EventEmitter<any[]> = new EventEmitter<any[]>();
-  @Output('edit') onEdit: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output('changeActive') onChangeActive: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
@@ -42,9 +55,15 @@ export class TableComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.showEdit) {
-      this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'edit'];
-    } else {
+      if (this.showChangeStatus) {
+        this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'enabled', 'edit'];
+      } else {
+        this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'edit'];
+      }
+    } else if (this.showCheckbox) {
       this.columnsWithCheckbox = ['select', ...this.columnsToDisplay];
+    } else {
+      this.columnsWithCheckbox = [...this.columnsToDisplay];
     }
 
     this.dataSource.sort = this.sort;
@@ -102,5 +121,13 @@ export class TableComponent implements OnInit {
 
   edit($event: MouseEvent, element: any) {
     this.onEdit.emit(element);
+  }
+
+  enableDisable(row: any) {
+    this.onChangeActive.emit(row);
+  }
+
+  isEnabled(element: any) {
+    return element.enabled;
   }
 }

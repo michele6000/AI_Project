@@ -16,6 +16,15 @@
     <td mat-cell *matCellDef="let element"> {{element[col]}} </td>
   </ng-container>
 
+  <ng-container matColumnDef="enabled">
+    <th mat-header-cell *matHeaderCellDef>
+      Enable / Disable
+    </th>
+    <td mat-cell *matCellDef="let element">
+      <mat-checkbox [checked]="isEnabled(element)" (change)="enableDisable(element)"></mat-checkbox>
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="edit" *ngIf="showEdit">
     <th mat-header-cell *matHeaderCellDef>
       Modify

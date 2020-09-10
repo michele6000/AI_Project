@@ -1,1 +1,17 @@
-<p>assignments works!</p>
+<div class="w-70 container">
+  <div class="text-right">
+    <button class="mb-10" mat-raised-button color="primary" (click)="createAssignment($event)">Create Assignment</button>
+  </div>
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let consegna of consegne">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <div>
+          {{consegna.content}} - Released at {{consegna.releaseString}} - Expires at {{consegna.expiryString}}
+          </div>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-table-filter filterColumn="status" [data]="consegna.elaborati" [columns]="columnsElaborati" (edit)="edit($event)"></app-table-filter>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

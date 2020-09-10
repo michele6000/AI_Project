@@ -1,7 +1,7 @@
 export class UserModel {
   name: string;
-  surname: string;
-  matricola: string;
+  firstName: string;
+  id: string;
   password: string;
   email: string;
 }

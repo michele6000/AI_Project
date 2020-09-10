@@ -1,6 +1,7 @@
-export class CourseModel {
+export interface CourseModel {
   name: string;
-  identifier: string;
+  acronymous: string;
   min: number;
   max: number;
+  enabled: boolean;
 }

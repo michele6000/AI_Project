@@ -14,6 +14,13 @@ public class Team {
   private String name;
   private int status;
 
+  // Limitazioni per la VM
+  private Integer limit_hdd; // espresso in MB
+  private Integer limit_cpu; // espresso in core
+  private Integer limit_ram; // espresso in MB
+  private Integer limit_instance;
+  private Integer limit_active_instance;
+
   @ManyToOne
   @JoinColumn(name = "VMType_id")
   private VMType vmType;
@@ -64,9 +71,8 @@ public class Team {
   public void removeMember(Student student) {
     members.remove(student);
     student.getTeams().remove(this);
-    if(pendentStudents.contains(student))
-       pendentStudents.remove(student);
-    else confirmedStudents.remove(student);
+    pendentStudents.remove(student);
+    confirmedStudents.remove(student);
   }
 
   public void confirmStudent(Student student) {

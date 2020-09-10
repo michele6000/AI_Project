@@ -9,11 +9,17 @@ import {VmsComponent} from './professor/vms/vms.component';
 import {AssignmentsComponent} from './professor/assignments/assignments.component';
 import {CoursesComponent} from './professor/courses/courses.component';
 import {GroupsComponent} from './student/groups/groups.component';
-import {VmsStudentComponent} from "./student/vms-student/vms-student.component";
-import {AssignmentsStudentComponent} from "./student/assignments-student/assignments-student.component";
+import {VmsStudentComponent} from './student/vms-student/vms-student.component';
+import {AssignmentsStudentComponent} from './student/assignments-student/assignments-student.component';
+import {RouteGuardService} from './auth/route-guard.service';
 
 
 const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full'
+  },
   {
     path: 'home',
     component: HomeComponent
@@ -24,49 +30,93 @@ const routes: Routes = [
   },
   {
     path: 'teacher/courses',
-    component: CoursesComponent
+    component: CoursesComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: 'ROLE_PROFESSOR'
+    }
   },
   {
     path: 'teacher',
-    component: ProfessorComponent
+    component: ProfessorComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: 'ROLE_PROFESSOR'
+    }
   },
   {
     path: 'teacher/:course',
     component: ProfessorComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: 'ROLE_PROFESSOR'
+    },
     children: [
       {
         path: 'students',
-        component: EnrolledStudentsComponent
+        component: EnrolledStudentsComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_PROFESSOR'
+        }
       },
       {
         path: 'vms',
-        component: VmsComponent
+        component: VmsComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_PROFESSOR'
+        }
       },
       {
         path: 'assignments',
-        component: AssignmentsComponent
+        component: AssignmentsComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_PROFESSOR'
+        }
       }
     ]
   },
   {
     path: 'student',
-    component: StudentComponent
+    component: StudentComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: 'ROLE_STUDENT'
+    }
   },
   {
     path: 'student/:course',
     component: StudentComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: 'ROLE_STUDENT'
+    },
     children: [
       {
         path: 'groups',
-        component: GroupsComponent
+        component: GroupsComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_STUDENT'
+        }
       },
       {
         path: 'vms',
-        component: VmsStudentComponent
+        component: VmsStudentComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_STUDENT'
+        }
       },
       {
         path: 'assignments',
-        component: AssignmentsStudentComponent
+        component: AssignmentsStudentComponent,
+        canActivate: [RouteGuardService],
+        data: {
+          expectedRole: 'ROLE_STUDENT'
+        }
       }
     ]
   },

@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "start": "npx ng serve --proxy-config src/proxy.conf.json --host 0.0.0.0 --poll=500",
+    "build": "npx ng build --prod demo",
+    "test": "npx ng test --browsers=ChromeHeadless",
+    "lint": "npx ng lint",
+    "e2e": "npx ng e2e"
   },
   "private": true,
   "dependencies": {
@@ -21,6 +21,7 @@
     "@angular/platform-browser": "~9.1.11",
     "@angular/platform-browser-dynamic": "~9.1.11",
     "@angular/router": "~9.1.11",
+    "moment": "^2.27.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
