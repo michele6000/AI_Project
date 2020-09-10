@@ -1,10 +1,7 @@
 package it.polito.ai.project;
 
-import it.polito.ai.project.entities.Course;
-import it.polito.ai.project.entities.Professor;
 import it.polito.ai.project.entities.User;
 import it.polito.ai.project.repositories.UserRepository;
-import java.util.Collections;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,9 +10,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Collections;
+
 @SpringBootApplication
 public class ProjectApplication {
-  private static final String CSV_FILE_PATH = "fileTest.csv";
 
 
   public static void main(String[] args) {
