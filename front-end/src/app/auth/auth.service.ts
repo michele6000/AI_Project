@@ -41,7 +41,7 @@ export class AuthService {
       this.localUser.roles = tkn.roles;
       this.localUser.id = localStorage.getItem('email').split('@')[0];
       // Verificare
-      this.loginRedirect();
+      // this.loginRedirect();
     } else {
       this.userSubject.next(null);
     }
