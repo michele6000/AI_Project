@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {CreateVmProfessorComponent} from '../../dialog/create-vm/create-vm-professor.component';
 import {EditVmStudentComponent} from '../../dialog/edit-vm-student/edit-vm-student.component';
 import {StudentService} from '../../services/student.service';
 import {Router} from '@angular/router';
@@ -8,7 +7,6 @@ import {CourseModel} from '../../models/course.model';
 import {GroupModel} from '../../models/group.model';
 import {VmModel} from '../../models/vm.model';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {EditCourseComponent} from '../../dialog/edit-course/edit-course.component';
 import {DialogDeleteVmComponent} from './dialog-delete-vm/dialog-delete-vm.component';
 
 @Component({
@@ -23,7 +21,8 @@ export class VmsStudentComponent implements OnInit {
   corso: CourseModel;
   team: GroupModel;
 
-  constructor(private dialog: MatDialog, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) { }
+  constructor(private dialog: MatDialog, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {
+  }
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];

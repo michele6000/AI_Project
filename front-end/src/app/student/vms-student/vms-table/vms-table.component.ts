@@ -18,6 +18,15 @@ export class VmsTableComponent implements OnInit {
 
   @ViewChild(MatTable)
   table: MatTable<any>;
+  @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
+  @Output('delete') onDelete: EventEmitter<any> = new EventEmitter<any>();
+  @ViewChild(MatPaginator, {static: true})
+  paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true})
+  sort: MatSort;
+
+  constructor(private studentService: StudentService) {
+  }
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
@@ -29,18 +38,6 @@ export class VmsTableComponent implements OnInit {
 
   @Input('columns') set columns(columns) {
     this.columnsToDisplay = columns;
-  }
-
-  @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
-  @Output('delete') onDelete: EventEmitter<any> = new EventEmitter<any>();
-
-  @ViewChild(MatPaginator, {static: true})
-  paginator: MatPaginator;
-
-  @ViewChild(MatSort, {static: true})
-  sort: MatSort;
-
-  constructor(private studentService: StudentService) {
   }
 
   ngOnInit(): void {
@@ -55,11 +52,17 @@ export class VmsTableComponent implements OnInit {
   }
 
   powerOn(element: VmModel) {
-    this.studentService.powerOnVm(element.id).subscribe((res) => {element.status = 'poweron'; }, (error) => {});
+    this.studentService.powerOnVm(element.id).subscribe((res) => {
+      element.status = 'poweron';
+    }, (error) => {
+    });
   }
 
   powerOff(element: VmModel) {
-    this.studentService.powerOffVm(element.id).subscribe((res) => {element.status = 'poweroff'; }, (error) => {});
+    this.studentService.powerOffVm(element.id).subscribe((res) => {
+      element.status = 'poweroff';
+    }, (error) => {
+    });
   }
 
   delete(element: VmModel) {

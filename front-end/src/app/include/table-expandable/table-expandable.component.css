@@ -1,4 +1,6 @@
-table, mat-paginator {width: 80%}
+table, mat-paginator {
+  width: 80%
+}
 
 tr.example-detail-row {
   height: 0;

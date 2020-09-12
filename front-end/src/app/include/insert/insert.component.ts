@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {Observable} from 'rxjs';
 import {FormControl} from '@angular/forms';
-import {UserModel} from '../../models/user.models';
 import {StudentModel} from '../../models/student.model';
 import {map, startWith} from "rxjs/operators";
 
@@ -19,13 +18,6 @@ export class InsertComponent implements OnInit {
   @Input('options') options: StudentModel[] = [];
 
   @Output('add') onAdd: EventEmitter<StudentModel> = new EventEmitter<StudentModel>();
-
-  private _filter(name: string): any[] {
-    const filterValue = name.toLowerCase();
-    return this.options.filter(option => option.id.toLowerCase().indexOf(filterValue) === 0
-    || option.firstName.toLowerCase().indexOf(filterValue) === 0
-    || option.name.toLowerCase().indexOf(filterValue) === 0);
-  }
 
   constructor() {
   }
@@ -49,5 +41,12 @@ export class InsertComponent implements OnInit {
 
   displayFn(studentModel: StudentModel): string {
     return studentModel ? studentModel.firstName + ' ' + studentModel.name + ' ' + studentModel.id : '';
+  }
+
+  private _filter(name: string): any[] {
+    const filterValue = name.toLowerCase();
+    return this.options.filter(option => option.id.toLowerCase().indexOf(filterValue) === 0
+      || option.firstName.toLowerCase().indexOf(filterValue) === 0
+      || option.name.toLowerCase().indexOf(filterValue) === 0);
   }
 }

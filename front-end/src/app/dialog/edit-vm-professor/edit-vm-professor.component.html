@@ -3,38 +3,39 @@
     <mat-card-title>Edit VM</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <mat-error class="mt-10-center" *ngIf="error">
+    <mat-error *ngIf="error" class="mt-10-center">
       Error
     </mat-error>
     <form #f="ngForm" (ngSubmit)="modify(f)">
       <br>
       <mat-form-field class="dialog-position-field">
         <mat-label>Number of V-CPU</mat-label>
-        <input matInput type="text" #vcpu="ngModel" ngModel required placeholder="Number of V-CPU" name="vcpu" value="">
+        <input #vcpu="ngModel" matInput name="vcpu" ngModel placeholder="Number of V-CPU" required type="text" value="">
       </mat-form-field>
       <br>
       <mat-form-field class="dialog-position-field">
         <mat-label>RAM</mat-label>
-        <input matInput type="text" #ram="ngModel" ngModel required placeholder="RAM" name="ram" value="">
+        <input #ram="ngModel" matInput name="ram" ngModel placeholder="RAM" required type="text" value="">
       </mat-form-field>
       <br>
       <mat-form-field class="dialog-position-field">
         <mat-label>Disk</mat-label>
-        <input matInput type="text" #disk="ngModel" ngModel required placeholder="Disk" name="disk" value="">
+        <input #disk="ngModel" matInput name="disk" ngModel placeholder="Disk" required type="text" value="">
       </mat-form-field>
       <br>
       <mat-form-field class="dialog-position-field">
         <mat-label>Maximum number of VMs</mat-label>
-        <input matInput type="number" #maxVm="ngModel" ngModel required name="maxVm" value="">
+        <input #maxVm="ngModel" matInput name="maxVm" ngModel required type="number" value="">
       </mat-form-field>
       <br>
       <mat-form-field class="dialog-position-field">
         <mat-label>Maximum number of simultaneously active VMs</mat-label>
-        <input matInput type="number" #maxActiveVmSimultaneously="ngModel" ngModel required name="maxActiveVmSimultaneously" value="">
+        <input #maxActiveVmSimultaneously="ngModel" matInput name="maxActiveVmSimultaneously" ngModel required
+               type="number" value="">
       </mat-form-field>
       <br>
       <mat-card-actions>
-        <button mat-button [disabled]="!f.valid" mat-raised-button color="primary">Create</button>
+        <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Create</button>
         <button [routerLink]="['/teacher']" mat-button mat-dialog-close>Cancel</button>
       </mat-card-actions>
     </form>

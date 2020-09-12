@@ -1,8 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {CourseModel} from '../models/course.model';
-import {switchMap} from 'rxjs/operators';
 import {ProfessorService} from "../services/professor.service";
 import {AuthService} from "../auth/auth.service";
 import {Subscription} from "rxjs";

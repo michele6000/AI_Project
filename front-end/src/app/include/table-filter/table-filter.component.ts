@@ -13,6 +13,15 @@ export class TableFilterComponent implements OnInit {
   columnsToDisplay = [];
   columnsWithEdit = [];
   dataSource = new MatTableDataSource();
+  @Input() filterColumn: string;
+  @Output('edit') onEdit: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @ViewChild(MatPaginator, {static: true})
+  paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true})
+  sort: MatSort;
+
+  constructor() {
+  }
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
@@ -20,19 +29,6 @@ export class TableFilterComponent implements OnInit {
 
   @Input('columns') set columns(columns) {
     this.columnsToDisplay = columns;
-  }
-
-  @Input() filterColumn: string;
-
-  @Output('edit') onEdit: EventEmitter<any[]> = new EventEmitter<any[]>();
-
-  @ViewChild(MatPaginator, {static: true})
-  paginator: MatPaginator;
-
-  @ViewChild(MatSort, {static: true})
-  sort: MatSort;
-
-  constructor() {
   }
 
   ngOnInit(): void {

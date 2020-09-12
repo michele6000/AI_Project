@@ -2,11 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {EditHomeworkComponent} from '../../dialog/edit-homework/edit-homework.component';
-import {CreateVmProfessorComponent} from '../../dialog/create-vm/create-vm-professor.component';
 import {CreateAssignmentComponent} from '../../dialog/create-assignment/create-assignment.component';
 import {CourseModel} from '../../models/course.model';
 import {ProfessorService} from '../../services/professor.service';
-import {SubmissionModel} from "../../models/submission.model";
 import * as moment from 'moment';
 
 @Component({

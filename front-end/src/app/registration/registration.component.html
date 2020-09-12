@@ -3,38 +3,39 @@
 <div class="container text-center">
   <h1>Registration</h1>
   <mat-card-content>
-    <mat-error class="mb-20" *ngIf="errorPw">
+    <mat-error *ngIf="errorPw" class="mb-20">
       Error. Different password
     </mat-error>
-    <mat-error class="mb-20" *ngIf="notValidDomain">
+    <mat-error *ngIf="notValidDomain" class="mb-20">
       You must have an email that belongs to university domain (eg. @polito.it)
     </mat-error>
-    <form class="registration-form" (ngSubmit)="register(f)" #f="ngForm">
+    <form #f="ngForm" (ngSubmit)="register(f)" class="registration-form">
       <mat-form-field class="full-width">
         <mat-label>Name</mat-label>
-        <input matInput placeholder="Name" name="name" required #name="ngModel" ngModel>
+        <input #name="ngModel" matInput name="name" ngModel placeholder="Name" required>
       </mat-form-field>
       <mat-form-field class="full-width">
         <mat-label>Surname</mat-label>
-        <input matInput placeholder="Surname" name="surname" required #surname="ngModel" ngModel>
+        <input #surname="ngModel" matInput name="surname" ngModel placeholder="Surname" required>
       </mat-form-field>
       <mat-form-field class="full-width">
         <mat-label>Matricola</mat-label>
-        <input matInput placeholder="Matricola" name="matricola" required #matricola="ngModel" ngModel>
+        <input #matricola="ngModel" matInput name="matricola" ngModel placeholder="Matricola" required>
       </mat-form-field>
       <mat-form-field class="full-width">
         <mat-label>Password</mat-label>
-        <input matInput placeholder="Password" name="password" type="password" required #password="ngModel" ngModel>
+        <input #password="ngModel" matInput name="password" ngModel placeholder="Password" required type="password">
       </mat-form-field>
       <mat-form-field class="full-width">
         <mat-label>Confirm password</mat-label>
-        <input matInput placeholder="Confirm Password" name="confirm_password" type="password" required #confirm_password="ngModel" ngModel>
+        <input #confirm_password="ngModel" matInput name="confirm_password" ngModel placeholder="Confirm Password"
+               required type="password">
       </mat-form-field>
       <mat-form-field class="full-width">
         <mat-label>Email</mat-label>
-        <input matInput placeholder="Mail" name="email" type="email" required email #email="ngModel" ngModel>
+        <input #email="ngModel" email matInput name="email" ngModel placeholder="Mail" required type="email">
       </mat-form-field>
-      <button mat-raised-button color="primary" [disabled]="!f.valid">REGISTER</button>
+      <button [disabled]="!f.valid" color="primary" mat-raised-button>REGISTER</button>
     </form>
   </mat-card-content>
 </div>

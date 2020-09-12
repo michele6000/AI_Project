@@ -8,9 +8,9 @@
           </div>
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <input hidden (change)="handleFileSelect($event)" #fileInput type="file" id="file">
-      <button mat-button mat-raised-button color="primary" class="float-right ml-10">Upload solution</button>
-      <button type="button" mat-raised-button (click)="fileInput.click()" class="float-right">Choose file</button>
+      <input #fileInput (change)="handleFileSelect($event)" hidden id="file" type="file">
+      <button class="float-right ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>
+      <button (click)="fileInput.click()" class="float-right" mat-raised-button type="button">Choose file</button>
       <h2>History</h2>
       <mat-list>
         <mat-list-item *ngFor="let a of consegna.history ">{{a.timestamp}} - {{a.status}}</mat-list-item>

@@ -1,9 +1,11 @@
 <mat-toolbar color="primary">
-  <mat-icon class="pointer" (click)="toggleForMenuClick()" *ngIf="isLoggedIn">menu</mat-icon>
-  <span routerLink="/docente" class="pointer title">{{title}}</span>
+  <mat-icon (click)="toggleForMenuClick()" *ngIf="isLoggedIn" class="pointer">menu</mat-icon>
+  <span class="pointer title" routerLink="/docente">{{title}}</span>
   <span class="fill-remaining-space"></span>
-  <p class="position mb-0" *ngIf="isLoggedIn">{{email}}</p>
-  <button mat-raised-button class="float-right" (click)="logout()" *ngIf="isLoggedIn">Logout</button>
-  <a mat-button routerLink="/register" *ngIf="!isLoggedIn">Register</a>
-  <button [routerLink]="['/home']" [queryParams]="{doLogin: 'true'}" mat-raised-button class="float-right" mat-button *ngIf="!isLoggedIn">Login</button>
+  <p *ngIf="isLoggedIn" class="position mb-0">{{email}}</p>
+  <button (click)="logout()" *ngIf="isLoggedIn" class="float-right" mat-raised-button>Logout</button>
+  <a *ngIf="!isLoggedIn" mat-button routerLink="/register">Register</a>
+  <button *ngIf="!isLoggedIn" [queryParams]="{doLogin: 'true'}" [routerLink]="['/home']" class="float-right" mat-button
+          mat-raised-button>Login
+  </button>
 </mat-toolbar>

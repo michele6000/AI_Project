@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {ProfessorService} from '../../services/professor.service';
 import {NgForm} from '@angular/forms';
@@ -30,12 +30,12 @@ export class EditHomeworkComponent implements OnInit {
     this.fileAbsent = false;
   }
 
-  send(f: NgForm){
+  send(f: NgForm) {
 
   }
 
-  showGrade($event){
-    if ( $event.value == 0){
+  showGrade($event) {
+    if ($event.value == 0) {
       this.showInputGrade = false;
     } else {
       this.showInputGrade = true;

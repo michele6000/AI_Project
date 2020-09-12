@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {StudentModel} from "../../models/student.model";
 
 @Component({
   selector: 'app-table',
@@ -25,6 +24,16 @@ export class TableComponent implements OnInit {
   @Input() showEdit: boolean;
   @Input() showChangeStatus: boolean;
   @Input() showCheckbox = true;
+  @Output('delete') onDelete: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
+  @Output('changeActive') onChangeActive: EventEmitter<any> = new EventEmitter<any>();
+  @ViewChild(MatPaginator, {static: true})
+  paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true})
+  sort: MatSort;
+
+  constructor() {
+  }
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
@@ -37,20 +46,6 @@ export class TableComponent implements OnInit {
 
   @Input('columns') set columns(columns) {
     this.columnsToDisplay = columns;
-  }
-
-  @Output('delete') onDelete: EventEmitter<any[]> = new EventEmitter<any[]>();
-  @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
-
-  @Output('changeActive') onChangeActive: EventEmitter<any> = new EventEmitter<any>();
-
-  @ViewChild(MatPaginator, {static: true})
-  paginator: MatPaginator;
-
-  @ViewChild(MatSort, {static: true})
-  sort: MatSort;
-
-  constructor() {
   }
 
   ngOnInit(): void {

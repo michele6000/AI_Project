@@ -80,7 +80,7 @@ export class CoursesComponent implements OnInit {
   }
 
   onChangeActiveCompleted(result: any, acronymous: string) {
-    if (result){
+    if (result) {
       this.professorService.findCoursesByProfessor(this.id, true);
     }
   }

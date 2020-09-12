@@ -5,26 +5,26 @@
       <mat-list-item *ngFor="let a of assignments">{{a.timestamp}} - {{a.status}}</mat-list-item>
     </mat-list>
     <hr/>
-    <mat-error class="mt-10-center" *ngIf="error">
+    <mat-error *ngIf="error" class="mt-10-center">
       Error
     </mat-error>
-    <form #f="ngForm" class="mt-10" (ngSubmit)="send(f)">
+    <form #f="ngForm" (ngSubmit)="send(f)" class="mt-10">
       <h2>Send correction</h2>
       <div class="mt-10 mb-10">
-        <button type="button" mat-raised-button (click)="fileInput.click()">Choose file</button>
-        <input hidden (change)="handleFileSelect($event)" accept="application/pdf" #fileInput type="file" id="file">
+        <button (click)="fileInput.click()" mat-raised-button type="button">Choose file</button>
+        <input #fileInput (change)="handleFileSelect($event)" accept="application/pdf" hidden id="file" type="file">
       </div>
-      <mat-radio-group aria-label="Select an option" name="last" (change)="showGrade($event)">
+      <mat-radio-group (change)="showGrade($event)" aria-label="Select an option" name="last">
         <mat-radio-button value="0">Wait student revision</mat-radio-button>
         <mat-radio-button value="1">Final Correction</mat-radio-button>
       </mat-radio-group>
-      <mat-form-field class="dialog-position-field mt-20" *ngIf="showInputGrade">
+      <mat-form-field *ngIf="showInputGrade" class="dialog-position-field mt-20">
         <mat-label>Grade</mat-label>
-        <input matInput type="number" #grade="ngModel" ngModel required placeholder="Grade" name="grade" value="">
+        <input #grade="ngModel" matInput name="grade" ngModel placeholder="Grade" required type="number" value="">
       </mat-form-field>
-      <br />
+      <br/>
       <mat-card-actions class="mt-10">
-        <button mat-button [disabled]="!f.valid || fileAbsent" mat-raised-button color="primary">Send</button>
+        <button [disabled]="!f.valid || fileAbsent" color="primary" mat-button mat-raised-button>Send</button>
         <button mat-button mat-dialog-close>Cancel</button>
       </mat-card-actions>
     </form>

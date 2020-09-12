@@ -20,12 +20,11 @@ const DOMINIO_STUDENT = '@studenti.polito.it';
 export class AuthService {
 
   user: Observable<UserLogged>;
-  private userSubject: BehaviorSubject<UserLogged>;
   localUser: UserLogged = {
     id: null, email: undefined, roles: []
   };
-
   tokenExpired: Observable<boolean> = new Observable<boolean>();
+  private userSubject: BehaviorSubject<UserLogged>;
   private tokenExpiredSubject: BehaviorSubject<boolean>;
 
   constructor(private http: HttpClient, private router: Router,

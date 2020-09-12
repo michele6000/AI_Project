@@ -1,10 +1,9 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {concatMap, switchMap, toArray} from 'rxjs/operators';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import {from, Observable} from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {concatMap, toArray} from 'rxjs/operators';
+import {ActivatedRoute, Router} from '@angular/router';
+import {from} from 'rxjs';
 import {CourseModel} from '../../models/course.model';
 import {StudentModel} from '../../models/student.model';
-import {MatTable} from '@angular/material/table';
 import {HttpClient} from '@angular/common/http';
 import {ProfessorService} from "../../services/professor.service";
 import {MatSnackBar} from '@angular/material/snack-bar';

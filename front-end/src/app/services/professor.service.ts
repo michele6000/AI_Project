@@ -1,11 +1,9 @@
 import {Injectable} from '@angular/core';
-import {UserModel} from '../models/user.models';
 import {HttpClient} from '@angular/common/http';
 import {CourseModel} from '../models/course.model';
 import {VmModel} from '../models/vm.model';
 import {VmType} from '../models/vm-type.model';
-import {VmStudent} from '../models/vm-student.model';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {StudentModel} from '../models/student.model';
 import {GroupModel} from "../models/group.model";
 import {SubmissionModel} from "../models/submission.model";
@@ -20,9 +18,8 @@ export class ProfessorService {
   // private dataStore: {courses: CourseModel[]} = {courses: null};
 
   courses: Observable<CourseModel[]>;
-  private coursesSubject: BehaviorSubject<CourseModel[]>;
-
   students: Observable<StudentModel[]>;
+  private coursesSubject: BehaviorSubject<CourseModel[]>;
   private studentsSubject: BehaviorSubject<StudentModel[]>;
 
   constructor(private http: HttpClient) {

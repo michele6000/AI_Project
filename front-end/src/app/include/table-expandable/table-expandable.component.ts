@@ -1,11 +1,19 @@
-import {Component, ViewChild, ViewChildren, QueryList, ChangeDetectorRef, OnInit, Output, EventEmitter, Input} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {MatSort} from '@angular/material/sort';
-import {MatTableDataSource, MatTable} from '@angular/material/table';
+import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from "@angular/material/paginator";
 import {GroupModel} from "../../models/group.model";
-import {VmModel} from "../../models/vm.model";
-import {StudentModel} from "../../models/student.model";
 
 /**
  * @title Table with expandable rows
@@ -38,6 +46,14 @@ export class TableExpandableComponent implements OnInit {
 
   dataSource: MatTableDataSource<any>;
   usersData: any[] = [];
+  columnsToDisplay = ['id', 'name', 'vcpu', 'ram'];
+  columnsWithEdit: string[];
+  innerDisplayedColumns = ['name', 'state', 'link'];
+  expandedElement: any | null;
+  @Input() showEdit = false;
+
+  constructor(private cd: ChangeDetectorRef) {
+  }
 
   @Input() set columns(columns) {
     this.columnsToDisplay = columns;
@@ -46,13 +62,6 @@ export class TableExpandableComponent implements OnInit {
   @Input() set innerColumns(columns) {
     this.innerDisplayedColumns = columns;
   }
-
-  columnsToDisplay = ['id', 'name', 'vcpu', 'ram'];
-  columnsWithEdit: string[];
-  innerDisplayedColumns = ['name', 'state', 'link'];
-  expandedElement: any | null;
-
-  @Input() showEdit = false;
 
   @Input('data') set data(data) {
     this.usersData = [];
@@ -65,9 +74,6 @@ export class TableExpandableComponent implements OnInit {
     if (this.table) {
       this.table.renderRows();
     }
-  }
-
-  constructor(private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {

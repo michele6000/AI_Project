@@ -1,3 +1,11 @@
-table, mat-paginator {width: 80%}
-.color-green {color: green;}
-.color-red {color: red;}
+table, mat-paginator {
+  width: 80%
+}
+
+.color-green {
+  color: green;
+}
+
+.color-red {
+  color: red;
+}

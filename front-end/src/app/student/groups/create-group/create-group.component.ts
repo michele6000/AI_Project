@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
-import {ProfessorService} from '../../../services/professor.service';
 import {StudentModel} from '../../../models/student.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CourseModel} from '../../../models/course.model';
@@ -23,9 +22,9 @@ export class CreateGroupComponent implements OnInit {
   course: CourseModel;
 
   selectedStudents: StudentModel[] = [];
-  private courseParam: string;
   error = false;
   message = '';
+  private courseParam: string;
 
   constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {
   }

@@ -3,7 +3,6 @@ import {NgForm} from "@angular/forms";
 import {UserModel} from "../models/user.models";
 import {AuthService} from "../auth/auth.service";
 import {Router} from '@angular/router';
-import {register} from 'ts-node';
 
 @Component({
   selector: 'app-registration',
@@ -15,7 +14,8 @@ export class RegistrationComponent implements OnInit {
   errorPw = false;
   notValidDomain = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {
+  }
 
   ngOnInit(): void {
   }
@@ -32,7 +32,7 @@ export class RegistrationComponent implements OnInit {
       user.email = f.value.email;
 
       this.authService.register(user).subscribe(result => {
-        if (result === false){
+        if (result === false) {
           this.notValidDomain = true;
         } else {
           this.router.navigate(['home'], {queryParams: {doLogin: 'true'}});

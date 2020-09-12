@@ -2,7 +2,6 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
 import {CourseModel} from '../models/course.model';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ProfessorService} from "../services/professor.service";
 import {StudentService} from "../services/student.service";
 import {Subscription} from "rxjs";
 

@@ -6,7 +6,6 @@ import {VmStudent} from '../models/vm-student.model';
 import {StudentModel} from "../models/student.model";
 import {GroupModel} from "../models/group.model";
 import {VmModel} from "../models/vm.model";
-import {SubmissionModel} from "../models/submission.model";
 
 const API_URL = '/api/API/';
 
@@ -16,9 +15,8 @@ const API_URL = '/api/API/';
 export class StudentService {
 
   courses: Observable<CourseModel[]>;
-  private coursesSubject: BehaviorSubject<CourseModel[]>;
-
   teams: Observable<GroupModel[]>;
+  private coursesSubject: BehaviorSubject<CourseModel[]>;
   private teamsSubject: BehaviorSubject<GroupModel[]>;
 
   constructor(private http: HttpClient) {

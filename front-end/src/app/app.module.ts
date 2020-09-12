@@ -12,7 +12,6 @@ import {HeaderComponent} from './include/header/header.component';
 import {MatCardModule} from '@angular/material/card';
 import {MatInputModule} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {AuthService} from './auth/auth.service';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {LoginComponent} from './login/login.component';
 import {MatDialogModule} from '@angular/material/dialog';
@@ -44,18 +43,18 @@ import {AssignmentsStudentComponent} from './student/assignments-student/assignm
 import {InfoGroupComponent} from './student/groups/info-group/info-group.component';
 import {CreateGroupComponent} from './student/groups/create-group/create-group.component';
 import {GroupDirective} from './student/groups/group.directive';
-import { EditCourseComponent } from './dialog/edit-course/edit-course.component';
+import {EditCourseComponent} from './dialog/edit-course/edit-course.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatExpansionModule} from "@angular/material/expansion";
-import { TableFilterComponent } from './include/table-filter/table-filter.component';
-import { EditHomeworkComponent } from './dialog/edit-homework/edit-homework.component';
+import {TableFilterComponent} from './include/table-filter/table-filter.component';
+import {EditHomeworkComponent} from './dialog/edit-homework/edit-homework.component';
 import {MatRadioModule} from "@angular/material/radio";
 import {AuthInterceptor} from "./auth/auth.interceptor";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
-import { EditVmProfessorComponent } from './dialog/edit-vm-professor/edit-vm-professor.component';
-import { VmsTableComponent } from './student/vms-student/vms-table/vms-table.component';
-import { DialogDeleteVmComponent } from './student/vms-student/dialog-delete-vm/dialog-delete-vm.component';
-import { CreateAssignmentComponent } from './dialog/create-assignment/create-assignment.component';
+import {EditVmProfessorComponent} from './dialog/edit-vm-professor/edit-vm-professor.component';
+import {VmsTableComponent} from './student/vms-student/vms-table/vms-table.component';
+import {DialogDeleteVmComponent} from './student/vms-student/dialog-delete-vm/dialog-delete-vm.component';
+import {CreateAssignmentComponent} from './dialog/create-assignment/create-assignment.component';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
 
@@ -123,7 +122,10 @@ import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
     MatDatepickerModule,
     MatNativeDateModule
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, {provide: MAT_DATE_LOCALE, useValue: 'en-GB'}],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, {
+    provide: MAT_DATE_LOCALE,
+    useValue: 'en-GB'
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule {

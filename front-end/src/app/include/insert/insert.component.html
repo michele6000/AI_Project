@@ -1,11 +1,11 @@
 <form class="example-form mleft20">
-  <mat-form-field style="width: 500px;" class="text-input w-500">
-    <input type="text" matInput placeholder="Aggiungi" [formControl]="formControl" [matAutocomplete]="auto">
-    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="optionSelected($event)">
+  <mat-form-field class="text-input w-500" style="width: 500px;">
+    <input [formControl]="formControl" [matAutocomplete]="auto" matInput placeholder="Aggiungi" type="text">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event)" [displayWith]="displayFn">
       <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
         {{option.firstName + " " + option.name + " " + option.id}}
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
-  <button mat-raised-button color="primary" class="ml-20" (click)="add()">Add</button>
+  <button (click)="add()" class="ml-20" color="primary" mat-raised-button>Add</button>
 </form>
