@@ -16,33 +16,33 @@ import java.util.Collections;
 public class ProjectApplication {
 
 
-  public static void main(String[] args) {
-    SpringApplication.run(ProjectApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(ProjectApplication.class, args);
+    }
 
-  @Bean
-  public CommandLineRunner adminCreator(
-    UserRepository userRepo,
-    PasswordEncoder passwordEncoder
-  ) {
-    return args -> {
-      if (!userRepo.existsById("admin")) {
-        User admin = new User();
-        admin.setUsername("admin");
-        admin.setPassword(passwordEncoder.encode("admin"));
-        admin.setRoles(Collections.singletonList("ROLE_ADMIN"));
-        userRepo.save(admin);
-      }
-    };
-  }
+    @Bean
+    public CommandLineRunner adminCreator(
+            UserRepository userRepo,
+            PasswordEncoder passwordEncoder
+    ) {
+        return args -> {
+            if (!userRepo.existsById("admin")) {
+                User admin = new User();
+                admin.setUsername("admin");
+                admin.setPassword(passwordEncoder.encode("admin"));
+                admin.setRoles(Collections.singletonList("ROLE_ADMIN"));
+                userRepo.save(admin);
+            }
+        };
+    }
 
-  @Bean
-  public ModelMapper modelMapper() {
-    return new ModelMapper();
-  }
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

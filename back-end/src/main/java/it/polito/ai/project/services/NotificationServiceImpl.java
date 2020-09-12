@@ -71,16 +71,15 @@ public class NotificationServiceImpl implements NotificationService {
         everythingOk.set(false);
 
         //token not existent
-        if (!tokenRepo.existsById(token)) return false;
+        if (!tokenRepo.existsById(token))
+            return false;
 
         Long teamId = tokenRepo.getOne(token).getTeamId();
 
         //token expired
-        if (
-                tokenRepo
-                        .findAllByExpiryDateBefore(new Timestamp(new Date().getTime()))
-                        .stream()
-                        .anyMatch(t -> t.getId().equals(token))
+        if (tokenRepo.findAllByExpiryDateBefore(new Timestamp(new Date().getTime()))
+                .stream()
+                .anyMatch(t -> t.getId().equals(token))
         ) {
             teamService.evictTeam(teamId);
             return false;
@@ -105,11 +104,10 @@ public class NotificationServiceImpl implements NotificationService {
         //token not existent
         if (!tokenRepo.existsById(token)) return false;
         //token expired
-        if (
-                tokenRepo
-                        .findAllByExpiryDateBefore(new Timestamp(new Date().getTime()))
-                        .stream()
-                        .anyMatch(t -> t.getId().equals(token))
+        if (tokenRepo
+                .findAllByExpiryDateBefore(new Timestamp(new Date().getTime()))
+                .stream()
+                .anyMatch(t -> t.getId().equals(token))
         ) return false;
 
         Long teamId = tokenRepo.getOne(token).getTeamId();

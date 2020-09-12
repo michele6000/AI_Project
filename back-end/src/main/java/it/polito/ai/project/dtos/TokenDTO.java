@@ -1,11 +1,12 @@
 package it.polito.ai.project.dtos;
 
-import java.sql.Timestamp;
 import lombok.Data;
+
+import java.sql.Timestamp;
 
 @Data
 public class TokenDTO {
-  private String id;
-  private Long teamId;
-  private Timestamp expiryDate;
+    private String id;
+    private Long teamId;
+    private Timestamp expiryDate;
 }

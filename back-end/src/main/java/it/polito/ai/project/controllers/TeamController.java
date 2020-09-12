@@ -80,24 +80,19 @@ public class TeamController {
     public void deleteMember(@PathVariable Long teamId, @PathVariable String studentId) {
         try {
             //se non sono professore (sono studente) e sto provando a cancellare un membro diverso da me stesso
-            if (!getCurrentRoles().contains("PROFESSOR") && getCurrentUsername()!=studentId) throw new ResponseStatusException(
-            HttpStatus.FORBIDDEN,
-            "You are not allowed to delete this member!"
-    );
-            service.deleteMember(teamId,studentId);
+            if (!getCurrentRoles().contains("PROFESSOR") && getCurrentUsername() != studentId)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete this member!");
+            service.deleteMember(teamId, studentId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
     @PostMapping("/{teamId}/{studentId}/addMember")
-    public void addMember(
-            @PathVariable Long teamId,
-            @PathVariable String studentId
-    ) {
-        List<String>students=new ArrayList<>();
+    public void addMember(@PathVariable Long teamId, @PathVariable String studentId) {
+        List<String> students = new ArrayList<>();
         try {
-            service.addMember(teamId,studentId);
+            service.addMember(teamId, studentId);
             students.add(studentId);
             notifyService.notifyTeam(service.getTeam(teamId), students);
         } catch (TeamServiceException e) {
@@ -109,10 +104,8 @@ public class TeamController {
     //TODO: chi può farlo oltre al professore? Può essere usata dallo studente per annullare vecchie proposte, ma come?
     public void evictTeam(@PathVariable Long teamId) {
         try {
-            if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
-                    "You are not allowed to evict this team!"
-            );
+            if (!getCurrentRoles().contains("PROFESSOR"))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to evict this team!");
             service.evictTeam(teamId);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -122,7 +115,7 @@ public class TeamController {
     @PostMapping("/{teamId}/createVmInstance")
     public VMDTO createVmInstance(@PathVariable Long teamId, @RequestBody VMDTO vm) {
         try {
-            return vmService.createVmInstance(teamId,vm,getCurrentUsername());
+            return vmService.createVmInstance(teamId, vm, getCurrentUsername());
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -155,7 +148,7 @@ public class TeamController {
                 .getAuthentication()
                 .getAuthorities()
                 .stream()
-                .map(a -> ((GrantedAuthority) a).getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
     }
 

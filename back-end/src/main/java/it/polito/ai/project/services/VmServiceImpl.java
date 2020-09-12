@@ -57,7 +57,7 @@ public class VmServiceImpl implements VmService {
         VMType vmt = new VMType();
         vmt.setDockerFile(vmType.getDockerFile());
         Long id = vmtRepo.save(vmt).getId();
-        setVMType(courseName,id );
+        setVMType(courseName, id);
         return id;
     }
 
@@ -289,9 +289,9 @@ public class VmServiceImpl implements VmService {
     @Override
     public TeamDTO setTeamLimit(TeamDTO team) {
         Optional<Team> optionalTeamEntity = teamRepo.findById(team.getId());
-        if (!optionalTeamEntity.isPresent()) {
+        if (!optionalTeamEntity.isPresent())
             throw new TeamNotFoundException("Team not found!");
-        }
+
         optionalTeamEntity.get().setLimit_ram(team.getLimit_ram());
         optionalTeamEntity.get().setLimit_cpu(team.getLimit_cpu());
         optionalTeamEntity.get().setLimit_hdd(team.getLimit_hdd());

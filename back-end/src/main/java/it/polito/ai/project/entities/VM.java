@@ -30,13 +30,13 @@ public class VM {
     @ManyToMany(mappedBy = "vms")
     private List<Student> owners = new ArrayList<>();
 
-    public void setVmType(VMType t){
-        vmType=t;
+    public void setVmType(VMType t) {
+        vmType = t;
         t.getVMs().add(this);
     }
 
-    public void setTeam(Team t){
-        team=t;
+    public void setTeam(Team t) {
+        team = t;
         t.getVMInstance().add(this);
     }
 

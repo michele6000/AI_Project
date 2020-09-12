@@ -2,7 +2,6 @@ package it.polito.ai.project.controllers;
 
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.VMDTO;
-import it.polito.ai.project.entities.VM;
 import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.services.TeamService;
 import it.polito.ai.project.services.VmService;
@@ -35,7 +34,7 @@ public class VMController {
     @PostMapping("/{vmId}/modifyConfiguration")
     public Boolean modifyConfiguration(@PathVariable Long vmId, @RequestBody VMDTO vm) {
         try {
-            return vmService.modifyVMConfiguration(vmId,vm);
+            return vmService.modifyVMConfiguration(vmId, vm);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -45,7 +44,7 @@ public class VMController {
     @PostMapping("/{vmId}/modifyOwner")
     public Boolean modifyOwner(@PathVariable Long vmId, @RequestBody String studentID) {
         try {
-            return vmService.modifyVMOwner(vmId,studentID);
+            return vmService.modifyVMOwner(vmId, studentID);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -54,7 +53,7 @@ public class VMController {
     @PostMapping("/{vmId}/addOwner")
     public Boolean addOwner(@PathVariable Long vmId, @RequestBody String studentID) {
         try {
-            return vmService.addVMOwner(vmId,studentID);
+            return vmService.addVMOwner(vmId, studentID);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -96,12 +95,6 @@ public class VMController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-
-
-
-
-
-
 
 
 }

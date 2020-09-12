@@ -2,8 +2,6 @@ package it.polito.ai.project.dtos;
 
 import lombok.Data;
 
-import javax.persistence.Id;
-
 @Data
 public class SolutionDTO {
     private Long id;

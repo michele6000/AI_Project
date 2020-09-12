@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -50,19 +53,18 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         if (submissionDTO == null)
             throw new SubmissionNotFoundException("Bad request!");
-
-        Submission submissionEntity = modelMapper.map(submissionDTO, Submission.class);
-
-
         if (courseName.length() == 0 || !courseRepo.existsById(courseName))
+
             throw new CourseNotFoundException("Course not found!");
 
+        Submission submissionEntity = modelMapper.map(submissionDTO, Submission.class);
         Course course = courseRepo.getOne(courseName);
 
         if (!course.isEnabled())
             throw new CourseDisabledException("Course not enabled!");
 
-        if (!courseRepo.getOne(courseName).getProfessors().contains(profRepo.getOne(profId))) { //l'altro non andava bene va fatto prima di fare le modifiche sul repo, e non avendo l'id quello non andava bene
+        // l'altro non andava bene va fatto prima di fare le modifiche sul repo, e non avendo l'id quello non andava bene
+        if (!courseRepo.getOne(courseName).getProfessors().contains(profRepo.getOne(profId))) {
             submissionRepo.delete(submissionEntity);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
         }
@@ -79,14 +81,16 @@ public class SubmissionServiceImpl implements SubmissionService {
                     "The professor created a new submission for you.\nSubmission id:" + submissionEntity.getId() + "\nExpiry date: " + submissionEntity.getExpiryDate()
             );
 
-        return modelMapper.map(submissionEntity,SubmissionDTO.class);
+        return modelMapper.map(submissionEntity, SubmissionDTO.class);
     }
 
     @Override
     public List<SubmissionDTO> getAllSubmissions(String courseName, String username) {
 
-        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException("Course not found!");
-        if (!courseRepo.getOne(courseName).isEnabled()) throw new CourseDisabledException("Course not enabled!");
+        if (!courseRepo.existsById(courseName))
+            throw new CourseNotFoundException("Course not found!");
+        if (!courseRepo.getOne(courseName).isEnabled())
+            throw new CourseDisabledException("Course not enabled!");
 
         return courseRepo
                 .getOne(courseName)
@@ -98,8 +102,10 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionDTO getSubmission(String courseName, Long id, String username) {
 
-        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException("Course not found!");
-        if (!submissionRepo.existsById(id)) throw new SubmissionNotFoundException("Submission not found!");
+        if (!courseRepo.existsById(courseName))
+            throw new CourseNotFoundException("Course not found!");
+        if (!submissionRepo.existsById(id))
+            throw new SubmissionNotFoundException("Submission not found!");
 
         if (!profRepo.existsById(username)) { //a student is requiring submission
             if (studentRepo.getOne(username).getSolutions().stream().noneMatch(sol -> sol.getSubmission().getId().equals(id))) {
@@ -115,9 +121,11 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public String addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId) {
 
-        if (solutionDTO == null) throw new SolutionNotFoundException("Bad request!");
+        if (solutionDTO == null)
+            throw new SolutionNotFoundException("Bad request!");
 
-        if (!submissionRepo.existsById(submissionId)) throw new SubmissionNotFoundException("Submission not found!");
+        if (!submissionRepo.existsById(submissionId))
+            throw new SubmissionNotFoundException("Submission not found!");
 
         Submission submission = submissionRepo.getOne(submissionId);
         if (submission.getExpiryDate().before(new Date()))
@@ -125,9 +133,8 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         Solution solution = modelMapper.map(solutionDTO, Solution.class);
 
-        if (studentId.length() == 0 || !studentRepo.existsById(studentId)) throw new StudentNotFoundException(
-                "Student not found!"
-        );
+        if (studentId.length() == 0 || !studentRepo.existsById(studentId))
+            throw new StudentNotFoundException("Student not found!");
 
         Student s = studentRepo.getOne(studentId);
 
@@ -164,12 +171,13 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Override
     public List<SolutionDTO> getAllSolutions(Long submissionId) { //all students for that submission (only last version)
-        if (!submissionRepo.existsById(submissionId)) throw new SubmissionNotFoundException("Submission not found!");
+        if (!submissionRepo.existsById(submissionId))
+            throw new SubmissionNotFoundException("Submission not found!");
 
-        Submission subm= submissionRepo.getOne(submissionId);
+        Submission subm = submissionRepo.getOne(submissionId);
 
         return subm.getSolutions().stream().map(Solution::getStudent)
-                .map(stud->getLastSolVersion(subm.getId(),stud.getId()))
+                .map(stud -> getLastSolVersion(subm.getId(), stud.getId()))
                 .map(s -> modelMapper.map(s, SolutionDTO.class))
                 .collect(Collectors.toList());
     }
@@ -177,10 +185,12 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public List<SolutionDTO> getAllSolutionsForStudentForSubmission(Long submissionId, String studentId) {
         // history of solutions for a student for a specific submission
-        if (!submissionRepo.existsById(submissionId)) throw new SubmissionNotFoundException("Submission not found!");
-        if (studentId.length() == 0 || !studentRepo.existsById(studentId)) throw new StudentNotFoundException(
-                "Student not found!"
-        );
+        if (!submissionRepo.existsById(submissionId))
+            throw new SubmissionNotFoundException("Submission not found!");
+
+        if (studentId.length() == 0 || !studentRepo.existsById(studentId))
+            throw new StudentNotFoundException("Student not found!");
+
         Student s = studentRepo.getOne(studentId);
         Submission submission = submissionRepo.getOne(submissionId);
 
@@ -195,10 +205,14 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     public List<SolutionDTO> getAllSolutionsForStudentForCourse(String courseName, String studentId) {
         // history of all solutions (only last version) for a student for ALL submissions of the course
-        if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException("Student not found!");
-        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException("Course not found!");
+        if (!studentRepo.existsById(studentId))
+            throw new StudentNotFoundException("Student not found!");
+
+        if (!courseRepo.existsById(courseName))
+            throw new CourseNotFoundException("Course not found!");
 
         Course course = courseRepo.getOne(courseName);
+
         if (!studentRepo.getOne(studentId).getCourses().contains(course))
             throw new StudentNotFoundException("Student not enrolled in this course!");
 
@@ -208,14 +222,15 @@ public class SubmissionServiceImpl implements SubmissionService {
         Student s = studentRepo.getOne(studentId);
 
         return course.getSubmissions().stream()
-                .map(subm->getLastSolVersion(subm.getId(),studentId))
+                .map(subm -> getLastSolVersion(subm.getId(), studentId))
                 .map(sol -> modelMapper.map(sol, SolutionDTO.class))
                 .collect(Collectors.toList());
     }
 
     @Override
     public boolean evaluateSolution(Long solutionId, Long evaluation, String profId) {
-        if (!solutionRepo.existsById(solutionId)) throw new SubmissionNotFoundException("Solution not found!");
+        if (!solutionRepo.existsById(solutionId))
+            throw new SubmissionNotFoundException("Solution not found!");
 
         if (!isProfessorCourseSolution(solutionId, profId))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
@@ -236,18 +251,23 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Override
     public void stopRevisions(Long solutionId, String profId) {
-        if (!solutionRepo.existsById(solutionId)) throw new SubmissionNotFoundException("Solution not found!");
+        if (!solutionRepo.existsById(solutionId))
+            throw new SubmissionNotFoundException("Solution not found!");
 
         if (!isProfessorCourseSolution(solutionId, profId))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+
         solutionRepo.getOne(solutionId).setRevisable(false);
 
     }
 
     @Override
     public SolutionDTO getSolution(Long solutionId, String username) {
-        if (!solutionRepo.existsById(solutionId)) throw new SubmissionNotFoundException("Solution not found!");
+        if (!solutionRepo.existsById(solutionId))
+            throw new SubmissionNotFoundException("Solution not found!");
+
         Solution sol = solutionRepo.getOne(solutionId);
+
         if (sol.getSubmission().getCourse().getProfessors().contains(profRepo.getOne(username))) {
             sol.setStatus("REVISED");
             return modelMapper.map(sol, SolutionDTO.class);
@@ -262,10 +282,14 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SolutionDTO getLastSolution(String studentId, Long submissionId, String username) {
 
-        if (!studentRepo.existsById(studentId)) throw new StudentNotFoundException("Student not found!");
-        if (!submissionRepo.existsById(submissionId)) throw new SubmissionNotFoundException("Submission not found!");
+        if (!studentRepo.existsById(studentId))
+            throw new StudentNotFoundException("Student not found!");
+
+        if (!submissionRepo.existsById(submissionId))
+            throw new SubmissionNotFoundException("Submission not found!");
 
         Course course = submissionRepo.getOne(submissionId).getCourse();
+
         if (!studentRepo.getOne(studentId).getCourses().contains(course))
             throw new StudentNotFoundException("Student not enrolled in this course!");
 
@@ -331,12 +355,11 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     private Solution getLastSolVersion(Long submissionId, String studentId) {
-        Solution sol = submissionRepo.getOne(submissionId).getSolutions()
+        return submissionRepo.getOne(submissionId).getSolutions()
                 .stream()
                 .filter(s -> s.getStudent().equals(studentRepo.getOne(studentId)))
                 .max(Comparator.comparing(Solution::getVersion))
                 .get();
-        return sol;
     }
 
 

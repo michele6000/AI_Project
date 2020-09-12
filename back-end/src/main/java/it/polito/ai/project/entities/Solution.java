@@ -12,10 +12,10 @@ public class Solution {
     private Long id;
 
     private String image; //image of student's solution for the submission
-    private String status =null;
+    private String status = null;
     private Long evaluation;
-    private int version=0; //0 non ancora consegnato, 1 prima consegna, incrementato per ogni nuova versione
-    private boolean isRevisable=true;
+    private int version = 0; //0 non ancora consegnato, 1 prima consegna, incrementato per ogni nuova versione
+    private boolean isRevisable = true;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
@@ -25,12 +25,12 @@ public class Solution {
     @JoinColumn(name = "submission_id")
     private Submission submission;
 
-    public void setStudent(Student s){
+    public void setStudent(Student s) {
         student = s;
         s.getSolutions().add(this);
     }
 
-    public void setSubmission(Submission s){
+    public void setSubmission(Submission s) {
         submission = s;
         s.getSolutions().add(this);
     }

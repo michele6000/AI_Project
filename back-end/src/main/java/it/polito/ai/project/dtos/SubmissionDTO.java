@@ -2,7 +2,6 @@ package it.polito.ai.project.dtos;
 
 import lombok.Data;
 
-import java.awt.*;
 import java.sql.Timestamp;
 
 @Data

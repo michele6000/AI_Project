@@ -6,16 +6,16 @@ import org.springframework.hateoas.RepresentationModel;
 
 @Data
 public class StudentDTO extends RepresentationModel<StudentDTO> {
-  @CsvBindByName
-  private String id;
+    @CsvBindByName
+    private String id;
 
-  @CsvBindByName
-  private String name;
+    @CsvBindByName
+    private String name;
 
-  @CsvBindByName
-  private String firstName;
+    @CsvBindByName
+    private String firstName;
 
-  private String email;
-  private String password;
-  private String image; //TODO: mettere binary
+    private String email;
+    private String password;
+    private String image; //TODO: mettere binary
 }

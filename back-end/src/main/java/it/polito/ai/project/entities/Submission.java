@@ -23,10 +23,10 @@ public class Submission {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToMany ()
-    private List<Solution> solutions= new ArrayList<>();
+    @OneToMany()
+    private List<Solution> solutions = new ArrayList<>();
 
-    public void setCourse(Course c){
+    public void setCourse(Course c) {
         course = c;
         c.getSubmissions().add(this);
     }

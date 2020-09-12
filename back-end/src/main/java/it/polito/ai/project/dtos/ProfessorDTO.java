@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class ProfessorDTO {
-  private String id;
-  private String firstName;
-  private String name;
-  private String email;
-  private String password;
-  private String image; //TODO: metterne binary
+    private String id;
+    private String firstName;
+    private String name;
+    private String email;
+    private String password;
+    private String image; //TODO: metterne binary
 }
