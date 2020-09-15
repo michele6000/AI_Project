@@ -3,9 +3,9 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {CourseModel} from '../models/course.model';
 import {HttpClient} from '@angular/common/http';
 import {VmStudent} from '../models/vm-student.model';
-import {StudentModel} from "../models/student.model";
-import {GroupModel} from "../models/group.model";
-import {VmModel} from "../models/vm.model";
+import {StudentModel} from '../models/student.model';
+import {GroupModel} from '../models/group.model';
+import {VmModel} from '../models/vm.model';
 
 const API_URL = '/api/API/';
 
@@ -129,6 +129,16 @@ export class StudentService {
 
   getHistorySolutions(studentId: string, submissionId: number) {
     return this.http.get<any[]>(API_URL + 'students/' + studentId + '/' + submissionId + '/getHistorySolution');
+  }
+
+  getSubmissionById(courseName: string, submissionId: string) {
+    return this.http.get<any>(API_URL + 'courses/' + courseName + '/submissions/' + submissionId);
+  }
+
+  addSolution(studentId: string, submissionId: string, image: string) {
+    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + submissionId + '/addSolution', {
+      image: image
+    });
   }
 
 }

@@ -5,7 +5,7 @@ import {MatDatepickerInputEvent} from '@angular/material/datepicker';
 import {SubmissionModel} from "../../models/submission.model";
 import {ProfessorService} from "../../services/professor.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {CourseModel} from "../../models/course.model";
+import {CourseModel} from '../../models/course.model';
 import {Router} from "@angular/router";
 
 @Component({
@@ -24,12 +24,13 @@ export class CreateAssignmentComponent implements OnInit {
 
   canChoseExpiryDate = false;
   errorExpiryDate = false;
+  file: any;
 
   private courseParam: string;
   private corso: CourseModel;
 
-  constructor(private dialogRef: MatDialogRef<CreateAssignmentComponent>, private professorService: ProfessorService, private snackBar: MatSnackBar, private router: Router) {
-
+  constructor(private dialogRef: MatDialogRef<CreateAssignmentComponent>, private professorService: ProfessorService,
+              private snackBar: MatSnackBar, private router: Router) {
     this.minDate = new Date();
     this.minExpiryDate = new Date();
   }
@@ -45,7 +46,7 @@ export class CreateAssignmentComponent implements OnInit {
       const submission = new SubmissionModel();
       submission.releaseDate = this.chosenReleaseDate;
       submission.expiryDate = this.chosenExpiryDate;
-      submission.content = 'LAB ' + (Math.random() * 10000);
+      submission.content = this.file.name;
 
       this.professorService.createAssignment(this.corso.name, submission).subscribe(
         (res) => {
@@ -84,7 +85,8 @@ export class CreateAssignmentComponent implements OnInit {
     this.errorExpiryDate = false;
   }
 
-  handleFileSelect($event: Event) {
-
+  handleFileSelect($event: any) {
+    this.file = $event.target.files[0];
   }
+
 }

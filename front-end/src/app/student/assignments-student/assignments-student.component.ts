@@ -12,22 +12,7 @@ import * as moment from "moment";
 export class AssignmentsStudentComponent implements OnInit {
 
   file: any;
-  consegne = [
-    {
-      name: 'Lab 1',
-      date: '06/07/2020',
-      history: [
-        {
-          status: 'Rivisto',
-          timestamp: '06/07/2020 14:57:12'
-        },
-        {
-          status: 'Consegnato',
-          timestamp: '06/07/2020 14:37:12'
-        }
-      ]
-    }
-  ];
+  consegne = [];
   private courseParam: string;
   private corso: CourseModel;
 
@@ -68,5 +53,19 @@ export class AssignmentsStudentComponent implements OnInit {
   handleFileSelect($event: any) {
     console.log($event);
     this.file = $event.target.files[0];
+    console.log(this.file);
+  }
+
+  openSubmission(id: string) {
+    this.studentService.getSubmissionById(this.corso.name, id).subscribe((res) => {
+      console.log(res);
+    });
+  }
+
+  uploadSolution(id: string) {
+    // Carica la soluzione proposta dallo studente
+    this.studentService.addSolution(localStorage.getItem('id'), id, this.file.name).subscribe((res) => {
+      console.log(res);
+    });
   }
 }

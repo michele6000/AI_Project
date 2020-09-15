@@ -1,15 +1,15 @@
 <div class="w-50 container">
   <mat-accordion>
-    <mat-expansion-panel *ngFor="let consegna of consegne">
+    <mat-expansion-panel *ngFor="let consegna of consegne" (afterExpand)="openSubmission(consegna.id)">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <div>
-            {{consegna.name}} - {{consegna.date}}
+            {{consegna.content}} - {{consegna.expiryString}}
           </div>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <input #fileInput (change)="handleFileSelect($event)" hidden id="file" type="file">
-      <button class="float-right ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>
+      <button (click)="uploadSolution(consegna.id)" class="float-right ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>
       <button (click)="fileInput.click()" class="float-right" mat-raised-button type="button">Choose file</button>
       <h2>History</h2>
       <mat-list>
