@@ -128,7 +128,7 @@ export class StudentService {
   }
 
   getHistorySolutions(studentId: string, submissionId: number) {
-    return this.http.get<any[]>(API_URL + 'students/' + studentId + '/' + submissionId + '/getHistorySolution');
+    return this.http.get<any[]>(API_URL + 'students/' + studentId + '/' + submissionId + '/getHistorySolutions');
   }
 
   getSubmissionById(courseName: string, submissionId: string) {
@@ -137,7 +137,7 @@ export class StudentService {
 
   addSolution(studentId: string, submissionId: string, image: string) {
     return this.http.post<any>(API_URL + 'students/' + studentId + '/' + submissionId + '/addSolution', {
-      image: image
+      image
     });
   }
 
