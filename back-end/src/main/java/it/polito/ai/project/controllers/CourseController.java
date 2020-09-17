@@ -278,10 +278,10 @@ public class CourseController {
         }
     }
 
-    @PostMapping("/{submissionId}/stopRevisions")
-    public void stopRevisions(@PathVariable Long submissionId) {
+    @PostMapping("/{solutionId}/stopRevisions")
+    public void stopRevisions(@PathVariable Long solutionId) {
         try {
-            submissionService.stopRevisions(submissionId, getCurrentUsername());
+            submissionService.stopRevisions(solutionId, getCurrentUsername());
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

@@ -28,7 +28,7 @@ public class Student {
     @ManyToMany(mappedBy = "members")
     private List<Team> teams = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "student")
     private List<Solution> solutions = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
