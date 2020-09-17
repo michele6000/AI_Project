@@ -252,7 +252,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public void stopRevisions(Long solutionId, String profId) {
         if (!solutionRepo.existsById(solutionId))
-            throw new SubmissionNotFoundException("Solution not found!");
+            throw new SolutionNotFoundException("Solution not found!");
 
         if (!isProfessorCourseSolution(solutionId, profId))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
