@@ -39,8 +39,10 @@ export class AuthService {
       this.localUser.email = localStorage.getItem('email');
       this.localUser.roles = tkn.roles;
       this.localUser.id = localStorage.getItem('email').split('@')[0];
-      // Verificare
-      // this.loginRedirect();
+      this.loginRetrieveDatas();
+      // TODO: Verificare, serve per riportare alla pagina corretta in base al ruolo dell'utente
+      // dopo che vengono richiesti i dati
+      this.loginRedirect();
     } else {
       this.userSubject.next(null);
     }
@@ -48,16 +50,24 @@ export class AuthService {
 
   loginRedirect() {
     if (this.localUser.roles.filter((value => value === 'ROLE_STUDENT')).length > 0) {
-      this.studentService.findCoursesByStudent(this.localUser.id);
-      this.studentService.findTeamsByStudent(this.localUser.id);
       this.router.navigate(['student']);
     } else if (this.localUser.roles.filter((value => value === 'ROLE_PROFESSOR')).length > 0) {
-      this.professorService.findCoursesByProfessor(this.localUser.id);
       this.router.navigate(['teacher']);
     } else if (this.localUser.roles.filter((value => value === 'ROLE_ADMIN')).length > 0) {
-      this.router.navigate(['home']);
+      // this.router.navigate(['home']);
     } else {
       // @todo Utente loggato ma non ha ruoli
+    }
+  }
+
+  loginRetrieveDatas() {
+    if (this.localUser.roles.filter((value => value === 'ROLE_STUDENT')).length > 0) {
+      this.studentService.findCoursesByStudent(this.localUser.id);
+      this.studentService.findTeamsByStudent(this.localUser.id);
+    } else if (this.localUser.roles.filter((value => value === 'ROLE_PROFESSOR')).length > 0) {
+      this.professorService.findCoursesByProfessor(this.localUser.id);
+    } else {
+      // @todo Utente loggato ADMIN o senza ha ruoli
     }
   }
 

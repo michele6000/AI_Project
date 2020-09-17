@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from "./auth/auth.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {MatDialog} from "@angular/material/dialog";
-import {LoginComponent} from "./login/login.component";
+import {AuthService} from './auth/auth.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {LoginComponent} from './login/login.component';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +30,7 @@ export class AppComponent implements OnInit {
                 } else {
                   this.router.navigate(['home']);
                 }*/
+                this.authService.loginRetrieveDatas();
                 this.authService.loginRedirect();
               } else {
                 this.router.navigate(['home']);
