@@ -350,8 +350,9 @@ public class SubmissionServiceImpl implements SubmissionService {
         sol.setStatus("READ");
         sol.setRevisable(true);
         sol.setVersion(0);
-        studentRepo.getOne(username).addSolution(sol);
+        sol.setStudent(studentRepo.getOne(username));
         solutionRepo.save(sol);
+        studentRepo.getOne(username).addSolution(sol);
     }
 
     private Solution getLastSolVersion(Long submissionId, String studentId) {
