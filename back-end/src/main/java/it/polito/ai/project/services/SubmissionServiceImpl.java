@@ -110,7 +110,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (!profRepo.existsById(username)) { //a student is requiring submission
             if (studentRepo.getOne(username).getSolutions().stream().noneMatch(sol -> sol.getSubmission().getId().equals(id))) {
                 //no solution for this submission and this student-->create an empty solution with status "READ"
-                createNewSol(username);
+                createNewSol(username, id);
             }
         }
 
@@ -345,12 +345,13 @@ public class SubmissionServiceImpl implements SubmissionService {
         return submissionRepo.getOne(submissionId).getCourse().getProfessors().contains(profRepo.getOne(profId));
     }
 
-    private void createNewSol(String username) {
+    private void createNewSol(String username, Long submissionId) {
         Solution sol = new Solution();
         sol.setStatus("READ");
         sol.setRevisable(true);
         sol.setVersion(0);
         sol.setStudent(studentRepo.getOne(username));
+        sol.setSubmission(submissionRepo.getOne(submissionId));
         solutionRepo.save(sol);
         studentRepo.getOne(username).addSolution(sol);
     }
@@ -388,13 +389,13 @@ public class SubmissionServiceImpl implements SubmissionService {
 
 //
         if (optSubmission.isPresent()) {
-            if (!profRepo.existsById(username)) { //a student is requiring submission
+            /*if (!profRepo.existsById(username)) { //a student is requiring submission
                 if (studentRepo.getOne(username).getSolutions().stream().noneMatch(sol -> sol.getSubmission().getId()
                         .equals(optSubmission.get().getId()))) {
                     //no solution for this submission and this student-->create an empty solution with status "READ"
                     createNewSol(username);
                 }
-            }
+            }*/
             return optSubmission.get();
         } else throw new SubmissionNotFoundException("There are no submissions for this course!");
     }
