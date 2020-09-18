@@ -113,16 +113,12 @@ export class ProfessorService {
 
   /* VMs */
 
-  createVMType(vm: VmType) {
-    return this.http.post<string>(API_URL + 'courses/createVMType', {vm});
+  createVMType(courseName: string, vm: VmType) {
+    return this.http.post<string>(API_URL + 'courses/' + courseName + '/createVMType', vm);
   }
 
   setVMType(courseName: string, vmtId: string) {
     return this.http.post(API_URL + 'courses/' + courseName + '/setVMType?vmtId=' + vmtId, {});
-  }
-
-  updateVMType(vm: VmType) {
-
   }
 
   findVmsByTeam(teamId: number) {
@@ -164,6 +160,10 @@ export class ProfessorService {
   /* TEAMS */
   findTeamsByCourse(courseName: string) {
     return this.http.get<GroupModel[]>(API_URL + 'courses/' + courseName + '/teams');
+  }
+
+  setTeamLimits(teamId: number, team: GroupModel) {
+    return this.http.post<any>(API_URL + 'team/' + teamId + '/setTeamLimits', team);
   }
 
   /* SUBMISSIONS */

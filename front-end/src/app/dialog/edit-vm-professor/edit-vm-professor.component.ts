@@ -23,13 +23,13 @@ export class EditVmProfessorComponent implements OnInit {
   }
 
   modify(f: NgForm) {
-    const vm = new VmType();
-    vm.dockerFile = '/var/docker/vm' + Math.random() + '.docker';
-    vm.limit_ram = f.value.ram;
-    vm.limit_cpu = f.value.vcpu;
-    vm.limit_hdd = f.value.disk;
-    vm.limit_instance = f.value.maxVm;
-    vm.limit_active_instance = f.value.maxActiveVmSimultaneously;
-    this.professorService.updateVMType(vm);
+    const groupForm = new GroupModel();
+    groupForm.id = this.group.id;
+    groupForm.limit_cpu = f.value.vcpu;
+    groupForm.limit_hdd = f.value.disk;
+    groupForm.limit_instance = f.value.maxVm;
+    groupForm.limit_ram = f.value.ram;
+    groupForm.limit_active_instance = f.value.maxActiveVmSimultaneously;
+    this.professorService.setTeamLimits(this.group.id, groupForm).subscribe(res => console.log(res));
   }
 }

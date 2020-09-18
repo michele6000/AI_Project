@@ -10,9 +10,9 @@
       <div class="dialog-position-field">
         <span>Dockerfile configuration</span>
         <button (click)="fileInput.click()" class="ml-20" mat-raised-button type="button">Choose file</button>
-        <input #fileInput (change)="handleFileSelect($event)" accept=".dockerfile" hidden id="file" type="file">
+        <input #fileInput (change)="handleFileSelect($event)" hidden id="file" type="file">
       </div>
-      <br>
+      <!--<br>
       <mat-form-field class="dialog-position-field">
         <mat-label>Number of V-CPU</mat-label>
         <input #vcpu="ngModel" matInput name="vcpu" ngModel placeholder="Number of V-CPU" required type="text" value="">
@@ -37,7 +37,7 @@
         <mat-label>Maximum number of simultaneously active VMs</mat-label>
         <input #maxActiveVmSimultaneously="ngModel" matInput name="maxActiveVmSimultaneously" ngModel required
                type="number" value="">
-      </mat-form-field>
+      </mat-form-field>-->
       <br>
       <mat-card-actions>
         <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Create</button>

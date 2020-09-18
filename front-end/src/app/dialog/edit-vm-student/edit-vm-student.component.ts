@@ -24,8 +24,8 @@ export class EditVmStudentComponent implements OnInit {
   create(f: NgForm) {
     const vm = new VmStudent();
     vm.ram = f.value.ram;
-    vm.vcpu = f.value.vcpu;
-    vm.disk = f.value.disk;
+    vm.cpu = f.value.vcpu;
+    vm.hdd = f.value.disk;
     this.studentService.createVM(this.team.id, vm).subscribe((res) => {
       console.log(res);
     });
