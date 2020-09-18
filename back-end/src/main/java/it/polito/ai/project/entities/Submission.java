@@ -17,7 +17,8 @@ public class Submission {
 
     private Timestamp expiryDate;
     private Timestamp releaseDate;
-    private String content; //image
+    @Lob
+    private Byte[] image;
 
     @ManyToOne
     @JoinColumn(name = "course_id")

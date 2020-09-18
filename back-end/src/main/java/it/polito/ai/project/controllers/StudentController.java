@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -149,11 +150,11 @@ public class StudentController {
     }
 
     @PostMapping("/{studentId}/{submissionId}/addSolution") //
-    public String addSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
+    public String addSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol, @RequestParam("imagefile") MultipartFile file) {
         if (!isMe(studentId))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to add a solution!");
         try {
-            return submissionService.addSolution(submissionId, sol, studentId);
+            return submissionService.addSolution(submissionId, sol, studentId, file);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
