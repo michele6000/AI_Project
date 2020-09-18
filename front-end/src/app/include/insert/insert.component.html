@@ -1,5 +1,5 @@
-<form class="example-form mleft20">
-  <mat-form-field class="text-input w-500" style="width: 500px;">
+<form class="mleft20">
+  <mat-form-field class="text-input w-70">
     <input [formControl]="formControl" [matAutocomplete]="auto" matInput placeholder="Aggiungi" type="text">
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event)" [displayWith]="displayFn">
       <mat-option *ngFor="let option of filteredOptions | async" [value]="option">

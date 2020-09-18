@@ -42,7 +42,7 @@ export class VmsStudentComponent implements OnInit {
   }
 
   createVM() {
-    this.dialog.open(EditVmStudentComponent)
+    this.dialog.open(EditVmStudentComponent, {data: this.team})
       .afterClosed()
       .subscribe(result => {
         console.log(result);
