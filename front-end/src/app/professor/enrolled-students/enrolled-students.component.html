@@ -1,6 +1,6 @@
 <div class="container">
-  <div class="d-flex w-80 align-items-center">
-    <app-insert (add)="addStudent($event)" [options]="students"></app-insert>
+  <div class="d-flex align-items-center">
+    <app-insert (add)="addStudent($event)" [options]="students" class="w-50"></app-insert>
     <span class="fill-remaining-space"></span>
     <div class="d-flex align-items-center">
       <mat-icon class="mr-20 cursor-default" matTooltip="Choose CSV file with students' list" matTooltipPosition="left">

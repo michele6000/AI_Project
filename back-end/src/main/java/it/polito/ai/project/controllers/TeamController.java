@@ -80,7 +80,7 @@ public class TeamController {
     public void deleteMember(@PathVariable Long teamId, @PathVariable String studentId) {
         try {
             //se non sono professore (sono studente) e sto provando a cancellare un membro diverso da me stesso
-            if (!getCurrentRoles().contains("PROFESSOR") && getCurrentUsername() != studentId)
+            if (!getCurrentRoles().contains("ROLE_PROFESSOR") && getCurrentUsername() != studentId)
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete this member!");
             service.deleteMember(teamId, studentId);
         } catch (TeamServiceException e) {
@@ -104,7 +104,7 @@ public class TeamController {
     //TODO: chi può farlo oltre al professore? Può essere usata dallo studente per annullare vecchie proposte, ma come?
     public void evictTeam(@PathVariable Long teamId) {
         try {
-            if (!getCurrentRoles().contains("PROFESSOR"))
+            if (!getCurrentRoles().contains("ROLE_PROFESSOR"))
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to evict this team!");
             service.evictTeam(teamId);
         } catch (TeamServiceException e) {
@@ -124,10 +124,11 @@ public class TeamController {
     @PostMapping("/{teamId}/setTeamLimits")
     public TeamDTO createVmInstance(@PathVariable Long teamId, @RequestBody TeamDTO team) {
         try {
-            if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
+            if (!getCurrentRoles().contains("ROLE_PROFESSOR")) throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     "You are not allowed set limits of this team!"
             );
+            team.setId(teamId);
             return vmService.setTeamLimit(team);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

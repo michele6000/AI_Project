@@ -42,14 +42,14 @@ public class Team {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "team_students",
+            name = "team_pendent_students",
             joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id"))
-    private List<Student> pendentStudents = members;
+    private List<Student> pendentStudents = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "team_students",
+            name = "team_confirmed_students",
             joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> confirmedStudents = new ArrayList<>();

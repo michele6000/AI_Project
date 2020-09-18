@@ -1,5 +1,5 @@
 export class VmStudent {
-  vcpu: number;
+  cpu: number;
   ram: number;
-  disk: number;
+  hdd: number;
 }

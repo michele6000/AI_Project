@@ -6,11 +6,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .pointer {cursor: pointer;}
 .mb-0 {margin-bottom: 0 !important;}
 mat-sidenav-container{ margin: 0px; height: calc(100% - 128px); }
-.container {margin: 18px 18px;}
+.container {margin: 18px 5%;}
 .d-flex {display: flex;}
 .align-items-center {align-items: center;}
 .full-width {width: 100%;}
-.text-center {text-align: center;}
+.text-center {text-align: center !important;}
 .text-right {text-align: right;}
 .margin-auto {margin: 0 auto;}
 .float-right {float: right;}
@@ -30,6 +30,6 @@ mat-sidenav-container{ margin: 0px; height: calc(100% - 128px); }
 .w-500 {width: 500px;}
 .cursor-pointer {cursor: pointer;}
 .cursor-default{cursor: default;}
-.dialog-position-field{width: 90%;margin-bottom: 15px;}
+.dialog-position-field{width: 95%;margin-left: 2.5%;margin-bottom: 15px;}
 .mt-10-center{margin-top: 10px;text-align: center;}
 .mat-radio-button ~ .mat-radio-button {margin-left: 16px;}

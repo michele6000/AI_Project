@@ -81,7 +81,7 @@ export class StudentService {
   /* VMs */
 
   createVM(teamId: number, vm: VmStudent) {
-    return this.http.post(API_URL + 'team/' + teamId + '/createVmInstance', {vm});
+    return this.http.post(API_URL + 'team/' + teamId + '/createVmInstance', vm);
   }
 
   getVmConfiguration(vmId: number) {
@@ -99,11 +99,11 @@ export class StudentService {
   }
 
   findConfirmedStudentsByTeamId(teamId: number) {
-    return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/confirmedStudents');
+    return this.http.get<any[]>(API_URL + 'team/' + teamId + '/confirmedStudents');
   }
 
   findPendentStudentsByTeamId(teamId: number) {
-    return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/pendentStudents');
+    return this.http.get<any[]>(API_URL + 'team/' + teamId + '/pendentStudents');
   }
 
   findVmsByTeam(teamId: number) {

@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "npx ng serve --proxy-config src/proxy.conf.json --host 0.0.0.0 --poll=500",
-    "build": "npx ng build --prod demo",
+    "build": "npx ng build ",
     "test": "npx ng test --browsers=ChromeHeadless",
     "lint": "npx ng lint",
     "e2e": "npx ng e2e"

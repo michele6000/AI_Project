@@ -342,6 +342,10 @@ public class TeamServiceImpl implements TeamService {
         team.setLimit_hdd(0);
         team.setLimit_ram(0);
         team.setName(name);
+
+        Optional<VMType> optionalVMTypeEntity = Optional.ofNullable(courseRepo.getOne(courseId).getVmType());
+        optionalVMTypeEntity.ifPresent(team::setVmType);
+
         membersIds.forEach(
                 m -> team.addMember(studentRepo.getOne(m))
         );
