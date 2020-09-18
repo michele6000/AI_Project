@@ -206,7 +206,7 @@ public class StudentController {
     @Deprecated
     @PostMapping("/{studentId}/{submissionId}/evaluateLatestSolution")
     public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
-//    if (!getCurrentRoles().contains("PROFESSOR"))  throw new ResponseStatusException(
+//    if (!getCurrentRoles().contains("ROLE_PROFESSOR"))  throw new ResponseStatusException(
 //            HttpStatus.FORBIDDEN,
 //            "You are not allowed to evaluate a solution!"
 //    );

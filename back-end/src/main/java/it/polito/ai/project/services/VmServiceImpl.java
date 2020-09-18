@@ -91,7 +91,7 @@ public class VmServiceImpl implements VmService {
 
         optionalCourseEntity.get().setVmType(optionalVMTypeEntity.get());
         optionalVMTypeEntity.get().getCourses().add(optionalCourseEntity.get());
-
+        optionalCourseEntity.get().getTeams().forEach(t -> t.setVmType(optionalVMTypeEntity.get()));
         return true;
 
     }
@@ -251,7 +251,12 @@ public class VmServiceImpl implements VmService {
         if (!optionalStudentEntity.isPresent()) {
             throw new StudentNotFoundException("Student not found!");
         }
-        VMType vmType = optionalTeamEntity.get().getVmType();
+
+        Optional<VMType> optionalVMTypeEntity = Optional.ofNullable(optionalTeamEntity.get().getVmType());
+        if (!optionalVMTypeEntity.isPresent()) {
+            throw new TeamServiceException("You must wait, professor have to setup vmType of the course!");
+        }
+
 
         boolean quota = false;
         if (vm.getRam() > optionalTeamEntity.get().getLimit_ram()) quota = true;
@@ -259,7 +264,7 @@ public class VmServiceImpl implements VmService {
         if (vm.getHdd() > optionalTeamEntity.get().getLimit_hdd()) quota = true;
         if (vmRepo.findAll().stream()
                 .filter(_vm -> _vm.getTeam().getId().equals(teamId))
-                .filter(_vm -> _vm.getVmType().getId().equals(vmType.getId()))
+                .filter(_vm -> _vm.getVmType().getId().equals(optionalVMTypeEntity.get().getId()))
                 .count() + 1 > optionalTeamEntity.get().getLimit_instance())
             quota = true;
 
@@ -269,8 +274,8 @@ public class VmServiceImpl implements VmService {
         VM _vm = new VM();
         _vm.setStatus("poweroff");
 
-        vmType.getVMs().add(_vm);
-        _vm.setVmType(vmType);
+        optionalVMTypeEntity.get().getVMs().add(_vm);
+        _vm.setVmType(optionalVMTypeEntity.get());
 
         optionalTeamEntity.get().getVMInstance().add(_vm);
         _vm.setTeam(optionalTeamEntity.get());
@@ -281,7 +286,7 @@ public class VmServiceImpl implements VmService {
         _vm.setHdd(vm.getHdd());
         _vm.setCpu(vm.getCpu());
         _vm.setRam(vm.getRam());
-        _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + vmType.getId());
+        _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + optionalVMTypeEntity.get().getId());
 
         return modelMapper.map(vmRepo.save(_vm), VMDTO.class);
     }
