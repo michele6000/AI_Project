@@ -25,7 +25,7 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build front-end-angular
-     run: cd ./front-end ; npm i ; sudo npm run build
+      run: cd ./front-end ; npm i ; sudo npm run build
 
     - name: Build front-end Docker image
       run: docker build ./front-end --file ./front-end/Dockerfile --tag front-end:$custom_tag
