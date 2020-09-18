@@ -17,18 +17,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Login to DockerHub
       uses: docker/login-action@v1.3.0
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    #- name: Build front-end-angular
-    #  run: cd ./front-end ; npm i ; sudo npm run build
-    #- name: Build front-end Docker image
-     # run: docker build ./front-end --file ./front-end/Dockerfile --tag front-end:$DATE
+
+    - name: Build front-end-angular
+     run: cd ./front-end ; npm i ; sudo npm run build
+
+    - name: Build front-end Docker image
+      run: docker build ./front-end --file ./front-end/Dockerfile --tag front-end:$custom_tag
+
+    - name: tag and publish front-end
+      run: docker tag back-end:$custom_tag michele6000/front-end:$custom_tag ; docker push michele6000/front-end
+
     - name: Build back-end-spring
       run: cd ./back-end ; mvn package
+
     - name: Build back-end Docker image
       run: docker build ./back-end --file ./back-end/Dockerfile --tag back-end:$custom_tag
-    - name: tag and publish
-      run: docker tag back-end:$custom_tag michele6000/back-end:custom_tag ; docker push michele6000/back-end
+      
+    - name: tag and publish back-end
+      run: docker tag back-end:$custom_tag michele6000/back-end:$custom_tag ; docker push michele6000/back-end
