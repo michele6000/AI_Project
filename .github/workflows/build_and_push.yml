@@ -31,7 +31,7 @@ jobs:
       run: docker build ./front-end --file ./front-end/Dockerfile --tag front-end:$custom_tag
 
     - name: tag and publish front-end
-      run: docker tag back-end:$custom_tag michele6000/front-end:$custom_tag ; docker push michele6000/front-end
+      run: docker tag front-end:$custom_tag michele6000/front-end:$custom_tag ; docker push michele6000/front-end
 
     - name: Build back-end-spring
       run: cd ./back-end ; mvn package
