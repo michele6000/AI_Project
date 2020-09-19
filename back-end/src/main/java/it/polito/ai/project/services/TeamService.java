@@ -96,7 +96,7 @@ public interface TeamService {
     //  @PreAuthorize("hasRole('ROLE_ADMIN')")
     boolean addProfessor(ProfessorDTO professor);
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     boolean addProfessorToCourse(String professorId, String courseName);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
