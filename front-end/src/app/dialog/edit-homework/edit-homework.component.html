@@ -23,7 +23,7 @@
         <input #grade="ngModel" matInput name="grade" ngModel placeholder="Grade" required type="number" value="">
       </mat-form-field>
       <br/>
-      <mat-card-actions class="mt-10">
+      <mat-card-actions class="mt-10 float-right">
         <button [disabled]="!f.valid || fileAbsent" color="primary" mat-button mat-raised-button>Send</button>
         <button mat-button mat-dialog-close>Cancel</button>
       </mat-card-actions>
