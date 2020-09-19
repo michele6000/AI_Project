@@ -95,7 +95,8 @@ public class NotificationServiceImpl implements NotificationService {
                 throw e;
             }
         } else everythingOk.set(true);
-        teamRepo.getOne(teamId).confirmStudent(studentRepo.getOne(username));
+        teamRepo.getOne(teamId).getPendentStudents().remove(studentRepo.getOne(username));
+        teamRepo.getOne(teamId).getConfirmedStudents().add(studentRepo.getOne(username));
         return false;
     }
 
