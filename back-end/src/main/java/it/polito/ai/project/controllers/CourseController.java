@@ -71,7 +71,7 @@ public class CourseController {
         try {
             return vmService.getVMType(courseName);
         } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -198,6 +198,7 @@ public class CourseController {
     ) {
         TeamDTO team;
         try {
+
             team = service.proposeTeam(courseName, name, membersIds);
             notifyService.notifyTeam(team, membersIds,timestamp);
             return true;
