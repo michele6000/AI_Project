@@ -4,10 +4,10 @@ import {MatDialog} from '@angular/material/dialog';
 import {CreateVmProfessorComponent} from '../../dialog/create-vm/create-vm-professor.component';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ProfessorService} from '../../services/professor.service';
-import {CourseModel} from "../../models/course.model";
-import {from} from "rxjs";
-import {concatMap, toArray} from "rxjs/operators";
-import {EditVmProfessorComponent} from "../../dialog/edit-vm-professor/edit-vm-professor.component";
+import {CourseModel} from '../../models/course.model';
+import {from} from 'rxjs';
+import {concatMap, toArray} from 'rxjs/operators';
+import {EditVmProfessorComponent} from '../../dialog/edit-vm-professor/edit-vm-professor.component';
 
 @Component({
   selector: 'app-vms',
@@ -24,6 +24,8 @@ export class VmsComponent implements OnInit {
   groupsColumns = ['name'];
   innerGroupColumns = ['accessLink', 'owner', 'status'];
 
+  hasVMType = false;
+
   constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService) {
 
   }
@@ -32,6 +34,13 @@ export class VmsComponent implements OnInit {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
 
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
+
+    // Recupero il VM Type, se presente
+    this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {
+      this.hasVMType = true;
+    }, error => {
+      this.hasVMType = false;
+    });
 
     // Recupero l'elenco di Teams
     this.professorService.findTeamsByCourse(this.corso.name).subscribe((teams) => {

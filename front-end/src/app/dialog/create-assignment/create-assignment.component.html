@@ -1,45 +1,41 @@
-<mat-card class="example-card dimensioni">
-  <mat-card-header>
-    <mat-card-title>Create Assignment</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <mat-error *ngIf="error" class="mt-10-center">
-      ERROR
+<div class="dimensioni">
+  <mat-card-title>Create Assignment</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <mat-error *ngIf="error" class="mt-10-center">
+    Error
+  </mat-error>
+  <form #f="ngForm" (ngSubmit)="createAssignment(f)" class="login-form">
+
+    <mat-form-field class="w-100">
+      <mat-label>Release Date</mat-label>
+      <input (dateChange)="releaseChoseValue($event)" [matDatepicker]="releasePicker" [max]="" [min]="minDate"
+             matInput name="releaseDate" ngModel required>
+      <mat-datepicker-toggle [for]="releasePicker" matSuffix></mat-datepicker-toggle>
+      <mat-datepicker #releasePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Expiry Date</mat-label>
+      <input (dateChange)="expiryChoseValue($event)" [disabled]="!canChoseExpiryDate" [matDatepicker]="expiryPicker" [min]="minExpiryDate"
+             matInput name="expiryDate" ngModel required>
+      <mat-datepicker-toggle [for]="expiryPicker" matSuffix></mat-datepicker-toggle>
+      <mat-datepicker #expiryPicker></mat-datepicker>
+    </mat-form-field>
+
+    <div class="dialog-position-field">
+      <span>Assignment Content</span>
+      <button (click)="fileInput.click()" class="ml-20" mat-raised-button type="button">Choose file</button>
+      <input #fileInput (change)="handleFileSelect($event)" accept="image/jpeg,image/png,application/pdf" hidden
+             id="file" type="file">
+    </div>
+
+    <mat-error *ngIf="chosenExpiryDate < chosenReleaseDate && !errorExpiryDate" class="mt-10">
+      Expiry date must be > than release date
     </mat-error>
-    <form #f="ngForm" (ngSubmit)="createAssignment(f)" class="login-form">
 
-      <mat-form-field class="w-100">
-        <mat-label>Release Date</mat-label>
-        <input (dateChange)="releaseChoseValue($event)" [matDatepicker]="releasePicker" [max]="" [min]="minDate"
-               matInput name="releaseDate" ngModel required>
-        <mat-datepicker-toggle [for]="releasePicker" matSuffix></mat-datepicker-toggle>
-        <mat-datepicker #releasePicker></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field class="w-100">
-        <mat-label>Expiry Date</mat-label>
-        <input (dateChange)="expiryChoseValue($event)" [disabled]="!canChoseExpiryDate" [matDatepicker]="expiryPicker" [min]="minExpiryDate"
-               matInput name="expiryDate" ngModel required>
-        <mat-datepicker-toggle [for]="expiryPicker" matSuffix></mat-datepicker-toggle>
-        <mat-datepicker #expiryPicker></mat-datepicker>
-      </mat-form-field>
-
-      <div class="dialog-position-field">
-        <span>Assignment Content</span>
-        <button (click)="fileInput.click()" class="ml-20" mat-raised-button type="button">Choose file</button>
-        <input #fileInput (change)="handleFileSelect($event)" accept="image/jpeg,image/png,application/pdf" hidden
-               id="file" type="file">
-      </div>
-
-      <mat-error *ngIf="chosenExpiryDate < chosenReleaseDate && !errorExpiryDate" class="mt-10">
-        Expiry date must be > than release date
-      </mat-error>
-
-      <mat-card-actions>
-        <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit">Create</button>
-        <button (click)="closeDialog()" mat-button mat-dialog-close>Cancel</button>
-      </mat-card-actions>
-
-    </form>
-  </mat-card-content>
-</mat-card>
+    <mat-card-actions class="float-right">
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit">Create</button>
+      <button (click)="closeDialog()" mat-button mat-dialog-close>Cancel</button>
+    </mat-card-actions>
+  </form>
+</div>

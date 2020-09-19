@@ -1,5 +1,5 @@
-<button (click)="delete()" *ngIf="showDelete" class="mb-10" color="primary" mat-fab>
-  <mat-icon>delete</mat-icon>
+<button class="delete" type="submit" mat-button (click)="delete()" *ngIf="showDelete">Delete selected
+  <mat-icon color="primary" class="icon-delete">delete</mat-icon>
 </button>
 <table [dataSource]="dataSource" class="mat-elevation-z4 w-100" mat-table matSort>
   <ng-container matColumnDef="select">

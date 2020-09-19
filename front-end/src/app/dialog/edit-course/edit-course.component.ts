@@ -22,6 +22,13 @@ export class EditCourseComponent implements OnInit {
   }
 
   updateCourse(f: NgForm) {
+    // Update course with new values
 
+    this.course.name = f.value.name;
+    this.course.acronymous = f.value.identifier;
+    this.course.min = f.value.min;
+    this.course.max = f.value.max;
+
+    // TO DO: Call service
   }
 }

@@ -125,6 +125,10 @@ export class ProfessorService {
     return this.http.get<VmModel[]>(API_URL + 'team/' + teamId + '/vms');
   }
 
+  findVmTypeByCourse(courseName: string){
+    return this.http.get<VmModel>(API_URL + 'courses/' + courseName + '/getVMType');
+  }
+
   /* STUDENTS */
 
   // Richiede l'elenco degli studenti al server se non ancora noti,

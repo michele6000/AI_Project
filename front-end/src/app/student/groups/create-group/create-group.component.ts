@@ -8,6 +8,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {GroupModel} from '../../../models/group.model';
 import {concatMap, toArray} from 'rxjs/operators';
 import {forkJoin, from, Observable} from 'rxjs';
+import {MatDatepickerInputEvent} from "@angular/material/datepicker";
 
 @Component({
   selector: 'app-create-group',
@@ -28,7 +29,16 @@ export class CreateGroupComponent implements OnInit {
   message = '';
   private courseParam: string;
 
+  minDate: Date;
+  maxDate: Date;
+  chosenTimeout: Date;
+
   constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {
+    const today = new Date();
+    this.minDate = new Date();
+    this.minDate.setDate(today.getDate() + 1);
+    this.maxDate = new Date();
+    this.maxDate.setDate(today.getDate() + 15);
   }
 
   ngOnInit(): void {
@@ -92,7 +102,7 @@ export class CreateGroupComponent implements OnInit {
       } else {
         this.error = false;
         this.message = '';
-        this.studentService.proposeTeam(this.selectedStudents, this.course.name, f.value.name).subscribe(
+        this.studentService.proposeTeam(this.selectedStudents, this.course.name, f.value.name, this.chosenTimeout).subscribe(
           (response) => {
             // Tutte a buon fine
             this.snackBar.open('Team proposal created successfully.', 'OK', {
@@ -107,5 +117,9 @@ export class CreateGroupComponent implements OnInit {
         );
       }
     }
+  }
+
+  timeoutChoseValue($event: MatDatepickerInputEvent<any>) {
+    this.chosenTimeout = $event.target.value;
   }
 }

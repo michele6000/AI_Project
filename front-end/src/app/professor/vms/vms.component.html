@@ -1,6 +1,6 @@
 <div class="container">
   <div class="text-right w-80 mb-10">
-    <button (click)="createVM($event)" class="mb-10" color="primary" mat-raised-button>Create VM Type</button>
+    <button [disabled]="hasVMType" (click)="createVM($event)" class="mb-10" color="primary" mat-raised-button>+ Create VM Type</button>
   </div>
   <p>List of active Teams in this course.</p>
   <app-table-expandable (edit)="modifyGroup($event)" [columns]="groupsColumns" [data]="groupsData"
