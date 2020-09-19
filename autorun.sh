@@ -26,10 +26,10 @@ cd ..
 echo " "
 echo "############## Pulling MariaDB ##############"
 echo " "
-docker pull michele6000/ai-test:beta1
+docker pull mariadb:latest
 echo " "
 echo "############## Starting all services ##############"
 echo " "
-docker-compose up
+docker-compose -f docker-compose-offline.yml up
 echo " "
 echo "############## All service stopped ##############"

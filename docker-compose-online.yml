@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  teams-db:
+    image: michele6000/ai-test:beta1
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=database
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=admin
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mariadb_files:/var/lib/mysql
+
+  front-end:
+    image: michele6000/front-end:latest
+    ports:
+    - 4200:4200
+    depends_on:
+      - back-end
+
+  back-end:
+    image: michele6000/back-end:latest
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://teams-db:3306/database?autoReconnect=true&useSSL=false
+    depends_on:
+      - teams-db

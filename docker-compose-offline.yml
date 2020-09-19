@@ -2,7 +2,7 @@ version: '3'
 
 services:
   teams-db:
-    image: michele6000/ai-test:beta1
+    image: mariadb:latest
     environment:
       - MYSQL_ROOT_PASSWORD=admin
       - MYSQL_DATABASE=database
