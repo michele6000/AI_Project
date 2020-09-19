@@ -81,8 +81,16 @@ export class StudentService {
 
   /* VMs */
 
-  createVM(teamId: number, vm: VmStudent) {
-    return this.http.post(API_URL + 'team/' + teamId + '/createVmInstance', vm);
+  createVm(teamId: number, vm: VmStudent) {
+    return this.http.post<any>(API_URL + 'team/' + teamId + '/createVmInstance', vm);
+  }
+
+  addVmOwner(vmId: number, ownerId: string) {
+    return this.http.post(API_URL + 'vm/' + vmId + '/addOwner', ownerId);
+  }
+
+  getVmOwners(vmId: number) {
+    return this.http.get<StudentModel[]>(API_URL + 'vm/' + vmId + '/getOwners');
   }
 
   getVmConfiguration(vmId: number) {
