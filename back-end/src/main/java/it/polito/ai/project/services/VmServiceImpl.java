@@ -97,6 +97,20 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    public VMTypeDTO getVMType(String courseName) {
+        Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
+
+        if (!optionalCourseEntity.isPresent()) {
+            throw new CourseNotFoundException("Course not found!");
+        }
+        Optional<VMType> optionalVMTypeEntity = Optional.ofNullable(optionalCourseEntity.get().getVmType());
+        if (!optionalVMTypeEntity.isPresent()) {
+            throw new VmNotFoundException("VMType not found!");
+        }
+        return modelMapper.map(optionalVMTypeEntity.get(),VMTypeDTO.class);
+    }
+
+    @Override
     public VMDTO getVMConfig(Long vmId) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         if (!optionalVMEntity.isPresent()) {
