@@ -10,6 +10,7 @@ import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -138,7 +139,9 @@ public class TeamServiceImpl implements TeamService {
         if (!studentRepo.existsById(studentId)) return Optional.empty();
 
         return Optional.of(
-                modelMapper.map(studentRepo.getOne(studentId), StudentDTO.class)
+                modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(studentRepo.getOne(studentId))
         );
     }
 
@@ -147,7 +150,9 @@ public class TeamServiceImpl implements TeamService {
         return studentRepo
                 .findAll()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -160,7 +165,9 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(courseName)
                 .getStudents()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -325,7 +332,9 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(teamId)
                 .getMembers()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -338,7 +347,9 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(teamId)
                 .getConfirmedStudents()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -351,7 +362,9 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(teamId)
                 .getPendentStudents()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -463,7 +476,9 @@ public class TeamServiceImpl implements TeamService {
         return courseRepo
                 .getStudentsInTeams(courseName)
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -474,7 +489,9 @@ public class TeamServiceImpl implements TeamService {
         return courseRepo
                 .getStudentsNotInTeams(courseName)
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
