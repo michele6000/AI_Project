@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -89,12 +90,12 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/{studentId}/addMember")
-    public void addMember(@PathVariable Long teamId, @PathVariable String studentId) {
+    public void addMember(@PathVariable Long teamId, @PathVariable String studentId, @RequestParam Timestamp timestamp) {
         List<String> students = new ArrayList<>();
         try {
             service.addMember(teamId, studentId);
             students.add(studentId);
-            notifyService.notifyTeam(service.getTeam(teamId), students);
+            notifyService.notifyTeam(service.getTeam(teamId), students, timestamp);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

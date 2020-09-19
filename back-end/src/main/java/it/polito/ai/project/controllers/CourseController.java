@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -183,12 +184,13 @@ public class CourseController {
     public boolean proposeTeam(
             @PathVariable String courseName,
             @RequestParam String name,
+            @RequestParam Timestamp timestamp,
             @RequestBody List<String> membersIds
     ) {
         TeamDTO team;
         try {
             team = service.proposeTeam(courseName, name, membersIds);
-            notifyService.notifyTeam(team, membersIds);
+            notifyService.notifyTeam(team, membersIds,timestamp);
             return true;
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
