@@ -66,6 +66,15 @@ public class CourseController {
         }
     }
 
+    @GetMapping("/{courseName}/getVMType")
+    public VMTypeDTO getVMType(@PathVariable String courseName) {
+        try {
+            return vmService.getVMType(courseName);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
     @PostMapping("/{courseName}/deleteOne")
     public Boolean deleteOne(@PathVariable String courseName, @RequestParam String studentId) {
         try {
