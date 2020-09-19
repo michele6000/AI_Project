@@ -126,7 +126,7 @@ export class ProfessorService {
   }
 
   findVmTypeByCourse(courseName: string){
-    return this.http.get<VmModel>(API_URL + 'courses/' + courseName + '/vm');
+    return this.http.get<VmModel>(API_URL + 'courses/' + courseName + '/getVMType');
   }
 
   /* STUDENTS */
