@@ -6,6 +6,7 @@ import {VmStudent} from '../models/vm-student.model';
 import {StudentModel} from '../models/student.model';
 import {GroupModel} from '../models/group.model';
 import {VmModel} from '../models/vm.model';
+import * as moment from 'moment';
 
 const API_URL = '/api/API/';
 
@@ -67,7 +68,7 @@ export class StudentService {
     studentIds.push(localStorage.getItem('id'));
 
     return this.http.post(
-      API_URL + 'courses/' + courseName + '/proposeTeam?name=' + groupName + '&timestamp=' + timeout, studentIds
+      API_URL + 'courses/' + courseName + '/proposeTeam?name=' + groupName + '&timestamp=' + moment(timeout).format('YYYY-MM-DD HH:mm:ss'), studentIds
     );
   }
 

@@ -30,10 +30,15 @@ export class CreateGroupComponent implements OnInit {
   private courseParam: string;
 
   minDate: Date;
+  maxDate: Date;
   chosenTimeout: Date;
 
   constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {
+    const today = new Date();
     this.minDate = new Date();
+    this.minDate.setDate(today.getDate() + 1);
+    this.maxDate = new Date();
+    this.maxDate.setDate(today.getDate() + 15);
   }
 
   ngOnInit(): void {

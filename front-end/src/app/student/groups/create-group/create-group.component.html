@@ -15,7 +15,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Proposal Timeout</mat-label>
-      <input (dateChange)="timeoutChoseValue($event)" [matDatepicker]="proposalTimeout" [max]="" [min]="minDate"
+      <input (dateChange)="timeoutChoseValue($event)" [matDatepicker]="proposalTimeout" [max]="maxDate" [min]="minDate"
              matInput name="proposalTimeout" ngModel required>
       <mat-datepicker-toggle [for]="proposalTimeout" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #proposalTimeout></mat-datepicker>

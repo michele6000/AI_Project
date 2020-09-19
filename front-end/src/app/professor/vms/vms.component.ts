@@ -38,6 +38,8 @@ export class VmsComponent implements OnInit {
     // Recupero il VM Type, se presente
     this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {
       this.hasVMType = true;
+    }, error => {
+      this.hasVMType = false;
     });
 
     // Recupero l'elenco di Teams

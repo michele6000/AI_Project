@@ -397,7 +397,11 @@ public class TeamServiceImpl implements TeamService {
         optionalVMTypeEntity.ifPresent(team::setVmType);
 
         membersIds.forEach(
-                m -> team.addMember(studentRepo.getOne(m))
+                m -> {
+                    team.addMember(studentRepo.getOne(m));
+                    team.getPendentStudents().add(studentRepo.getOne(m));
+                }
+
         );
         team.setCourse(courseRepo.getOne(courseId));
         team.setId((teamRepo.save(team).getId()));
