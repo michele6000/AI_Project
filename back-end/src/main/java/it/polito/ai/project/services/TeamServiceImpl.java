@@ -202,9 +202,9 @@ public class TeamServiceImpl implements TeamService {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
 
             courseRepo.getOne(courseName).getTeams().forEach(t -> evictTeam(t.getId()));
+            profRepo.getOne(username).getCourses().remove(courseRepo.getOne(courseName));
             courseRepo.getOne(courseName).getStudents().forEach(s ->{
                     s.getCourses().remove(courseRepo.getOne(courseName));
-                    profRepo.getOne(username).getCourses().remove(courseRepo.getOne(courseName));
                     notification.sendMessage(s.getEmail(),
                             "Course deleted",
                             "We inform you that the course " + courseName + " has been deleted.");
