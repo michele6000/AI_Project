@@ -3,13 +3,14 @@ package it.polito.ai.project.services;
 import it.polito.ai.project.dtos.SolutionDTO;
 import it.polito.ai.project.dtos.SubmissionDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface SubmissionService {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
-    SubmissionDTO addSubmission(SubmissionDTO submissionDTO, String courseName, String profId);
+    SubmissionDTO addSubmission(SubmissionDTO submissionDTO, String courseName, String profId, MultipartFile submissionFile) ;
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     List<SubmissionDTO> getAllSubmissions(String courseName, String username);
@@ -21,7 +22,7 @@ public interface SubmissionService {
     SolutionDTO getLastSolution(String studentId, Long submissionId, String username);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
-    String addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
+    String addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId, MultipartFile solutionFile);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
