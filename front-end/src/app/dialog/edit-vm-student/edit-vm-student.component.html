@@ -1,31 +1,28 @@
-<mat-card class="example-card dimensioni">
-  <mat-card-header>
-    <mat-card-title>Create VM</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <mat-error *ngIf="error" class="mt-10-center">
-      Error
-    </mat-error>
-    <form #f="ngForm" (ngSubmit)="create(f)">
-      <mat-form-field class="dialog-position-field">
-        <mat-label>Number of V-CPU</mat-label>
-        <input #vcpu="ngModel" matInput name="vcpu" ngModel placeholder="Number of V-CPU" required type="text" value="">
-      </mat-form-field>
-      <br>
-      <mat-form-field class="dialog-position-field">
-        <mat-label>RAM</mat-label>
-        <input #ram="ngModel" matInput name="ram" ngModel placeholder="RAM" required type="text" value="">
-      </mat-form-field>
-      <br>
-      <mat-form-field class="dialog-position-field">
-        <mat-label>Disk</mat-label>
-        <input #disk="ngModel" matInput name="disk" ngModel placeholder="Disk" required type="text" value="">
-      </mat-form-field>
-      <br>
-      <mat-card-actions>
-        <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Create</button>
-        <button [routerLink]="['/student/applicazioni-internet/vms']" mat-button mat-dialog-close>Cancel</button>
-      </mat-card-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+<div class="dimensioni">
+  <mat-card-title>Create VM</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <mat-error *ngIf="error" class="mt-10-center">
+    Error
+  </mat-error>
+  <form #f="ngForm" (ngSubmit)="create(f)">
+    <mat-form-field class="dialog-position-field">
+      <mat-label>Number of V-CPU</mat-label>
+      <input #vcpu="ngModel" matInput name="vcpu" ngModel placeholder="Number of V-CPU" required type="text" value="">
+    </mat-form-field>
+    <br>
+    <mat-form-field class="dialog-position-field">
+      <mat-label>RAM</mat-label>
+      <input #ram="ngModel" matInput name="ram" ngModel placeholder="RAM" required type="text" value="">
+    </mat-form-field>
+    <br>
+    <mat-form-field class="dialog-position-field">
+      <mat-label>Disk</mat-label>
+      <input #disk="ngModel" matInput name="disk" ngModel placeholder="Disk" required type="text" value="">
+    </mat-form-field>
+    <br>
+    <mat-card-actions>
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Create</button>
+      <button [routerLink]="['/student/applicazioni-internet/vms']" mat-button mat-dialog-close>Cancel</button>
+    </mat-card-actions>
+  </form>
+</div>
