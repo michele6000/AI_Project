@@ -134,7 +134,6 @@ public class VmServiceImpl implements VmService {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
 
-        System.out.println(studentID);
         if (!optionalVMEntity.isPresent()) {
             throw new VmNotFoundException("Vm not found!");
         }

@@ -47,8 +47,6 @@ public class CourseController {
 
     @GetMapping({"/{professorId}/getCourses"})
     public List<CourseDTO> getProfessorCourses(@PathVariable String professorId) {
-        System.out.println(professorId);
-        System.out.println("HERE HERE HERE");
         List<CourseDTO> courses = service.getProfessorCourses(professorId);
         courses.forEach(ModelHelper::enrich);
         return courses;
@@ -269,7 +267,6 @@ public class CourseController {
     @GetMapping("/{courseName}/submissions/{id}")
     public SubmissionDTO getSubmissionById(@PathVariable String courseName, @PathVariable Long id) {
         try {
-            System.out.println("sub: " + id);
             return submissionService.getSubmission(courseName, id, getCurrentUsername());
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
