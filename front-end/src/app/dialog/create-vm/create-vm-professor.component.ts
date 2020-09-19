@@ -37,7 +37,7 @@ export class CreateVmProfessorComponent implements OnInit {
 
   create(f: NgForm) {
     const vm = new VmType();
-    vm.dockerFile = '/var/docker/vm' + this.file.name;
+    vm.dockerFile = '/var/docker/vm/' + this.file.name;
 
     // Creazione VM Type
     this.professorService.createVMType(this.corso.name, vm).subscribe(

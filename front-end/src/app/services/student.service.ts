@@ -62,12 +62,12 @@ export class StudentService {
     }
   }
 
-  proposeTeam(students: StudentModel[], courseName: string, groupName: string) {
+  proposeTeam(students: StudentModel[], courseName: string, groupName: string, timeout: Date) {
     const studentIds = students.map(s => s.id);
     studentIds.push(localStorage.getItem('id'));
 
     return this.http.post(
-      API_URL + 'courses/' + courseName + '/proposeTeam?name=' + groupName, studentIds
+      API_URL + 'courses/' + courseName + '/proposeTeam?name=' + groupName + '&timestamp=' + timeout, studentIds
     );
   }
 

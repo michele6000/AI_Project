@@ -125,8 +125,8 @@ export class ProfessorService {
     return this.http.get<VmModel[]>(API_URL + 'team/' + teamId + '/vms');
   }
 
-  findVmsByCourse(courseName: string){
-    return this.http.get<VmModel[]>(API_URL + 'courses/' + courseName + '/vms');
+  findVmTypeByCourse(courseName: string){
+    return this.http.get<VmModel>(API_URL + 'courses/' + courseName + '/vm');
   }
 
   /* STUDENTS */
