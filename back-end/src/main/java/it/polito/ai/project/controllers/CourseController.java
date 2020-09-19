@@ -98,20 +98,50 @@ public class CourseController {
     @PostMapping("/{courseName}/enable")
     public boolean enableCourse(@PathVariable String courseName) {
         try {
-            service.enableCourse(courseName);
+            service.enableCourse(courseName, getCurrentUsername());
             return true;
-        } catch (CourseNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (CourseNotFoundException | ResponseStatusException e) {
+            if (e instanceof ResponseStatusException)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
+
+            else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
         }
     }
 
+    @PostMapping("/{courseName}/update")
+    public boolean updateCourse(@PathVariable String courseName, @RequestBody CourseDTO ModifiedCourse) {
+        try {
+            service.updateCourse(courseName, ModifiedCourse, getCurrentUsername());
+            return true;
+        } catch (CourseNotFoundException | ResponseStatusException e) {
+            if (e instanceof ResponseStatusException)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
+
+            else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
+        }
+    }
+    @PostMapping("/{courseName}/delete")
+    public boolean deleteCourse(@PathVariable String courseName) {
+        try {
+            service.deleteCourse(courseName, getCurrentUsername());
+            return true;
+        } catch (CourseNotFoundException | ResponseStatusException e) {
+            if (e instanceof ResponseStatusException)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
+
+            else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
+        }
+    }
     @PostMapping("/{courseName}/disable")
     public boolean disableCourse(@PathVariable String courseName) {
         try {
-            service.disableCourse(courseName);
+            service.disableCourse(courseName, getCurrentUsername());
             return true;
-        } catch (CourseNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (CourseNotFoundException | ResponseStatusException e) {
+            if (e instanceof ResponseStatusException)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
+
+            else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
         }
     }
 

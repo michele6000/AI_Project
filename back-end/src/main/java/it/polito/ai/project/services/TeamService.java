@@ -36,10 +36,16 @@ public interface TeamService {
     boolean addStudentToCourse(String studentId, String courseName);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
-    void enableCourse(String courseName);
+    void enableCourse(String courseName, String username);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
-    void disableCourse(String courseName);
+    void disableCourse(String courseName, String username);
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
+    void deleteCourse(String courseName, String username);
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
+    void updateCourse(String courseName, CourseDTO course, String username);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     List<Boolean> addAll(List<StudentDTO> students);
