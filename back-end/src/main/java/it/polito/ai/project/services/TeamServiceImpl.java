@@ -11,8 +11,10 @@ import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.io.Reader;
@@ -163,8 +165,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void enableCourse(String courseName) {
+    public void enableCourse(String courseName, String username) {
+
         if (courseRepo.existsById(courseName)) {
+            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
             courseRepo
                     .getOne(courseName)
                     .setEnabled(true);
@@ -177,14 +182,51 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void disableCourse(String courseName) {
+    public void disableCourse(String courseName, String username) {
         if (courseRepo.existsById(courseName)) {
+            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
             courseRepo.getOne(courseName).setEnabled(false);
             courseRepo.getOne(courseName).getTeams().forEach(t -> t.setStatus(0));
             courseRepo.getOne(courseName).getStudents().forEach(s ->
                     notification.sendMessage(s.getEmail(),
                             "Course disabled",
                             "We inform you that the course " + courseName + " has been disabled."));
+        } else throw new CourseNotFoundException("Course not found!");
+    }
+
+    @Override
+    public void deleteCourse(String courseName, String username) {
+        if (courseRepo.existsById(courseName)) {
+            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+
+            courseRepo.getOne(courseName).getTeams().forEach(t -> evictTeam(t.getId()));
+            courseRepo.getOne(courseName).getStudents().forEach(s ->{
+                    s.getCourses().remove(courseRepo.getOne(courseName));
+                    profRepo.getOne(username).getCourses().remove(courseRepo.getOne(courseName));
+                    notification.sendMessage(s.getEmail(),
+                            "Course deleted",
+                            "We inform you that the course " + courseName + " has been deleted.");
+                    courseRepo.delete(courseRepo.getOne(courseName));
+            });
+        } else throw new CourseNotFoundException("Course not found!");
+
+    }
+
+    @Override
+    public void updateCourse(String courseName, CourseDTO course, String username) {
+        if (courseRepo.existsById(courseName)) {
+            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+
+            Course newCourse=modelMapper.map(course,Course.class);
+            courseRepo.getOne(courseName).getStudents().forEach(newCourse::addStudent);
+            courseRepo.getOne(courseName).getTeams().forEach(newCourse::addTeam);
+            courseRepo.getOne(courseName).getProfessors().forEach(newCourse::addProfessor);
+            courseRepo.delete(courseRepo.getOne(courseName));
+            courseRepo.save(newCourse);
+
         } else throw new CourseNotFoundException("Course not found!");
     }
 
@@ -557,5 +599,9 @@ public class TeamServiceImpl implements TeamService {
         return true;
     }
 
+    private boolean isProfessorCourse(String courseName, String profId) {
+        return courseRepo.getOne(courseName).getProfessors()
+                .contains(profRepo.getOne(profId));
+    }
 
 }
