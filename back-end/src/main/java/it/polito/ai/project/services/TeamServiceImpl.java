@@ -216,18 +216,26 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void updateCourse(String courseName, CourseDTO course, String username) {
-        if (courseRepo.existsById(courseName)) {
-            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+        Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
+        if (!optionalCourseEntity.isPresent()) {
+            throw new CourseNotFoundException("Course not found!");
+        }
 
-            Course newCourse=modelMapper.map(course,Course.class);
-            courseRepo.getOne(courseName).getStudents().forEach(newCourse::addStudent);
-            courseRepo.getOne(courseName).getTeams().forEach(newCourse::addTeam);
-            courseRepo.getOne(courseName).getProfessors().forEach(newCourse::addProfessor);
-            courseRepo.delete(courseRepo.getOne(courseName));
-            courseRepo.save(newCourse);
+        if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
 
-        } else throw new CourseNotFoundException("Course not found!");
+        Optional<String> _courseName = Optional.ofNullable(course.getName());
+        _courseName.ifPresent(l -> optionalCourseEntity.get().setName(l));
+
+        Optional<String> _acronymous = Optional.ofNullable(course.getAcronymous());
+        _acronymous.ifPresent(l -> optionalCourseEntity.get().setAcronymous(l));
+
+        Optional<Integer> _min = Optional.of(course.getMin());
+        _min.ifPresent(l -> optionalCourseEntity.get().setMin(l));
+
+        Optional<Integer> _max = Optional.of(course.getMax());
+        _max.ifPresent(l -> optionalCourseEntity.get().setMax(l));
+        
     }
 
     @Override
