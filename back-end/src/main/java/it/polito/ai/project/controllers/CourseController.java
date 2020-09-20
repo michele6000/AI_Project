@@ -278,7 +278,7 @@ public class CourseController {
 
     //  SUBMISSION START
     @PostMapping("/{courseName}/addSubmission")
-    public SubmissionDTO addSubmission(@PathVariable String courseName, @RequestBody Submission submission) {
+    public SubmissionDTO addSubmission(@PathVariable String courseName, @ModelAttribute Submission submission) {
         try {
             String profId = SecurityContextHolder
                     .getContext()

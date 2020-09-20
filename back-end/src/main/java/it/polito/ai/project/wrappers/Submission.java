@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class Submission {
+public class Submission extends SubmissionDTO{
     SubmissionDTO submissionDTO;
     MultipartFile multipartFile;
 }
