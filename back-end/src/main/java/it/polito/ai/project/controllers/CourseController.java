@@ -278,14 +278,16 @@ public class CourseController {
 
     //  SUBMISSION START
     @PostMapping("/{courseName}/addSubmission")
-    public SubmissionDTO addSubmission(@PathVariable String courseName, @ModelAttribute Submission submission) {
+    public SubmissionDTO addSubmission(@PathVariable String courseName,
+                                       @RequestPart("submission") SubmissionDTO submission,
+                                       @RequestPart("file") MultipartFile file) {
         try {
             String profId = SecurityContextHolder
                     .getContext()
                     .getAuthentication()
                     .getName()
                     .split("@")[0];
-            return submissionService.addSubmission(submission.getSubmissionDTO(), courseName, profId,submission.getMultipartFile());
+            return submissionService.addSubmission(submission, courseName, profId, file);
         } catch (TeamServiceException | ResponseStatusException e) {
             if (e instanceof ResponseStatusException)
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
