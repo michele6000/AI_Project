@@ -9,6 +9,7 @@ import it.polito.ai.project.services.NotificationService;
 import it.polito.ai.project.services.SubmissionService;
 import it.polito.ai.project.services.TeamService;
 import it.polito.ai.project.services.VmService;
+import it.polito.ai.project.wrappers.Submission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -277,14 +278,14 @@ public class CourseController {
 
     //  SUBMISSION START
     @PostMapping("/{courseName}/addSubmission")
-    public SubmissionDTO addSubmission( @PathVariable String courseName, @RequestBody SubmissionDTO dto , @RequestParam("imagefile") MultipartFile file ) {
+    public SubmissionDTO addSubmission(@PathVariable String courseName, @RequestBody Submission submission) {
         try {
             String profId = SecurityContextHolder
                     .getContext()
                     .getAuthentication()
                     .getName()
                     .split("@")[0];
-            return submissionService.addSubmission(dto, courseName, profId,file);
+            return submissionService.addSubmission(submission.getSubmissionDTO(), courseName, profId,submission.getMultipartFile());
         } catch (TeamServiceException | ResponseStatusException e) {
             if (e instanceof ResponseStatusException)
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
