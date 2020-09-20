@@ -160,6 +160,7 @@ public class VmServiceImpl implements VmService {
         tmp.getVms().remove(optionalVMEntity.get());
         optionalVMEntity.get().getOwners().add(optionalStudentEntity.get());
         optionalStudentEntity.get().getVms().add(optionalVMEntity.get());
+        optionalVMEntity.get().setOwner(studentID);
 
         return true;
     }
@@ -298,6 +299,7 @@ public class VmServiceImpl implements VmService {
         _vm.getOwners().add(optionalStudentEntity.get());
         optionalStudentEntity.get().getVms().add(_vm);
 
+        _vm.setOwner(studentID);
         _vm.setHdd(vm.getHdd());
         _vm.setCpu(vm.getCpu());
         _vm.setRam(vm.getRam());
