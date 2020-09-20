@@ -15,7 +15,8 @@ public class Student {
     private String firstName;
     private String email;
     private String password;
-    private String image; //TODO: mettere binary
+    @Lob
+    private Byte[] image;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(

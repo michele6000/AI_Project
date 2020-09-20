@@ -1,9 +1,6 @@
 package it.polito.ai.project.controllers;
 
-import it.polito.ai.project.dtos.CourseDTO;
-import it.polito.ai.project.dtos.SolutionDTO;
-import it.polito.ai.project.dtos.StudentDTO;
-import it.polito.ai.project.dtos.TeamDTO;
+import it.polito.ai.project.dtos.*;
 import it.polito.ai.project.exceptions.StudentNotFoundException;
 import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.services.SubmissionService;
@@ -150,7 +147,9 @@ public class StudentController {
     }
 
     @PostMapping("/{studentId}/{submissionId}/addSolution") //
-    public String addSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol, @RequestParam("imagefile") MultipartFile file) {
+    public String addSolution(@PathVariable String studentId, @PathVariable Long submissionId,
+                              @RequestPart("submission") SolutionDTO sol,
+                              @RequestPart("file") MultipartFile file) {
         if (!isMe(studentId))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to add a solution!");
         try {

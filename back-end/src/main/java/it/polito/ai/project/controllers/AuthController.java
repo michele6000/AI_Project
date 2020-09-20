@@ -1,6 +1,7 @@
 package it.polito.ai.project.controllers;
 
 import it.polito.ai.project.dtos.ProfessorDTO;
+import it.polito.ai.project.dtos.SolutionDTO;
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.UserDTO;
 import it.polito.ai.project.security.jwt.JwtTokenProvider;
@@ -14,10 +15,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -73,11 +72,12 @@ public class AuthController {
 
 
     @PostMapping("/addProfessor")
-    public ProfessorDTO addProfessor(@RequestBody ProfessorDTO professor) {
+    public ProfessorDTO addProfessor(@RequestPart("submission") ProfessorDTO professor,
+                                     @RequestPart("file") MultipartFile file) {
         if (!professor.getEmail().endsWith("@polito.it"))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not allowed");
 
-        if (!service.addProfessor(professor)) throw new ResponseStatusException(
+        if (!service.addProfessor(professor,file)) throw new ResponseStatusException(
                 HttpStatus.CONFLICT,
                 professor.getId()
         );
@@ -85,11 +85,12 @@ public class AuthController {
     }
 
     @PostMapping("/addStudent")
-    public StudentDTO addProfessor(@RequestBody StudentDTO student) {
+    public StudentDTO addProfessor(@RequestPart("submission") StudentDTO student,
+                                   @RequestPart("file") MultipartFile file) {
         if (!student.getEmail().endsWith("@studenti.polito.it"))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not allowed");
 
-        if (!service.addStudent(student)) throw new ResponseStatusException(HttpStatus.CONFLICT, student.getId());
+        if (!service.addStudent(student,file)) throw new ResponseStatusException(HttpStatus.CONFLICT, student.getId());
         return student;
     }
 }

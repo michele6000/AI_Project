@@ -5,6 +5,7 @@ import it.polito.ai.project.dtos.ProfessorDTO;
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.TeamDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Reader;
 import java.util.List;
@@ -21,7 +22,7 @@ public interface TeamService {
     List<CourseDTO> getAllCourses();
 
     //  @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    boolean addStudent(StudentDTO student);
+    boolean addStudent(StudentDTO student, MultipartFile file);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     Optional<StudentDTO> getStudent(String studentId);
@@ -94,7 +95,7 @@ public interface TeamService {
     void evictTeam(Long id);
 
     //  @PreAuthorize("hasRole('ROLE_ADMIN')")
-    boolean addProfessor(ProfessorDTO professor);
+    boolean addProfessor(ProfessorDTO professor, MultipartFile file);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     boolean addProfessorToCourse(String professorId, String courseName);

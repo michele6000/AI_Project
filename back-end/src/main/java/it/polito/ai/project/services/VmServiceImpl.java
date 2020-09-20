@@ -7,11 +7,18 @@ import it.polito.ai.project.dtos.VMTypeDTO;
 import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -304,6 +311,23 @@ public class VmServiceImpl implements VmService {
         _vm.setCpu(vm.getCpu());
         _vm.setRam(vm.getRam());
         _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + optionalVMTypeEntity.get().getId());
+
+        try{
+            File fileItem = new File("./../resources/static/linux.png");
+            FileInputStream input = new FileInputStream(fileItem);
+            MultipartFile file = new MockMultipartFile("fileItem",
+                    fileItem.getName(), "image/png", input.readAllBytes());
+            Byte[] byteObjects = new Byte[file.getBytes().length];
+
+            int i = 0;
+
+            for (byte b : file.getBytes())
+                byteObjects[i++] = b;
+
+            _vm.setImage(byteObjects);
+        } catch (IOException e) {
+            throw new TeamServiceException("Error saving image: " + e.getMessage());
+        }
 
         return modelMapper.map(vmRepo.save(_vm), VMDTO.class);
     }

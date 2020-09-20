@@ -9,5 +9,5 @@ public class ProfessorDTO {
     private String name;
     private String email;
     private String password;
-    private String image; //TODO: metterne binary
+    private Byte[] image;
 }

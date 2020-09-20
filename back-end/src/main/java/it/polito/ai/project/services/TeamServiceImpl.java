@@ -10,14 +10,15 @@ import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,13 +64,27 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public boolean addStudent(StudentDTO student) {
+    public boolean addStudent(StudentDTO student, MultipartFile file) {
         if (student == null ||
                 student.getId().length() == 0 ||
                 student.getName().length() == 0 ||
                 student.getFirstName().length() == 0
         )
             return false;
+
+        try{
+            Byte[] byteObjects = new Byte[file.getBytes().length];
+
+            int i = 0;
+
+            for (byte b : file.getBytes())
+                byteObjects[i++] = b;
+
+            student.setImage(byteObjects);
+        } catch (IOException e) {
+            throw new TeamServiceException("Error saving image: " + e.getMessage());
+        }
+
         Student studentEntity = modelMapper.map(student, Student.class);
         if (studentRepo.existsById(studentEntity.getId()))
             return false;
@@ -79,7 +94,6 @@ public class TeamServiceImpl implements TeamService {
         user.setPassword(passwordEncoder.encode(student.getPassword()));
         user.setRoles(Collections.singletonList("ROLE_STUDENT"));
         User u = userRepo.save(modelMapper.map(user, User.class));
-
         studentRepo.save(studentEntity);
         notification.sendMessage(
                 "paola.caso96@gmail.com",
@@ -248,7 +262,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<Boolean> addAll(List<StudentDTO> students) {
         List<Boolean> studentsAdded = new ArrayList<>();
-        students.forEach(s -> studentsAdded.add(addStudent(s)));
+        students.forEach(s -> studentsAdded.add(addStudent(s, null)));
         return studentsAdded;
     }
 
@@ -540,7 +554,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public boolean addProfessor(ProfessorDTO professor) {
+    public boolean addProfessor(ProfessorDTO professor, MultipartFile file) {
         if (professor == null) {
             return false;
         }
@@ -552,6 +566,20 @@ public class TeamServiceImpl implements TeamService {
         user.setUsername(id + "@polito.it");
         user.setPassword(passwordEncoder.encode(professor.getPassword()));
         user.setRoles(Collections.singletonList("ROLE_PROFESSOR"));
+
+        try{
+            Byte[] byteObjects = new Byte[file.getBytes().length];
+
+            int i = 0;
+
+            for (byte b : file.getBytes())
+                byteObjects[i++] = b;
+
+            professor.setImage(byteObjects);
+        } catch (IOException e) {
+            throw new TeamServiceException("Error saving image: " + e.getMessage());
+        }
+
         userRepo.save(modelMapper.map(user, User.class));
         profRepo.save(modelMapper.map(professor, Professor.class));
         notification.sendMessage(
