@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {StudentService} from "../../services/student.service";
-import {CourseModel} from "../../models/course.model";
-import {Router} from "@angular/router";
-import * as moment from "moment";
+import {StudentService} from '../../services/student.service';
+import {CourseModel} from '../../models/course.model';
+import {Router} from '@angular/router';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-assignments-student',
@@ -15,6 +15,7 @@ export class AssignmentsStudentComponent implements OnInit {
   consegne = [];
   private courseParam: string;
   private corso: CourseModel;
+  hasConsegne = false;
 
   constructor(private studentService: StudentService, private router: Router) {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
@@ -40,6 +41,9 @@ export class AssignmentsStudentComponent implements OnInit {
           consegne.push(c);
         });
         this.consegne = consegne;
+        if (consegne.length > 0) {
+          this.hasConsegne = true;
+        }
       },
       (error) => {
 
