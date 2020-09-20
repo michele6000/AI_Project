@@ -8,6 +8,7 @@ import {CourseModel} from '../../models/course.model';
 import {from} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
 import {EditVmProfessorComponent} from '../../dialog/edit-vm-professor/edit-vm-professor.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-vms',
@@ -26,12 +27,13 @@ export class VmsComponent implements OnInit {
 
   hasVMType = false;
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService) {
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService, private snackBar: MatSnackBar) {
 
   }
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
+    console.log("Course param " + this.courseParam);
 
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
 
@@ -68,11 +70,18 @@ export class VmsComponent implements OnInit {
   }
 
   createVM($event) {
-    this.dialog.open(CreateVmProfessorComponent, {})
-      .afterClosed()
-      .subscribe(result => {
-        console.log(result);
+    console.log(this.corso);
+    if (this.corso.name !== '') {
+      this.dialog.open(CreateVmProfessorComponent, {})
+          .afterClosed()
+          .subscribe(result => {
+            console.log(result);
+          });
+    } else {
+      this.snackBar.open('You must to create a course firstly', 'OK', {
+        duration: 5000
       });
+    }
   }
 
   modifyGroup($event: GroupModel) {

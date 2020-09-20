@@ -62,7 +62,8 @@ export class AssignmentsComponent implements OnInit {
     this.dialog.open(CreateAssignmentComponent, {})
       .afterClosed()
       .subscribe(result => {
-        console.log(result);
+
+
       });
   }
 }

@@ -192,4 +192,12 @@ export class ProfessorService {
   findAssignmentsByCourse(courseName: string) {
     return this.http.get<any[]>(API_URL + 'courses/' + courseName + '/getAllSubmissions');
   }
+
+  updateCourse(course: CourseModel){
+    return this.http.post<any>(API_URL + 'courses/' + course.name + '/update', course);
+  }
+
+  deleteCourse(courseName: string){
+    return this.http.get<any>(API_URL + 'courses/' + courseName + '/delete');
+  }
 }
