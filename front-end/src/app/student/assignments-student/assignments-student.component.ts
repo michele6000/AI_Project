@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {StudentService} from "../../services/student.service";
-import {CourseModel} from "../../models/course.model";
-import {Router} from "@angular/router";
-import * as moment from "moment";
+import {StudentService} from '../../services/student.service';
+import {CourseModel} from '../../models/course.model';
+import {Router} from '@angular/router';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-assignments-student',
@@ -15,6 +15,20 @@ export class AssignmentsStudentComponent implements OnInit {
   consegne = [];
   private courseParam: string;
   private corso: CourseModel;
+  hasConsegne = false;
+
+  imageToShow: any;
+
+  createImageFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      this.imageToShow = reader.result;
+    }, false);
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
+  }
 
   constructor(private studentService: StudentService, private router: Router) {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
@@ -26,6 +40,8 @@ export class AssignmentsStudentComponent implements OnInit {
         res.forEach((c) => {
           c.expiryString = moment(c.expiryDate).format('L');
           c.releaseString = moment(c.releaseDate).format('L');
+          c.blob = new Blob(c.image, { type: 'image/png' });
+          this.createImageFromBlob(c.blob);
 
           // @todo Riempire con tutti gli elaborati dello studente
           this.studentService.getHistorySolutions(localStorage.getItem('id'), c.id).subscribe(
@@ -40,6 +56,9 @@ export class AssignmentsStudentComponent implements OnInit {
           consegne.push(c);
         });
         this.consegne = consegne;
+        if (consegne.length > 0) {
+          this.hasConsegne = true;
+        }
       },
       (error) => {
 

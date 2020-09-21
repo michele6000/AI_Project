@@ -24,7 +24,7 @@ export class CreateAssignmentComponent implements OnInit {
 
   canChoseExpiryDate = false;
   errorExpiryDate = false;
-  file: any;
+  file: File;
 
   private courseParam: string;
   private corso: CourseModel;
@@ -48,7 +48,7 @@ export class CreateAssignmentComponent implements OnInit {
       submission.expiryDate = this.chosenExpiryDate;
       submission.content = this.file.name;
 
-      this.professorService.createAssignment(this.corso.name, submission).subscribe(
+      this.professorService.createAssignment(this.corso.name, submission, this.file).subscribe(
         (res) => {
           this.snackBar.open('Assignment created successfully.', 'OK', {
             duration: 5000

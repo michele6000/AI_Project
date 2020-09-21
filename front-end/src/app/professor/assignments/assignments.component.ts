@@ -16,39 +16,6 @@ export class AssignmentsComponent implements OnInit {
 
   consegne: any[];
 
-  /*
-  consegne = [
-    {
-      name: 'Lab 1',
-      date: '06/07/2020',
-      elaborati: [
-        {
-          name: 'Mario',
-          surname: 'Rossi',
-          matricola: '223098',
-          status: 'Letto',
-          timestamp: '06/07/2020 16:37:12',
-          history: [
-            {
-              status: 'Rivisto',
-              timestamp: '06/07/2020 14:57:12'
-            },
-            {
-              status: 'Consegnato',
-              timestamp: '06/07/2020 14:37:12'
-            }
-          ]
-        }
-      ]
-    },
-    {
-      name: 'Lab 2',
-      date: '12/07/2020',
-      elaborati: []
-    }
-  ];
-   */
-
   columnsElaborati = ['name', 'surname', 'matricola', 'status', 'timestamp'];
 
   private courseParam: string;
@@ -95,7 +62,8 @@ export class AssignmentsComponent implements OnInit {
     this.dialog.open(CreateAssignmentComponent, {})
       .afterClosed()
       .subscribe(result => {
-        console.log(result);
+
+
       });
   }
 }
