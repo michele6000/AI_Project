@@ -37,10 +37,10 @@
       </mat-form-field>
 
       <div class="dialog-position-field">
-        <span>Assignment Content</span>
+        <span>Photo Content</span>
         <button (click)="fileInput.click()" class="ml-20" mat-raised-button type="button">Choose file</button>
         <input #fileInput (change)="handleFileSelect($event)" accept="image/jpeg,image/png,application/pdf" hidden
-               id="file" type="file">
+               id="file" type="file" required="required">
       </div>
       <button [disabled]="!f.valid" color="primary" mat-raised-button>REGISTER</button>
     </form>

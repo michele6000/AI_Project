@@ -6,13 +6,13 @@
         <mat-panel-title>
           <div>
             {{consegna.content}} - {{consegna.expiryString}}
+            <button (click)="handleShowSubmission(consegna.id)" class="ml-20" mat-raised-button type="button">Show submission</button>
           </div>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <input #fileInput (change)="handleFileSelect($event)" hidden id="file" type="file">
       <button (click)="uploadSolution(consegna.id)" class="float-right ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>
       <button (click)="fileInput.click()" class="float-right" mat-raised-button type="button">Choose file</button>
-      <button (click)="handleShowSubmission(consegna.id)" class="float-right" mat-raised-button type="button">Show submission</button>
       <h2>History</h2>
       <mat-list>
         <mat-list-item *ngFor="let a of consegna.history ">{{a.timestamp}} - {{a.status}}</mat-list-item>

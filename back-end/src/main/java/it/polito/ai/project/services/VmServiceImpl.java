@@ -315,6 +315,7 @@ public class VmServiceImpl implements VmService {
 //        _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + optionalVMTypeEntity.get().getId());
 
         try{
+
             Resource resource = new ClassPathResource("./templates/linux.png");
             FileInputStream input = new FileInputStream(resource.getFile());
             MultipartFile file = new MockMultipartFile("fileItem",

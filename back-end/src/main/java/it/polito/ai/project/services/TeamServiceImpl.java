@@ -53,6 +53,15 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private NotificationService notification;
 
+    @Autowired
+    private VMTypeRepository vmTypeRepository;
+
+    @Autowired
+    private SubmissionRepository submissionRepository;
+
+    @Autowired
+    private SolutionRepository solutionRepository;
+
 
     @Override
     public boolean addCourse(CourseDTO course) {
@@ -216,6 +225,7 @@ public class TeamServiceImpl implements TeamService {
         } else throw new CourseNotFoundException("Course not found!");
     }
 
+    // @Todo gestire con gli optional
     @Override
     public void deleteCourse(String courseName, String username) {
         if (courseRepo.existsById(courseName)) {
@@ -229,8 +239,18 @@ public class TeamServiceImpl implements TeamService {
                     notification.sendMessage(s.getEmail(),
                             "Course deleted",
                             "We inform you that the course " + courseName + " has been deleted.");
-                    courseRepo.delete(courseRepo.getOne(courseName));
             });
+            vmTypeRepository.delete(courseRepo.getOne(courseName).getVmType());
+            // solution
+            // submission
+            courseRepo.getOne(courseName).getSubmissions().forEach( s -> {
+                submissionRepository.getOne(s.getId()).getSolutions().forEach( sol -> {
+                    solutionRepository.delete(sol);
+                });
+
+                submissionRepository.delete(s);
+            });
+            courseRepo.delete(courseRepo.getOne(courseName));
         } else throw new CourseNotFoundException("Course not found!");
 
     }

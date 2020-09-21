@@ -27,16 +27,21 @@ export class EditCourseComponent implements OnInit {
     this.course.acronymous = f.value.identifier;
     this.course.min = f.value.min;
     this.course.max = f.value.max;
+    console.log(this.course);
 
-    if (this.professorService.updateCourse(this.course)){
-      this.dialogRef.close();
-      this.snackBar.open('Course update successfully', 'OK', {
-        duration: 5000
-      });
-    } else {
-      this.snackBar.open('Error updating course', 'OK', {
-        duration: 5000
-      });
-    }
+    this.professorService.updateCourse(this.course).subscribe(
+      res => {
+        if (res) {
+          this.dialogRef.close();
+          this.snackBar.open('Course update successfully', 'OK', {
+            duration: 5000
+          });
+        } else {
+          this.snackBar.open('Error updating course', 'OK', {
+            duration: 5000
+          });
+        }
+      }
+    );
   }
 }

@@ -7,6 +7,7 @@ import {StudentModel} from '../models/student.model';
 import {GroupModel} from '../models/group.model';
 import {VmModel} from '../models/vm.model';
 import * as moment from 'moment';
+import {SolutionModel} from '../models/solution.model';
 
 const API_URL = '/api/API/';
 
@@ -144,10 +145,13 @@ export class StudentService {
     return this.http.get<any>(API_URL + 'courses/' + courseName + '/submissions/' + submissionId);
   }
 
-  addSolution(studentId: string, submissionId: string, image: string) {
-    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + submissionId + '/addSolution', {
-      image
-    });
+  addSolution(studentId: string, submissionId: string, solution: File) {
+    const formData = new FormData();
+    const solutionModel = new SolutionModel();
+    const solutionStr = new Blob([JSON.stringify(solutionModel)], { type: 'application/json'});
+    formData.append('solution', solutionStr);
+    formData.append('file', solution);
+    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + submissionId + '/addSolution', formData);
   }
 
 }

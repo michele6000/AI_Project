@@ -48,14 +48,17 @@ export class CreateAssignmentComponent implements OnInit {
       submission.expiryDate = this.chosenExpiryDate;
       submission.content = this.file.name;
 
+      // close  dialog
       this.professorService.createAssignment(this.corso.name, submission, this.file).subscribe(
         (res) => {
+          // @Todo -> fare la richiesta per avere anche l'assignment appena inserito
+          this.dialogRef.close();
           this.snackBar.open('Assignment created successfully.', 'OK', {
             duration: 5000
           });
         },
         (error) => {
-          console.log(error);
+          this.dialogRef.close();
           this.snackBar.open('Error creating assignment, try again.', 'OK', {
             duration: 5000
           });

@@ -62,6 +62,7 @@ export class CoursesComponent implements OnInit {
     });
   }
 
+  //@Todo: aggiornare la tabella dei corsi dopo aver fatto delete
   deleteCourse($event: CourseModel[]) {
     const res = from($event).pipe(
       concatMap(course => {

@@ -194,10 +194,10 @@ export class ProfessorService {
   }
 
   updateCourse(course: CourseModel){
-    return this.http.post<any>(API_URL + 'courses/' + course.name + '/update', course);
+    return this.http.post<boolean>(API_URL + 'courses/' + course.name + '/update', course);
   }
 
   deleteCourse(courseName: string){
-    return this.http.get<any>(API_URL + 'courses/' + courseName + '/delete');
+    return this.http.post<boolean>(API_URL + 'courses/' + courseName + '/delete', {});
   }
 }

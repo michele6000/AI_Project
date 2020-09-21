@@ -50,7 +50,7 @@ public class NotificationServiceImpl implements NotificationService {
         message.setTo(this.address);
         message.setSubject(subject);
         message.setText(body);
-        emailSender.send(message);
+        //emailSender.send(message);
     }
 
     @Override

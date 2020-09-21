@@ -161,7 +161,7 @@ public class StudentController {
 
     @PostMapping("/{studentId}/{submissionId}/addSolution") //
     public String addSolution(@PathVariable String studentId, @PathVariable Long submissionId,
-                              @RequestPart("submission") SolutionDTO sol,
+                              @RequestPart("solution") SolutionDTO sol,
                               @RequestPart("file") MultipartFile file) {
         if (!isMe(studentId))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to add a solution!");
