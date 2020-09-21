@@ -12,11 +12,11 @@
       <input #fileInput (change)="handleFileSelect($event)" hidden id="file" type="file">
       <button (click)="uploadSolution(consegna.id)" class="float-right ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>
       <button (click)="fileInput.click()" class="float-right" mat-raised-button type="button">Choose file</button>
+      <button (click)="handleShowSubmission(consegna.id)" class="float-right" mat-raised-button type="button">Show submission</button>
       <h2>History</h2>
       <mat-list>
         <mat-list-item *ngFor="let a of consegna.history ">{{a.timestamp}} - {{a.status}}</mat-list-item>
       </mat-list>
     </mat-expansion-panel>
   </mat-accordion>
-  <img [src]="imageToShow" />
 </div>

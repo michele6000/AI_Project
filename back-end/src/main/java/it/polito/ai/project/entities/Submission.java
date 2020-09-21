@@ -14,7 +14,7 @@ public class Submission {
     @Id
     @GeneratedValue
     private Long id;
-
+    private String content;
     private Timestamp expiryDate;
     private Timestamp releaseDate;
     @Lob

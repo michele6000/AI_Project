@@ -11,5 +11,6 @@ public class SubmissionDTO {
     private Timestamp expiryDate;
     private Timestamp releaseDate;
     private Byte[] image;
+    private String content;
 
 }

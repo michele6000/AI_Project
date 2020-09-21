@@ -54,5 +54,6 @@ public interface VmService {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     TeamDTO setTeamLimit(TeamDTO team);
 
-
+//    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    byte[] getVmImage(Long vmId);
 }

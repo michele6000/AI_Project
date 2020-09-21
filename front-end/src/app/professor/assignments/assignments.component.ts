@@ -66,4 +66,8 @@ export class AssignmentsComponent implements OnInit {
 
       });
   }
+
+  handleShowSubmission(id: string) {
+    window.open("//"+"localhost:8080/API/courses/submissions/getImage/"+id, "_blank");
+  }
 }

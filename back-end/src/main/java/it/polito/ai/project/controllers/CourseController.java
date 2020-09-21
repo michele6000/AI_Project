@@ -322,12 +322,12 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "{courseName}/submissions/{id}/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void showImage(HttpServletResponse response, @PathVariable String courseName, @PathVariable Long id)
+    @GetMapping(value = "/submissions/getImage/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public void showImage(HttpServletResponse response, @PathVariable Long id)
             throws ServletException, IOException{
         response.addHeader("Access-Control-Allow-Origin","*");
         response.setContentType("image/jpeg");
-        response.getOutputStream().write(submissionService.getSubmissionImage(courseName,id));
+        response.getOutputStream().write(submissionService.getSubmissionImage(id));
         response.getOutputStream().close();
     }
 

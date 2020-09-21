@@ -18,7 +18,7 @@ export class CreateAssignmentComponent implements OnInit {
   date: FormGroup;
   minDate: Date;
   minExpiryDate: Date;
-
+  content: string;
   chosenReleaseDate: Date;
   chosenExpiryDate: Date;
 

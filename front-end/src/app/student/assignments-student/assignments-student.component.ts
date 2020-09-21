@@ -40,9 +40,6 @@ export class AssignmentsStudentComponent implements OnInit {
         res.forEach((c) => {
           c.expiryString = moment(c.expiryDate).format('L');
           c.releaseString = moment(c.releaseDate).format('L');
-          c.blob = new Blob(c.image, { type: 'image/png' });
-          this.createImageFromBlob(c.blob);
-
           // @todo Riempire con tutti gli elaborati dello studente
           this.studentService.getHistorySolutions(localStorage.getItem('id'), c.id).subscribe(
             (resHistory) => {
@@ -86,5 +83,9 @@ export class AssignmentsStudentComponent implements OnInit {
     this.studentService.addSolution(localStorage.getItem('id'), id, this.file.name).subscribe((res) => {
       console.log(res);
     });
+  }
+
+  handleShowSubmission(id: string) {
+    window.open("//"+"localhost:8080/API/courses/submissions/getImage/"+id, "_blank");
   }
 }

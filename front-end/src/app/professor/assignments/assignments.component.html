@@ -12,6 +12,7 @@
           </div>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <button (click)="handleShowSubmission(consegna.id)" class="float-right" mat-raised-button type="button">Show submission</button>
       <app-table-filter (edit)="edit($event)" [columns]="columnsElaborati" [data]="consegna.elaborati"
                         filterColumn="status"></app-table-filter>
     </mat-expansion-panel>

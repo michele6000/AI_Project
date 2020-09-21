@@ -312,7 +312,7 @@ public class VmServiceImpl implements VmService {
         _vm.setHdd(vm.getHdd());
         _vm.setCpu(vm.getCpu());
         _vm.setRam(vm.getRam());
-        _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + optionalVMTypeEntity.get().getId());
+//        _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + optionalVMTypeEntity.get().getId());
 
         try{
             Resource resource = new ClassPathResource("./templates/linux.png");
@@ -331,6 +331,8 @@ public class VmServiceImpl implements VmService {
             throw new TeamServiceException("Error saving image: " + e.getMessage());
         }
 
+        _vm = vmRepo.save(_vm);
+        _vm.setAccessLink("http://localhost:8080/API/vm/getImage/"+_vm.getId());
         return modelMapper.map(vmRepo.save(_vm), VMDTO.class);
     }
 
@@ -346,5 +348,21 @@ public class VmServiceImpl implements VmService {
         optionalTeamEntity.get().setLimit_instance(team.getLimit_instance());
         optionalTeamEntity.get().setLimit_active_instance(team.getLimit_active_instance());
         return team;
+    }
+
+    @Override
+    public byte[] getVmImage(Long vmId) {
+        Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
+        if (!optionalVMEntity.isPresent()) {
+            throw new VmNotFoundException("Vm not found!");
+        }
+
+        Byte[] image = vmRepo.getOne(vmId).getImage();
+        int j=0;
+        byte[] bytes = new byte[image.length];
+        for(Byte b: image)
+            bytes[j++] = b;
+
+        return bytes;
     }
 }

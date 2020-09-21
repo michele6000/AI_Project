@@ -292,8 +292,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public byte[] getSubmissionImage(String courseName, Long submissionId) {
-        if (!solutionRepo.existsById(submissionId))
+    public byte[] getSubmissionImage( Long submissionId) {
+        if (!submissionRepo.existsById(submissionId))
             throw new SolutionNotFoundException("Submission not found!");
 
         Byte[] image = submissionRepo.getOne(submissionId).getImage();
