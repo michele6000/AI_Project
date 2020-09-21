@@ -172,17 +172,7 @@ public class StudentController {
         }
     }
 
-    @Deprecated
-    @PostMapping("/{studentId}/{submissionId}/updateSolution")
-    public String updateSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
-        if (!isMe(studentId))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to add a solution!");
-        try {
-            return submissionService.updateSolution(submissionId, sol, studentId);
-        } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
+
 
     //  SOLUTIONS END
 
@@ -229,6 +219,18 @@ public class StudentController {
             if (e instanceof TeamServiceException)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
             else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+    }
+
+    @Deprecated
+    @PostMapping("/{studentId}/{submissionId}/updateSolution")
+    public String updateSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
+        if (!isMe(studentId))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to add a solution!");
+        try {
+            return submissionService.updateSolution(submissionId, sol, studentId);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 

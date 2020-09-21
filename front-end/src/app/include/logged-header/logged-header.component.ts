@@ -42,7 +42,6 @@ export class LoggedHeaderComponent implements OnInit {
     let imageUrl = 'http://localhost:8080/auth/getImage?id=' + this.username;
 
     this.getBase64ImageFromURL(imageUrl).subscribe(base64data => {
-      console.log(base64data);
       this.base64Image = 'data:image/jpg;base64,' + base64data;
     });
   }
@@ -82,7 +81,6 @@ export class LoggedHeaderComponent implements OnInit {
     var ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
     var dataURL = canvas.toDataURL("image/png");
-    console.log(dataURL);
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
   }
 
