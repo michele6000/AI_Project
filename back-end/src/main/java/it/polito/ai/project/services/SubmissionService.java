@@ -22,7 +22,7 @@ public interface SubmissionService {
     SolutionDTO getLastSolution(String studentId, Long submissionId, String username);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
-    String addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId, MultipartFile solutionFile);
+    SolutionDTO addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId, MultipartFile solutionFile);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
