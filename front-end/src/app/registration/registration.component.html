@@ -35,6 +35,13 @@
         <mat-label>Email</mat-label>
         <input #email="ngModel" email matInput name="email" ngModel placeholder="Mail" required type="email">
       </mat-form-field>
+
+      <div class="dialog-position-field">
+        <span>Assignment Content</span>
+        <button (click)="fileInput.click()" class="ml-20" mat-raised-button type="button">Choose file</button>
+        <input #fileInput (change)="handleFileSelect($event)" accept="image/jpeg,image/png,application/pdf" hidden
+               id="file" type="file">
+      </div>
       <button [disabled]="!f.valid" color="primary" mat-raised-button>REGISTER</button>
     </form>
   </mat-card-content>

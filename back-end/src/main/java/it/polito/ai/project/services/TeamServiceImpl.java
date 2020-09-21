@@ -591,6 +591,15 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public Byte[] getImage(String username) {
+        if(username.startsWith("s"))
+            return studentRepo.getOne(username).getImage();
+        else if (username.startsWith("d"))
+            return profRepo.getOne(username).getImage();
+        return new Byte[0];
+    }
+
+    @Override
     public boolean addProfessorToCourse(String professorId, String courseName) {
         Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
         if (!optionalCourseEntity.isPresent()) {
