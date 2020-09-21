@@ -10,6 +10,8 @@ import it.polito.ai.project.repositories.*;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -313,10 +315,10 @@ public class VmServiceImpl implements VmService {
         _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + optionalVMTypeEntity.get().getId());
 
         try{
-            File fileItem = new File("./../resources/static/linux.png");
-            FileInputStream input = new FileInputStream(fileItem);
+            Resource resource = new ClassPathResource("./templates/linux.png");
+            FileInputStream input = new FileInputStream(resource.getFile());
             MultipartFile file = new MockMultipartFile("fileItem",
-                    fileItem.getName(), "image/png", input.readAllBytes());
+                    resource.getFile().getName(), "image/png", input.readAllBytes());
             Byte[] byteObjects = new Byte[file.getBytes().length];
 
             int i = 0;

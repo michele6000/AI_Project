@@ -292,9 +292,37 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
+    public byte[] getSubmissionImage(String courseName, Long submissionId) {
+        if (!solutionRepo.existsById(submissionId))
+            throw new SolutionNotFoundException("Submission not found!");
+
+        Byte[] image = submissionRepo.getOne(submissionId).getImage();
+        int j=0;
+        byte[] bytes = new byte[image.length];
+        for(Byte b: image)
+            bytes[j++] = b;
+
+        return bytes;
+    }
+
+    @Override
+    public byte[] getSolutionImage(String studentId, Long solutionId) {
+        if (!solutionRepo.existsById(solutionId))
+            throw new SolutionNotFoundException("Solution not found!");
+
+        Byte[] image = solutionRepo.getOne(solutionId).getImage();
+        int j=0;
+        byte[] bytes = new byte[image.length];
+        for(Byte b: image)
+            bytes[j++] = b;
+
+        return bytes;
+    }
+
+    @Override
     public SolutionDTO getSolution(Long solutionId, String username) {
         if (!solutionRepo.existsById(solutionId))
-            throw new SubmissionNotFoundException("Solution not found!");
+            throw new SolutionNotFoundException("Solution not found!");
 
         Solution sol = solutionRepo.getOne(solutionId);
 

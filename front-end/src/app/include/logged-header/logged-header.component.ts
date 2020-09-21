@@ -39,7 +39,7 @@ export class LoggedHeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    let imageUrl = 'http://localhost:8080/auth/getImage?id=s222942@studenti.polito.it';
+    let imageUrl = 'http://localhost:8080/auth/getImage?id=' + this.username;
 
     this.getBase64ImageFromURL(imageUrl).subscribe(base64data => {
       console.log(base64data);

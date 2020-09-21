@@ -7,11 +7,15 @@ import it.polito.ai.project.services.SubmissionService;
 import it.polito.ai.project.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -131,6 +135,15 @@ public class StudentController {
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+    }
+
+    @GetMapping(value = "{studentId}/{solutionId}/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
+    public void showImage(HttpServletResponse response, @PathVariable String studentId, @PathVariable Long solutionId)
+            throws ServletException, IOException {
+        response.addHeader("Access-Control-Allow-Origin","*");
+        response.setContentType("image/jpeg");
+        response.getOutputStream().write(submissionService.getSolutionImage(studentId,solutionId));
+        response.getOutputStream().close();
     }
 
     @PostMapping("/{studentId}/{solutionId}/evaluateSolution")
