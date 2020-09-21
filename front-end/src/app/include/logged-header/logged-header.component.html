@@ -3,7 +3,8 @@
   <span class="pointer title" routerLink="/docente">{{title}}</span>
   <span class="fill-remaining-space"></span>
   <p *ngIf="isLoggedIn" class="position mb-0" style="font-size: 15px">Welcome back, {{username}}</p>
-<!--  <img [src]="ImgUrl" alt="user image" width="50" height="60">-->
+  <img *ngIf="isLoggedIn" [src]="base64Image" alt="user image" style="margin-right: 10px" width="50" height="50">
+<!--  todo: da controllare parametri dell'imagine-->
   <button (click)="logout()" *ngIf="isLoggedIn" class="float-right" mat-raised-button>Logout</button>
   <a *ngIf="!isLoggedIn" mat-button routerLink="/register">Register</a>
   <button *ngIf="!isLoggedIn" [queryParams]="{doLogin: 'true'}" [routerLink]="['/home']" class="float-right" mat-button

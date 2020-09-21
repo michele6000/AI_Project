@@ -8,10 +8,10 @@ import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.repositories.StudentRepository;
 import it.polito.ai.project.security.jwt.JwtTokenProvider;
 import it.polito.ai.project.services.TeamService;
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
@@ -69,11 +72,28 @@ public class AuthController {
             Map<Object, Object> model = new HashMap<>();
             model.put("username", username);
             model.put("token", token);
-            model.put("image",service.getImage(username));
+
+
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.IMAGE_PNG);
+//
+//
+//            model.put("image",new HttpEntity<>(, headers));
+
+
             return ok(model);
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid username/password supplied!");
         }
+    }
+
+    @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
+    public void showImage(@RequestParam("id") String username, HttpServletResponse response, HttpServletRequest request)
+            throws ServletException, IOException{
+        response.addHeader("Access-Control-Allow-Origin","*");
+        response.setContentType("image/jpeg");
+        response.getOutputStream().write(service.getImage(username.split("@")[0]));
+        response.getOutputStream().close();
     }
 
 

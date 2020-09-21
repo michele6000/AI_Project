@@ -591,12 +591,20 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Byte[] getImage(String username) {
+    public byte[] getImage(String username) {
+
+        Byte[] image = new Byte[0];
         if(username.startsWith("s"))
-            return studentRepo.getOne(username).getImage();
+            image = studentRepo.getOne(username).getImage();
         else if (username.startsWith("d"))
-            return profRepo.getOne(username).getImage();
-        return new Byte[0];
+            image = profRepo.getOne(username).getImage();
+
+        int j=0;
+        byte[] bytes = new byte[image.length];
+        for(Byte b: image)
+            bytes[j++] = b;
+
+        return bytes;
     }
 
     @Override
