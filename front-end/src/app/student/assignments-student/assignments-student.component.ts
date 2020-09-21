@@ -80,17 +80,13 @@ export class AssignmentsStudentComponent implements OnInit {
   }
 
   uploadSolution(id: string) {
-    // Carica la soluzione proposta dallo studente
     this.studentService.addSolution(localStorage.getItem('id'), id, this.file).subscribe(
       (res) => {
-        console.log("Res " + res);
         this.snackBar.open('Solution uploaded successfully.', 'OK', {
           duration: 5000
         });
       },
       (error) => {
-        console.log("Error ");
-        console.log(error);
         this.snackBar.open('Error uploading solution, try again.', 'OK', {
           duration: 5000
         });
