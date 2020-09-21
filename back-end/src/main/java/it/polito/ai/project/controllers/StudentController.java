@@ -160,7 +160,7 @@ public class StudentController {
     }
 
     @PostMapping("/{studentId}/{submissionId}/addSolution") //
-    public String addSolution(@PathVariable String studentId, @PathVariable Long submissionId,
+    public SolutionDTO addSolution(@PathVariable String studentId, @PathVariable Long submissionId,
                               @RequestPart("solution") SolutionDTO sol,
                               @RequestPart("file") MultipartFile file) {
         if (!isMe(studentId))
