@@ -136,7 +136,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     // @Todo ->
     @Override
-    public String addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId, MultipartFile solutionFile) {
+    public SolutionDTO addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId, MultipartFile solutionFile) {
 
         if (solutionDTO == null)
             throw new SolutionNotFoundException("Bad request!");
@@ -185,7 +185,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         solutionRepo.save(solution);
         studentRepo.getOne(studentId).addSolution(solution);
 
-        return "Solution successfully created, id = " + solution.getId() + " Version = " + solution.getVersion();
+        return modelMapper.map(solutionRepo.getOne(solution.getId()),SolutionDTO.class);
     }
 
 
