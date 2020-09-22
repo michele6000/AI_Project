@@ -1,18 +1,22 @@
 <div class="w-50 container">
   <p *ngIf="!hasConsegne">There are no assignments available for this course.</p>
   <mat-accordion>
-    <mat-expansion-panel *ngFor="let consegna of consegne" (afterExpand)="openSubmission(consegna.id)">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <div>
+    <mat-expansion-panel #expansionPanel *ngFor="let consegna of consegne"  >
+      <mat-expansion-panel-header (click)="expandPanel(expansionPanel, $event)">
+        <mat-panel-title style="margin-top: 9px !important;">
             {{consegna.content}} - {{consegna.expiryString}}
-            <button (click)="handleShowSubmission(consegna.id)" class="ml-20" mat-raised-button type="button">Show submission</button>
-          </div>
         </mat-panel-title>
+        <mat-panel-description>
+          <button (click)="handleShowSubmission(consegna.id)" class="submissionButton" mat-raised-button color="primary" type="button">Show submission</button>
+        </mat-panel-description>
       </mat-expansion-panel-header>
       <input #fileInput (change)="handleFileSelect($event)" hidden id="file" type="file">
-      <button (click)="uploadSolution(consegna.id)" class="float-right ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>
-      <button (click)="fileInput.click()" class="float-right" mat-raised-button type="button">Choose file</button>
+
+      <button (click)="fileInput.click()"  mat-raised-button type="button">Choose file</button>
+      <button (click)="uploadSolution(consegna.id)" class="ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>
+
+      <mat-divider class="mt-10 mb-20"></mat-divider>
+
       <h2>History</h2>
       <mat-list>
         <mat-list-item *ngFor="let a of consegna.history ">{{a.timestamp}} - {{a.status}}</mat-list-item>

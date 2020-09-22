@@ -1,11 +1,16 @@
-<button class="delete" type="submit" mat-button (click)="delete()" *ngIf="showDelete">Delete selected
-  <mat-icon color="primary" class="icon-delete">delete</mat-icon>
-</button>
-<table [dataSource]="dataSource" class="mat-elevation-z4 w-100" mat-table matSort>
+<!--<button class="delete" type="submit" mat-button (click)="delete()" *ngIf="showDelete">Delete selected-->
+<!--  <mat-icon color="primary" class="icon-delete">delete</mat-icon>-->
+<!--</button>-->
+<mat-divider class="mt-10 mb-20"></mat-divider>
+<h1>Enrolled students:</h1>
+<table [dataSource]="dataSource" style="margin-top: 20px" class="mat-elevation-z4 w-100" mat-table matSort>
   <ng-container matColumnDef="select">
     <th *matHeaderCellDef mat-header-cell>
       <mat-checkbox (change)="changeStatusAll($event.checked)" [checked]="isAllChecked()"
                     [indeterminate]="isIndeterminated()"></mat-checkbox>
+      <button style="margin-left: 5px" mat-icon-button color="warn" matTooltip="Delete selected student(s)" (click)="delete()">
+        <mat-icon>delete</mat-icon>
+      </button>
     </th>
     <td *matCellDef="let element" mat-cell>
       <mat-checkbox (change)="changeStatus(element)" [checked]="change(element)"></mat-checkbox>

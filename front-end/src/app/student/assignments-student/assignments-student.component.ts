@@ -25,6 +25,22 @@ export class AssignmentsStudentComponent implements OnInit {
 
   imageToShow: any;
 
+  panelOpenState = false;
+
+  expandPanel(matExpansionPanel, event): void {
+    event.stopPropagation(); // Preventing event bubbling
+
+    if (!this._isExpansionIndicator(event.target)) {
+      matExpansionPanel.close(); // Here's the magic
+    }
+  }
+
+  private _isExpansionIndicator(target: EventTarget): boolean {
+    const expansionIndicatorClass = 'mat-expansion-indicator';
+
+    return (target['classList'] && target['classList'].contains(expansionIndicatorClass) );
+  }
+
   createImageFromBlob(image: Blob) {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
@@ -78,11 +94,11 @@ export class AssignmentsStudentComponent implements OnInit {
     console.log(this.file);
   }
 
-  openSubmission(id: string) {
-    this.studentService.getSubmissionById(this.corso.name, id).subscribe((res) => {
-      console.log(res);
-    });
-  }
+  // openSubmission(id: string) {
+  //   // this.studentService.getSubmissionById(this.corso.name, id).subscribe((res) => {
+  //   //   console.log(res);
+  //   // });
+  // }
 
   uploadSolution(id: string) {
     this.studentService.addSolution(localStorage.getItem('id'), id, this.file).subscribe(
@@ -100,6 +116,9 @@ export class AssignmentsStudentComponent implements OnInit {
   }
 
   handleShowSubmission(id: string) {
+    this.studentService.getSubmissionById(this.corso.name, id).subscribe((res) => {
+      console.log(res);
+    });
     window.open('//' + API_URL_PUBLIC+'courses/submissions/getImage/' + id, '_blank');
   }
 }

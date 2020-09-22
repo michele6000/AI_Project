@@ -24,11 +24,13 @@ export class AssignmentsComponent implements OnInit {
 
   private courseParam: string;
   private corso: CourseModel;
+  show: boolean;
 
   constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService) {
   }
 
   ngOnInit(): void {
+    this.show=false;
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
 
@@ -45,6 +47,7 @@ export class AssignmentsComponent implements OnInit {
           consegne.push(c);
         });
         this.consegne = consegne;
+        this.show = consegne.length != 0;
       },
       (error) => {
         console.log(error);

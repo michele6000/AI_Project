@@ -1,10 +1,12 @@
 <div class="w-70 container">
-  <div class="text-right">
-    <button (click)="createAssignment($event)" class="mb-10" color="primary" mat-raised-button>Create Assignment
-    </button>
+  <div class="d-flex align-items-center">
+    <h2  class="mb-10 mr-20">Create assignment:</h2>
+    <button (click)="createAssignment($event)" class="ml-20 mb-10" color="primary" mat-raised-button>Create Assignment </button>
   </div>
-  <mat-accordion>
-    <mat-expansion-panel *ngFor="let consegna of consegne">
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <h1 *ngIf="show" >Assignments of the course:</h1>
+  <mat-accordion *ngIf="show">
+    <mat-expansion-panel *ngFor="let consegna of consegne" class="mb-20" >
       <mat-expansion-panel-header>
         <mat-panel-title>
           <div>

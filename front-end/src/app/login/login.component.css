@@ -1,4 +1,4 @@
 .dimensioni {
   width: 400px;
-  height: 250px;
+  max-height: 250px;
 }

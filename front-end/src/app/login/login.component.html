@@ -1,13 +1,11 @@
-<mat-card class="example-card dimensioni">
-  <mat-card-header>
-    <mat-card-title>Login</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <mat-error *ngIf="error" class="mt-10-center">
+<div class="dimensioni">
+<mat-card-title>Login</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <mat-error *ngIf="error" class="mt-10-center">
       Credenziali errate
     </mat-error>
     <form #f="ngForm" (ngSubmit)="login(f)" class="login-form">
-      <mat-form-field class="dialog-position-field">
+      <mat-form-field class="w-100">
         <mat-label>Email</mat-label>
         <input #email="ngModel" email matInput name="email" ngModel placeholder="Email" required type="email" value="">
         <mat-error *ngIf="email.invalid">
@@ -18,17 +16,17 @@
         </mat-error>
       </mat-form-field>
       <br>
-      <mat-form-field class="dialog-position-field">
+      <mat-form-field class="w-100">
         <mat-label>Password</mat-label>
         <input #password="ngModel" matInput name="password" ngModel required type="password" value="">
         <mat-error *ngIf="password.dirty && password.touched">
           Password obbligatoria
         </mat-error>
       </mat-form-field>
-      <mat-card-actions>
-        <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit">Login</button>
+      <mat-card-actions class="float-right mb-0">
+        <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit" style="margin-right: 20px">Login</button>
         <button [routerLink]="['/home']" mat-button mat-dialog-close>Cancel</button>
       </mat-card-actions>
     </form>
-  </mat-card-content>
-</mat-card>
+</div>
+

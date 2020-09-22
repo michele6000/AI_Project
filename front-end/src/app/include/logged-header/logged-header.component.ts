@@ -31,7 +31,7 @@ export class LoggedHeaderComponent implements OnInit {
         this.email = next.email;
         this.username = this.email.split("@")[0];
         this.isLoggedIn = true;
-        this.title = 'VIRTUAL LABS';
+        this.title = 'Teams';
         this.ImgUrl = next.image
 
       } else {
