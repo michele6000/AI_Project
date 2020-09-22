@@ -1,6 +1,7 @@
 package it.polito.ai.project.services;
 
 import it.polito.ai.project.dtos.SolutionDTO;
+import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.SubmissionDTO;
 import it.polito.ai.project.entities.Course;
 import it.polito.ai.project.entities.Solution;
@@ -229,9 +230,10 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new StudentNotFoundException("Student not enrolled in this course!");
 
         return s.getSolutions().stream().filter(sol -> sol.getSubmission().equals(submission))
-                .map(sol -> modelMapper.map(sol, SolutionDTO.class))
+                .map(sol -> modelMapper.typeMap(Solution.class, SolutionDTO.class).addMappings(mapper -> {
+                    mapper.skip(SolutionDTO::setImage);
+                }).map(sol))
                 .collect(Collectors.toList());
-
     }
 
     public List<SolutionDTO> getAllSolutionsForStudentForCourse(String courseName, String studentId) {

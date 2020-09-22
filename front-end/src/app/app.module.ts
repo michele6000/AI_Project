@@ -57,6 +57,7 @@ import {DialogDeleteVmComponent} from './student/vms-student/dialog-delete-vm/di
 import {CreateAssignmentComponent} from './dialog/create-assignment/create-assignment.component';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
+import { ConfirmDeleteComponent } from './dialog/confirm-delete/confirm-delete.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +93,8 @@ import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
     VmsTableComponent,
     VmsTableComponent,
     DialogDeleteVmComponent,
-    CreateAssignmentComponent
+    CreateAssignmentComponent,
+    ConfirmDeleteComponent
   ],
   imports: [
     BrowserModule,

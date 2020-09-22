@@ -141,11 +141,11 @@ export class StudentService {
     return this.http.get<any[]>(API_URL + 'students/' + studentId + '/' + submissionId + '/getHistorySolutions');
   }
 
-  getSubmissionById(courseName: string, submissionId: string) {
+  getSubmissionById(courseName: string, submissionId: number) {
     return this.http.get<any>(API_URL + 'courses/' + courseName + '/submissions/' + submissionId);
   }
 
-  addSolution(studentId: string, submissionId: string, solution: File) {
+  addSolution(studentId: string, submissionId: number, solution: File) {
     const formData = new FormData();
     const solutionModel = new SolutionModel();
     const solutionStr = new Blob([JSON.stringify(solutionModel)], { type: 'application/json'});

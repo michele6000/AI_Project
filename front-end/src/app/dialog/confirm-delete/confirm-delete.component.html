@@ -1,0 +1,10 @@
+<div class="dimensioni">
+  <mat-card-title>Confirm delete</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+    <p>This is a destructive operation.</p>
+    <p>Are you sure?</p>
+    <mat-card-actions class="float-right mb-0">
+      <button color="primary" mat-button mat-raised-button (click)="confirm()">Confirm</button>
+      <button (click)="closeDialog()" mat-button mat-dialog-close>Abort</button>
+    </mat-card-actions>
+</div>

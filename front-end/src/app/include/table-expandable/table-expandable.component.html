@@ -1,4 +1,4 @@
-<table #outerSort="matSort" [dataSource]="dataSource" class="mat-elevation-z8" mat-table matSort multiTemplateDataRows>
+<table #outerSort="matSort" [dataSource]="dataSource" class="mat-elevation-z8 w-100" mat-table matSort multiTemplateDataRows>
   <ng-container *ngFor="let column of columnsToDisplay" matColumnDef="{{column}}">
     <th *matHeaderCellDef mat-header-cell mat-sort-header> {{column}} </th>
     <td *matCellDef="let element" mat-cell> {{element[column]}} </td>
@@ -38,4 +38,4 @@
   </tr>
   <tr *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row" mat-row></tr>
 </table>
-<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" class="mat-elevation-z4" showFirstLastButtons></mat-paginator>
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" class="mat-elevation-z4 w-100" showFirstLastButtons></mat-paginator>
