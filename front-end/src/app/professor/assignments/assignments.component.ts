@@ -7,7 +7,7 @@ import {CourseModel} from '../../models/course.model';
 import {ProfessorService} from '../../services/professor.service';
 import * as moment from 'moment';
 
-const API_URL_PUBLIC = '/public/API/';
+const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
 
 

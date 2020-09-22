@@ -5,7 +5,7 @@ import {Router} from '@angular/router';
 import * as moment from 'moment';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
-const API_URL_PUBLIC = '/public/API/';
+const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
 
 
