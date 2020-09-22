@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {ProfessorService} from '../../services/professor.service';
 import {CourseModel} from '../../models/course.model';
+import {MatDialogRef} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-create-course',
@@ -11,7 +13,7 @@ import {CourseModel} from '../../models/course.model';
 export class CreateCourseComponent implements OnInit {
   error = false;
 
-  constructor(private professorService: ProfessorService) {
+  constructor(private professorService: ProfessorService, private dialogRef: MatDialogRef<CreateCourseComponent>, private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
@@ -25,6 +27,15 @@ export class CreateCourseComponent implements OnInit {
       max: f.value.max,
       enabled: true
     };
-    this.professorService.createCourse(course);
+    if (this.professorService.createCourse(course)){
+      this.dialogRef.close();
+      this.snackBar.open('Course create successfully', 'OK', {
+        duration: 5000
+      });
+    } else {
+      this.snackBar.open('Error creating course ' + course.name, 'OK', {
+        duration: 5000
+      });
+    }
   }
 }

@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,7 +81,7 @@ public class TeamController {
     public void deleteMember(@PathVariable Long teamId, @PathVariable String studentId) {
         try {
             //se non sono professore (sono studente) e sto provando a cancellare un membro diverso da me stesso
-            if (!getCurrentRoles().contains("PROFESSOR") && getCurrentUsername() != studentId)
+            if (!getCurrentRoles().contains("ROLE_PROFESSOR") && getCurrentUsername() != studentId)
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete this member!");
             service.deleteMember(teamId, studentId);
         } catch (TeamServiceException e) {
@@ -89,12 +90,12 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/{studentId}/addMember")
-    public void addMember(@PathVariable Long teamId, @PathVariable String studentId) {
+    public void addMember(@PathVariable Long teamId, @PathVariable String studentId, @RequestParam Timestamp timestamp) {
         List<String> students = new ArrayList<>();
         try {
             service.addMember(teamId, studentId);
             students.add(studentId);
-            notifyService.notifyTeam(service.getTeam(teamId), students);
+            notifyService.notifyTeam(service.getTeam(teamId), students, timestamp);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -104,7 +105,7 @@ public class TeamController {
     //TODO: chi può farlo oltre al professore? Può essere usata dallo studente per annullare vecchie proposte, ma come?
     public void evictTeam(@PathVariable Long teamId) {
         try {
-            if (!getCurrentRoles().contains("PROFESSOR"))
+            if (!getCurrentRoles().contains("ROLE_PROFESSOR"))
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to evict this team!");
             service.evictTeam(teamId);
         } catch (TeamServiceException e) {
@@ -124,10 +125,11 @@ public class TeamController {
     @PostMapping("/{teamId}/setTeamLimits")
     public TeamDTO createVmInstance(@PathVariable Long teamId, @RequestBody TeamDTO team) {
         try {
-            if (!getCurrentRoles().contains("PROFESSOR")) throw new ResponseStatusException(
+            if (!getCurrentRoles().contains("ROLE_PROFESSOR")) throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     "You are not allowed set limits of this team!"
             );
+            team.setId(teamId);
             return vmService.setTeamLimit(team);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

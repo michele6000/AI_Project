@@ -13,6 +13,7 @@ export class RegistrationComponent implements OnInit {
 
   errorPw = false;
   notValidDomain = false;
+  file: File;
 
   constructor(private authService: AuthService, private router: Router) {
   }
@@ -31,7 +32,7 @@ export class RegistrationComponent implements OnInit {
       user.password = f.value.password;
       user.email = f.value.email;
 
-      this.authService.register(user).subscribe(result => {
+      this.authService.register(user, this.file).subscribe(result => {
         if (result === false) {
           this.notValidDomain = true;
         } else {
@@ -39,5 +40,9 @@ export class RegistrationComponent implements OnInit {
         }
       });
     }
+  }
+
+  handleFileSelect($event: any) {
+    this.file = $event.target.files[0];
   }
 }

@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +51,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     private ProfessorRepository profRepo;
 
     @Override
-    public SubmissionDTO addSubmission(SubmissionDTO submissionDTO, String courseName, String profId) {
+    public SubmissionDTO addSubmission(SubmissionDTO submissionDTO, String courseName, String profId, MultipartFile submissionFile) {
 
         if (submissionDTO == null)
             throw new SubmissionNotFoundException("Bad request!");
@@ -68,6 +70,20 @@ public class SubmissionServiceImpl implements SubmissionService {
             submissionRepo.delete(submissionEntity);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
         }
+
+        try{
+            Byte[] byteObjects = new Byte[submissionFile.getBytes().length];
+
+            int i = 0;
+
+            for (byte b : submissionFile.getBytes())
+                byteObjects[i++] = b;
+
+            submissionEntity.setImage(byteObjects);
+        } catch (IOException e) {
+            throw new TeamServiceException("Error saving image: " + e.getMessage());
+        }
+
 
         submissionEntity.setCourse(course);
         submissionEntity = submissionRepo.save(submissionEntity);
@@ -118,8 +134,9 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
 
+    // @Todo ->
     @Override
-    public String addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId) {
+    public SolutionDTO addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId, MultipartFile solutionFile) {
 
         if (solutionDTO == null)
             throw new SolutionNotFoundException("Bad request!");
@@ -152,17 +169,31 @@ public class SubmissionServiceImpl implements SubmissionService {
         solution.setStudent(studentRepo.getOne(studentId));
         solution.setVersion((int) (version + 1L));
 
+        try{
+            Byte[] byteObjects = new Byte[solutionFile.getBytes().length];
+
+            int i = 0;
+
+            for (byte b : solutionFile.getBytes())
+                byteObjects[i++] = b;
+
+            solution.setImage(byteObjects);
+        } catch (IOException e) {
+            throw new TeamServiceException("Error saving image: " + e.getMessage());
+        }
+
         solutionRepo.save(solution);
         studentRepo.getOne(studentId).addSolution(solution);
 
-        return "Solution successfully created, id = " + solution.getId() + " Version = " + solution.getVersion();
+        return modelMapper.map(solutionRepo.getOne(solution.getId()),SolutionDTO.class);
     }
 
 
+    @Deprecated
     @Override
     public String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId) {
         try {
-            return addSolution(submissionId, solutionDTO, studentId);
+            return "DEPRECATED";
         } catch (TeamServiceException e) {
             throw e;
         }
@@ -262,9 +293,37 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
+    public byte[] getSubmissionImage( Long submissionId) {
+        if (!submissionRepo.existsById(submissionId))
+            throw new SolutionNotFoundException("Submission not found!");
+
+        Byte[] image = submissionRepo.getOne(submissionId).getImage();
+        int j=0;
+        byte[] bytes = new byte[image.length];
+        for(Byte b: image)
+            bytes[j++] = b;
+
+        return bytes;
+    }
+
+    @Override
+    public byte[] getSolutionImage(String studentId, Long solutionId) {
+        if (!solutionRepo.existsById(solutionId))
+            throw new SolutionNotFoundException("Solution not found!");
+
+        Byte[] image = solutionRepo.getOne(solutionId).getImage();
+        int j=0;
+        byte[] bytes = new byte[image.length];
+        for(Byte b: image)
+            bytes[j++] = b;
+
+        return bytes;
+    }
+
+    @Override
     public SolutionDTO getSolution(Long solutionId, String username) {
         if (!solutionRepo.existsById(solutionId))
-            throw new SubmissionNotFoundException("Solution not found!");
+            throw new SolutionNotFoundException("Solution not found!");
 
         Solution sol = solutionRepo.getOne(solutionId);
 

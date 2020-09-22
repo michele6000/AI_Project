@@ -2,7 +2,9 @@
   <mat-icon (click)="toggleForMenuClick()" *ngIf="isLoggedIn" class="pointer">menu</mat-icon>
   <span class="pointer title" routerLink="/docente">{{title}}</span>
   <span class="fill-remaining-space"></span>
-  <p *ngIf="isLoggedIn" class="position mb-0">{{email}}</p>
+  <p *ngIf="isLoggedIn" class="position mb-0" style="font-size: 15px">Welcome back, {{username}}</p>
+  <img *ngIf="isLoggedIn" [src]="base64Image" alt="user image" class="img">
+<!--  todo: da controllare parametri dell'imagine-->
   <button (click)="logout()" *ngIf="isLoggedIn" class="float-right" mat-raised-button>Logout</button>
   <a *ngIf="!isLoggedIn" mat-button routerLink="/register">Register</a>
   <button *ngIf="!isLoggedIn" [queryParams]="{doLogin: 'true'}" [routerLink]="['/home']" class="float-right" mat-button

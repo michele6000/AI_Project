@@ -14,10 +14,11 @@ public class Submission {
     @Id
     @GeneratedValue
     private Long id;
-
+    private String content;
     private Timestamp expiryDate;
     private Timestamp releaseDate;
-    private String content; //image
+    @Lob
+    private Byte[] image;
 
     @ManyToOne
     @JoinColumn(name = "course_id")

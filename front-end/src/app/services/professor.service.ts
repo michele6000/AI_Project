@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {CourseModel} from '../models/course.model';
 import {VmModel} from '../models/vm.model';
 import {VmType} from '../models/vm-type.model';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {StudentModel} from '../models/student.model';
-import {GroupModel} from "../models/group.model";
-import {SubmissionModel} from "../models/submission.model";
+import {GroupModel} from '../models/group.model';
+import {SubmissionModel} from '../models/submission.model';
+import * as moment from "moment";
 
 const API_URL = '/api/API/';
 
@@ -113,20 +114,20 @@ export class ProfessorService {
 
   /* VMs */
 
-  createVMType(vm: VmType) {
-    return this.http.post<string>(API_URL + 'courses/createVMType', {vm});
+  createVMType(courseName: string, vm: VmType) {
+    return this.http.post<string>(API_URL + 'courses/' + courseName + '/createVMType', vm);
   }
 
   setVMType(courseName: string, vmtId: string) {
     return this.http.post(API_URL + 'courses/' + courseName + '/setVMType?vmtId=' + vmtId, {});
   }
 
-  updateVMType(vm: VmType) {
-
-  }
-
   findVmsByTeam(teamId: number) {
     return this.http.get<VmModel[]>(API_URL + 'team/' + teamId + '/vms');
+  }
+
+  findVmTypeByCourse(courseName: string){
+    return this.http.get<VmModel>(API_URL + 'courses/' + courseName + '/getVMType');
   }
 
   /* STUDENTS */
@@ -166,12 +167,37 @@ export class ProfessorService {
     return this.http.get<GroupModel[]>(API_URL + 'courses/' + courseName + '/teams');
   }
 
+  setTeamLimits(teamId: number, team: GroupModel) {
+    return this.http.post<any>(API_URL + 'team/' + teamId + '/setTeamLimits', team);
+  }
+
   /* SUBMISSIONS */
-  createAssignment(courseName: string, submission: SubmissionModel) {
-    return this.http.post(API_URL + 'courses/' + courseName + '/addSubmission', submission);
+  createAssignment(courseName: string, submission: SubmissionModel, file: File) {
+    const formData = new FormData();
+    const submissionStr = new Blob([JSON.stringify(submission)], { type: 'application/json'});
+    formData.append('submission', submissionStr);
+    /*formData.append('submission.submissionDTO.content', submission.content);
+    formData.append('submission.submissionDTO.expiryDate', moment(submission.expiryDate).format('YYYY-MM-DD HH:mm:ss'));
+    formData.append('submission.submissionDTO.releaseDate', moment(submission.releaseDate).format('YYYY-MM-DD HH:mm:ss'));*/
+    formData.append('file', file);
+    return this.http.post(API_URL + 'courses/' + courseName + '/addSubmission', formData);
+    /*return this.http.post(API_URL + 'courses/' + courseName + '/addSubmission', {
+      submission: {
+        multipartFile: file,
+        submissionDTO: submission
+      }
+    });*/
   }
 
   findAssignmentsByCourse(courseName: string) {
     return this.http.get<any[]>(API_URL + 'courses/' + courseName + '/getAllSubmissions');
+  }
+
+  updateCourse(course: CourseModel){
+    return this.http.post<boolean>(API_URL + 'courses/' + course.name + '/update', course);
+  }
+
+  deleteCourse(courseName: string){
+    return this.http.post<boolean>(API_URL + 'courses/' + courseName + '/delete', {});
   }
 }

@@ -4,10 +4,11 @@ import {MatDialog} from '@angular/material/dialog';
 import {CreateVmProfessorComponent} from '../../dialog/create-vm/create-vm-professor.component';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ProfessorService} from '../../services/professor.service';
-import {CourseModel} from "../../models/course.model";
-import {from} from "rxjs";
-import {concatMap, toArray} from "rxjs/operators";
-import {EditVmProfessorComponent} from "../../dialog/edit-vm-professor/edit-vm-professor.component";
+import {CourseModel} from '../../models/course.model';
+import {from} from 'rxjs';
+import {concatMap, toArray} from 'rxjs/operators';
+import {EditVmProfessorComponent} from '../../dialog/edit-vm-professor/edit-vm-professor.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-vms',
@@ -24,14 +25,24 @@ export class VmsComponent implements OnInit {
   groupsColumns = ['name'];
   innerGroupColumns = ['accessLink', 'owner', 'status'];
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService) {
+  hasVMType = false;
+
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService, private snackBar: MatSnackBar) {
 
   }
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
+    console.log("Course param " + this.courseParam);
 
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
+
+    // Recupero il VM Type, se presente
+    this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {
+      this.hasVMType = true;
+    }, error => {
+      this.hasVMType = false;
+    });
 
     // Recupero l'elenco di Teams
     this.professorService.findTeamsByCourse(this.corso.name).subscribe((teams) => {
@@ -59,11 +70,18 @@ export class VmsComponent implements OnInit {
   }
 
   createVM($event) {
-    this.dialog.open(CreateVmProfessorComponent, {})
-      .afterClosed()
-      .subscribe(result => {
-        console.log(result);
+    console.log(this.corso);
+    if (this.corso.name !== '') {
+      this.dialog.open(CreateVmProfessorComponent, {})
+          .afterClosed()
+          .subscribe(result => {
+            console.log(result);
+          });
+    } else {
+      this.snackBar.open('You must to create a course firstly', 'OK', {
+        duration: 5000
       });
+    }
   }
 
   modifyGroup($event: GroupModel) {

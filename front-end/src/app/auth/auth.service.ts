@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {UserModel} from '../models/user.models';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {shareReplay, tap} from 'rxjs/operators';
@@ -21,7 +21,7 @@ export class AuthService {
 
   user: Observable<UserLogged>;
   localUser: UserLogged = {
-    id: null, email: undefined, roles: []
+    id: null, email: undefined, roles: [], image: null
   };
   tokenExpired: Observable<boolean> = new Observable<boolean>();
   private userSubject: BehaviorSubject<UserLogged>;
@@ -39,6 +39,7 @@ export class AuthService {
       this.localUser.email = localStorage.getItem('email');
       this.localUser.roles = tkn.roles;
       this.localUser.id = localStorage.getItem('email').split('@')[0];
+      this.localUser.image = localStorage.getItem('image');
       this.loginRetrieveDatas();
       // TODO: Verificare, serve per riportare alla pagina corretta in base al ruolo dell'utente
       // dopo che vengono richiesti i dati
@@ -85,6 +86,7 @@ export class AuthService {
           localStorage.setItem('email', email);
           localStorage.setItem('id', email.split('@')[0]);
           localStorage.setItem('roles', tkn.roles);
+          localStorage.setItem('image',payload.image);
 
           this.localUser.roles = tkn.roles;
           this.localUser.id = email.split('@')[0];
@@ -125,7 +127,7 @@ export class AuthService {
     this.router.navigate(['home']);
   }
 
-  register(user: UserModel) {
+  register(user: UserModel,  file: File) {
     const email = user.email;
     let url = '';
     if (email.includes(DOMINIO_PROFESSOR)) {
@@ -134,10 +136,15 @@ export class AuthService {
       url = 'addStudent';
     }
 
+    const formData = new FormData();
+    const submissionStr = new Blob([JSON.stringify(user)], { type: 'application/json'});
+    formData.append('user', submissionStr);
+    formData.append('file', file);
+
     if (url !== '') {
       return this.http.post(
         API_URL_REGISTER + url,
-        user
+        formData,
       );
     } else {
       return of(false);

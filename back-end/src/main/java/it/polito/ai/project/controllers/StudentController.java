@@ -1,19 +1,21 @@
 package it.polito.ai.project.controllers;
 
-import it.polito.ai.project.dtos.CourseDTO;
-import it.polito.ai.project.dtos.SolutionDTO;
-import it.polito.ai.project.dtos.StudentDTO;
-import it.polito.ai.project.dtos.TeamDTO;
+import it.polito.ai.project.dtos.*;
 import it.polito.ai.project.exceptions.StudentNotFoundException;
 import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.services.SubmissionService;
 import it.polito.ai.project.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -135,6 +137,15 @@ public class StudentController {
         }
     }
 
+    @GetMapping(value = "{studentId}/{solutionId}/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
+    public void showImage(HttpServletResponse response, @PathVariable String studentId, @PathVariable Long solutionId)
+            throws ServletException, IOException {
+        response.addHeader("Access-Control-Allow-Origin","*");
+        response.setContentType("image/jpeg");
+        response.getOutputStream().write(submissionService.getSolutionImage(studentId,solutionId));
+        response.getOutputStream().close();
+    }
+
     @PostMapping("/{studentId}/{solutionId}/evaluateSolution")
     public boolean evaluateSolution(@PathVariable String studentId, @PathVariable Long solutionId, @RequestParam Long evaluation) {
         if (getCurrentRoles().contains("ROLE_STUDENT"))
@@ -149,27 +160,19 @@ public class StudentController {
     }
 
     @PostMapping("/{studentId}/{submissionId}/addSolution") //
-    public String addSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
+    public SolutionDTO addSolution(@PathVariable String studentId, @PathVariable Long submissionId,
+                              @RequestPart("solution") SolutionDTO sol,
+                              @RequestPart("file") MultipartFile file) {
         if (!isMe(studentId))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to add a solution!");
         try {
-            return submissionService.addSolution(submissionId, sol, studentId);
+            return submissionService.addSolution(submissionId, sol, studentId, file);
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @Deprecated
-    @PostMapping("/{studentId}/{submissionId}/updateSolution")
-    public String updateSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
-        if (!isMe(studentId))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to add a solution!");
-        try {
-            return submissionService.updateSolution(submissionId, sol, studentId);
-        } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
+
 
     //  SOLUTIONS END
 
@@ -206,7 +209,7 @@ public class StudentController {
     @Deprecated
     @PostMapping("/{studentId}/{submissionId}/evaluateLatestSolution")
     public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
-//    if (!getCurrentRoles().contains("PROFESSOR"))  throw new ResponseStatusException(
+//    if (!getCurrentRoles().contains("ROLE_PROFESSOR"))  throw new ResponseStatusException(
 //            HttpStatus.FORBIDDEN,
 //            "You are not allowed to evaluate a solution!"
 //    );
@@ -216,6 +219,18 @@ public class StudentController {
             if (e instanceof TeamServiceException)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
             else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+    }
+
+    @Deprecated
+    @PostMapping("/{studentId}/{submissionId}/updateSolution")
+    public String updateSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
+        if (!isMe(studentId))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to add a solution!");
+        try {
+            return submissionService.updateSolution(submissionId, sol, studentId);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 

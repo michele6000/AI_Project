@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {StudentService} from "../../services/student.service";
-import {CourseModel} from "../../models/course.model";
-import {Router} from "@angular/router";
-import * as moment from "moment";
+import {StudentService} from '../../services/student.service';
+import {CourseModel} from '../../models/course.model';
+import {Router} from '@angular/router';
+import * as moment from 'moment';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-assignments-student',
@@ -15,8 +16,22 @@ export class AssignmentsStudentComponent implements OnInit {
   consegne = [];
   private courseParam: string;
   private corso: CourseModel;
+  hasConsegne = false;
 
-  constructor(private studentService: StudentService, private router: Router) {
+  imageToShow: any;
+
+  createImageFromBlob(image: Blob) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      this.imageToShow = reader.result;
+    }, false);
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
+  }
+
+  constructor(private studentService: StudentService, private router: Router, private snackBar: MatSnackBar,) {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
     this.corso = this.studentService.findCourseByNameUrl(this.courseParam);
 
@@ -26,7 +41,6 @@ export class AssignmentsStudentComponent implements OnInit {
         res.forEach((c) => {
           c.expiryString = moment(c.expiryDate).format('L');
           c.releaseString = moment(c.releaseDate).format('L');
-
           // @todo Riempire con tutti gli elaborati dello studente
           this.studentService.getHistorySolutions(localStorage.getItem('id'), c.id).subscribe(
             (resHistory) => {
@@ -40,6 +54,9 @@ export class AssignmentsStudentComponent implements OnInit {
           consegne.push(c);
         });
         this.consegne = consegne;
+        if (consegne.length > 0) {
+          this.hasConsegne = true;
+        }
       },
       (error) => {
 
@@ -63,9 +80,21 @@ export class AssignmentsStudentComponent implements OnInit {
   }
 
   uploadSolution(id: string) {
-    // Carica la soluzione proposta dallo studente
-    this.studentService.addSolution(localStorage.getItem('id'), id, this.file.name).subscribe((res) => {
-      console.log(res);
-    });
+    this.studentService.addSolution(localStorage.getItem('id'), id, this.file).subscribe(
+      (res) => {
+        this.snackBar.open('Solution uploaded successfully.', 'OK', {
+          duration: 5000
+        });
+      },
+      (error) => {
+        this.snackBar.open('Error uploading solution, try again.', 'OK', {
+          duration: 5000
+        });
+      }
+    );
+  }
+
+  handleShowSubmission(id: string) {
+    window.open('//' + 'localhost:8080/API/courses/submissions/getImage/' + id, '_blank');
   }
 }

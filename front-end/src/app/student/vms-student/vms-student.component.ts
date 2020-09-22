@@ -35,14 +35,24 @@ export class VmsStudentComponent implements OnInit {
         this.team = teams.filter(t => t.status === 1 && t.courseName === this.corso.name)[0];
 
         // Recupero le VM del team
-        this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => this.data = vms);
+        this.studentService.findVmsByTeam(this.team.id).subscribe(
+          (vms) => {
+            const vmList = [];
+            vms.forEach((vm) => {
+              this.studentService.getVmOwners(vm.id).subscribe((owners) => {
+                console.log(vm);
+                console.log(owners);
+              });
+            });
+            this.data = vms;
+          });
       }
     });
 
   }
 
   createVM() {
-    this.dialog.open(EditVmStudentComponent)
+    this.dialog.open(EditVmStudentComponent, {data: this.team})
       .afterClosed()
       .subscribe(result => {
         console.log(result);

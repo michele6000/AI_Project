@@ -31,7 +31,7 @@ export class InfoGroupComponent implements OnInit {
 
       // Recupero l'elenco di studenti dato il team ID
       this.studentService.findMembersByTeamId(this.team.id).subscribe((students) => {
-        this.data = students.filter((s) => s.id !== localStorage.getItem('id'));
+        this.data = students;
       });
     });
   }

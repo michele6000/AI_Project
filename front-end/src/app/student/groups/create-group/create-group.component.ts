@@ -3,9 +3,12 @@ import {NgForm} from '@angular/forms';
 import {StudentModel} from '../../../models/student.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CourseModel} from '../../../models/course.model';
-import {StudentService} from "../../../services/student.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {GroupModel} from "../../../models/group.model";
+import {StudentService} from '../../../services/student.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {GroupModel} from '../../../models/group.model';
+import {concatMap, toArray} from 'rxjs/operators';
+import {forkJoin, from, Observable} from 'rxjs';
+import {MatDatepickerInputEvent} from "@angular/material/datepicker";
 
 @Component({
   selector: 'app-create-group',
@@ -26,7 +29,16 @@ export class CreateGroupComponent implements OnInit {
   message = '';
   private courseParam: string;
 
+  minDate: Date;
+  maxDate: Date;
+  chosenTimeout: Date;
+
   constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {
+    const today = new Date();
+    this.minDate = new Date();
+    this.minDate.setDate(today.getDate() + 1);
+    this.maxDate = new Date();
+    this.maxDate.setDate(today.getDate() + 15);
   }
 
   ngOnInit(): void {
@@ -50,16 +62,33 @@ export class CreateGroupComponent implements OnInit {
     this.studentService.teams.subscribe((teams) => {
       const groupData = teams ? teams.filter(t => t.courseName === this.course.name) : [];
 
+      /*from(groupData).pipe(
+        concatMap((t) => this.studentService.findMembersByTeamId(t.id) as Observable<StudentModel[]>),
+        toArray()
+      ).subscribe((res) => console.log(res));*/
+
       // Per ogni gruppo del corso recupero l'elenco degli studenti e lo stato
       groupData.forEach((t) => {
-        this.studentService.findMembersByTeamId(t.id).subscribe(
-          (payload) => {
-            t.members = payload;
-            this.groupsData = [...this.groupsData, t];
-          },
-          (error) => {
+
+        forkJoin(
+          // as of RxJS 6.5+ we can use a dictionary of sources
+          {
+            pendent: this.studentService.findPendentStudentsByTeamId(t.id),
+            confirmed: this.studentService.findConfirmedStudentsByTeamId(t.id),
           }
-        );
+        ).subscribe((res) => {
+          t.members = [];
+          res.confirmed.forEach((c) => {
+            c.status = 'Confirmed';
+            t.members.push(c);
+          });
+          res.pendent.forEach(c => {
+            c.status = 'Pendent';
+            t.members.push(c);
+          });
+          this.groupsData = [...this.groupsData, t];
+        });
+
       });
     });
   }
@@ -73,7 +102,7 @@ export class CreateGroupComponent implements OnInit {
       } else {
         this.error = false;
         this.message = '';
-        this.studentService.proposeTeam(this.selectedStudents, this.course.name, f.value.name).subscribe(
+        this.studentService.proposeTeam(this.selectedStudents, this.course.name, f.value.name, this.chosenTimeout).subscribe(
           (response) => {
             // Tutte a buon fine
             this.snackBar.open('Team proposal created successfully.', 'OK', {
@@ -88,5 +117,9 @@ export class CreateGroupComponent implements OnInit {
         );
       }
     }
+  }
+
+  timeoutChoseValue($event: MatDatepickerInputEvent<any>) {
+    this.chosenTimeout = $event.target.value;
   }
 }

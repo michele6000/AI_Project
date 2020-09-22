@@ -6,6 +6,9 @@ import {CourseModel} from '../../models/course.model';
 import {EditCourseComponent} from '../../dialog/edit-course/edit-course.component';
 import {ProfessorService} from "../../services/professor.service";
 import {AuthService} from "../../auth/auth.service";
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {from} from 'rxjs';
+import {concatMap, toArray} from 'rxjs/operators';
 
 @Component({
   selector: 'app-courses',
@@ -18,7 +21,7 @@ export class CoursesComponent implements OnInit {
   data: CourseModel[] = [];
   id: string = null;
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService) {
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {
 
   }
 
@@ -59,8 +62,28 @@ export class CoursesComponent implements OnInit {
     });
   }
 
+  //@Todo: aggiornare la tabella dei corsi dopo aver fatto delete
   deleteCourse($event: CourseModel[]) {
-    console.log($event);
+    const res = from($event).pipe(
+      concatMap(course => {
+        return this.professorService.deleteCourse(course.name);
+      }),
+      toArray()
+    );
+
+    res.subscribe((result: boolean[]) => {
+      if (result.filter(e => !e).length > 0) {
+        // Almeno una ha fallito
+        this.snackBar.open('Error delete courses .', 'OK', {
+          duration: 5000
+        });
+      } else {
+        // Tutte a buon fine
+        this.snackBar.open('Courses deleted successfully.', 'OK', {
+          duration: 5000
+        });
+      }
+    });
   }
 
   editCourse(course: CourseModel) {

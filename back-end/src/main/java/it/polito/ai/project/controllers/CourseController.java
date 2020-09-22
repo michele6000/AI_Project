@@ -9,16 +9,22 @@ import it.polito.ai.project.services.NotificationService;
 import it.polito.ai.project.services.SubmissionService;
 import it.polito.ai.project.services.TeamService;
 import it.polito.ai.project.services.VmService;
+import it.polito.ai.project.wrappers.Submission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -47,8 +53,6 @@ public class CourseController {
 
     @GetMapping({"/{professorId}/getCourses"})
     public List<CourseDTO> getProfessorCourses(@PathVariable String professorId) {
-        System.out.println(professorId);
-        System.out.println("HERE HERE HERE");
         List<CourseDTO> courses = service.getProfessorCourses(professorId);
         courses.forEach(ModelHelper::enrich);
         return courses;
@@ -64,6 +68,15 @@ public class CourseController {
         else {
             CourseDTO courseDTO = course.get();
             return ModelHelper.enrich(courseDTO);
+        }
+    }
+
+    @GetMapping("/{courseName}/getVMType")
+    public VMTypeDTO getVMType(@PathVariable String courseName) {
+        try {
+            return vmService.getVMType(courseName);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -98,20 +111,50 @@ public class CourseController {
     @PostMapping("/{courseName}/enable")
     public boolean enableCourse(@PathVariable String courseName) {
         try {
-            service.enableCourse(courseName);
+            service.enableCourse(courseName, getCurrentUsername());
             return true;
-        } catch (CourseNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (CourseNotFoundException | ResponseStatusException e) {
+            if (e instanceof ResponseStatusException)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
+
+            else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
         }
     }
 
+    @PostMapping("/{courseName}/update")
+    public boolean updateCourse(@PathVariable String courseName, @RequestBody CourseDTO ModifiedCourse) {
+        try {
+            service.updateCourse(courseName, ModifiedCourse, getCurrentUsername());
+            return true;
+        } catch (CourseNotFoundException | ResponseStatusException e) {
+            if (e instanceof ResponseStatusException)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
+
+            else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
+        }
+    }
+    @PostMapping("/{courseName}/delete")
+    public boolean deleteCourse(@PathVariable String courseName) {
+        try {
+            service.deleteCourse(courseName, getCurrentUsername());
+            return true;
+        } catch (CourseNotFoundException | ResponseStatusException e) {
+            if (e instanceof ResponseStatusException)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
+
+            else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
+        }
+    }
     @PostMapping("/{courseName}/disable")
     public boolean disableCourse(@PathVariable String courseName) {
         try {
-            service.disableCourse(courseName);
+            service.disableCourse(courseName, getCurrentUsername());
             return true;
-        } catch (CourseNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (CourseNotFoundException | ResponseStatusException e) {
+            if (e instanceof ResponseStatusException)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
+
+            else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
         }
     }
 
@@ -155,12 +198,14 @@ public class CourseController {
     public boolean proposeTeam(
             @PathVariable String courseName,
             @RequestParam String name,
+            @RequestParam Timestamp timestamp,
             @RequestBody List<String> membersIds
     ) {
         TeamDTO team;
         try {
+
             team = service.proposeTeam(courseName, name, membersIds);
-            notifyService.notifyTeam(team, membersIds);
+            notifyService.notifyTeam(team, membersIds,timestamp);
             return true;
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -237,16 +282,16 @@ public class CourseController {
 
     //  SUBMISSION START
     @PostMapping("/{courseName}/addSubmission")
-    public SubmissionDTO addSubmission(
-            @PathVariable String courseName, @RequestBody SubmissionDTO dto
-    ) {
+    public SubmissionDTO addSubmission(@PathVariable String courseName,
+                                       @RequestPart("submission") SubmissionDTO submission,
+                                       @RequestPart("file") MultipartFile file) {
         try {
             String profId = SecurityContextHolder
                     .getContext()
                     .getAuthentication()
                     .getName()
                     .split("@")[0];
-            return submissionService.addSubmission(dto, courseName, profId);
+            return submissionService.addSubmission(submission, courseName, profId, file);
         } catch (TeamServiceException | ResponseStatusException e) {
             if (e instanceof ResponseStatusException)
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Error: " + e.getMessage());
@@ -271,11 +316,19 @@ public class CourseController {
     @GetMapping("/{courseName}/submissions/{id}")
     public SubmissionDTO getSubmissionById(@PathVariable String courseName, @PathVariable Long id) {
         try {
-            System.out.println("sub: " + id);
             return submissionService.getSubmission(courseName, id, getCurrentUsername());
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+    }
+
+    @GetMapping(value = "/submissions/getImage/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public void showImage(HttpServletResponse response, @PathVariable Long id)
+            throws ServletException, IOException{
+        response.addHeader("Access-Control-Allow-Origin","*");
+        response.setContentType("image/jpeg");
+        response.getOutputStream().write(submissionService.getSubmissionImage(id));
+        response.getOutputStream().close();
     }
 
     @PostMapping("/{solutionId}/stopRevisions")

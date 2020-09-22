@@ -11,10 +11,14 @@ import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +53,15 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private NotificationService notification;
 
+    @Autowired
+    private VMTypeRepository vmTypeRepository;
+
+    @Autowired
+    private SubmissionRepository submissionRepository;
+
+    @Autowired
+    private SolutionRepository solutionRepository;
+
 
     @Override
     public boolean addCourse(CourseDTO course) {
@@ -60,13 +73,27 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public boolean addStudent(StudentDTO student) {
+    public boolean addStudent(StudentDTO student, MultipartFile file) {
         if (student == null ||
                 student.getId().length() == 0 ||
                 student.getName().length() == 0 ||
                 student.getFirstName().length() == 0
         )
             return false;
+
+        try{
+            Byte[] byteObjects = new Byte[file.getBytes().length];
+
+            int i = 0;
+
+            for (byte b : file.getBytes())
+                byteObjects[i++] = b;
+
+            student.setImage(byteObjects);
+        } catch (IOException e) {
+            throw new TeamServiceException("Error saving image: " + e.getMessage());
+        }
+
         Student studentEntity = modelMapper.map(student, Student.class);
         if (studentRepo.existsById(studentEntity.getId()))
             return false;
@@ -76,7 +103,6 @@ public class TeamServiceImpl implements TeamService {
         user.setPassword(passwordEncoder.encode(student.getPassword()));
         user.setRoles(Collections.singletonList("ROLE_STUDENT"));
         User u = userRepo.save(modelMapper.map(user, User.class));
-
         studentRepo.save(studentEntity);
         notification.sendMessage(
                 "paola.caso96@gmail.com",
@@ -136,7 +162,9 @@ public class TeamServiceImpl implements TeamService {
         if (!studentRepo.existsById(studentId)) return Optional.empty();
 
         return Optional.of(
-                modelMapper.map(studentRepo.getOne(studentId), StudentDTO.class)
+                modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(studentRepo.getOne(studentId))
         );
     }
 
@@ -145,7 +173,9 @@ public class TeamServiceImpl implements TeamService {
         return studentRepo
                 .findAll()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -158,13 +188,18 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(courseName)
                 .getStudents()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void enableCourse(String courseName) {
+    public void enableCourse(String courseName, String username) {
+
         if (courseRepo.existsById(courseName)) {
+            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
             courseRepo
                     .getOne(courseName)
                     .setEnabled(true);
@@ -177,8 +212,10 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void disableCourse(String courseName) {
+    public void disableCourse(String courseName, String username) {
         if (courseRepo.existsById(courseName)) {
+            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
             courseRepo.getOne(courseName).setEnabled(false);
             courseRepo.getOne(courseName).getTeams().forEach(t -> t.setStatus(0));
             courseRepo.getOne(courseName).getStudents().forEach(s ->
@@ -188,10 +225,64 @@ public class TeamServiceImpl implements TeamService {
         } else throw new CourseNotFoundException("Course not found!");
     }
 
+    // @Todo gestire con gli optional
+    @Override
+    public void deleteCourse(String courseName, String username) {
+        if (courseRepo.existsById(courseName)) {
+            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+
+            courseRepo.getOne(courseName).getTeams().forEach(t -> evictTeam(t.getId()));
+            profRepo.getOne(username).getCourses().remove(courseRepo.getOne(courseName));
+            courseRepo.getOne(courseName).getStudents().forEach(s ->{
+                    s.getCourses().remove(courseRepo.getOne(courseName));
+                    notification.sendMessage(s.getEmail(),
+                            "Course deleted",
+                            "We inform you that the course " + courseName + " has been deleted.");
+            });
+            vmTypeRepository.delete(courseRepo.getOne(courseName).getVmType());
+            // solution
+            // submission
+            courseRepo.getOne(courseName).getSubmissions().forEach( s -> {
+                submissionRepository.getOne(s.getId()).getSolutions().forEach( sol -> {
+                    solutionRepository.delete(sol);
+                });
+
+                submissionRepository.delete(s);
+            });
+            courseRepo.delete(courseRepo.getOne(courseName));
+        } else throw new CourseNotFoundException("Course not found!");
+
+    }
+
+    @Override
+    public void updateCourse(String courseName, CourseDTO course, String username) {
+        Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
+        if (!optionalCourseEntity.isPresent()) {
+            throw new CourseNotFoundException("Course not found!");
+        }
+
+        if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+
+        Optional<String> _courseName = Optional.ofNullable(course.getName());
+        _courseName.ifPresent(l -> optionalCourseEntity.get().setName(l));
+
+        Optional<String> _acronymous = Optional.ofNullable(course.getAcronymous());
+        _acronymous.ifPresent(l -> optionalCourseEntity.get().setAcronymous(l));
+
+        Optional<Integer> _min = Optional.of(course.getMin());
+        _min.ifPresent(l -> optionalCourseEntity.get().setMin(l));
+
+        Optional<Integer> _max = Optional.of(course.getMax());
+        _max.ifPresent(l -> optionalCourseEntity.get().setMax(l));
+        
+    }
+
     @Override
     public List<Boolean> addAll(List<StudentDTO> students) {
         List<Boolean> studentsAdded = new ArrayList<>();
-        students.forEach(s -> studentsAdded.add(addStudent(s)));
+        students.forEach(s -> studentsAdded.add(addStudent(s, null)));
         return studentsAdded;
     }
 
@@ -275,7 +366,9 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(teamId)
                 .getMembers()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -288,7 +381,9 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(teamId)
                 .getConfirmedStudents()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -301,7 +396,9 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(teamId)
                 .getPendentStudents()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -342,8 +439,16 @@ public class TeamServiceImpl implements TeamService {
         team.setLimit_hdd(0);
         team.setLimit_ram(0);
         team.setName(name);
+
+        Optional<VMType> optionalVMTypeEntity = Optional.ofNullable(courseRepo.getOne(courseId).getVmType());
+        optionalVMTypeEntity.ifPresent(team::setVmType);
+
         membersIds.forEach(
-                m -> team.addMember(studentRepo.getOne(m))
+                m -> {
+                    team.addMember(studentRepo.getOne(m));
+                    team.getPendentStudents().add(studentRepo.getOne(m));
+                }
+
         );
         team.setCourse(courseRepo.getOne(courseId));
         team.setId((teamRepo.save(team).getId()));
@@ -405,7 +510,9 @@ public class TeamServiceImpl implements TeamService {
         return courseRepo
                 .getStudentsInTeams(courseName)
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -416,7 +523,9 @@ public class TeamServiceImpl implements TeamService {
         return courseRepo
                 .getStudentsNotInTeams(courseName)
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -465,7 +574,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public boolean addProfessor(ProfessorDTO professor) {
+    public boolean addProfessor(ProfessorDTO professor, MultipartFile file) {
         if (professor == null) {
             return false;
         }
@@ -477,6 +586,20 @@ public class TeamServiceImpl implements TeamService {
         user.setUsername(id + "@polito.it");
         user.setPassword(passwordEncoder.encode(professor.getPassword()));
         user.setRoles(Collections.singletonList("ROLE_PROFESSOR"));
+
+        try{
+            Byte[] byteObjects = new Byte[file.getBytes().length];
+
+            int i = 0;
+
+            for (byte b : file.getBytes())
+                byteObjects[i++] = b;
+
+            professor.setImage(byteObjects);
+        } catch (IOException e) {
+            throw new TeamServiceException("Error saving image: " + e.getMessage());
+        }
+
         userRepo.save(modelMapper.map(user, User.class));
         profRepo.save(modelMapper.map(professor, Professor.class));
         notification.sendMessage(
@@ -485,6 +608,23 @@ public class TeamServiceImpl implements TeamService {
                 "Username: " + user.getUsername() + "\nPassword: " + professor.getPassword()
         );
         return true;
+    }
+
+    @Override
+    public byte[] getImage(String username) {
+
+        Byte[] image = new Byte[0];
+        if(username.startsWith("s"))
+            image = studentRepo.getOne(username).getImage();
+        else if (username.startsWith("d"))
+            image = profRepo.getOne(username).getImage();
+
+        int j=0;
+        byte[] bytes = new byte[image.length];
+        for(Byte b: image)
+            bytes[j++] = b;
+
+        return bytes;
     }
 
     @Override
@@ -553,5 +693,9 @@ public class TeamServiceImpl implements TeamService {
         return true;
     }
 
+    private boolean isProfessorCourse(String courseName, String profId) {
+        return courseRepo.getOne(courseName).getProfessors()
+                .contains(profRepo.getOne(profId));
+    }
 
 }

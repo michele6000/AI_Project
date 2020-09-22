@@ -1,10 +1,12 @@
 <div class="w-50 container">
+  <p *ngIf="!hasConsegne">There are no assignments available for this course.</p>
   <mat-accordion>
     <mat-expansion-panel *ngFor="let consegna of consegne" (afterExpand)="openSubmission(consegna.id)">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <div>
             {{consegna.content}} - {{consegna.expiryString}}
+            <button (click)="handleShowSubmission(consegna.id)" class="ml-20" mat-raised-button type="button">Show submission</button>
           </div>
         </mat-panel-title>
       </mat-expansion-panel-header>

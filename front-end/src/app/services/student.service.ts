@@ -6,6 +6,8 @@ import {VmStudent} from '../models/vm-student.model';
 import {StudentModel} from '../models/student.model';
 import {GroupModel} from '../models/group.model';
 import {VmModel} from '../models/vm.model';
+import * as moment from 'moment';
+import {SolutionModel} from '../models/solution.model';
 
 const API_URL = '/api/API/';
 
@@ -62,12 +64,12 @@ export class StudentService {
     }
   }
 
-  proposeTeam(students: StudentModel[], courseName: string, groupName: string) {
+  proposeTeam(students: StudentModel[], courseName: string, groupName: string, timeout: Date) {
     const studentIds = students.map(s => s.id);
     studentIds.push(localStorage.getItem('id'));
 
     return this.http.post(
-      API_URL + 'courses/' + courseName + '/proposeTeam?name=' + groupName, studentIds
+      API_URL + 'courses/' + courseName + '/proposeTeam?name=' + groupName + '&timestamp=' + moment(timeout).format('YYYY-MM-DD HH:mm:ss'), studentIds
     );
   }
 
@@ -80,8 +82,16 @@ export class StudentService {
 
   /* VMs */
 
-  createVM(teamId: number, vm: VmStudent) {
-    return this.http.post(API_URL + 'team/' + teamId + '/createVmInstance', {vm});
+  createVm(teamId: number, vm: VmStudent) {
+    return this.http.post<any>(API_URL + 'team/' + teamId + '/createVmInstance', vm);
+  }
+
+  addVmOwner(vmId: number, ownerId: string) {
+    return this.http.post(API_URL + 'vm/' + vmId + '/addOwner', ownerId);
+  }
+
+  getVmOwners(vmId: number) {
+    return this.http.get<StudentModel[]>(API_URL + 'vm/' + vmId + '/getOwners');
   }
 
   getVmConfiguration(vmId: number) {
@@ -99,11 +109,11 @@ export class StudentService {
   }
 
   findConfirmedStudentsByTeamId(teamId: number) {
-    return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/confirmedStudents');
+    return this.http.get<any[]>(API_URL + 'team/' + teamId + '/confirmedStudents');
   }
 
   findPendentStudentsByTeamId(teamId: number) {
-    return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/pendentStudents');
+    return this.http.get<any[]>(API_URL + 'team/' + teamId + '/pendentStudents');
   }
 
   findVmsByTeam(teamId: number) {
@@ -135,10 +145,13 @@ export class StudentService {
     return this.http.get<any>(API_URL + 'courses/' + courseName + '/submissions/' + submissionId);
   }
 
-  addSolution(studentId: string, submissionId: string, image: string) {
-    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + submissionId + '/addSolution', {
-      image
-    });
+  addSolution(studentId: string, submissionId: string, solution: File) {
+    const formData = new FormData();
+    const solutionModel = new SolutionModel();
+    const solutionStr = new Blob([JSON.stringify(solutionModel)], { type: 'application/json'});
+    formData.append('solution', solutionStr);
+    formData.append('file', solution);
+    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + submissionId + '/addSolution', formData);
   }
 
 }

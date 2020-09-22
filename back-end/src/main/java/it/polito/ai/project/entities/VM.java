@@ -12,12 +12,14 @@ public class VM {
     @Id
     @GeneratedValue
     private Long id;
-
+    private String owner;
     private Integer cpu;
     private Integer ram;
     private Integer hdd;
     private String status;
     private String accessLink;
+    @Lob
+    private Byte[] image;
 
     @ManyToOne
     @JoinColumn(name = "VMType_id")

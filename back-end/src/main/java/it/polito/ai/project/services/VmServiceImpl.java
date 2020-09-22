@@ -7,11 +7,20 @@ import it.polito.ai.project.dtos.VMTypeDTO;
 import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -91,9 +100,23 @@ public class VmServiceImpl implements VmService {
 
         optionalCourseEntity.get().setVmType(optionalVMTypeEntity.get());
         optionalVMTypeEntity.get().getCourses().add(optionalCourseEntity.get());
-
+        optionalCourseEntity.get().getTeams().forEach(t -> t.setVmType(optionalVMTypeEntity.get()));
         return true;
 
+    }
+
+    @Override
+    public VMTypeDTO getVMType(String courseName) {
+        Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
+
+        if (!optionalCourseEntity.isPresent()) {
+            throw new CourseNotFoundException("Course not found!");
+        }
+        Optional<VMType> optionalVMTypeEntity = Optional.ofNullable(optionalCourseEntity.get().getVmType());
+        if (!optionalVMTypeEntity.isPresent()) {
+            throw new VmNotFoundException("VMType not found!");
+        }
+        return modelMapper.map(optionalVMTypeEntity.get(),VMTypeDTO.class);
     }
 
     @Override
@@ -134,7 +157,6 @@ public class VmServiceImpl implements VmService {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
 
-        System.out.println(studentID);
         if (!optionalVMEntity.isPresent()) {
             throw new VmNotFoundException("Vm not found!");
         }
@@ -147,6 +169,7 @@ public class VmServiceImpl implements VmService {
         tmp.getVms().remove(optionalVMEntity.get());
         optionalVMEntity.get().getOwners().add(optionalStudentEntity.get());
         optionalStudentEntity.get().getVms().add(optionalVMEntity.get());
+        optionalVMEntity.get().setOwner(studentID);
 
         return true;
     }
@@ -176,7 +199,9 @@ public class VmServiceImpl implements VmService {
         return vmRepo.getOne(vmId)
                 .getOwners()
                 .stream()
-                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
+                    mapper.skip(StudentDTO::setPassword);
+                }).map(s))
                 .collect(Collectors.toList());
     }
 
@@ -251,7 +276,12 @@ public class VmServiceImpl implements VmService {
         if (!optionalStudentEntity.isPresent()) {
             throw new StudentNotFoundException("Student not found!");
         }
-        VMType vmType = optionalTeamEntity.get().getVmType();
+
+        Optional<VMType> optionalVMTypeEntity = Optional.ofNullable(optionalTeamEntity.get().getVmType());
+        if (!optionalVMTypeEntity.isPresent()) {
+            throw new TeamServiceException("You must wait, professor have to setup vmType of the course!");
+        }
+
 
         boolean quota = false;
         if (vm.getRam() > optionalTeamEntity.get().getLimit_ram()) quota = true;
@@ -259,7 +289,7 @@ public class VmServiceImpl implements VmService {
         if (vm.getHdd() > optionalTeamEntity.get().getLimit_hdd()) quota = true;
         if (vmRepo.findAll().stream()
                 .filter(_vm -> _vm.getTeam().getId().equals(teamId))
-                .filter(_vm -> _vm.getVmType().getId().equals(vmType.getId()))
+                .filter(_vm -> _vm.getVmType().getId().equals(optionalVMTypeEntity.get().getId()))
                 .count() + 1 > optionalTeamEntity.get().getLimit_instance())
             quota = true;
 
@@ -269,8 +299,8 @@ public class VmServiceImpl implements VmService {
         VM _vm = new VM();
         _vm.setStatus("poweroff");
 
-        vmType.getVMs().add(_vm);
-        _vm.setVmType(vmType);
+        optionalVMTypeEntity.get().getVMs().add(_vm);
+        _vm.setVmType(optionalVMTypeEntity.get());
 
         optionalTeamEntity.get().getVMInstance().add(_vm);
         _vm.setTeam(optionalTeamEntity.get());
@@ -278,11 +308,32 @@ public class VmServiceImpl implements VmService {
         _vm.getOwners().add(optionalStudentEntity.get());
         optionalStudentEntity.get().getVms().add(_vm);
 
+        _vm.setOwner(studentID);
         _vm.setHdd(vm.getHdd());
         _vm.setCpu(vm.getCpu());
         _vm.setRam(vm.getRam());
-        _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + vmType.getId());
+//        _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + optionalVMTypeEntity.get().getId());
 
+        try{
+
+            Resource resource = new ClassPathResource("./templates/linux.png");
+            FileInputStream input = new FileInputStream(resource.getFile());
+            MultipartFile file = new MockMultipartFile("fileItem",
+                    resource.getFile().getName(), "image/png", input.readAllBytes());
+            Byte[] byteObjects = new Byte[file.getBytes().length];
+
+            int i = 0;
+
+            for (byte b : file.getBytes())
+                byteObjects[i++] = b;
+
+            _vm.setImage(byteObjects);
+        } catch (IOException e) {
+            throw new TeamServiceException("Error saving image: " + e.getMessage());
+        }
+
+        _vm = vmRepo.save(_vm);
+        _vm.setAccessLink("http://localhost:8080/API/vm/getImage/"+_vm.getId());
         return modelMapper.map(vmRepo.save(_vm), VMDTO.class);
     }
 
@@ -298,5 +349,21 @@ public class VmServiceImpl implements VmService {
         optionalTeamEntity.get().setLimit_instance(team.getLimit_instance());
         optionalTeamEntity.get().setLimit_active_instance(team.getLimit_active_instance());
         return team;
+    }
+
+    @Override
+    public byte[] getVmImage(Long vmId) {
+        Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
+        if (!optionalVMEntity.isPresent()) {
+            throw new VmNotFoundException("Vm not found!");
+        }
+
+        Byte[] image = vmRepo.getOne(vmId).getImage();
+        int j=0;
+        byte[] bytes = new byte[image.length];
+        for(Byte b: image)
+            bytes[j++] = b;
+
+        return bytes;
     }
 }

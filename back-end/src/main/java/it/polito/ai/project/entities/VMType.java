@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,13 +19,13 @@ public class VMType {
 
 
     @OneToMany()
-    private List<Course> courses; // una VM_type può essere associata a cpiù corsi ma non viceversa
+    private List<Course> courses = new ArrayList<>() ;// una VM_type può essere associata a cpiù corsi ma non viceversa
 
     @OneToMany(mappedBy = "vmType")
-    private List<VM> VMs; // posso avere più istanze con lo stesso tipo ma non viceversa
+    private List<VM> VMs= new ArrayList<>() ; // posso avere più istanze con lo stesso tipo ma non viceversa
 
     @OneToMany()
-    private List<Team> teams; //posso avere più team che usano la stessa vm type
+    private List<Team> teams= new ArrayList<>() ; //posso avere più team che usano la stessa vm type
 
     public void addCourse(Course c) {
         courses.add(c);
