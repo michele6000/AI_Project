@@ -9,11 +9,56 @@
     <td *matCellDef="let element" mat-cell> {{element[col]}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="edit">
+  <!-- 'evaluate', 'evaluation', 'solution', 'review' -->
+
+  <ng-container matColumnDef="evaluate">
     <th *matHeaderCellDef mat-header-cell>
-      View history
+      Evaluate Solution
     </th>
     <td *matCellDef="let element" mat-cell>
+      <button mat-stroked-button color="primary">Evaluate</button>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="evaluation">
+    <th *matHeaderCellDef mat-header-cell>
+      Evaluation
+    </th>
+    <td *matCellDef="let element" mat-cell> {{element['evaluation']}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="showSolution">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      Show Solution
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      <mat-icon (click)="edit($event, element)" class="cursor-pointer">post_add</mat-icon>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="stopRevision">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      Stop Revision
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      <mat-icon (click)="edit($event, element)" class="cursor-pointer color-red">block</mat-icon>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="reviewSolution">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      Review Solution
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      <mat-icon (click)="edit($event, element)" class="cursor-pointer color-green">done_all</mat-icon>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="edit">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      View history
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
       <mat-icon (click)="edit($event, element)" class="cursor-pointer">edit</mat-icon>
     </td>
   </ng-container>

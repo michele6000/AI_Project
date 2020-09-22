@@ -56,10 +56,12 @@ export class AssignmentsStudentComponent implements OnInit {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
     this.corso = this.studentService.findCourseByNameUrl(this.courseParam);
 
+    // Recupero l'elenco di Submissions per questo corso
     this.studentService.findSubmissions(this.corso.name).subscribe(
       (submissions) => {
-        console.log('Submissions: ');
-        console.log(submissions);
+
+        // Richiedo in concatMap (quindi, per ogni Submission raggruppando i risultati in un
+        //  unica subscribe) l'elenco delle soluzioni [historySolutions] per quella Submission
         const consegne = [];
         const result = from(submissions).pipe(
           concatMap(submission => {
@@ -67,15 +69,25 @@ export class AssignmentsStudentComponent implements OnInit {
           }),
           toArray()
         );
+
+        // result contiene un unico Observable
         result.subscribe((historySolutions: any[][]) => {
-          console.log('History: ');
-          console.log(historySolutions);
+
+          // historySolutions è un Array di Array
+          //  contiene, per ogni Submission, un array di solutions
+          //  con corrispondenza chiave-chiave rispetto all'array di submissions
+
+          // Per ogni Submission aggiungo alla Submission stessa l'elenco di Solutions
+          //  [historySolutions] e le date formattate correttamente
           submissions.forEach((singleSubmission, key) => {
             singleSubmission.expiryString = moment(singleSubmission.expiryDate).format('L');
             singleSubmission.releaseString = moment(singleSubmission.releaseDate).format('L');
             singleSubmission.history = historySolutions[key];
+
+            // Aggiungo la Submission aggiornata all'array
             consegne.push(singleSubmission);
-            });
+          });
+          // Aggiorno l'array di Submission ottenuto per popolare la vista
           this.consegne = consegne;
           if (consegne.length > 0) {
             this.hasConsegne = true;

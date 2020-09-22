@@ -33,7 +33,7 @@ export class TableFilterComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.columnsWithEdit = [...this.columnsToDisplay, 'edit'];
+    this.columnsWithEdit = [...this.columnsToDisplay, 'evaluate', 'evaluation', 'showSolution', 'stopRevision', 'reviewSolution', 'edit'];
 
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;

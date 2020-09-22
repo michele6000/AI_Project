@@ -33,3 +33,5 @@ mat-sidenav-container{ margin: 0px; height: calc(100% - 128px); }
 .dialog-position-field{width: 95%;margin-left: 2.5%;margin-bottom: 15px;}
 .mt-10-center{margin-top: 10px;text-align: center;}
 .mat-radio-button ~ .mat-radio-button {margin-left: 16px;}
+.color-green {color: green;}
+.color-red {color: red;}

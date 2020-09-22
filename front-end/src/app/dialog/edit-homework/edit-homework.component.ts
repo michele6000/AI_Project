@@ -10,11 +10,12 @@ import {NgForm} from '@angular/forms';
 })
 export class EditHomeworkComponent implements OnInit {
 
-  error: boolean = false;
-  fileAbsent: boolean = false;
+  error = false;
+  fileAbsent = false;
   file: any;
   assignments: any[];
-  showInputGrade: boolean = false;
+  showInputGrade = false;
+  history: any = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any[], private professorService: ProfessorService) {
     this.assignments = data;
@@ -35,7 +36,7 @@ export class EditHomeworkComponent implements OnInit {
   }
 
   showGrade($event) {
-    if ($event.value == 0) {
+    if ($event.value === 0) {
       this.showInputGrade = false;
     } else {
       this.showInputGrade = true;
@@ -43,4 +44,7 @@ export class EditHomeworkComponent implements OnInit {
   }
 
 
+  handleShowSolution(id: any) {
+
+  }
 }

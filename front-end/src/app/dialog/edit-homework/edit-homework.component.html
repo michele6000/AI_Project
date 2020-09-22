@@ -1,33 +1,13 @@
-<mat-card class="example-card dimensioni">
-  <h2>Manage homework</h2>
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item *ngFor="let a of assignments">{{a.timestamp}} - {{a.status}}</mat-list-item>
-    </mat-list>
-    <hr/>
-    <mat-error *ngIf="error" class="mt-10-center">
-      Error
-    </mat-error>
-    <form #f="ngForm" (ngSubmit)="send(f)" class="mt-10">
-      <h2>Send correction</h2>
-      <div class="mt-10 mb-10">
-        <button (click)="fileInput.click()" mat-raised-button type="button">Choose file</button>
-        <input #fileInput (change)="handleFileSelect($event)" accept="application/pdf" hidden id="file" type="file">
-      </div>
-      <mat-radio-group (change)="showGrade($event)" aria-label="Select an option" name="last">
-        <mat-radio-button value="0">Wait student revision</mat-radio-button>
-        <mat-radio-button value="1">Final Correction</mat-radio-button>
-      </mat-radio-group>
-      <mat-form-field *ngIf="showInputGrade" class="dialog-position-field mt-20">
-        <mat-label>Grade</mat-label>
-        <input #grade="ngModel" matInput name="grade" ngModel placeholder="Grade" required type="number" value="">
-      </mat-form-field>
-      <br/>
-      <mat-card-actions class="mt-10 float-right">
-        <button [disabled]="!f.valid || fileAbsent" color="primary" mat-button mat-raised-button>Send</button>
-        <button mat-button mat-dialog-close>Cancel</button>
-      </mat-card-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
-
+<div class="dimensioni">
+  <mat-card-title>Solution History</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <mat-list>
+    <mat-list-item *ngFor="let solution of history ">
+      Version: {{solution.version}} - Status: {{solution.status}}
+      <a mat-stroked-button (click)="handleShowSolution(solution.id)" class="ml-20">Show solution</a>
+    </mat-list-item>
+  </mat-list>
+  <mat-card-actions class="mt-10 float-right">
+    <button mat-button mat-dialog-close>Dismiss</button>
+  </mat-card-actions>
+</div>
