@@ -1,8 +1,22 @@
 {
   "/api": {
-    "target": "http://back-end:8080",
+    "target": "http://localhost:8080",
     "pathRewrite": {
       "/api": ""
+    },
+    "secure": false
+  },
+  "/public": {
+    "target": "http://93.56.104.204:8080",
+    "pathRewrite": {
+      "/public": ""
+    },
+    "secure": false
+  },
+  "/local": {
+    "target": "http://localhost:8080",
+    "pathRewrite": {
+      "/local": ""
     },
     "secure": false
   }

@@ -5,6 +5,11 @@ import {Router} from '@angular/router';
 import * as moment from 'moment';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
+const API_URL_PUBLIC = '/public/API/';
+const API_URL_LOCAL = '/local/API/';
+
+
+
 @Component({
   selector: 'app-assignments-student',
   templateUrl: './assignments-student.component.html',
@@ -95,6 +100,6 @@ export class AssignmentsStudentComponent implements OnInit {
   }
 
   handleShowSubmission(id: string) {
-    window.open('//' + 'localhost:8080/API/courses/submissions/getImage/' + id, '_blank');
+    window.open('//' + API_URL_PUBLIC+'courses/submissions/getImage/' + id, '_blank');
   }
 }

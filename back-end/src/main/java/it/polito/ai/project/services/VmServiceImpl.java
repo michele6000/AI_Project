@@ -7,6 +7,7 @@ import it.polito.ai.project.dtos.VMTypeDTO;
 import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -318,13 +319,13 @@ public class VmServiceImpl implements VmService {
 
             Resource resource = new ClassPathResource("./templates/linux.png");
             FileInputStream input = new FileInputStream(resource.getFile());
-            MultipartFile file = new MockMultipartFile("fileItem",
-                    resource.getFile().getName(), "image/png", input.readAllBytes());
-            Byte[] byteObjects = new Byte[file.getBytes().length];
+            MultipartFile multipartFile = new MockMultipartFile("linux.png", input);
+
+            Byte[] byteObjects = new Byte[multipartFile.getBytes().length];
 
             int i = 0;
 
-            for (byte b : file.getBytes())
+            for (byte b : multipartFile.getBytes())
                 byteObjects[i++] = b;
 
             _vm.setImage(byteObjects);

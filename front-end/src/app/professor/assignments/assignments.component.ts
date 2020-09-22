@@ -7,6 +7,10 @@ import {CourseModel} from '../../models/course.model';
 import {ProfessorService} from '../../services/professor.service';
 import * as moment from 'moment';
 
+const API_URL_PUBLIC = '/public/API/';
+const API_URL_LOCAL = '/local/API/';
+
+
 @Component({
   selector: 'app-assignments',
   templateUrl: './assignments.component.html',
@@ -68,6 +72,6 @@ export class AssignmentsComponent implements OnInit {
   }
 
   handleShowSubmission(id: string) {
-    window.open("//"+"localhost:8080/API/courses/submissions/getImage/"+id, "_blank");
+    window.open("//"+API_URL_PUBLIC+"courses/submissions/getImage/"+id, "_blank");
   }
 }

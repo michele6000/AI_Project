@@ -12,12 +12,14 @@ echo "   |()    __    () |"
 echo "    \    (__)      |"
 echo " "
 cd ./back-end
+mvn clean ; mvn package
 docker build -f Dockerfile -t back-end .
 echo " "
 echo "############## Backend builded! ##############"
 echo " "
 cd ..
 cd ./front-end
+npm i ; sudo npm run build
 docker build -f Dockerfile -t front-end .
 echo " "
 echo "############## Front builded! ##############"

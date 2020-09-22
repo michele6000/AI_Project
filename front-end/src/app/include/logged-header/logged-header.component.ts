@@ -4,6 +4,10 @@ import {Router} from '@angular/router';
 import {DomSanitizer} from "@angular/platform-browser";
 import {Observable, Observer} from "rxjs";
 
+const API_URL_PUBLIC = '/public/auth/';
+const API_URL_LOCAL = '/local/auth/';
+
+
 @Component({
   selector: 'app-logged-header',
   templateUrl: './logged-header.component.html',
@@ -39,7 +43,7 @@ export class LoggedHeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    let imageUrl = 'http://localhost:8080/auth/getImage?id=' + this.username;
+    let imageUrl = API_URL_PUBLIC +'getImage?id=' + this.username;
 
     this.getBase64ImageFromURL(imageUrl).subscribe(base64data => {
       this.base64Image = 'data:image/jpg;base64,' + base64data;
