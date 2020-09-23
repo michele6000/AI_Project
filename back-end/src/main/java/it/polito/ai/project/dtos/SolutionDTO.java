@@ -6,7 +6,7 @@ import lombok.Data;
 public class SolutionDTO {
     private Long id;
     private Byte[] image;
-    private String version;
+    private int version;
     private Long evaluation;
     private String status;
     private boolean isRevisable; //flag

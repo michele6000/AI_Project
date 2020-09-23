@@ -135,6 +135,8 @@ export class AssignmentsStudentComponent implements OnInit {
 
   handleShowSubmission(id: number) {
     this.studentService.getSubmissionById(this.corso.name, id).subscribe((res) => {
+      console.log(res);
+      console.log("HERE");
     });
     window.open('//' + API_URL_PUBLIC + 'courses/submissions/getImage/' + id, '_blank');
   }
