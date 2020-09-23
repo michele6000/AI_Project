@@ -1,6 +1,13 @@
 <div class="container">
-  <div class="text-right w-100">
-    <button (click)="createVM()" class="float-right mb-20" color="primary" mat-raised-button>Create VM</button>
+  <div class="d-flex align-items-center">
+
+  <h2 class="mb-10 mr-20">Management option: </h2>
+  <button class="mb-10 ml-20 float-right" (click)="createVM()"  color="primary" mat-raised-button>Create VM</button>
+
   </div>
+
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <h2 class="mb-10 mr-20">Team VMs: </h2>
+
   <app-vms-table (delete)="deleteVm($event)" [columns]="columns" [data]="data"></app-vms-table>
 </div>

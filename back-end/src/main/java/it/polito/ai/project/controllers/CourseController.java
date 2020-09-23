@@ -9,7 +9,6 @@ import it.polito.ai.project.services.NotificationService;
 import it.polito.ai.project.services.SubmissionService;
 import it.polito.ai.project.services.TeamService;
 import it.polito.ai.project.services.VmService;
-import it.polito.ai.project.wrappers.Submission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -133,6 +131,7 @@ public class CourseController {
             else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
         }
     }
+
     @PostMapping("/{courseName}/delete")
     public boolean deleteCourse(@PathVariable String courseName) {
         try {
@@ -145,6 +144,7 @@ public class CourseController {
             else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
         }
     }
+
     @PostMapping("/{courseName}/disable")
     public boolean disableCourse(@PathVariable String courseName) {
         try {
@@ -205,7 +205,7 @@ public class CourseController {
         try {
 
             team = service.proposeTeam(courseName, name, membersIds);
-            notifyService.notifyTeam(team, membersIds,timestamp);
+            notifyService.notifyTeam(team, membersIds, timestamp);
             return true;
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -323,12 +323,15 @@ public class CourseController {
     }
 
     @GetMapping(value = "/submissions/getImage/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void showImage(HttpServletResponse response, @PathVariable Long id)
-            throws ServletException, IOException{
-        response.addHeader("Access-Control-Allow-Origin","*");
-        response.setContentType("image/jpeg");
-        response.getOutputStream().write(submissionService.getSubmissionImage(id));
-        response.getOutputStream().close();
+    public void showImage(HttpServletResponse response, @PathVariable Long id) {
+        try {
+            response.addHeader("Access-Control-Allow-Origin", "*");
+            response.setContentType("image/jpeg");
+            response.getOutputStream().write(submissionService.getSubmissionImage(id));
+            response.getOutputStream().close();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error retrieving image!");
+        }
     }
 
     @PostMapping("/{solutionId}/stopRevisions")

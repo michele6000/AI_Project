@@ -12,6 +12,7 @@
       </button>
     </div>
   </div>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
   <h1>Enrolled students:</h1>
   <app-table (delete)="deleteStudent($event)" [columns]="columns" [data]="data" [showDelete]="true"></app-table>
 </div>

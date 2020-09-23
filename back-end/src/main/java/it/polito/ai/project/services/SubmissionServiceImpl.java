@@ -57,7 +57,6 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (submissionDTO == null)
             throw new SubmissionNotFoundException("Bad request!");
         if (courseName.length() == 0 || !courseRepo.existsById(courseName))
-
             throw new CourseNotFoundException("Course not found!");
 
         Submission submissionEntity = modelMapper.map(submissionDTO, Submission.class);
@@ -67,16 +66,14 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new CourseDisabledException("Course not enabled!");
 
         // l'altro non andava bene va fatto prima di fare le modifiche sul repo, e non avendo l'id quello non andava bene
-        if (!courseRepo.getOne(courseName).getProfessors().contains(profRepo.getOne(profId))) {
+        if (!course.getProfessors().contains(profRepo.getOne(profId))) {
             submissionRepo.delete(submissionEntity);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
         }
 
         try{
             Byte[] byteObjects = new Byte[submissionFile.getBytes().length];
-
             int i = 0;
-
             for (byte b : submissionFile.getBytes())
                 byteObjects[i++] = b;
 
@@ -85,11 +82,9 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new TeamServiceException("Error saving image: " + e.getMessage());
         }
 
-
         submissionEntity.setCourse(course);
         submissionEntity = submissionRepo.save(submissionEntity);
         course.addSubmission(submissionEntity);
-
 
         for (Student s : course.getStudents())
             notification.sendMessage(
@@ -131,14 +126,15 @@ public class SubmissionServiceImpl implements SubmissionService {
                 //no solution for this submission and this student-->create an empty solution with status "READ"
                 List<Solution> ReadSol = submissionRepo.getOne(submissionId).getSolutions().stream()
                         .filter(sol -> sol.getStudent().getId().equals(studentId))
-                        .filter(sol -> sol.getVersion() < 0) // metterei == -1 onde evitare che il click a submission chiuse dia problemi
+                        .filter(sol -> sol.getVersion() == -1)
                         .filter(sol -> sol.getSubmission().getId().equals(submissionId))
                         .collect(Collectors.toList() );
                 if (ReadSol.size() > 0){
                     submissionRepo.getOne(submissionId).getSolutions().remove(ReadSol.get(0));
                     solutionRepo.delete(ReadSol.get(0));
                 }
-                createNewSol(studentId, submissionId);
+                if (!submissionRepo.getOne(submissionId).getExpiryDate().before(new Date()))
+                    createNewSol(studentId, submissionId);
             }
         }
 
@@ -146,7 +142,6 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
 
-    // @Todo ->
     @Override
     public SolutionDTO addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId, MultipartFile solutionFile) {
 
@@ -157,10 +152,9 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new SubmissionNotFoundException("Submission not found!");
 
         Submission submission = submissionRepo.getOne(submissionId);
+
         if (submission.getExpiryDate().before(new Date()))
             throw new SubmissionExpiredException("This submission expired! You cannot submit solutions now.");
-
-        Solution solution = modelMapper.map(solutionDTO, Solution.class);
 
         if (!getLastSolVersion(submissionId,studentId).isRevisable())
             throw new SubmissionExpiredException("Professor has stopped review! You cannot submit any solutions.");
@@ -168,31 +162,31 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (studentId.length() == 0 || !studentRepo.existsById(studentId))
             throw new StudentNotFoundException("Student not found!");
 
-        Student s = studentRepo.getOne(studentId);
+        Solution solution = modelMapper.map(solutionDTO, Solution.class);
+        Student student = studentRepo.getOne(studentId);
 
-        if (!s.getCourses().contains(submission.getCourse()))
+        if (!student.getCourses().contains(submission.getCourse()))
             throw new StudentNotFoundException("Student not enrolled in this course!");
 
-        List<Solution> ReadSol = submissionRepo.getOne(submissionId).getSolutions().stream()
+        List<Solution> ReadSol = submission.getSolutions().stream()
                 .filter(sol -> sol.getStudent().getId().equals(studentId))
                 .filter(sol -> sol.getVersion() == 0)
                 .filter(sol -> sol.getSubmission().getId().equals(submissionId))
                 .collect(Collectors.toList() );
         if (ReadSol.size() > 0){
-            submissionRepo.getOne(submissionId).getSolutions().remove(ReadSol.get(0));
+            submission.getSolutions().remove(ReadSol.get(0));
             solutionRepo.delete(ReadSol.get(0));
         }
 
-        long version = solutionRepo.findAll()
+        long version = student.getSolutions()
                 .stream()
-                .filter(sol -> sol.getStudent().getId().equals(studentId))
                 .filter(sol -> sol.getSubmission().getId().equals(submissionId))
                 .count();
 
-        solution.setSubmission(submissionRepo.getOne(submissionId));
+        solution.setSubmission(submission);
         solution.setStatus("SUBMITTED");
         solution.setRevisable(true);
-        solution.setStudent(studentRepo.getOne(studentId));
+        solution.setStudent(student);
         solution.setVersion((int) (version + 1L));
 
         try{
@@ -206,24 +200,16 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new TeamServiceException("Error saving image: " + e.getMessage());
         }
 
+        solution = solutionRepo.save(solution);
+        student.addSolution(solution);
 
-
-        solutionRepo.save(solution);
-        studentRepo.getOne(studentId).addSolution(solution);
-
-        return modelMapper.map(solutionRepo.getOne(solution.getId()),SolutionDTO.class);
+        return modelMapper.map(solution,SolutionDTO.class);
     }
-
 
     @Deprecated
     @Override
     public String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId) {
-        try {
-            return "DEPRECATED";
-        } catch (TeamServiceException e) {
-            throw e;
-        }
-
+        return "DEPRECATED";
     }
 
     @Override
@@ -231,10 +217,9 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (!submissionRepo.existsById(submissionId))
             throw new SubmissionNotFoundException("Submission not found!");
 
-        Submission subm = submissionRepo.getOne(submissionId);
-
-        return subm.getSolutions().stream().map(Solution::getStudent)
-                .map(stud -> getLastSolVersion(subm.getId(), stud.getId()))
+        return submissionRepo.getOne(submissionId)
+                .getSolutions().stream().map(Solution::getStudent)
+                .map(stud -> getLastSolVersion(submissionId, stud.getId()))
                 .map(s -> modelMapper.map(s, SolutionDTO.class))
                 .filter(sol -> sol.getVersion() > 0)
                 .collect(Collectors.toList());
@@ -249,13 +234,13 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (studentId.length() == 0 || !studentRepo.existsById(studentId))
             throw new StudentNotFoundException("Student not found!");
 
-        Student s = studentRepo.getOne(studentId);
+        Student student = studentRepo.getOne(studentId);
         Submission submission = submissionRepo.getOne(submissionId);
 
-        if (!s.getCourses().contains(submission.getCourse()))
+        if (!student.getCourses().contains(submission.getCourse()))
             throw new StudentNotFoundException("Student not enrolled in this course!");
 
-        return s.getSolutions().stream()
+        return student.getSolutions().stream()
                 .filter(sol -> sol.getSubmission().equals(submission))
                 .filter(sol -> sol.getVersion() > 0)
                 .map(sol -> modelMapper.typeMap(Solution.class, SolutionDTO.class).addMappings(mapper -> {
@@ -280,10 +265,8 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (!course.isEnabled())
             throw new CourseDisabledException("Course not enabled!");
 
-        Student s = studentRepo.getOne(studentId);
-
         return course.getSubmissions().stream()
-                .map(subm -> getLastSolVersion(subm.getId(), studentId))
+                .map(submission -> getLastSolVersion(submission.getId(), studentId))
                 .map(sol -> modelMapper.map(sol, SolutionDTO.class))
                 .collect(Collectors.toList());
     }
@@ -337,7 +320,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public byte[] getSolutionImage(String studentId, Long solutionId) {
+    public byte[] getSolutionImage(Long solutionId) {
         if (!solutionRepo.existsById(solutionId))
             throw new SolutionNotFoundException("Solution not found!");
 
@@ -357,15 +340,10 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         Solution sol = solutionRepo.getOne(solutionId);
 
-        if (sol.getSubmission().getCourse().getProfessors().contains(profRepo.getOne(username))) {
+        if (sol.getSubmission().getCourse().getProfessors().contains(profRepo.getOne(username)))
             sol.setStatus("REVISED");
-            return modelMapper.map(sol, SolutionDTO.class);
-        } else { //is a student
-//            if (sol.isRevisable())
-                return modelMapper.map(sol, SolutionDTO.class);
-//            else
-//                throw new NotRevisableException("You cannot modify/read this solution (id = " + sol.getId() + ") anymore!");
-        }
+
+        return modelMapper.map(sol, SolutionDTO.class);
     }
 
     @Override
@@ -385,46 +363,49 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (!course.isEnabled())
             throw new CourseDisabledException("Course not enabled!");
 
-        Solution sol = getLastSolVersion(submissionId, studentId);
-
-//        if (submissionRepo.getOne(submissionId).getCourse().getProfessors().contains(profRepo.getOne(username)))
-//            sol.setStatus("REVISED");
-//        else if (!sol.isRevisable())
-//            throw new NotRevisableException("You cannot modify/read this solution (id = " + sol.getId() + ") anymore!");
-//        solutionRepo.save(sol);
-        return modelMapper.map(sol, SolutionDTO.class);
+        return modelMapper.map(getLastSolVersion(submissionId, studentId), SolutionDTO.class);
 
     }
 
     /* ----------- PRIVATE METHODS ------------ */
 
 
-    @Scheduled(fixedRate = 600000)
-    private void passiveSolutionAfterSubmissionExpiryDate() {
-//        controllare se era read, aggiungere costrutto della add solution, mettere come stato NOT_SUBMITTED
-        Solution sol = new Solution();
-        sol.setStatus("SUBMITTED");
-        sol.setVersion(0); //  version -2 ( cosi le get falliscono), version number simbolico (-1 not read, 0 read, -2 not-submitted)
-        sol.setRevisable(false);
+    @Scheduled(fixedRate = 6000)
+    public void passiveSolutionAfterSubmissionExpiryDate() {
         AtomicBoolean found = new AtomicBoolean(false);
-        submissionRepo.findAll()
-                .forEach(
-                        s -> {
-                            if (s.getExpiryDate().before(new Date())) //expirated submission
-                                s.getCourse().getStudents().forEach(stud -> {
-                                    found.set(false);
-                                    stud.getSolutions().forEach(solution -> { // aggiungere filtro su version , non deve essere 0 o -1
-                                        if (solution.getSubmission().equals(s))
-                                            found.set(true);
-                                    });
-                                    if (!found.get()) // se found: va settato revisable a false? no ce il controllo sulla data
-                                        // student didn't send a solution
-                                        // che sia read o che sia not-read metto costrutto (vedi add submission )
 
-                                        stud.getSolutions().add(sol);
-                                });
+        submissionRepo.findAll().forEach( submission -> {
+            // Per ogni submission
+            if(submission.getExpiryDate().before(new Date())) // se è scaduta
+                submission.getCourse().getStudents().forEach(student -> {
+                    // per ogni studente del corso
+                    found.set(false);
+                    if (student.getSolutions().stream()
+                            .filter(solution -> solution.getSubmission().equals(submission)) //submission corrente
+                            .anyMatch(solution -> solution.getVersion() != -1 && solution.getVersion() != 0 )) // cioè ha sottomesso qualcosa
+                        found.set(true);
+                    if (!found.get()){
+                        // student didn't send a solution
+                        List<Solution> ReadSol = student.getSolutions().stream()
+                                .filter(sol -> sol.getSubmission().equals(submission))
+                                .filter(sol -> sol.getVersion() != -2) // se è stata già processata in passato
+                                .filter(sol -> sol.getVersion() == 0 || sol.getVersion() == -1) // se è letta oppure non letta
+                                .collect(Collectors.toList() );
+                        if (ReadSol.size() > 0){
+                            submission.getSolutions().remove(ReadSol.get(0));
+                            solutionRepo.delete(ReadSol.get(0)); // elimino la solution fittizia
                         }
-                );
+                        Solution blankSolution = new Solution();
+                        blankSolution.setStatus("NOT_SUBMITTED");
+                        blankSolution.setVersion(-2);
+                        blankSolution.setRevisable(false);
+                        blankSolution.setStudent(student);
+                        blankSolution.setSubmission(submission);
+                        solutionRepo.save(blankSolution);
+                        System.out.println("Running auto wipe - " + student.getId() + " - "+ submission.getId());
+                    }
+                });
+        });
 
     }
 

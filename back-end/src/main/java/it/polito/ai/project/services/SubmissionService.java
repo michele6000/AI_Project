@@ -48,8 +48,9 @@ public interface SubmissionService {
 //    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     byte[] getSubmissionImage(Long submissionId);
 
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
-    byte[] getSolutionImage(String studentId, Long solutionId);
+//    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
+    byte[] getSolutionImage(Long solutionId);
+
     /* DEPRECATED */
 
     @Deprecated

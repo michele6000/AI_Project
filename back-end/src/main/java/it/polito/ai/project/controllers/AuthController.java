@@ -1,17 +1,16 @@
 package it.polito.ai.project.controllers;
 
 import it.polito.ai.project.dtos.ProfessorDTO;
-import it.polito.ai.project.dtos.SolutionDTO;
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.UserDTO;
-import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.repositories.StudentRepository;
 import it.polito.ai.project.security.jwt.JwtTokenProvider;
 import it.polito.ai.project.services.TeamService;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -80,11 +79,17 @@ public class AuthController {
 
     @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
     public void showImage(@RequestParam("id") String username, HttpServletResponse response, HttpServletRequest request)
-            throws ServletException, IOException{
-        response.addHeader("Access-Control-Allow-Origin","*");
-        response.setContentType("image/jpeg");
-        response.getOutputStream().write(service.getImage(username.split("@")[0]));
-        response.getOutputStream().close();
+            throws ServletException, IOException {
+
+        try {
+            response.addHeader("Access-Control-Allow-Origin", "*");
+            response.setContentType("image/jpeg");
+            response.getOutputStream().write(service.getImage(username.split("@")[0]));
+            response.getOutputStream().close();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error retrieving image!");
+        }
+
     }
 
 
@@ -94,8 +99,8 @@ public class AuthController {
         if (!professor.getEmail().endsWith("@polito.it"))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not allowed");
 
-        if (!service.addProfessor(professor,file))
-            throw new ResponseStatusException( HttpStatus.CONFLICT, professor.getId());
+        if (!service.addProfessor(professor, file))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, professor.getId());
         return professor;
     }
 
@@ -105,7 +110,7 @@ public class AuthController {
         if (!student.getEmail().endsWith("@studenti.polito.it"))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not allowed");
 
-        if (!service.addStudent(student,file)) throw new ResponseStatusException(HttpStatus.CONFLICT, student.getId());
+        if (!service.addStudent(student, file)) throw new ResponseStatusException(HttpStatus.CONFLICT, student.getId());
         return student;
     }
 }

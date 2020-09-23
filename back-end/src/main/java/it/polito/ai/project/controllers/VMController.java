@@ -101,12 +101,15 @@ public class VMController {
     }
 
     @GetMapping(value = "/getImage/{vmId}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void showImage(HttpServletResponse response, @PathVariable Long vmId)
-            throws IOException {
-        response.addHeader("Access-Control-Allow-Origin","*");
-        response.setContentType("image/jpeg");
-        response.getOutputStream().write(vmService.getVmImage(vmId));
-        response.getOutputStream().close();
+    public void showImage(HttpServletResponse response, @PathVariable Long vmId) {
+        try {
+            response.addHeader("Access-Control-Allow-Origin","*");
+            response.setContentType("image/jpeg");
+            response.getOutputStream().write(vmService.getVmImage(vmId));
+            response.getOutputStream().close();
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error retrieving image!");
+        }
     }
 
 

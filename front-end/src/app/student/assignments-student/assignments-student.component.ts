@@ -142,7 +142,6 @@ export class AssignmentsStudentComponent implements OnInit {
   }
 
   handleShowSolution(solutionId: number) {
-    const studentId = localStorage.getItem('id');
-    window.open('//' + API_URL_PUBLIC + 'students/' + studentId + '/' + solutionId + '/getImage', '_blank');
+    window.open('//' + API_URL_PUBLIC + 'students/solutions/getImage/'  + solutionId , '_blank');
   }
 }
