@@ -8,6 +8,7 @@ import {GroupModel} from '../../models/group.model';
 import {VmModel} from '../../models/vm.model';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {DialogDeleteVmComponent} from './dialog-delete-vm/dialog-delete-vm.component';
+import {ModifyVmStudentComponent} from '../../dialog/modify-vm-student/modify-vm-student.component';
 
 @Component({
   selector: 'app-vms-student',
@@ -16,7 +17,7 @@ import {DialogDeleteVmComponent} from './dialog-delete-vm/dialog-delete-vm.compo
 })
 export class VmsStudentComponent implements OnInit {
   data = [];
-  columns = ['owner', 'accessLink', 'status'];
+  columns = ['owner'];
   courseParam: string;
   corso: CourseModel;
   team: GroupModel;
@@ -40,8 +41,15 @@ export class VmsStudentComponent implements OnInit {
             const vmList = [];
             vms.forEach((vm) => {
               this.studentService.getVmOwners(vm.id).subscribe((owners) => {
-                console.log(vm);
-                console.log(owners);
+                let studentOwners = '';
+                // concateno gli id degli studenti (owners della VM)
+                owners.forEach(o => {
+                    studentOwners += o.id;
+                    studentOwners += ' ';
+                });
+                // elimino dalla stringa l'ultima virgola alla fine
+                // studentOwners.substr(0, studentOwners.length - 3);
+                vm.owner = studentOwners;
               });
             });
             this.data = vms;
@@ -76,5 +84,17 @@ export class VmsStudentComponent implements OnInit {
         }
       });
 
+  }
+
+  editVM(vm: VmModel){
+    this.dialog.open(ModifyVmStudentComponent, {data: vm})
+      .afterClosed()
+      .subscribe(result => {
+        this.studentService.getVmConfiguration(vm.id).subscribe(
+          res => {
+            // @TODO -> riassegnare la VM config aggiornata nel gruppo
+          }
+        );
+      });
   }
 }

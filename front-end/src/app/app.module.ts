@@ -58,6 +58,8 @@ import {CreateAssignmentComponent} from './dialog/create-assignment/create-assig
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
 import { ConfirmDeleteComponent } from './dialog/confirm-delete/confirm-delete.component';
+import { ModifyVmStudentComponent } from './dialog/modify-vm-student/modify-vm-student.component';
+import { ModifyOwnerComponent } from './dialog/modify-owner/modify-owner.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +96,9 @@ import { ConfirmDeleteComponent } from './dialog/confirm-delete/confirm-delete.c
     VmsTableComponent,
     DialogDeleteVmComponent,
     CreateAssignmentComponent,
-    ConfirmDeleteComponent
+    ConfirmDeleteComponent,
+    ModifyVmStudentComponent,
+    ModifyOwnerComponent
   ],
   imports: [
     BrowserModule,

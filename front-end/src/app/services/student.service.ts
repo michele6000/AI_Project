@@ -86,13 +86,23 @@ export class StudentService {
     return this.http.post<any>(API_URL + 'team/' + teamId + '/createVmInstance', vm);
   }
 
+  modifyConfigurationVm(vmId: number, vm: VmStudent){
+    return this.http.post<any>(API_URL + 'vm/' + vmId + '/modifyConfiguration', vm);
+  }
+
   addVmOwner(vmId: number, ownerId: string) {
     return this.http.post(API_URL + 'vm/' + vmId + '/addOwner', ownerId);
+  }
+
+  modifyOwner(vmId: number) {
+    return this.http.post(API_URL + 'vm/' + vmId + '/modifyOwner', {});
   }
 
   getVmOwners(vmId: number) {
     return this.http.get<StudentModel[]>(API_URL + 'vm/' + vmId + '/getOwners');
   }
+
+
 
   getVmConfiguration(vmId: number) {
     return this.http.get(API_URL + 'vm/' + vmId + '/getCurrentConfiguration');

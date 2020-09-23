@@ -24,7 +24,7 @@ public class Submission {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToMany()
+    @OneToMany(mappedBy = "submission")
     private List<Solution> solutions = new ArrayList<>();
 
     public void setCourse(Course c) {

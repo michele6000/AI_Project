@@ -5,11 +5,29 @@
     <td *matCellDef="let element" mat-cell> {{element[col]}} </td>
   </ng-container>
 
+  <ng-container matColumnDef="accessLink">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      Access Link
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      <a href="{{element.accessLink}}" target="_blank">{{element.accessLink}}</a>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="status">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      Status
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      {{element.status}}
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="power">
-    <th *matHeaderCellDef mat-header-cell>
+    <th *matHeaderCellDef mat-header-cell class="text-center">
       Power
     </th>
-    <td *matCellDef="let element" mat-cell>
+    <td *matCellDef="let element" mat-cell class="text-center">
       <mat-icon (click)="powerOn(element)" *ngIf="element.status === 'poweroff'" class="cursor-pointer color-green">
         play_circle_outline
       </mat-icon>
@@ -20,20 +38,39 @@
   </ng-container>
 
   <ng-container matColumnDef="delete">
-    <th *matHeaderCellDef mat-header-cell>
+    <th *matHeaderCellDef mat-header-cell class="text-center">
       Delete
     </th>
-    <td *matCellDef="let element" mat-cell>
+    <td *matCellDef="let element" mat-cell class="text-center">
       <mat-icon (click)="delete(element)" class="cursor-pointer">delete_outline</mat-icon>
     </td>
   </ng-container>
 
   <ng-container matColumnDef="edit">
-    <th *matHeaderCellDef mat-header-cell>
+    <th *matHeaderCellDef mat-header-cell class="text-center">
       Modify
     </th>
-    <td *matCellDef="let element" mat-cell>
+    <td *matCellDef="let element" mat-cell class="text-center">
       <mat-icon (click)="edit($event, element)" class="cursor-pointer">edit</mat-icon>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="addOwner" class="text-center">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      Add Owner
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      <mat-icon (click)="addOwner(element)" class="cursor-pointer">group_add</mat-icon>
+    </td>
+  </ng-container>
+
+  <!-- se c'è piu di un owner non mostrate la colonna -->
+  <ng-container matColumnDef="changeOwner" class="text-center">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      Change Owner
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      <mat-icon (click)="changeOwner(element)" class="cursor-pointer">person</mat-icon>
     </td>
   </ng-container>
 

@@ -1,0 +1,18 @@
+<div class="dimensioni">
+  <mat-card-title>{{label_owner}}</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <mat-error *ngIf="error" class="mt-10-center">
+    Error
+  </mat-error>
+  <form #f="ngForm" (ngSubmit)="modify(f)">
+    <mat-form-field class="w-100">
+      <mat-label>Matricolla</mat-label>
+      <input #matricola="ngModel" email matInput name="matricola" ngModel placeholder="Student id" required type="text" value="">
+    </mat-form-field>
+    <br>
+    <mat-card-actions class="float-right">
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Modify</button>
+      <button (click)="closeDialog()" mat-button mat-dialog-close>Cancel</button>
+    </mat-card-actions>
+  </form>
+</div>

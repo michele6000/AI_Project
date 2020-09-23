@@ -8,32 +8,32 @@
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>Number of V-CPU</mat-label>
-      <input #vcpu="ngModel" matInput name="vcpu" ngModel placeholder="Number of V-CPU" required type="text" value="">
+      <input #vcpu="ngModel" matInput name="vcpu" ngModel [ngModel]="group.limit_cpu" placeholder="Number of V-CPU" required type="text" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>RAM (size in MB)</mat-label>
-      <input #ram="ngModel" matInput name="ram" ngModel placeholder="RAM" required type="text" value="">
+      <input #ram="ngModel" matInput name="ram" ngModel [ngModel]="group.limit_ram" placeholder="RAM" required type="text" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>Disk (size in MB)</mat-label>
-      <input #disk="ngModel" matInput name="disk" ngModel placeholder="Disk" required type="text" value="">
+      <input #disk="ngModel" matInput name="disk" ngModel [ngModel]="group.limit_hdd" placeholder="Disk" required type="text" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>Maximum number of VMs</mat-label>
-      <input #maxVm="ngModel" matInput name="maxVm" ngModel required type="number" value="">
+      <input #maxVm="ngModel" matInput name="maxVm" ngModel [ngModel]="group.limit_instance" required type="number" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>Maximum number of simultaneously active VMs</mat-label>
-      <input #maxActiveVmSimultaneously="ngModel" matInput name="maxActiveVmSimultaneously" ngModel required
+      <input #maxActiveVmSimultaneously="ngModel" matInput name="maxActiveVmSimultaneously" ngModel [ngModel]="group.limit_active_instance" required
              type="number" value="">
     </mat-form-field>
     <br>
     <mat-card-actions class="float-right">
-      <button [disabled]="!f.valid" class="mr-20" color="primary" mat-button mat-raised-button>Create</button>
+      <button [disabled]="!f.valid" class="mr-20" color="primary" mat-button mat-raised-button>{{nameButton}}</button>
       <button [routerLink]="['/teacher']" mat-button mat-dialog-close>Cancel</button>
     </mat-card-actions>
   </form>

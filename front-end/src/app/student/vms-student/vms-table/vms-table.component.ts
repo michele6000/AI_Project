@@ -4,6 +4,9 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {VmModel} from "../../../models/vm.model";
 import {StudentService} from "../../../services/student.service";
+import {CreateAssignmentComponent} from '../../../dialog/create-assignment/create-assignment.component';
+import {MatDialog} from '@angular/material/dialog';
+import {ModifyOwnerComponent} from '../../../dialog/modify-owner/modify-owner.component';
 
 @Component({
   selector: 'app-vms-table',
@@ -25,12 +28,11 @@ export class VmsTableComponent implements OnInit {
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
 
-  constructor(private studentService: StudentService) {
+  constructor(private studentService: StudentService, private dialog: MatDialog) {
   }
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
-    console.log(data);
     if (this.table) {
       this.table.renderRows();
     }
@@ -41,7 +43,7 @@ export class VmsTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnsWithCheckbox = [...this.columnsToDisplay, 'power', 'delete', 'edit'];
+    this.columnsWithCheckbox = [...this.columnsToDisplay, 'accessLink', 'status', 'power', 'delete', 'edit', 'addOwner', 'changeOwner'];
 
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -67,5 +69,19 @@ export class VmsTableComponent implements OnInit {
 
   delete(element: VmModel) {
     this.onDelete.emit(element);
+  }
+
+  addOwner(element: VmModel) {
+    // open dialog
+    this.dialog.open(ModifyOwnerComponent, {data: element})
+      .afterClosed()
+      .subscribe(result => {
+
+
+      });
+  }
+
+  changeOwner(element: VmModel) {
+    // open dialog
   }
 }

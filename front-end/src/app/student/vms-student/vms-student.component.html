@@ -9,5 +9,5 @@
   <mat-divider class="mt-10 mb-20"></mat-divider>
   <h2 class="mb-10 mr-20">Team VMs: </h2>
 
-  <app-vms-table (delete)="deleteVm($event)" [columns]="columns" [data]="data"></app-vms-table>
+  <app-vms-table (delete)="deleteVm($event)" (edit)="editVM($event)" [columns]="columns" [data]="data"></app-vms-table>
 </div>

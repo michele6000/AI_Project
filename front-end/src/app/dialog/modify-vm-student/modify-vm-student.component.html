@@ -1,6 +1,5 @@
-<!-- CREATE VM  STUDENT -->
 <div class="dimensioni">
-  <mat-card-title>Create VM</mat-card-title>
+  <mat-card-title>Edit VM</mat-card-title>
   <mat-divider class="mt-10 mb-20"></mat-divider>
   <mat-error *ngIf="error" class="mt-10">
     Limit exceeded for:
@@ -10,25 +9,27 @@
       </li>
     </ul>
   </mat-error>
-  <form #f="ngForm" (ngSubmit)="create(f)">
+  <form #f="ngForm" (ngSubmit)="edit(f)">
     <mat-form-field class="dialog-position-field">
       <mat-label>Number of V-CPU</mat-label>
-      <input #vcpu="ngModel" matInput name="vcpu" ngModel placeholder="Number of V-CPU" required type="text" value="">
+      <input #vcpu="ngModel" [ngModel]="vmConfig.cpu" matInput name="vcpu" placeholder="Number of V-CPU" required type="text" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>RAM (size in MB)</mat-label>
-      <input #ram="ngModel" matInput name="ram" ngModel placeholder="RAM" required type="text" value="">
+      <input #ram="ngModel" [ngModel]="vmConfig.ram" matInput name="ram" placeholder="RAM" required type="text" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>Disk (size in MB)</mat-label>
-      <input #disk="ngModel" matInput name="disk" ngModel placeholder="Disk" required type="text" value="">
+      <input #disk="ngModel" [ngModel]="vmConfig.hdd" matInput name="disk" placeholder="Disk" required type="text" value="">
     </mat-form-field>
     <br>
     <mat-card-actions class="float-right">
-      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Create</button>
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Save</button>
+      <!-- Gestire path statico -->
       <button [routerLink]="['/student/applicazioni-internet/vms']" mat-button mat-dialog-close>Cancel</button>
     </mat-card-actions>
   </form>
 </div>
+
