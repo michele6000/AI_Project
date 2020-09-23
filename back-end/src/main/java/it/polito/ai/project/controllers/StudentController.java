@@ -138,7 +138,7 @@ public class StudentController {
     }
 
     @GetMapping(value = "/solutions/getImage/{solutionId}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void showImage(HttpServletResponse response,@PathVariable Long solutionId) throws {
+    public void showImage(HttpServletResponse response,@PathVariable Long solutionId) {
         try {
             response.addHeader("Access-Control-Allow-Origin","*");
             response.setContentType("image/jpeg");
