@@ -16,7 +16,7 @@
       Evaluate Solution
     </th>
     <td *matCellDef="let element" mat-cell>
-      <button mat-stroked-button color="primary">Evaluate</button>
+      <button mat-stroked-button color="primary" [disabled]="element.status === 'READ' || element.status === 'NOT_READ'">Evaluate</button>
     </td>
   </ng-container>
 
@@ -32,7 +32,7 @@
       Show Solution
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="edit($event, element)" class="cursor-pointer">post_add</mat-icon>
+      <mat-icon (click)="showSolution(element)" class="cursor-pointer" *ngIf="element.status !== 'READ' && element.status !== 'NOT_READ'">post_add</mat-icon>
     </td>
   </ng-container>
 
@@ -50,7 +50,7 @@
       Review Solution
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="edit($event, element)" class="cursor-pointer color-green">done_all</mat-icon>
+      <mat-icon (click)="edit($event, element)" class="cursor-pointer color-green" *ngIf="element.status !== 'READ' && element.status !== 'NOT_READ'">done_all</mat-icon>
     </td>
   </ng-container>
 

@@ -67,4 +67,9 @@ export class TableFilterComponent implements OnInit {
   edit($event: MouseEvent, element: any) {
     this.onEdit.emit(element);
   }
+
+  showSolution(element: any) {
+    console.log('Show solution');
+    console.log(element);
+  }
 }
