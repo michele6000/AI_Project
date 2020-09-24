@@ -367,4 +367,10 @@ public class VmServiceImpl implements VmService {
 
         return bytes;
     }
+
+    public TeamDTO retriveTeamFromVm (Long vmId){
+        if(!vmRepo.existsById(vmId))
+            throw new TeamServiceException("Vm not found!");
+        return modelMapper.map(vmRepo.getOne(vmId).getTeam(),TeamDTO.class);
+    }
 }

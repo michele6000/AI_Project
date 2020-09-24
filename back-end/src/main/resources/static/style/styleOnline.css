@@ -1,0 +1,55 @@
+
+body {
+    background-image: url('backOnline.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+* .container {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    width: 400px;
+}
+
+.notification {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 6px;
+    padding: 20px;
+    margin: 10px auto;
+    position: relative;
+}
+
+.notification .notification-title,
+.notification .notification-message {
+    color: #fff;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.notification .notification-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.notification .notification-message {
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.success {
+    background: #5ed490;
+    box-shadow: 5px 5px 5px #2d794b;
+}
+
+.error {
+    background: #f56668;
+    box-shadow: 5px 5px 5px #ba4849;
+}

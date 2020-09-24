@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="/style/style.css" rel="stylesheet">
+    <title th:text="${title}"></title>
+</head>
+<body>
+    <h1 style="text-align: center" th:text="${vmSpec}" ></h1>
+    <h2  style="text-align: center" th:text="${vmConfig}"></h2>
+
+    <div style="margin-top: 150px" class="notification error">
+        <h3 style="text-align: center" class="notification-title">Couldn't display VM</h3>
+        <p style="text-align: center" class="notification-message" >VM is currently poweroff</p>
+    </div>
+</body>
+</html>

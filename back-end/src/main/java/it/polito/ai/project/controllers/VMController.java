@@ -1,6 +1,7 @@
 package it.polito.ai.project.controllers;
 
 import it.polito.ai.project.dtos.StudentDTO;
+import it.polito.ai.project.dtos.TeamDTO;
 import it.polito.ai.project.dtos.VMDTO;
 import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.services.TeamService;
@@ -8,6 +9,8 @@ import it.polito.ai.project.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/API/vm")
 public class VMController {
 
@@ -100,17 +103,29 @@ public class VMController {
         }
     }
 
-    @GetMapping(value = "/getImage/{vmId}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void showImage(HttpServletResponse response, @PathVariable Long vmId) {
-        try {
-            response.addHeader("Access-Control-Allow-Origin","*");
-            response.setContentType("image/jpeg");
-            response.getOutputStream().write(vmService.getVmImage(vmId));
-            response.getOutputStream().close();
-        }catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error retrieving image!");
+//    @GetMapping(value = "/getImage/{vmId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping("/getImage/{vmId}")
+    public String showImage(@PathVariable Long vmId,  Model model) {
+//        try {
+//            response.addHeader("Access-Control-Allow-Origin","*");
+//            response.setContentType("image/jpeg");
+//            response.getOutputStream().write(vmService.getVmImage(vmId));
+//            response.getOutputStream().close();
+//        }catch (Exception e){
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error retrieving image!");
+//        }
+        VMDTO vm = vmService.getVMConfig(vmId);
+        TeamDTO team = vmService.retriveTeamFromVm(vmId);
+        model.addAttribute("title","VM - "+vm.getId().toString());
+        model.addAttribute("vmSpec","TeamId: "+team.getId()+" TeamName: "+team.getName() + " VmId: "+vmId);
+        model.addAttribute("vmConfig","VmConfig: V-CPU ("+vm.getCpu()+" core), V-Ram ("+vm.getRam()+" MB), HDD ("+vm.getHdd()+" MB)");
+        if (vm.getStatus().equals("poweron"))
+            return "vmTemplateOnline";
+        else{
+            return "vmTemplate";
         }
     }
+
 
 
 }
