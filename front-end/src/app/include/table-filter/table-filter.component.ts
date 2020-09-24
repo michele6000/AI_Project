@@ -14,7 +14,7 @@ export class TableFilterComponent implements OnInit {
   columnsWithEdit = [];
   dataSource = new MatTableDataSource();
   @Input() filterColumn: string;
-  @Output('edit') onEdit: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @Output('showHistory') onShowHistory: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
   @ViewChild(MatSort, {static: true})
@@ -64,12 +64,21 @@ export class TableFilterComponent implements OnInit {
     }
   }
 
-  edit($event: MouseEvent, element: any) {
-    this.onEdit.emit(element);
+  showHistory(submissionId: number, studentId: string) {
+    this.onShowHistory.emit({submissionId, studentId});
   }
 
   showSolution(element: any) {
     console.log('Show solution');
     console.log(element);
+  }
+
+  reviewSolution(element: any) {
+    console.log('Review solution');
+    console.log(element);
+  }
+
+  stopRevision(element: any) {
+
   }
 }

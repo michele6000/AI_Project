@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
-import {EditHomeworkComponent} from '../../dialog/edit-homework/edit-homework.component';
+import {ShowHistoryComponent} from '../../dialog/edit-homework/show-history.component';
 import {CreateAssignmentComponent} from '../../dialog/create-assignment/create-assignment.component';
 import {CourseModel} from '../../models/course.model';
 import {ProfessorService} from '../../services/professor.service';
@@ -96,8 +96,8 @@ export class AssignmentsComponent implements OnInit {
     // Per ogni consegna richiedo l'elenco di elaborati
   }
 
-  edit($event: any) {
-    this.dialog.open(EditHomeworkComponent, {data: $event.history})
+  showHistory(submissionId: number, studentId: string) {
+    this.dialog.open(ShowHistoryComponent, {data: {submissionId, studentId}})
       .afterClosed()
       .subscribe(result => {
 

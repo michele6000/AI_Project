@@ -41,7 +41,7 @@
       Stop Revision
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="edit($event, element)" class="cursor-pointer color-red">block</mat-icon>
+      <mat-icon (click)="stopRevision(element)" class="cursor-pointer color-red">block</mat-icon>
     </td>
   </ng-container>
 
@@ -50,7 +50,7 @@
       Review Solution
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="edit($event, element)" class="cursor-pointer color-green" *ngIf="element.status !== 'READ' && element.status !== 'NOT_READ'">done_all</mat-icon>
+      <mat-icon (click)="reviewSolution(element)" class="cursor-pointer color-green" *ngIf="element.status !== 'READ' && element.status !== 'NOT_READ'">done_all</mat-icon>
     </td>
   </ng-container>
 
@@ -59,7 +59,7 @@
       View history
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="edit($event, element)" class="cursor-pointer">edit</mat-icon>
+      <mat-icon (click)="showHistory(element.id, element.matricola)" class="cursor-pointer">edit</mat-icon>
     </td>
   </ng-container>
 

@@ -47,7 +47,7 @@ import {EditCourseComponent} from './dialog/edit-course/edit-course.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {TableFilterComponent} from './include/table-filter/table-filter.component';
-import {EditHomeworkComponent} from './dialog/edit-homework/edit-homework.component';
+import {ShowHistoryComponent} from './dialog/edit-homework/show-history.component';
 import {MatRadioModule} from "@angular/material/radio";
 import {AuthInterceptor} from "./auth/auth.interceptor";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
@@ -93,7 +93,7 @@ import {NgParticlesModule} from "ng-particles";
     GroupDirective,
     EditCourseComponent,
     TableFilterComponent,
-    EditHomeworkComponent,
+    ShowHistoryComponent,
     EditVmProfessorComponent,
     VmsTableComponent,
     VmsTableComponent,
