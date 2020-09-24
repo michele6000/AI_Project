@@ -1,5 +1,10 @@
 <div id="home">
   <app-logged-header></app-logged-header>
-  <h1 style="font-size: 50px; text-align: center ; margin-top: 280px; font-family:Impact">Welcome to Teams</h1>
-  <h1 style="font-size: 40px; text-align: center ; font-family:Impact">the best app to manage university teams</h1>
+  <div style="width: 100%; height: 100%">
+<!--TODO: AGGIUSTARE-->
+    <h1 style=" position: absolute; font-size: 50px; text-align: center ; margin-top: 280px; font-family:Impact">Welcome to Teams</h1>
+    <h1 style="position: absolute; font-size: 40px; text-align: center ; font-family:Impact">the best app to manage university teams</h1>
+    <Particles style="width: 80%!important;" [id]="id" [options]="particlesOptions" (particlesLoaded)="particlesLoaded($event)"></Particles>
+  </div>
+
 </div>

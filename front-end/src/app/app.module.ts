@@ -60,6 +60,7 @@ import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
 import { ConfirmDeleteComponent } from './dialog/confirm-delete/confirm-delete.component';
 import { ModifyVmStudentComponent } from './dialog/modify-vm-student/modify-vm-student.component';
 import { ModifyOwnerComponent } from './dialog/modify-owner/modify-owner.component';
+import {NgParticlesModule} from "ng-particles";
 
 @NgModule({
   declarations: [
@@ -101,6 +102,7 @@ import { ModifyOwnerComponent } from './dialog/modify-owner/modify-owner.compone
     ModifyOwnerComponent
   ],
   imports: [
+    NgParticlesModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
