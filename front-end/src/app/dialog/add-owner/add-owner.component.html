@@ -1,0 +1,23 @@
+<div class="dimensioni">
+  <mat-card-title>Add Vm Owner</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <mat-error *ngIf="error" class="mt-10-center">
+    Error
+  </mat-error>
+  <form #f="ngForm" (ngSubmit)="addOwner(f)">
+    <h4>Basic mat-select</h4>
+    <mat-form-field appearance="fill">
+      <mat-label>Matricola</mat-label>
+      <mat-select name="matricola" required>
+        <mat-option *ngFor="let student of students" [value]="student.id">
+          {{student.id}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <br>
+    <mat-card-actions class="float-right">
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Add</button>
+      <button (click)="closeDialog()" mat-button mat-dialog-close>Cancel</button>
+    </mat-card-actions>
+  </form>
+</div>

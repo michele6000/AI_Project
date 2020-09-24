@@ -60,6 +60,8 @@ import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
 import { ConfirmDeleteComponent } from './dialog/confirm-delete/confirm-delete.component';
 import { ModifyVmStudentComponent } from './dialog/modify-vm-student/modify-vm-student.component';
 import { ModifyOwnerComponent } from './dialog/modify-owner/modify-owner.component';
+import { AddOwnerComponent } from './dialog/add-owner/add-owner.component';
+import {MatSelectModule} from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -98,7 +100,8 @@ import { ModifyOwnerComponent } from './dialog/modify-owner/modify-owner.compone
     CreateAssignmentComponent,
     ConfirmDeleteComponent,
     ModifyVmStudentComponent,
-    ModifyOwnerComponent
+    ModifyOwnerComponent,
+    AddOwnerComponent
   ],
   imports: [
     BrowserModule,
@@ -126,7 +129,8 @@ import { ModifyOwnerComponent } from './dialog/modify-owner/modify-owner.compone
     MatRadioModule,
     MatSnackBarModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSelectModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, {
     provide: MAT_DATE_LOCALE,
