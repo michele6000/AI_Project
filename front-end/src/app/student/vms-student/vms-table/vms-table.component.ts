@@ -8,6 +8,7 @@ import {CreateAssignmentComponent} from '../../../dialog/create-assignment/creat
 import {MatDialog} from '@angular/material/dialog';
 import {ModifyOwnerComponent} from '../../../dialog/modify-owner/modify-owner.component';
 import {AddOwnerComponent} from '../../../dialog/add-owner/add-owner.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-vms-table',
@@ -24,13 +25,14 @@ export class VmsTableComponent implements OnInit {
   table: MatTable<any>;
   @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
   @Output('delete') onDelete: EventEmitter<any> = new EventEmitter<any>();
+  @Output('modifyOwner') onModifyOwner: EventEmitter<any> = new EventEmitter<any>();
+  @Output('addOwner') onAddOwner: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
 
-  constructor(private studentService: StudentService, private dialog: MatDialog) {
-  }
+  constructor(private studentService: StudentService, private dialog: MatDialog, private snackBar: MatSnackBar) { }
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
@@ -72,28 +74,34 @@ export class VmsTableComponent implements OnInit {
     this.onDelete.emit(element);
   }
 
+  // @TODO -> propagare al padre per riaggiornare la tabella
   addOwner(element: VmModel) {
     // open dialog
-    console.log("Add Owner");
-    console.log(element);
-    this.studentService.teams.subscribe((teams) => {
-      console.log("student Teams");
-      console.log(teams);
-      this.dialog.open(AddOwnerComponent, {data: element})
+    this.studentService.findMembersByTeamId(element.groupId).subscribe((studentInTeam) => {
+      this.dialog.open(AddOwnerComponent, {data: {vm: element, students: studentInTeam}})
         .afterClosed()
         .subscribe(result => {
-
-
+          if (result){
+            this.snackBar.open('Owner added successfully.', 'OK', {
+              duration: 5000
+            });
+          }
         });
     });
   }
 
-  changeOwner(element: VmModel) {
-    this.dialog.open(ModifyOwnerComponent, {data: element})
-      .afterClosed()
-      .subscribe(result => {
-
-      });
-
+  // @TODO -> propagare al padre per riaggiornare la tabella
+  modifyOwner(element: VmModel) {
+    this.studentService.findMembersByTeamId(element.groupId).subscribe((studentInTeam) => {
+      this.dialog.open(ModifyOwnerComponent, {data: {vm: element, students: studentInTeam}})
+        .afterClosed()
+        .subscribe(result => {
+          if (result){
+            this.snackBar.open('Owner modified successfully.', 'OK', {
+              duration: 5000
+            });
+          }
+        });
+    });
   }
 }

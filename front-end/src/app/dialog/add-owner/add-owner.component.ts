@@ -4,6 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {GroupModel} from '../../models/group.model';
 import {StudentService} from '../../services/student.service';
 import {StudentModel} from '../../models/student.model';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-owner',
@@ -12,16 +13,26 @@ import {StudentModel} from '../../models/student.model';
 })
 export class AddOwnerComponent implements OnInit {
   error: any;
-  students: StudentModel[];
+  dataVMAndStudents: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private dialogRef: MatDialogRef<AddOwnerComponent>, private studentService: StudentService) { }
-
-  ngOnInit(): void {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private dialogRef: MatDialogRef<AddOwnerComponent>, private studentService: StudentService) {
+    this.dataVMAndStudents = data;
   }
 
+  ngOnInit(): void {}
+
+  // addVmOwner(vmId: number, ownerId: string) {
   addOwner(f: NgForm) {
     const studentId = f.value.matricola;
-    //this.studentService.addVmOwner();
+    console.log(studentId);
+    this.studentService.addVmOwner(this.dataVMAndStudents.vm.id, studentId).subscribe(
+      res => {
+        this.dialogRef.close(res);
+      },
+      error => {
+        this.dialogRef.close(error);
+      }
+    );
   }
 
   closeDialog() {

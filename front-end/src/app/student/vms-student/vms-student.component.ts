@@ -50,6 +50,7 @@ export class VmsStudentComponent implements OnInit {
                 // elimino dalla stringa l'ultima virgola alla fine
                 // studentOwners.substr(0, studentOwners.length - 3);
                 vm.owner = studentOwners;
+                vm.groupId = this.team.id;
               });
             });
             this.data = vms;

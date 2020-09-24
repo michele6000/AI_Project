@@ -94,8 +94,8 @@ export class StudentService {
     return this.http.post(API_URL + 'vm/' + vmId + '/addOwner', ownerId);
   }
 
-  modifyOwner(vmId: number) {
-    return this.http.post(API_URL + 'vm/' + vmId + '/modifyOwner', {});
+  modifyOwner(vmId: number, studentId: string) {
+    return this.http.post(API_URL + 'vm/' + vmId + '/modifyOwner', studentId);
   }
 
   getVmOwners(vmId: number) {
