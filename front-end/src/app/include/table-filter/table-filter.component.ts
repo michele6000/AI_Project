@@ -2,6 +2,8 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
+import {StudentSubmissionModel} from "../../models/student-submission.model";
+import {SubmissionModel} from "../../models/submission.model";
 
 @Component({
   selector: 'app-table-filter',
@@ -14,7 +16,8 @@ export class TableFilterComponent implements OnInit {
   columnsWithEdit = [];
   dataSource = new MatTableDataSource();
   @Input() filterColumn: string;
-  @Output('showHistory') onShowHistory: EventEmitter<any> = new EventEmitter<any>();
+  @Input() submission: SubmissionModel;
+  @Output('showHistory') onShowHistory: EventEmitter<StudentSubmissionModel> = new EventEmitter<StudentSubmissionModel>();
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
   @ViewChild(MatSort, {static: true})
@@ -64,8 +67,11 @@ export class TableFilterComponent implements OnInit {
     }
   }
 
-  showHistory(submissionId: number, studentId: string) {
-    this.onShowHistory.emit({submissionId, studentId});
+  showHistory(matricola: any) {
+    const studentSub = new StudentSubmissionModel();
+    studentSub.studentId = matricola;
+    studentSub.submissionId = this.submission.id;
+    this.onShowHistory.emit(studentSub);
   }
 
   showSolution(element: any) {

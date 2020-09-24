@@ -8,6 +8,7 @@ import {ProfessorService} from '../../services/professor.service';
 import * as moment from 'moment';
 import {from} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
+import {StudentSubmissionModel} from "../../models/student-submission.model";
 
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
@@ -61,7 +62,6 @@ export class AssignmentsComponent implements OnInit {
               // resultLatestSolutions contiene un unico Observable
               resultLatestSolutions.subscribe((latestSolutions: any[]) => {
                 // latestSolutions contiene, per ogni studente, l'ultima soluzione
-                console.log('Latest Solutions foreach student');
                 const elaborati = [];
                 latestSolutions.forEach((latestSol, key) => {
                   latestSol.name = resStudents[key].firstName;
@@ -69,8 +69,8 @@ export class AssignmentsComponent implements OnInit {
                   latestSol.matricola = resStudents[key].id;
                   elaborati.push(latestSol);
                 });
+                // Aggiungo l'elenco delle latestSolutions per ogni studente alla submission
                 submission.elaborati = elaborati;
-                console.log(submission);
                 consegne.push(submission);
 
                 this.consegne = consegne;
@@ -96,8 +96,8 @@ export class AssignmentsComponent implements OnInit {
     // Per ogni consegna richiedo l'elenco di elaborati
   }
 
-  showHistory(submissionId: number, studentId: string) {
-    this.dialog.open(ShowHistoryComponent, {data: {submissionId, studentId}})
+  showHistory(studentSub: StudentSubmissionModel) {
+    this.dialog.open(ShowHistoryComponent, {data: studentSub})
       .afterClosed()
       .subscribe(result => {
 
