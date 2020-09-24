@@ -6,8 +6,8 @@ import {CreateAssignmentComponent} from '../../dialog/create-assignment/create-a
 import {CourseModel} from '../../models/course.model';
 import {ProfessorService} from '../../services/professor.service';
 import * as moment from 'moment';
-import {from} from "rxjs";
-import {concatMap, toArray} from "rxjs/operators";
+import {from} from 'rxjs';
+import {concatMap, toArray} from 'rxjs/operators';
 
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
@@ -75,14 +75,7 @@ export class AssignmentsComponent implements OnInit {
 
                 this.consegne = consegne;
                 this.show = consegne.length !== 0;
-              }, (error => {
-                // TODO: Remove
-                submission.elaborati = [];
-                consegne.push(submission);
-
-                this.consegne = consegne;
-                this.show = consegne.length !== 0;
-              }));
+              });
 
               // 4   - Per ogni solution devo avere [EvaluateSolution] + Evaluation (colonna a parte, può essere NULL => "")
               //        e [ShowSolution] e [StopRevision] e [ReviewSolution]
@@ -121,6 +114,6 @@ export class AssignmentsComponent implements OnInit {
   }
 
   handleShowSubmission(id: string) {
-    window.open("//" + API_URL_PUBLIC + "courses/submissions/getImage/" + id, "_blank");
+    window.open('//' + API_URL_PUBLIC + 'courses/submissions/getImage/' + id, '_blank');
   }
 }
