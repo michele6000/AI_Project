@@ -60,6 +60,8 @@ import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
 import { ConfirmDeleteComponent } from './dialog/confirm-delete/confirm-delete.component';
 import { ModifyVmStudentComponent } from './dialog/modify-vm-student/modify-vm-student.component';
 import { ModifyOwnerComponent } from './dialog/modify-owner/modify-owner.component';
+import { AddOwnerComponent } from './dialog/add-owner/add-owner.component';
+import {MatSelectModule} from '@angular/material/select';
 import {NgParticlesModule} from "ng-particles";
 
 @NgModule({
@@ -99,7 +101,8 @@ import {NgParticlesModule} from "ng-particles";
     CreateAssignmentComponent,
     ConfirmDeleteComponent,
     ModifyVmStudentComponent,
-    ModifyOwnerComponent
+    ModifyOwnerComponent,
+    AddOwnerComponent
   ],
   imports: [
     NgParticlesModule,
@@ -128,7 +131,8 @@ import {NgParticlesModule} from "ng-particles";
     MatRadioModule,
     MatSnackBarModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSelectModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, {
     provide: MAT_DATE_LOCALE,

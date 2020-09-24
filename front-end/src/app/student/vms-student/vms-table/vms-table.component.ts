@@ -7,6 +7,7 @@ import {StudentService} from "../../../services/student.service";
 import {CreateAssignmentComponent} from '../../../dialog/create-assignment/create-assignment.component';
 import {MatDialog} from '@angular/material/dialog';
 import {ModifyOwnerComponent} from '../../../dialog/modify-owner/modify-owner.component';
+import {AddOwnerComponent} from '../../../dialog/add-owner/add-owner.component';
 
 @Component({
   selector: 'app-vms-table',
@@ -73,15 +74,26 @@ export class VmsTableComponent implements OnInit {
 
   addOwner(element: VmModel) {
     // open dialog
+    console.log("Add Owner");
+    console.log(element);
+    this.studentService.teams.subscribe((teams) => {
+      console.log("student Teams");
+      console.log(teams);
+      this.dialog.open(AddOwnerComponent, {data: element})
+        .afterClosed()
+        .subscribe(result => {
+
+
+        });
+    });
+  }
+
+  changeOwner(element: VmModel) {
     this.dialog.open(ModifyOwnerComponent, {data: element})
       .afterClosed()
       .subscribe(result => {
 
-
       });
-  }
 
-  changeOwner(element: VmModel) {
-    // open dialog
   }
 }
