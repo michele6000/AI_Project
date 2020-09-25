@@ -45,12 +45,12 @@ export class EditVmStudentComponent implements OnInit {
     if (!this.error) {
       this.studentService.createVm(this.team.id, vm).subscribe(
         (res) => {
-          this.studentService.addVmOwner(res.id, localStorage.getItem('id')).subscribe((resOwner) => {
+          // this.studentService.addVmOwner(res.id, localStorage.getItem('id')).subscribe((resOwner) => {
             this.dialogRef.close();
             this.snackBar.open('VM created successfully', 'OK', {
               duration: 5000
             });
-          });
+          // });
         },
         (error) => {
           this.dialogRef.close();

@@ -88,6 +88,7 @@ export class VmsStudentComponent implements OnInit {
   }
 
   editVM(vm: VmModel){
+    // passo come limiti i vecchi valori e non funziona
     this.dialog.open(ModifyVmStudentComponent, {data: vm})
       .afterClosed()
       .subscribe(result => {

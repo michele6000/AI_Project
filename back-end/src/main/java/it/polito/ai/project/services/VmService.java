@@ -28,13 +28,13 @@ public interface VmService {
     VMDTO getVMConfig(Long vmId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    Boolean modifyVMConfiguration(Long vmId, VMDTO vm);
+    Boolean modifyVMConfiguration(Long vmId, VMDTO vm, String me);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    Boolean modifyVMOwner(Long vmId, String studentID);
+    Boolean modifyVMOwner(Long vmId, String studentID, String me);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    Boolean addVMOwner(Long vmId, String studentID);
+    Boolean addVMOwner(Long vmId, String studentID, String me);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     List<StudentDTO> getVMOwners(Long vmId);
@@ -46,7 +46,7 @@ public interface VmService {
     Boolean powerVMOff(Long vmId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    Boolean deleteVM(Long vmId);
+    Boolean deleteVM(Long vmId, String me);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     VMDTO createVmInstance(Long teamId, VMDTO vm, String currentUsername);
