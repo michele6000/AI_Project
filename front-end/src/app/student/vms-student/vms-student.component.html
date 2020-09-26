@@ -1,8 +1,9 @@
 <div class="container">
   <div class="d-flex align-items-center">
 
-  <h2 class="mb-10 mr-20">Management option: </h2>
-  <button class="mb-10 ml-20 float-right" (click)="createVM()"  color="primary" mat-raised-button>Create VM</button>
+  <h2 class="mb-10 mr-20" *ngIf="!canCreateVM">You need to create a group first.</h2>
+  <h2 class="mb-10 mr-20" *ngIf="canCreateVM">Management option: </h2>
+  <button class="mb-10 ml-20 float-right" *ngIf="canCreateVM" (click)="createVM()"  color="primary" mat-raised-button>Create VM</button>
 
   </div>
 

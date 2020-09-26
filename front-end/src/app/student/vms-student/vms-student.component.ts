@@ -23,6 +23,7 @@ export class VmsStudentComponent implements OnInit {
   courseParam: string;
   corso: CourseModel;
   team: GroupModel;
+  canCreateVM = false;
 
   constructor(private dialog: MatDialog, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {
   }
@@ -33,6 +34,7 @@ export class VmsStudentComponent implements OnInit {
     // Recupero il team al quale appartiene lo studente
     this.studentService.teams.subscribe((teams) => {
       if (teams.filter(t => t.status === 1 && t.courseName === this.corso.name).length > 0) {
+        this.canCreateVM = true;
         this.team = teams.filter(t => t.status === 1 && t.courseName === this.corso.name)[0];
         // Recupero le VM del team
         this.studentService.findVmsByTeam(this.team.id).subscribe(

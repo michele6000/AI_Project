@@ -57,7 +57,7 @@ export class AuthService {
     } else if (this.localUser.roles.filter((value => value === 'ROLE_ADMIN')).length > 0) {
       // this.router.navigate(['home']);
     } else {
-      // @todo Utente loggato ma non ha ruoli
+      // Utente loggato senza ruoli
     }
   }
 
@@ -68,7 +68,7 @@ export class AuthService {
     } else if (this.localUser.roles.filter((value => value === 'ROLE_PROFESSOR')).length > 0) {
       this.professorService.findCoursesByProfessor(this.localUser.id);
     } else {
-      // @todo Utente loggato ADMIN o senza ha ruoli
+      // Utente ADMIN o senza ha ruoli
     }
   }
 
@@ -86,7 +86,7 @@ export class AuthService {
           localStorage.setItem('email', email);
           localStorage.setItem('id', email.split('@')[0]);
           localStorage.setItem('roles', tkn.roles);
-          localStorage.setItem('image',payload.image);
+          localStorage.setItem('image', payload.image);
 
           this.localUser.roles = tkn.roles;
           this.localUser.id = email.split('@')[0];

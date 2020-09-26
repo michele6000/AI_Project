@@ -198,6 +198,10 @@ export class ProfessorService {
     return this.http.get<SolutionModel>(API_URL + 'students/' + studentId + '/' + submissionId + '/getLatestSolution');
   }
 
+  stopRevisions(solutionId: number) {
+    return this.http.post<any>(API_URL + 'courses/' + solutionId + '/stopRevisions', {});
+  }
+
   updateCourse(course: CourseModel){
     return this.http.post<boolean>(API_URL + 'courses/' + course.name + '/update', course);
   }
