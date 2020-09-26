@@ -7,6 +7,7 @@ import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.services.NotificationService;
 import it.polito.ai.project.services.TeamService;
 import it.polito.ai.project.services.VmService;
+import it.polito.ai.project.wrappers.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
@@ -51,9 +52,11 @@ public class TeamController {
     }
 
     @GetMapping("/{teamId}/stats")
-    public String getTeamStats(@PathVariable Long teamId) {
+    public GenericResponse getTeamStats(@PathVariable Long teamId) {
         try {
-            return vmService.getTeamStat(teamId);
+            GenericResponse response = new GenericResponse();
+            response.setGenericResponse(vmService.getTeamStat(teamId));
+            return response;
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
