@@ -33,7 +33,6 @@ export class VmsComponent implements OnInit {
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
-    console.log("Course param " + this.courseParam);
 
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
 
@@ -75,8 +74,7 @@ export class VmsComponent implements OnInit {
       this.dialog.open(CreateVmProfessorComponent, {})
           .afterClosed()
           .subscribe(result => {
-            console.log("SONO QUI");
-            console.log(result);
+
           });
     } else {
       this.snackBar.open('You must to create a course first', 'OK', {

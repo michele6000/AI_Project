@@ -18,6 +18,7 @@ const API_URL = '/api/API/';
 export class ProfessorService {
 
   // private dataStore: {courses: CourseModel[]} = {courses: null};
+  eventsSubjectChangeCorsoSideNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
 
   courses: Observable<CourseModel[]>;
   students: Observable<StudentModel[]>;

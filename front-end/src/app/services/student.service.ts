@@ -16,7 +16,7 @@ const API_URL = '/api/API/';
 })
 export class StudentService {
 
-  eventsSubjectChangeCorsoSindeNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
+  eventsSubjectChangeCorsoSideNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
 
   courses: Observable<CourseModel[]>;
   teams: Observable<GroupModel[]>;
