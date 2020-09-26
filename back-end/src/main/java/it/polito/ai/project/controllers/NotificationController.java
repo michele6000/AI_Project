@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/API/notifications")
@@ -17,14 +18,9 @@ public class NotificationController {
     NotificationService service;
 
     @GetMapping("/confirm/{token}")
-    public String confirm(@PathVariable String token, Model model) {
+    public String confirm(@PathVariable String token, @RequestParam String id, Model model) {
         try {
-            String username = SecurityContextHolder
-                    .getContext()
-                    .getAuthentication()
-                    .getName()
-                    .split("@")[0];
-            if (service.confirm(token, username)) {
+            if (service.confirm(token, id)) {
                 model.addAttribute("error", "display:none;");
                 model.addAttribute("message", "You joined the team!\nTEAM ACTIVATED!");
             } else {

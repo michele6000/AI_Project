@@ -32,11 +32,12 @@ export class EnrolledStudentsComponent implements OnInit {
 
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
 
-    this.professorService.getEnrolledStudents(this.corso.name).subscribe(
-      (res) => {
-        this.data = res;
-      }
-    );
+    if(this.corso.name.length > 0)
+      this.professorService.getEnrolledStudents(this.corso.name).subscribe(
+        (res) => {
+          this.data = res;
+        }
+      );
 
     this.professorService.getStudents().subscribe(
       (students) => {
@@ -79,6 +80,7 @@ export class EnrolledStudentsComponent implements OnInit {
   }
 
   addStudent($event: StudentModel) {
+    console.log($event.id);
     this.professorService.enrollStudent(this.corso.name, $event.id).subscribe((res) => {
       if (res) {
         this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);

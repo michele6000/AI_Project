@@ -1,0 +1,13 @@
+<div class="dimensioni">
+  <mat-card-title>Solution History</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <mat-list>
+    <mat-list-item *ngFor="let solution of history ">
+      Version: {{solution.version}} - Status: {{solution.status}}
+      <a mat-stroked-button (click)="handleShowSolution(solution.id)" class="ml-20">Show solution</a>
+    </mat-list-item>
+  </mat-list>
+  <mat-card-actions class="mt-10 float-right">
+    <button mat-button mat-dialog-close>Dismiss</button>
+  </mat-card-actions>
+</div>

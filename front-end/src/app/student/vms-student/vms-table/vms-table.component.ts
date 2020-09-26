@@ -4,6 +4,11 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {VmModel} from "../../../models/vm.model";
 import {StudentService} from "../../../services/student.service";
+import {CreateAssignmentComponent} from '../../../dialog/create-assignment/create-assignment.component';
+import {MatDialog} from '@angular/material/dialog';
+import {ModifyOwnerComponent} from '../../../dialog/modify-owner/modify-owner.component';
+import {AddOwnerComponent} from '../../../dialog/add-owner/add-owner.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-vms-table',
@@ -20,17 +25,17 @@ export class VmsTableComponent implements OnInit {
   table: MatTable<any>;
   @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
   @Output('delete') onDelete: EventEmitter<any> = new EventEmitter<any>();
+  @Output('modifyOwner') onModifyOwner: EventEmitter<any> = new EventEmitter<any>();
+  @Output('addOwner') onAddOwner: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
 
-  constructor(private studentService: StudentService) {
-  }
+  constructor(private studentService: StudentService, private dialog: MatDialog, private snackBar: MatSnackBar) { }
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
-    console.log(data);
     if (this.table) {
       this.table.renderRows();
     }
@@ -41,7 +46,7 @@ export class VmsTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnsWithCheckbox = [...this.columnsToDisplay, 'power', 'delete', 'edit'];
+    this.columnsWithCheckbox = [...this.columnsToDisplay, 'accessLink', 'status', 'power', 'delete', 'edit', 'addOwner', 'changeOwner'];
 
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -67,5 +72,36 @@ export class VmsTableComponent implements OnInit {
 
   delete(element: VmModel) {
     this.onDelete.emit(element);
+  }
+
+  // @TODO -> propagare al padre per riaggiornare la tabella
+  addOwner(element: VmModel) {
+    // open dialog
+    this.studentService.findMembersByTeamId(element.groupId).subscribe((studentInTeam) => {
+      this.dialog.open(AddOwnerComponent, {data: {vm: element, students: studentInTeam}})
+        .afterClosed()
+        .subscribe(result => {
+          if (result){
+            this.snackBar.open('Owner added successfully.', 'OK', {
+              duration: 5000
+            });
+          }
+        });
+    });
+  }
+
+  // @TODO -> propagare al padre per riaggiornare la tabella
+  modifyOwner(element: VmModel) {
+    this.studentService.findMembersByTeamId(element.groupId).subscribe((studentInTeam) => {
+      this.dialog.open(ModifyOwnerComponent, {data: {vm: element, students: studentInTeam}})
+        .afterClosed()
+        .subscribe(result => {
+          if (result){
+            this.snackBar.open('Owner modified successfully.', 'OK', {
+              duration: 5000
+            });
+          }
+        });
+    });
   }
 }

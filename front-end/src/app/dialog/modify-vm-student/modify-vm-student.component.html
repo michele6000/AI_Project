@@ -1,0 +1,35 @@
+<div class="dimensioni">
+  <mat-card-title>Edit VM</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <mat-error *ngIf="error" class="mt-10">
+    Limit exceeded for:
+    <ul class="mb-20">
+      <li *ngFor="let limit of limitError">
+        {{limit}}
+      </li>
+    </ul>
+  </mat-error>
+  <form #f="ngForm" (ngSubmit)="edit(f)">
+    <mat-form-field class="dialog-position-field">
+      <mat-label>Number of V-CPU</mat-label>
+      <input #vcpu="ngModel" [ngModel]="vmConfig.cpu" matInput name="vcpu" placeholder="Number of V-CPU" required type="text" value="">
+    </mat-form-field>
+    <br>
+    <mat-form-field class="dialog-position-field">
+      <mat-label>RAM (size in MB)</mat-label>
+      <input #ram="ngModel" [ngModel]="vmConfig.ram" matInput name="ram" placeholder="RAM" required type="text" value="">
+    </mat-form-field>
+    <br>
+    <mat-form-field class="dialog-position-field">
+      <mat-label>Disk (size in MB)</mat-label>
+      <input #disk="ngModel" [ngModel]="vmConfig.hdd" matInput name="disk" placeholder="Disk" required type="text" value="">
+    </mat-form-field>
+    <br>
+    <mat-card-actions class="float-right">
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Save</button>
+      <!-- Gestire path statico -->
+      <button [routerLink]="['/student/applicazioni-internet/vms']" mat-button mat-dialog-close>Cancel</button>
+    </mat-card-actions>
+  </form>
+</div>
+

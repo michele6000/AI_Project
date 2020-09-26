@@ -7,13 +7,10 @@ import it.polito.ai.project.services.TeamService;
 import it.polito.ai.project.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -38,28 +35,27 @@ public class VMController {
     @PostMapping("/{vmId}/modifyConfiguration")
     public Boolean modifyConfiguration(@PathVariable Long vmId, @RequestBody VMDTO vm) {
         try {
-            return vmService.modifyVMConfiguration(vmId, vm);
+            return vmService.modifyVMConfiguration(vmId, vm, getCurrentUsername());
         } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
-    //in caso di "cessione" dell'ownership
     @PostMapping("/{vmId}/modifyOwner")
     public Boolean modifyOwner(@PathVariable Long vmId, @RequestBody String studentID) {
         try {
-            return vmService.modifyVMOwner(vmId, studentID);
+            return vmService.modifyVMOwner(vmId, studentID,getCurrentUsername());
         } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
     @PostMapping("/{vmId}/addOwner")
     public Boolean addOwner(@PathVariable Long vmId, @RequestBody String studentID) {
         try {
-            return vmService.addVMOwner(vmId, studentID);
+            return vmService.addVMOwner(vmId, studentID,getCurrentUsername());
         } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -77,7 +73,7 @@ public class VMController {
         try {
             return vmService.powerVMOn(vmId);
         } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -86,7 +82,7 @@ public class VMController {
         try {
             return vmService.powerVMOff(vmId);
         } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -94,20 +90,18 @@ public class VMController {
     @PostMapping("/{vmId}/delete")
     public Boolean delete(@PathVariable Long vmId) {
         try {
-            return vmService.deleteVM(vmId);
+            return vmService.deleteVM(vmId, getCurrentUsername());
         } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
-    @GetMapping(value = "/getImage/{vmId}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void showImage(HttpServletResponse response, @PathVariable Long vmId)
-            throws IOException {
-        response.addHeader("Access-Control-Allow-Origin","*");
-        response.setContentType("image/jpeg");
-        response.getOutputStream().write(vmService.getVmImage(vmId));
-        response.getOutputStream().close();
+    private String getCurrentUsername() {
+        return SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName()
+                .split("@")[0];
     }
-
 
 }

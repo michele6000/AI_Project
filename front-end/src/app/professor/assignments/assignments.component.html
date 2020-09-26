@@ -1,4 +1,4 @@
-<div class="w-70 container">
+<div class="container">
   <div class="d-flex align-items-center">
     <h2  class="mb-10 mr-20">Create assignment:</h2>
     <button (click)="createAssignment($event)" class="ml-20 mb-10" color="primary" mat-raised-button>Create Assignment </button>
@@ -15,7 +15,7 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <button (click)="handleShowSubmission(consegna.id)" class="float-right" mat-raised-button type="button">Show submission</button>
-      <app-table-filter (edit)="edit($event)" [columns]="columnsElaborati" [data]="consegna.elaborati"
+      <app-table-filter (showHistory)="showHistory($event)" [submission]="consegna" [columns]="columnsElaborati" [data]="consegna.elaborati"
                         filterColumn="status"></app-table-filter>
     </mat-expansion-panel>
   </mat-accordion>

@@ -1,6 +1,6 @@
 <form class="mleft20">
   <mat-form-field class="text-input w-70">
-    <input [formControl]="formControl" [matAutocomplete]="auto" matInput placeholder="Aggiungi" type="text">
+    <input [formControl]="formControl" [matAutocomplete]="auto" matInput placeholder="Add" type="text">
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event)" [displayWith]="displayFn">
       <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
         {{option.firstName + " " + option.name + " " + option.id}}

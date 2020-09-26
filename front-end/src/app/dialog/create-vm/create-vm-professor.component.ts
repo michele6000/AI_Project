@@ -16,10 +16,10 @@ import {Router} from "@angular/router";
 export class CreateVmProfessorComponent implements OnInit {
   error = false;
   group: GroupModel;
-  fileAbsent = false;
   file: any;
   private courseParam: string;
   private corso: CourseModel;
+  filename = 'Choose file';
 
   // @todo Se non ho ancora un VM Type associato al corso visualizzo il bottone di creazione
   // altrimenti quello di modifica
@@ -42,23 +42,30 @@ export class CreateVmProfessorComponent implements OnInit {
     // Creazione VM Type
     this.professorService.createVMType(this.corso.name, vm).subscribe(
       (res) => {
+        this.dialogRef.close();
         // res è l'ID del VM Type se creata con successo
         this.snackBar.open('VM created successfully', 'OK', {
           duration: 5000
         });
+        return 200;
       },
       (error) => {
+        this.dialogRef.close();
         this.snackBar.open('Error creating VM, try again.', 'OK', {
           duration: 5000
         });
+        return 500;
       }
     );
   }
 
   handleFileSelect($event: any) {
-    console.log($event);
     this.file = $event.target.files[0];
-    this.fileAbsent = false;
+    if (this.file !== undefined) {
+      this.filename = this.file.name;
+    } else {
+      this.filename = 'Choose file';
+    }
   }
 
   closeDialog() {

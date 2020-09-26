@@ -340,6 +340,7 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(studentId)
                 .getCourses()
                 .stream()
+                .filter(Course::isEnabled)
                 .map(c -> modelMapper.map(c, CourseDTO.class))
                 .collect(Collectors.toList());
     }

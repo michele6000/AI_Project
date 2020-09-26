@@ -7,8 +7,6 @@ import it.polito.ai.project.dtos.VMTypeDTO;
 import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -18,10 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -130,17 +126,19 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    public Boolean modifyVMConfiguration(Long vmId, VMDTO vm) {
+    public Boolean modifyVMConfiguration(Long vmId, VMDTO vm, String me) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         if (!optionalVMEntity.isPresent()) {
             throw new VmNotFoundException("Vm not found!");
         }
 
-
         Optional<Team> optionalTeamEntity = teamRepo.findById(optionalVMEntity.get().getTeam().getId());
         if (!optionalTeamEntity.isPresent()) {
             throw new TeamNotFoundException("Team not found!");
         }
+
+        if (!optionalVMEntity.get().getOwners().contains(studentRepo.getOne(me)))
+            throw new TeamServiceException("You are not an owner of this VM!");
 
         if (!optionalVMEntity.get().getStatus().equals("poweroff")) return false;
         if (vm.getRam() > optionalTeamEntity.get().getLimit_ram()) return false;
@@ -154,9 +152,10 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    public Boolean modifyVMOwner(Long vmId, String studentID) {
+    public Boolean modifyVMOwner(Long vmId, String studentID, String me) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
+        Student studentMe = studentRepo.getOne(me);
 
         if (!optionalVMEntity.isPresent()) {
             throw new VmNotFoundException("Vm not found!");
@@ -165,18 +164,24 @@ public class VmServiceImpl implements VmService {
             throw new StudentNotFoundException("Student not found!");
         }
 
-        Student tmp = optionalVMEntity.get().getOwners().get(0);
-        optionalVMEntity.get().getOwners().clear();
-        tmp.getVms().remove(optionalVMEntity.get());
-        optionalVMEntity.get().getOwners().add(optionalStudentEntity.get());
-        optionalStudentEntity.get().getVms().add(optionalVMEntity.get());
-        optionalVMEntity.get().setOwner(studentID);
-
-        return true;
+        if(optionalVMEntity.get().getOwners().contains(studentMe) &&
+                !optionalVMEntity.get().getOwners().contains(optionalStudentEntity.get())){
+            studentMe.getVms().remove(optionalVMEntity.get());
+            optionalVMEntity.get().getOwners().remove(studentMe);
+            optionalVMEntity.get().getOwners().add(optionalStudentEntity.get());
+            optionalStudentEntity.get().getVms().add(optionalVMEntity.get());
+            return true;
+        } else if(optionalVMEntity.get().getOwners().contains(studentMe) &&
+                optionalVMEntity.get().getOwners().contains(optionalStudentEntity.get())) {
+            studentMe.getVms().remove(optionalVMEntity.get());
+            optionalVMEntity.get().getOwners().remove(studentMe);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public Boolean addVMOwner(Long vmId, String studentID) {
+    public Boolean addVMOwner(Long vmId, String studentID, String me) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         Optional<Student> optionalStudentEntity = studentRepo.findById(studentID);
         if (!optionalVMEntity.isPresent()) {
@@ -185,6 +190,12 @@ public class VmServiceImpl implements VmService {
         if (!optionalStudentEntity.isPresent()) {
             throw new StudentNotFoundException("Student not found!");
         }
+        if (optionalVMEntity.get().getOwners().contains(optionalStudentEntity.get()))
+            throw new TeamServiceException("Student is already owner");
+
+        if (!optionalVMEntity.get().getOwners().contains(studentRepo.getOne(me)))
+            throw new TeamServiceException("You are not a owner of this VM!");
+
         optionalVMEntity.get().getOwners().add(optionalStudentEntity.get());
         optionalStudentEntity.get().getVms().add(optionalVMEntity.get());
         return true;
@@ -253,11 +264,13 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    public Boolean deleteVM(Long vmId) {
+    public Boolean deleteVM(Long vmId, String me) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
         if (!optionalVMEntity.isPresent()) {
             throw new VmNotFoundException("Vm not found!");
         }
+        if (!optionalVMEntity.get().getOwners().contains(studentRepo.getOne(me)))
+            throw new TeamServiceException("You are not an owner of this VM!");
 
         optionalVMEntity.get().getTeam().getVMInstance().remove(optionalVMEntity.get());
         optionalVMEntity.get().getOwners().forEach(student -> student.getVms().remove(optionalVMEntity.get()));
@@ -300,12 +313,15 @@ public class VmServiceImpl implements VmService {
         VM _vm = new VM();
         _vm.setStatus("poweroff");
 
+        // vm type
         optionalVMTypeEntity.get().getVMs().add(_vm);
         _vm.setVmType(optionalVMTypeEntity.get());
 
+        // team
         optionalTeamEntity.get().getVMInstance().add(_vm);
         _vm.setTeam(optionalTeamEntity.get());
 
+        //owner
         _vm.getOwners().add(optionalStudentEntity.get());
         optionalStudentEntity.get().getVms().add(_vm);
 
@@ -366,5 +382,11 @@ public class VmServiceImpl implements VmService {
             bytes[j++] = b;
 
         return bytes;
+    }
+
+    public TeamDTO retriveTeamFromVm (Long vmId){
+        if(!vmRepo.existsById(vmId))
+            throw new TeamServiceException("Vm not found!");
+        return modelMapper.map(vmRepo.getOne(vmId).getTeam(),TeamDTO.class);
     }
 }

@@ -86,13 +86,23 @@ export class StudentService {
     return this.http.post<any>(API_URL + 'team/' + teamId + '/createVmInstance', vm);
   }
 
+  modifyConfigurationVm(vmId: number, vm: VmStudent){
+    return this.http.post<any>(API_URL + 'vm/' + vmId + '/modifyConfiguration', vm);
+  }
+
   addVmOwner(vmId: number, ownerId: string) {
     return this.http.post(API_URL + 'vm/' + vmId + '/addOwner', ownerId);
+  }
+
+  modifyOwner(vmId: number, studentId: string) {
+    return this.http.post(API_URL + 'vm/' + vmId + '/modifyOwner', studentId);
   }
 
   getVmOwners(vmId: number) {
     return this.http.get<StudentModel[]>(API_URL + 'vm/' + vmId + '/getOwners');
   }
+
+
 
   getVmConfiguration(vmId: number) {
     return this.http.get(API_URL + 'vm/' + vmId + '/getCurrentConfiguration');
@@ -141,11 +151,11 @@ export class StudentService {
     return this.http.get<any[]>(API_URL + 'students/' + studentId + '/' + submissionId + '/getHistorySolutions');
   }
 
-  getSubmissionById(courseName: string, submissionId: string) {
+  getSubmissionById(courseName: string, submissionId: number) {
     return this.http.get<any>(API_URL + 'courses/' + courseName + '/submissions/' + submissionId);
   }
 
-  addSolution(studentId: string, submissionId: string, solution: File) {
+  addSolution(studentId: string, submissionId: number, solution: File) {
     const formData = new FormData();
     const solutionModel = new SolutionModel();
     const solutionStr = new Blob([JSON.stringify(solutionModel)], { type: 'application/json'});

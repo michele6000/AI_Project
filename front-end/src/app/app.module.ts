@@ -47,7 +47,7 @@ import {EditCourseComponent} from './dialog/edit-course/edit-course.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {TableFilterComponent} from './include/table-filter/table-filter.component';
-import {EditHomeworkComponent} from './dialog/edit-homework/edit-homework.component';
+import {ShowHistoryComponent} from './dialog/edit-homework/show-history.component';
 import {MatRadioModule} from "@angular/material/radio";
 import {AuthInterceptor} from "./auth/auth.interceptor";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
@@ -57,6 +57,12 @@ import {DialogDeleteVmComponent} from './student/vms-student/dialog-delete-vm/di
 import {CreateAssignmentComponent} from './dialog/create-assignment/create-assignment.component';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
+import { ConfirmDeleteComponent } from './dialog/confirm-delete/confirm-delete.component';
+import { ModifyVmStudentComponent } from './dialog/modify-vm-student/modify-vm-student.component';
+import { ModifyOwnerComponent } from './dialog/modify-owner/modify-owner.component';
+import { AddOwnerComponent } from './dialog/add-owner/add-owner.component';
+import {MatSelectModule} from '@angular/material/select';
+import {NgParticlesModule} from "ng-particles";
 
 @NgModule({
   declarations: [
@@ -87,14 +93,19 @@ import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
     GroupDirective,
     EditCourseComponent,
     TableFilterComponent,
-    EditHomeworkComponent,
+    ShowHistoryComponent,
     EditVmProfessorComponent,
     VmsTableComponent,
     VmsTableComponent,
     DialogDeleteVmComponent,
-    CreateAssignmentComponent
+    CreateAssignmentComponent,
+    ConfirmDeleteComponent,
+    ModifyVmStudentComponent,
+    ModifyOwnerComponent,
+    AddOwnerComponent
   ],
   imports: [
+    NgParticlesModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -120,7 +131,8 @@ import {MAT_DATE_LOCALE, MatNativeDateModule} from "@angular/material/core";
     MatRadioModule,
     MatSnackBarModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSelectModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, {
     provide: MAT_DATE_LOCALE,

@@ -89,6 +89,8 @@ public class NotificationServiceImpl implements NotificationService {
 
         if (tokenRepo.findAllByTeamId(teamId).size() == 0) {
             try {
+                teamRepo.getOne(teamId).getPendentStudents().remove(studentRepo.getOne(username));
+                teamRepo.getOne(teamId).getConfirmedStudents().add(studentRepo.getOne(username));
                 teamService.setActive(teamId);
                 return true;
             } catch (TeamServiceException e) {
@@ -132,16 +134,16 @@ public class NotificationServiceImpl implements NotificationService {
             token.setTeamId(teamId);
             token.setExpiryDate(expiryDate);
             tokenRepo.save(token);
-            String address = "s" + m + "@studenti.polito.it";
+            String address = m + "@studenti.polito.it";
             String body =
                     "CONFIRM participation to the team: " +
                             URL_BASE +
                             "/notifications/confirm/" +
-                            id +
+                            id + "?id=" + m +
                             "\nREJECT participation to the team: " +
                             URL_BASE +
                             "/notifications/reject/" +
-                            id;
+                            id + "?id=" + m;
             this.sendMessage(address, "Team proposal", body);
         }
     }

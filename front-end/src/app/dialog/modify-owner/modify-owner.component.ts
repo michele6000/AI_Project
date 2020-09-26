@@ -1,0 +1,41 @@
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {NgForm} from '@angular/forms';
+import {StudentService} from '../../services/student.service';
+import {GroupModel} from '../../models/group.model';
+import {VmModel} from '../../models/vm.model';
+import {MatSnackBar} from '@angular/material/snack-bar';
+
+@Component({
+  selector: 'app-modify-owner',
+  templateUrl: './modify-owner.component.html',
+  styleUrls: ['./modify-owner.component.css']
+})
+export class ModifyOwnerComponent implements OnInit {
+  error = false;
+  dataVMAndStudents: any;
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private dialogRef: MatDialogRef<ModifyOwnerComponent>, private studentService: StudentService,  private snackBar: MatSnackBar) {
+    this.dataVMAndStudents = data;
+  }
+
+  ngOnInit(): void {
+  }
+
+  modifyOwner(f: NgForm) {
+    const studentId = f.value.matricola;
+    console.log(studentId);
+    this.studentService.modifyOwner(this.dataVMAndStudents.vm.id, studentId).subscribe(
+      res => {
+        this.dialogRef.close(res);
+      },
+      error => {
+        this.dialogRef.close(error);
+      }
+    );
+  }
+
+  closeDialog() {
+    this.dialogRef.close(false);
+  }
+}

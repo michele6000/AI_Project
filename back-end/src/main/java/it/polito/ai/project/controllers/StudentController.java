@@ -137,13 +137,16 @@ public class StudentController {
         }
     }
 
-    @GetMapping(value = "{studentId}/{solutionId}/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void showImage(HttpServletResponse response, @PathVariable String studentId, @PathVariable Long solutionId)
-            throws ServletException, IOException {
-        response.addHeader("Access-Control-Allow-Origin","*");
-        response.setContentType("image/jpeg");
-        response.getOutputStream().write(submissionService.getSolutionImage(studentId,solutionId));
-        response.getOutputStream().close();
+    @GetMapping(value = "/solutions/getImage/{solutionId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public void showImage(HttpServletResponse response,@PathVariable Long solutionId) {
+        try {
+            response.addHeader("Access-Control-Allow-Origin","*");
+            response.setContentType("image/jpeg");
+            response.getOutputStream().write(submissionService.getSolutionImage(solutionId));
+            response.getOutputStream().close();
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error retrieving image!");
+        }
     }
 
     @PostMapping("/{studentId}/{solutionId}/evaluateSolution")

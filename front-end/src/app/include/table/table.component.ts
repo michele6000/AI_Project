@@ -2,6 +2,9 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmDeleteComponent} from '../../dialog/confirm-delete/confirm-delete.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-table',
@@ -32,14 +35,12 @@ export class TableComponent implements OnInit {
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
 
-  constructor() {
+  constructor(private dialog: MatDialog, private snackBar: MatSnackBar) {
   }
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
-    console.log(data);
     if (this.table) {
-      console.log('Table ok');
       this.table.renderRows();
     }
   }
@@ -111,7 +112,20 @@ export class TableComponent implements OnInit {
   }
 
   delete() {
-    this.onDelete.emit(this.checkedObjects);
+    if (this.checkedObjects.length > 0){
+      this.dialog.open(ConfirmDeleteComponent)
+        .afterClosed()
+        .subscribe(result => {
+          if (result){
+            this.onDelete.emit(this.checkedObjects);
+          }
+          this.checkedObjects = [];
+        });
+    } else {
+      this.snackBar.open('You must select almost one element!', 'OK', {
+        duration: 5000
+      });
+    }
   }
 
   edit($event: MouseEvent, element: any) {

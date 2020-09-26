@@ -32,7 +32,7 @@ export class LoggedHeaderComponent implements OnInit {
         this.username = this.email.split("@")[0];
         this.isLoggedIn = true;
         this.title = 'Teams';
-        this.ImgUrl = next.image
+        this.ImgUrl = next.image;
 
       } else {
         this.email = '';
@@ -43,8 +43,7 @@ export class LoggedHeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    let imageUrl = API_URL_PUBLIC +'getImage?id=' + this.username;
-
+    const imageUrl = API_URL_PUBLIC + 'getImage?id=' + this.username;
     this.getBase64ImageFromURL(imageUrl).subscribe(base64data => {
       this.base64Image = 'data:image/jpg;base64,' + base64data;
     });

@@ -4,10 +4,12 @@ import {CourseModel} from '../../models/course.model';
 import {Router} from '@angular/router';
 import * as moment from 'moment';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {SubmissionModel} from '../../models/submission.model';
+import {from} from 'rxjs';
+import {concatMap, toArray} from 'rxjs/operators';
 
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
-
 
 
 @Component({
@@ -18,14 +20,12 @@ const API_URL_LOCAL = '/local/API/';
 export class AssignmentsStudentComponent implements OnInit {
 
   file: any;
-  consegne = [];
+  consegne: SubmissionModel[] = [];
   private courseParam: string;
   private corso: CourseModel;
   hasConsegne = false;
-
   imageToShow: any;
-
-  panelOpenState = false;
+  filename = 'Choose file';
 
   expandPanel(matExpansionPanel, event): void {
     event.stopPropagation(); // Preventing event bubbling
@@ -38,7 +38,7 @@ export class AssignmentsStudentComponent implements OnInit {
   private _isExpansionIndicator(target: EventTarget): boolean {
     const expansionIndicatorClass = 'mat-expansion-indicator';
 
-    return (target['classList'] && target['classList'].contains(expansionIndicatorClass) );
+    return (target['classList'] && target['classList'].contains(expansionIndicatorClass));
   }
 
   createImageFromBlob(image: Blob) {
@@ -52,32 +52,47 @@ export class AssignmentsStudentComponent implements OnInit {
     }
   }
 
-  constructor(private studentService: StudentService, private router: Router, private snackBar: MatSnackBar,) {
+  constructor(private studentService: StudentService, private router: Router, private snackBar: MatSnackBar) {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
     this.corso = this.studentService.findCourseByNameUrl(this.courseParam);
 
+    // Recupero l'elenco di Submissions per questo corso
     this.studentService.findSubmissions(this.corso.name).subscribe(
-      (res) => {
-        const consegne = [];
-        res.forEach((c) => {
-          c.expiryString = moment(c.expiryDate).format('L');
-          c.releaseString = moment(c.releaseDate).format('L');
-          // @todo Riempire con tutti gli elaborati dello studente
-          this.studentService.getHistorySolutions(localStorage.getItem('id'), c.id).subscribe(
-            (resHistory) => {
-              console.log(resHistory);
-            },
-            (errorHistory) => {
+      (submissions) => {
 
-            }
-          );
-          c.history = [];
-          consegne.push(c);
+        // Richiedo in concatMap (quindi, per ogni Submission raggruppando i risultati in un
+        //  unica subscribe) l'elenco delle soluzioni [historySolutions] per quella Submission
+        const consegne = [];
+        const result = from(submissions).pipe(
+          concatMap(submission => {
+            return this.studentService.getHistorySolutions(localStorage.getItem('id'), submission.id);
+          }),
+          toArray()
+        );
+
+        // result contiene un unico Observable
+        result.subscribe((historySolutions: any[][]) => {
+
+          // historySolutions è un Array di Array
+          //  contiene, per ogni Submission, un array di solutions
+          //  con corrispondenza chiave-chiave rispetto all'array di submissions
+
+          // Per ogni Submission aggiungo alla Submission stessa l'elenco di Solutions
+          //  [historySolutions] e le date formattate correttamente
+          submissions.forEach((singleSubmission, key) => {
+            singleSubmission.expiryString = moment(singleSubmission.expiryDate).format('L');
+            singleSubmission.releaseString = moment(singleSubmission.releaseDate).format('L');
+            singleSubmission.history = historySolutions[key];
+
+            // Aggiungo la Submission aggiornata all'array
+            consegne.push(singleSubmission);
+          });
+          // Aggiorno l'array di Submission ottenuto per popolare la vista
+          this.consegne = consegne;
+          if (consegne.length > 0) {
+            this.hasConsegne = true;
+          }
         });
-        this.consegne = consegne;
-        if (consegne.length > 0) {
-          this.hasConsegne = true;
-        }
       },
       (error) => {
 
@@ -89,36 +104,44 @@ export class AssignmentsStudentComponent implements OnInit {
   }
 
   handleFileSelect($event: any) {
-    console.log($event);
     this.file = $event.target.files[0];
-    console.log(this.file);
+    if (this.file !== undefined) {
+      this.filename = this.file.name;
+    } else {
+      this.filename = 'Choose file';
+    }
   }
 
-  // openSubmission(id: string) {
-  //   // this.studentService.getSubmissionById(this.corso.name, id).subscribe((res) => {
-  //   //   console.log(res);
-  //   // });
-  // }
-
-  uploadSolution(id: string) {
-    this.studentService.addSolution(localStorage.getItem('id'), id, this.file).subscribe(
-      (res) => {
-        this.snackBar.open('Solution uploaded successfully.', 'OK', {
-          duration: 5000
-        });
-      },
-      (error) => {
-        this.snackBar.open('Error uploading solution, try again.', 'OK', {
-          duration: 5000
-        });
-      }
-    );
+  uploadSolution(id: number) {
+    if (this.file !== undefined) {
+      this.studentService.addSolution(localStorage.getItem('id'), id, this.file).subscribe(
+        (res) => {
+          this.snackBar.open('Solution uploaded successfully.', 'OK', {
+            duration: 5000
+          });
+        },
+        (error) => {
+          this.snackBar.open('Error uploading solution, try again.', 'OK', {
+            duration: 5000
+          });
+        }
+      );
+    } else {
+      this.snackBar.open('You must select a file!', 'OK', {
+        duration: 5000
+      });
+    }
   }
 
-  handleShowSubmission(id: string) {
+  handleShowSubmission(id: number) {
     this.studentService.getSubmissionById(this.corso.name, id).subscribe((res) => {
       console.log(res);
+      console.log("HERE");
     });
-    window.open('//' + API_URL_PUBLIC+'courses/submissions/getImage/' + id, '_blank');
+    window.open('//' + API_URL_PUBLIC + 'courses/submissions/getImage/' + id, '_blank');
+  }
+
+  handleShowSolution(solutionId: number) {
+    window.open('//' + API_URL_PUBLIC + 'students/solutions/getImage/'  + solutionId , '_blank');
   }
 }

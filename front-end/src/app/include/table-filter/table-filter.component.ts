@@ -2,6 +2,8 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
+import {StudentSubmissionModel} from "../../models/student-submission.model";
+import {SubmissionModel} from "../../models/submission.model";
 
 @Component({
   selector: 'app-table-filter',
@@ -14,7 +16,8 @@ export class TableFilterComponent implements OnInit {
   columnsWithEdit = [];
   dataSource = new MatTableDataSource();
   @Input() filterColumn: string;
-  @Output('edit') onEdit: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @Input() submission: SubmissionModel;
+  @Output('showHistory') onShowHistory: EventEmitter<StudentSubmissionModel> = new EventEmitter<StudentSubmissionModel>();
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
   @ViewChild(MatSort, {static: true})
@@ -33,7 +36,7 @@ export class TableFilterComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.columnsWithEdit = [...this.columnsToDisplay, 'edit'];
+    this.columnsWithEdit = [...this.columnsToDisplay, 'evaluate', 'evaluation', 'showSolution', 'stopRevision', 'reviewSolution', 'edit'];
 
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -64,7 +67,24 @@ export class TableFilterComponent implements OnInit {
     }
   }
 
-  edit($event: MouseEvent, element: any) {
-    this.onEdit.emit(element);
+  showHistory(matricola: any) {
+    const studentSub = new StudentSubmissionModel();
+    studentSub.studentId = matricola;
+    studentSub.submissionId = this.submission.id;
+    this.onShowHistory.emit(studentSub);
+  }
+
+  showSolution(element: any) {
+    console.log('Show solution');
+    console.log(element);
+  }
+
+  reviewSolution(element: any) {
+    console.log('Review solution');
+    console.log(element);
+  }
+
+  stopRevision(element: any) {
+
   }
 }

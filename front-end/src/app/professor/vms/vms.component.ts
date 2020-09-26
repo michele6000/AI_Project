@@ -75,10 +75,11 @@ export class VmsComponent implements OnInit {
       this.dialog.open(CreateVmProfessorComponent, {})
           .afterClosed()
           .subscribe(result => {
+            console.log("SONO QUI");
             console.log(result);
           });
     } else {
-      this.snackBar.open('You must to create a course firstly', 'OK', {
+      this.snackBar.open('You must to create a course first', 'OK', {
         duration: 5000
       });
     }

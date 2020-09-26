@@ -8,6 +8,7 @@ import {StudentModel} from '../models/student.model';
 import {GroupModel} from '../models/group.model';
 import {SubmissionModel} from '../models/submission.model';
 import * as moment from "moment";
+import {SolutionModel} from "../models/solution.model";
 
 const API_URL = '/api/API/';
 
@@ -191,6 +192,10 @@ export class ProfessorService {
 
   findAssignmentsByCourse(courseName: string) {
     return this.http.get<any[]>(API_URL + 'courses/' + courseName + '/getAllSubmissions');
+  }
+
+  getLatestSolution(studentId: string, submissionId: number) {
+    return this.http.get<SolutionModel>(API_URL + 'students/' + studentId + '/' + submissionId + '/getLatestSolution');
   }
 
   updateCourse(course: CourseModel){
