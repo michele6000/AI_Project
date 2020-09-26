@@ -1,6 +1,7 @@
 <div class="dimensioni">
   <mat-card-title>Solution History</mat-card-title>
   <mat-divider class="mt-10 mb-20"></mat-divider>
+  <p *ngIf="history.length < 1">No history available.</p>
   <mat-list>
     <mat-list-item *ngFor="let solution of history ">
       Version: {{solution.version}} - Status: {{solution.status}}
