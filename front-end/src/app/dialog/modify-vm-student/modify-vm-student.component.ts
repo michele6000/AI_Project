@@ -14,13 +14,11 @@ import {VmModel} from '../../models/vm.model';
 })
 export class ModifyVmStudentComponent implements OnInit {
   error = false;
-  vmConfig: VmModel;
+  vmConfigAndLimitsPerTeam: any;
   limitError = [];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService, private snackBar: MatSnackBar, private dialogRef: MatDialogRef<ModifyVmStudentComponent>) {
-    this.vmConfig = data;
-    console.log("VM config: ");
-    console.log(this.vmConfig);
+  constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService, private dialogRef: MatDialogRef<ModifyVmStudentComponent>) {
+    this.vmConfigAndLimitsPerTeam = data;
   }
 
   ngOnInit(): void {}
@@ -32,31 +30,25 @@ export class ModifyVmStudentComponent implements OnInit {
     vm.hdd = f.value.disk;
     this.error = false;
     this.limitError = [];
-    if (vm.ram > this.vmConfig.ram) {
+    if (vm.ram > this.vmConfigAndLimitsPerTeam.team.limit_ram) {
       this.error = true;
-      this.limitError.push('RAM (maximum ' + this.vmConfig.ram + ')');
+      this.limitError.push('RAM (maximum ' + this.vmConfigAndLimitsPerTeam.team.limit_ram + ')');
     }
-    if (vm.hdd > this.vmConfig.hdd) {
+    if (vm.hdd > this.vmConfigAndLimitsPerTeam.team.limit_hdd) {
       this.error = true;
-      this.limitError.push('HDD (maximum ' + this.vmConfig.hdd + ')');
+      this.limitError.push('HDD (maximum ' + this.vmConfigAndLimitsPerTeam.team.limit_hdd + ')');
     }
-    if (vm.cpu > this.vmConfig.cpu) {
+    if (vm.cpu > this.vmConfigAndLimitsPerTeam.team.limit_cpu) {
       this.error = true;
-      this.limitError.push('CPU (maximum ' + this.vmConfig.cpu + ')');
+      this.limitError.push('CPU (maximum ' + this.vmConfigAndLimitsPerTeam.team.limit_cpu + ')');
     }
     if (!this.error) {
-      this.studentService.modifyConfigurationVm(this.vmConfig.id, vm).subscribe(
+      this.studentService.modifyConfigurationVm(this.vmConfigAndLimitsPerTeam.vmConfig.id, vm).subscribe(
         res => {
-          this.dialogRef.close();
-          this.snackBar.open('VM limits updated successfully', 'OK', {
-            duration: 5000
-          });
+          this.dialogRef.close(res);
         },
         error => {
-          this.dialogRef.close();
-          this.snackBar.open('Error updating VM limits', 'OK', {
-            duration: 5000
-          });
+          this.dialogRef.close(error);
         }
       );
     }

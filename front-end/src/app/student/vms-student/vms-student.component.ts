@@ -9,6 +9,8 @@ import {VmModel} from '../../models/vm.model';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {DialogDeleteVmComponent} from './dialog-delete-vm/dialog-delete-vm.component';
 import {ModifyVmStudentComponent} from '../../dialog/modify-vm-student/modify-vm-student.component';
+import {ModifyOwnerComponent} from '../../dialog/modify-owner/modify-owner.component';
+import {AddOwnerComponent} from '../../dialog/add-owner/add-owner.component';
 
 @Component({
   selector: 'app-vms-student',
@@ -27,33 +29,15 @@ export class VmsStudentComponent implements OnInit {
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
-
     this.corso = this.studentService.findCourseByNameUrl(this.courseParam);
-
     // Recupero il team al quale appartiene lo studente
     this.studentService.teams.subscribe((teams) => {
       if (teams.filter(t => t.status === 1 && t.courseName === this.corso.name).length > 0) {
         this.team = teams.filter(t => t.status === 1 && t.courseName === this.corso.name)[0];
-
         // Recupero le VM del team
         this.studentService.findVmsByTeam(this.team.id).subscribe(
           (vms) => {
-            const vmList = [];
-            vms.forEach((vm) => {
-              this.studentService.getVmOwners(vm.id).subscribe((owners) => {
-                let studentOwners = '';
-                // concateno gli id degli studenti (owners della VM)
-                owners.forEach(o => {
-                    studentOwners += o.id;
-                    studentOwners += ' ';
-                });
-                // elimino dalla stringa l'ultima virgola alla fine
-                // studentOwners.substr(0, studentOwners.length - 3);
-                vm.owner = studentOwners;
-                vm.groupId = this.team.id;
-              });
-            });
-            this.data = vms;
+            this.computeOwner(vms);
           });
       }
     });
@@ -64,7 +48,11 @@ export class VmsStudentComponent implements OnInit {
     this.dialog.open(EditVmStudentComponent, {data: this.team})
       .afterClosed()
       .subscribe(result => {
-        console.log(result);
+        if (result){
+          this.snackBar.open('VM created successfully.', 'OK', {
+            duration: 5000
+          });
+        }
       });
   }
 
@@ -75,28 +63,108 @@ export class VmsStudentComponent implements OnInit {
         if (result) {
           this.studentService.deleteVm($event.id).subscribe(
             (res) => {
-              this.snackBar.open('VM deleted successfully.', 'OK', {
-                duration: 5000
+              this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
+                this.computeOwner(vms);
+                this.snackBar.open('VM deleted successfully.', 'OK', {
+                  duration: 5000
+                });
               });
-              this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => this.data = vms);
             },
             (error) => {
+              this.snackBar.open('Error deleting VM.', 'OK', {
+                duration: 5000
+              });
             });
         }
       });
 
   }
 
-  editVM(vm: VmModel){
-    // passo come limiti i vecchi valori e non funziona
-    this.dialog.open(ModifyVmStudentComponent, {data: vm})
+  editVM(vm: VmModel) {
+    this.dialog.open(ModifyVmStudentComponent, {data: {vmConfig: vm, team: this.team}})
       .afterClosed()
       .subscribe(result => {
         this.studentService.getVmConfiguration(vm.id).subscribe(
           res => {
-            // @TODO -> riassegnare la VM config aggiornata nel gruppo
+            this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
+              this.computeOwner(vms);
+              if (res){
+                this.snackBar.open('VM limits updated successfully.', 'OK', {
+                  duration: 5000
+                });
+              } else {
+                this.snackBar.open('Error updating VM limits', 'OK', {
+                  duration: 5000
+                });
+              }
+            });
           }
         );
       });
+  }
+
+
+  modifyOwnerVM(element: VmModel) {
+    // recupero gli studenti del team
+    this.studentService.findMembersByTeamId(element.groupId).subscribe((studentInTeam) => {
+      // filtro gli studenti eliinando dalla lista lo studente loggato
+      // @Todo: togliere anche gli studenti che sonodiventati owner successivamente
+      studentInTeam = studentInTeam.filter((s) => s.id !== localStorage.getItem('id'));
+      this.dialog.open(ModifyOwnerComponent, {data: {vm: element, students: studentInTeam}})
+        .afterClosed()
+        .subscribe(result => {
+          if (result){
+            // recupero le vm
+            this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
+              // calcolo gli owner
+              this.computeOwner(vms);
+              this.snackBar.open('Owner modified successfully.', 'OK', {
+                duration: 5000
+              });
+            });
+          }
+        });
+    });
+  }
+
+  addOwnerVM(element: VmModel) {
+    // recupero gli studenti del team
+    this.studentService.findMembersByTeamId(element.groupId).subscribe((studentInTeam) => {
+      // filtro gli studenti eliinando dalla lista lo studente loggato
+      // @Todo: togliere anche gli studenti che sonodiventati owner successivamente
+      studentInTeam = studentInTeam.filter((s) => s.id !== localStorage.getItem('id'));
+      this.dialog.open(AddOwnerComponent, {data: {vm: element, students: studentInTeam}})
+        .afterClosed()
+        .subscribe(result => {
+          if (result){
+            this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
+              // calcolo gli owner
+              this.computeOwner(vms);
+              this.snackBar.open('Owner added successfully.', 'OK', {
+                duration: 5000
+              });
+            });
+          }
+        });
+    });
+  }
+
+  computeOwner(vms: VmModel[]) {
+    const vmList = [];
+    vms.forEach((vm) => {
+      this.studentService.getVmOwners(vm.id).subscribe((owners) => {
+        let studentOwners = '';
+        // concateno gli studenti (owners della VM)
+        owners.forEach(o => {
+          studentOwners += o.name + ' ' + o.firstName;
+          studentOwners += ', ';
+        });
+        // elimino dalla stringa l'ultima virgola alla fine
+        studentOwners.slice(0, -1);
+        vm.owner = studentOwners;
+        vm.groupId = this.team.id;
+      });
+    });
+    this.data = vms;
   }
 }

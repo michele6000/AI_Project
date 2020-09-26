@@ -2,9 +2,9 @@ import {Component, ComponentFactoryResolver, OnInit, ViewChild} from '@angular/c
 import {GroupDirective} from './group.directive';
 import {InfoGroupComponent} from './info-group/info-group.component';
 import {CreateGroupComponent} from './create-group/create-group.component';
-import {StudentService} from "../../services/student.service";
-import {CourseModel} from "../../models/course.model";
-import {Router} from "@angular/router";
+import {StudentService} from '../../services/student.service';
+import {CourseModel} from '../../models/course.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-groups',
@@ -22,10 +22,18 @@ export class GroupsComponent implements OnInit {
   }
 
   ngOnInit() {
+    // in ascolto sul BehaviorSubject per cambiare le informazioni del gruppo in base al corso
+    this.studentService.eventsSubjectChangeCorsoSindeNav.subscribe(next => {
+      this.computeGroup();
+    });
+  }
+
+  computeGroup() {
+    // recupero il corso dall'url
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
-
+    // recupero il corso dall'array di corsi dello studente dato il nome
     this.corso = this.studentService.findCourseByNameUrl(this.courseParam);
-
+    // carico il component con i gruppi a seconda se lo studente fa parte di un gruppo oppure no
     this.studentService.teams.subscribe((teams) => {
       if (teams && teams.filter(t => t.status === 1 && t.courseName === this.corso.name).length > 0) {
         this.loadComponent(1);

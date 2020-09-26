@@ -3,7 +3,7 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {CourseModel} from '../models/course.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {StudentService} from "../services/student.service";
-import {Subscription} from "rxjs";
+import {Subject, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-student',
@@ -56,5 +56,7 @@ export class StudentComponent implements OnInit {
   changeCorso(corso: CourseModel) {
     this.singoloCorso = corso;
     this.router.navigate(['student', corso.name.toLowerCase().replace(' ', '-'), 'groups']).then();
+    // BehaviorSubject utilizzato per notificare il cambio di un corso nella sidenav
+    this.studentService.eventsSubjectChangeCorsoSindeNav.next();
   }
 }

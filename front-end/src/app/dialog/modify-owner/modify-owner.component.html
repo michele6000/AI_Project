@@ -1,5 +1,5 @@
 <div class="dimensioni">
-  <mat-card-title>Add Vm Owner</mat-card-title>
+  <mat-card-title>Modify Vm Owner</mat-card-title>
   <mat-divider class="mt-10 mb-20"></mat-divider>
   <mat-error *ngIf="error" class="mt-10-center">
     Error
@@ -16,7 +16,7 @@
     </mat-form-field>
     <br>
     <mat-card-actions class="float-right">
-      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit">Add</button>
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit">Modify</button>
       <button (click)="closeDialog()" mat-button mat-dialog-close>Cancel</button>
     </mat-card-actions>
   </form>
