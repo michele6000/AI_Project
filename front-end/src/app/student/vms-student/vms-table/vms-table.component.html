@@ -60,7 +60,7 @@
       Add Owner
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="addOwner(element)" class="cursor-pointer">group_add</mat-icon>
+      <mat-icon (click)="addOwnerVM(element)" class="cursor-pointer">group_add</mat-icon>
     </td>
   </ng-container>
 
@@ -70,7 +70,7 @@
       Change Owner
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="modifyOwner(element)" class="cursor-pointer">person</mat-icon>
+      <mat-icon (click)="modifyOwnerVM(element)" class="cursor-pointer">person</mat-icon>
     </td>
   </ng-container>
 

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CourseModel} from '../models/course.model';
 import {HttpClient} from '@angular/common/http';
 import {VmStudent} from '../models/vm-student.model';
@@ -15,6 +15,8 @@ const API_URL = '/api/API/';
   providedIn: 'root'
 })
 export class StudentService {
+
+  eventsSubjectChangeCorsoSindeNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
 
   courses: Observable<CourseModel[]>;
   teams: Observable<GroupModel[]>;

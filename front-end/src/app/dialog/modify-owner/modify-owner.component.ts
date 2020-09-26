@@ -24,7 +24,6 @@ export class ModifyOwnerComponent implements OnInit {
 
   modifyOwner(f: NgForm) {
     const studentId = f.value.matricola;
-    console.log(studentId);
     this.studentService.modifyOwner(this.dataVMAndStudents.vm.id, studentId).subscribe(
       res => {
         this.dialogRef.close(res);
