@@ -62,7 +62,7 @@ export class CoursesComponent implements OnInit {
     });
   }
 
-  //@Todo: aggiornare la tabella dei corsi dopo aver fatto delete
+  // @Todo: aggiornare la tabella dei corsi dopo aver fatto delete
   deleteCourse($event: CourseModel[]) {
     const res = from($event).pipe(
       concatMap(course => {
@@ -83,6 +83,8 @@ export class CoursesComponent implements OnInit {
           duration: 5000
         });
       }
+      // Aggiorno tabella
+      this.professorService.findCoursesByProfessor(localStorage.getItem('id'), true);
     });
   }
 
