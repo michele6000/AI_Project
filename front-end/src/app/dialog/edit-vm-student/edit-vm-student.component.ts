@@ -15,9 +15,11 @@ export class EditVmStudentComponent implements OnInit {
   error = false;
   team: GroupModel;
   limitError = [];
+  courseName: string;
 
   constructor(private studentService: StudentService, @Inject(MAT_DIALOG_DATA) public data: GroupModel, private snackBar: MatSnackBar, private dialogRef: MatDialogRef<EditVmStudentComponent>) {
     this.team = data;
+    // this.courseName = ; //TODO: settare sto parametro
   }
 
   ngOnInit(): void {

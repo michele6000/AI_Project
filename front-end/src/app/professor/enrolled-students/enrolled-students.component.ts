@@ -40,7 +40,6 @@ export class EnrolledStudentsComponent implements OnInit {
           }
         );
       }
-
       // recupero la lista di studenti da cui pescare gli studenti per iscriverli al corso
       this.professorService.getStudents().subscribe(
         (students) => {

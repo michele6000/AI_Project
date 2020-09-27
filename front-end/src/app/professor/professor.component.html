@@ -1,11 +1,11 @@
 <app-logged-header (toggleMenu)="toggleMenu()"></app-logged-header>
 <mat-toolbar>
-  {{singoloCorso ? singoloCorso.name : ''}}
+  {{singoloCorso ? singoloCorso.name : 'Non sono presenti corsi'}}
   <span class="fill-remaining-space"></span>
   <button (click)="manageCourses()" color="primary" mat-raised-button routerLink="/teacher/courses">Manage Courses
   </button>
 </mat-toolbar>
-<mat-sidenav-container>
+<mat-sidenav-container *ngIf="singoloCorso">
   <mat-sidenav mode="side" opened position>
     <div>
       <mat-nav-list>

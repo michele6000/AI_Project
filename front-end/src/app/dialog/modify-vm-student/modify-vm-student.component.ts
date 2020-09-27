@@ -16,9 +16,13 @@ export class ModifyVmStudentComponent implements OnInit {
   error = false;
   vmConfigAndLimitsPerTeam: any;
   limitError = [];
+  courseName: string;
+
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService, private dialogRef: MatDialogRef<ModifyVmStudentComponent>) {
     this.vmConfigAndLimitsPerTeam = data;
+    this.courseName = this.vmConfigAndLimitsPerTeam.courseName;
+    console.log(this.courseName);
   }
 
   ngOnInit(): void {}

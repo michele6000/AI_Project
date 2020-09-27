@@ -42,7 +42,7 @@
       Delete
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="delete(element)" class="cursor-pointer">delete_outline</mat-icon>
+      <mat-icon (click)="delete(element)" class="cursor-pointer" *ngIf="element.status !== 'poweron'" >delete_outline</mat-icon>
     </td>
   </ng-container>
 
@@ -50,8 +50,8 @@
     <th *matHeaderCellDef mat-header-cell class="text-center">
       Modify
     </th>
-    <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="edit($event, element)" class="cursor-pointer">edit</mat-icon>
+    <td *matCellDef="let element" mat-cell class="text-center" >
+      <mat-icon (click)="edit($event, element)" class="cursor-pointer" *ngIf="element.status !== 'poweron'" >edit</mat-icon>
     </td>
   </ng-container>
 
@@ -64,7 +64,7 @@
     </td>
   </ng-container>
 
-  <!-- se c'è piu di un owner non mostrate la colonna -->
+  <!-- se c'è piu di un owner non mostrate la colonna. Michele: in realtà va bene cosi ho cambiato un po la logica del server -->
   <ng-container matColumnDef="changeOwner" class="text-center">
     <th *matHeaderCellDef mat-header-cell class="text-center">
       Change Owner

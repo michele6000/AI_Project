@@ -35,6 +35,8 @@ export class VmsComponent implements OnInit {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
 
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
+    if (this.corso.name.length == 0 )
+      return;
 
     // Recupero il VM Type, se presente
     this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {

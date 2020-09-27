@@ -240,7 +240,9 @@ public class TeamServiceImpl implements TeamService {
                             "Course deleted",
                             "We inform you that the course " + courseName + " has been deleted.");
             });
-            vmTypeRepository.delete(courseRepo.getOne(courseName).getVmType());
+            Optional<VMType> vmType = Optional.ofNullable(courseRepo.getOne(courseName).getVmType());
+            if(vmType.isPresent())
+                vmTypeRepository.delete(courseRepo.getOne(courseName).getVmType());
             // solution
             // submission
             courseRepo.getOne(courseName).getSubmissions().forEach( s -> {

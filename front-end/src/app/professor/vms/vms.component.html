@@ -1,4 +1,4 @@
-<div class="container">
+<div *ngIf="corso.name.length > 0" class="container">
   <div class="d-flex align-items-center">
     <h2 *ngIf="!hasVMType" class="mb-10 mr-20">Set VM Type:</h2>
     <h2 *ngIf="hasVMType" class="mb-10 mr-20">VM Type already setted</h2>

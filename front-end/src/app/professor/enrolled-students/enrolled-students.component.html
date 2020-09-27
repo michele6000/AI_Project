@@ -1,4 +1,4 @@
-<div class="container">
+<div *ngIf="corso.name.length > 0" class="container">
   <div class="d-flex align-items-center">
     <app-insert (add)="addStudent($event)" [options]="students" class="w-50"></app-insert>
     <span class="fill-remaining-space"></span>

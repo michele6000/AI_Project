@@ -26,7 +26,7 @@ export class AssignmentsComponent implements OnInit {
   columnsElaborati = ['name', 'surname', 'matricola', 'status'];
 
   private courseParam: string;
-  private corso: CourseModel;
+  corso: CourseModel;
   show: boolean;
 
   constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService) {
@@ -36,6 +36,9 @@ export class AssignmentsComponent implements OnInit {
     this.show = false;
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
+
+    if (this.corso.name.length == 0 )
+      return;
 
     // 1 - Recupero l'elenco di studenti del corso
     this.professorService.getEnrolledStudents(this.corso.name).subscribe(
