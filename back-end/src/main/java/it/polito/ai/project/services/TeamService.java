@@ -114,4 +114,6 @@ public interface TeamService {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_PROFESSOR','ROLE_ADMIN')")
     TeamDTO getTeam(Long teamId);
 
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    List<ProfessorDTO> getAllProfessors();
 }

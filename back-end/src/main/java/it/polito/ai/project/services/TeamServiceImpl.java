@@ -577,6 +577,19 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public List<ProfessorDTO> getAllProfessors() {
+        return profRepo.findAll()
+                .stream()
+                .map(professor ->
+                    modelMapper
+                            .typeMap(Professor.class,ProfessorDTO.class)
+                            .addMappings(mapper -> { mapper.skip(ProfessorDTO::setPassword); mapper.skip(ProfessorDTO::setImage); })
+                            .map(professor)
+                )
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public boolean addProfessor(ProfessorDTO professor, MultipartFile file) {
         if (professor == null) {
             return false;
