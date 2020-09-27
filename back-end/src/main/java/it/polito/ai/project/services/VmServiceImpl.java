@@ -211,9 +211,7 @@ public class VmServiceImpl implements VmService {
         return vmRepo.getOne(vmId)
                 .getOwners()
                 .stream()
-                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
-                    mapper.skip(StudentDTO::setPassword);
-                }).map(s))
+                .map(s -> modelMapper.map(s,StudentDTO.class))
                 .collect(Collectors.toList());
     }
 

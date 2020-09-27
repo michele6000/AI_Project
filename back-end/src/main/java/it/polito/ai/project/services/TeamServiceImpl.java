@@ -2,10 +2,7 @@ package it.polito.ai.project.services;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import it.polito.ai.project.dtos.CourseDTO;
-import it.polito.ai.project.dtos.ProfessorDTO;
-import it.polito.ai.project.dtos.StudentDTO;
-import it.polito.ai.project.dtos.TeamDTO;
+import it.polito.ai.project.dtos.*;
 import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
@@ -73,43 +70,47 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public boolean addStudent(StudentDTO student, MultipartFile file) {
-        if (student == null ||
-                student.getId().length() == 0 ||
-                student.getName().length() == 0 ||
-                student.getFirstName().length() == 0
+    public StudentDTO addStudent(UserDTO user, MultipartFile file) {
+        if (user == null ||
+                user.getUsername().length() == 0 ||
+                user.getName().length() == 0 ||
+                user.getFirstName().length() == 0
         )
-            return false;
+            return new StudentDTO();
+
+        if (studentRepo.existsById(user.getUsername()))
+            return new StudentDTO();
+
+        User _user = new User();
+        _user.setUsername(user.getEmail());
+        _user.setPassword(passwordEncoder.encode(user.getPassword()));
+        _user.setRoles(Collections.singletonList("ROLE_STUDENT"));
+
+        Student _student = new Student();
+        _student.setId(user.getUsername());
+        _student.setName(user.getName());
+        _student.setFirstName(user.getFirstName());
+        _student.setEmail(user.getEmail());
 
         try{
             Byte[] byteObjects = new Byte[file.getBytes().length];
-
             int i = 0;
-
             for (byte b : file.getBytes())
                 byteObjects[i++] = b;
-
-            student.setImage(byteObjects);
+            _student.setImage(byteObjects);
         } catch (IOException e) {
             throw new TeamServiceException("Error saving image: " + e.getMessage());
         }
 
-        Student studentEntity = modelMapper.map(student, Student.class);
-        if (studentRepo.existsById(studentEntity.getId()))
-            return false;
+        userRepo.save(_user);
+        studentRepo.save(_student);
 
-        User user = new User();
-        user.setUsername(student.getId() + "@studenti.polito.it");
-        user.setPassword(passwordEncoder.encode(student.getPassword()));
-        user.setRoles(Collections.singletonList("ROLE_STUDENT"));
-        User u = userRepo.save(modelMapper.map(user, User.class));
-        studentRepo.save(studentEntity);
         notification.sendMessage(
-                "paola.caso96@gmail.com",
+                user.getEmail(),
                 "New Registration",
-                "Username: " + user.getUsername() + " password: " + student.getPassword()
+                "Username: " + user.getUsername() + " password: " + user.getPassword()
         );
-        return true;
+        return modelMapper.map(_student,StudentDTO.class);
     }
 
     @Override
@@ -161,11 +162,7 @@ public class TeamServiceImpl implements TeamService {
     public Optional<StudentDTO> getStudent(String studentId) {
         if (!studentRepo.existsById(studentId)) return Optional.empty();
 
-        return Optional.of(
-                modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
-                    mapper.skip(StudentDTO::setPassword);
-                }).map(studentRepo.getOne(studentId))
-        );
+        return Optional.of(modelMapper.map(studentRepo.getOne(studentId),StudentDTO.class));
     }
 
     @Override
@@ -173,9 +170,7 @@ public class TeamServiceImpl implements TeamService {
         return studentRepo
                 .findAll()
                 .stream()
-                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
-                    mapper.skip(StudentDTO::setPassword);
-                }).map(s))
+                .map(s -> modelMapper.map(s,StudentDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -188,9 +183,7 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(courseName)
                 .getStudents()
                 .stream()
-                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
-                    mapper.skip(StudentDTO::setPassword);
-                }).map(s))
+                .map(s -> modelMapper.map(s,StudentDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -284,7 +277,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<Boolean> addAll(List<StudentDTO> students) {
         List<Boolean> studentsAdded = new ArrayList<>();
-        students.forEach(s -> studentsAdded.add(addStudent(s, null)));
+//        students.forEach(s -> studentsAdded.add(addStudent(s, null)));
         return studentsAdded;
     }
 
@@ -369,9 +362,7 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(teamId)
                 .getMembers()
                 .stream()
-                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
-                    mapper.skip(StudentDTO::setPassword);
-                }).map(s))
+                .map(s -> modelMapper.map(s,StudentDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -384,9 +375,7 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(teamId)
                 .getConfirmedStudents()
                 .stream()
-                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
-                    mapper.skip(StudentDTO::setPassword);
-                }).map(s))
+                .map(s -> modelMapper.map(s,StudentDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -399,9 +388,7 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(teamId)
                 .getPendentStudents()
                 .stream()
-                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
-                    mapper.skip(StudentDTO::setPassword);
-                }).map(s))
+                .map(s -> modelMapper.map(s,StudentDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -513,9 +500,7 @@ public class TeamServiceImpl implements TeamService {
         return courseRepo
                 .getStudentsInTeams(courseName)
                 .stream()
-                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
-                    mapper.skip(StudentDTO::setPassword);
-                }).map(s))
+                .map(s -> modelMapper.map(s,StudentDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -526,9 +511,7 @@ public class TeamServiceImpl implements TeamService {
         return courseRepo
                 .getStudentsNotInTeams(courseName)
                 .stream()
-                .map(s -> modelMapper.typeMap(Student.class,StudentDTO.class).addMappings(mapper -> {
-                    mapper.skip(StudentDTO::setPassword);
-                }).map(s))
+                .map(s -> modelMapper.map(s,StudentDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -583,47 +566,54 @@ public class TeamServiceImpl implements TeamService {
                 .map(professor ->
                     modelMapper
                             .typeMap(Professor.class,ProfessorDTO.class)
-                            .addMappings(mapper -> { mapper.skip(ProfessorDTO::setPassword); mapper.skip(ProfessorDTO::setImage); })
                             .map(professor)
                 )
                 .collect(Collectors.toList());
     }
 
     @Override
-    public boolean addProfessor(ProfessorDTO professor, MultipartFile file) {
-        if (professor == null) {
-            return false;
-        }
-        String id = professor.getId();
-        if (profRepo.findById(id).isPresent()) {
-            return false;
-        }
-        User user = new User();
-        user.setUsername(id + "@polito.it");
-        user.setPassword(passwordEncoder.encode(professor.getPassword()));
-        user.setRoles(Collections.singletonList("ROLE_PROFESSOR"));
+    public ProfessorDTO addProfessor(UserDTO user, MultipartFile file) {
+        if (user == null ||
+                user.getUsername().length() == 0 ||
+                user.getName().length() == 0 ||
+                user.getFirstName().length() == 0
+        )
+            return new ProfessorDTO();
+
+        if (studentRepo.existsById(user.getUsername()))
+            return new ProfessorDTO();
+
+
+        User _user = new User();
+        _user.setUsername(user.getEmail());
+        _user.setPassword(passwordEncoder.encode(user.getPassword()));
+        _user.setRoles(Collections.singletonList("ROLE_PROFESSOR"));
+
+        Professor _professor = new Professor();
+        _professor.setId(user.getUsername());
+        _professor.setName(user.getName());
+        _professor.setFirstName(user.getFirstName());
+        _professor.setEmail(user.getEmail());
 
         try{
             Byte[] byteObjects = new Byte[file.getBytes().length];
-
             int i = 0;
-
             for (byte b : file.getBytes())
                 byteObjects[i++] = b;
-
-            professor.setImage(byteObjects);
+            _professor.setImage(byteObjects);
         } catch (IOException e) {
             throw new TeamServiceException("Error saving image: " + e.getMessage());
         }
 
-        userRepo.save(modelMapper.map(user, User.class));
-        profRepo.save(modelMapper.map(professor, Professor.class));
+        userRepo.save(_user);
+        profRepo.save(_professor);
+
         notification.sendMessage(
-                user.getUsername(),
-                "New user",
-                "Username: " + user.getUsername() + "\nPassword: " + professor.getPassword()
+                user.getEmail(),
+                "New Registration",
+                "Username: " + user.getUsername() + " password: " + user.getPassword()
         );
-        return true;
+        return modelMapper.map(_professor,ProfessorDTO.class);
     }
 
     @Override
@@ -676,7 +666,6 @@ public class TeamServiceImpl implements TeamService {
                 .map(professor ->
                         modelMapper
                                 .typeMap(Professor.class,ProfessorDTO.class)
-                                .addMappings(mapper -> { mapper.skip(ProfessorDTO::setPassword); mapper.skip(ProfessorDTO::setImage); })
                                 .map(professor)
                 )
                 .collect(Collectors.toList());

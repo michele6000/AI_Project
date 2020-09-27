@@ -8,6 +8,5 @@ public class ProfessorDTO {
     private String firstName;
     private String name;
     private String email;
-    private String password;
     private Byte[] image;
 }
