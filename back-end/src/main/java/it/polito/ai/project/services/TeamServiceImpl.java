@@ -673,7 +673,12 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(courseName)
                 .getProfessors()
                 .stream()
-                .map(s -> modelMapper.map(s, ProfessorDTO.class))
+                .map(professor ->
+                        modelMapper
+                                .typeMap(Professor.class,ProfessorDTO.class)
+                                .addMappings(mapper -> { mapper.skip(ProfessorDTO::setPassword); mapper.skip(ProfessorDTO::setImage); })
+                                .map(professor)
+                )
                 .collect(Collectors.toList());
     }
 
