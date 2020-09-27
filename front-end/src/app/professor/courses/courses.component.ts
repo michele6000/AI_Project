@@ -21,9 +21,7 @@ export class CoursesComponent implements OnInit {
   data: CourseModel[] = [];
   id: string = null;
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {
-
-  }
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.activeRoute.queryParamMap

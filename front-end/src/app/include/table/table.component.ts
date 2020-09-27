@@ -27,8 +27,10 @@ export class TableComponent implements OnInit {
   @Input() showEdit: boolean;
   @Input() showChangeStatus: boolean;
   @Input() showCheckbox = true;
+  @Input() showDetails = false;
   @Output('delete') onDelete: EventEmitter<any[]> = new EventEmitter<any[]>();
   @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
+  @Output('show') onShowDetails: EventEmitter<any> = new EventEmitter<any>();
   @Output('changeActive') onChangeActive: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
@@ -53,11 +55,15 @@ export class TableComponent implements OnInit {
     if (this.showEdit) {
       if (this.showChangeStatus) {
         this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'enabled', 'edit'];
-      } else {
+      } else if (this.showCheckbox) {
         this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'edit'];
+      } else {
+        this.columnsWithCheckbox = [...this.columnsToDisplay, 'edit'];
       }
     } else if (this.showCheckbox) {
       this.columnsWithCheckbox = ['select', ...this.columnsToDisplay];
+    } else if (this.showDetails) {
+      this.columnsWithCheckbox = [...this.columnsToDisplay, 'details'];
     } else {
       this.columnsWithCheckbox = [...this.columnsToDisplay];
     }
@@ -138,5 +144,9 @@ export class TableComponent implements OnInit {
 
   isEnabled(element: any) {
     return element.enabled;
+  }
+
+  show(element: any) {
+    this.onShowDetails.emit(element);
   }
 }

@@ -27,9 +27,15 @@ export class ModifyOwnerComponent implements OnInit {
     this.studentService.modifyOwner(this.dataVMAndStudents.vm.id, studentId).subscribe(
       res => {
         this.dialogRef.close(res);
+        this.snackBar.open('Owner modified successfully.', 'OK', {
+          duration: 5000
+        });
       },
       error => {
         this.dialogRef.close(error);
+        this.snackBar.open('Error modifying owner.', 'OK', {
+          duration: 5000
+        });
       }
     );
   }

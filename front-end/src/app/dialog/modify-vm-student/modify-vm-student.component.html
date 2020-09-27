@@ -27,9 +27,7 @@
     <br>
     <mat-card-actions class="float-right">
       <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Save</button>
-      <!-- Gestire path statico -->
-<!--      <button [routerLink]="['/student/'+courseName+'/vms']" mat-button mat-dialog-close>Cancel</button>-->
-      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-button mat-dialog-close (click)="closeDialog()">Cancel</button>
     </mat-card-actions>
   </form>
 </div>

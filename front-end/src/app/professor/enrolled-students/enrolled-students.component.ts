@@ -5,8 +5,11 @@ import {from} from 'rxjs';
 import {CourseModel} from '../../models/course.model';
 import {StudentModel} from '../../models/student.model';
 import {HttpClient} from '@angular/common/http';
-import {ProfessorService} from "../../services/professor.service";
+import {ProfessorService} from '../../services/professor.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {GroupModel} from '../../models/group.model';
+import {MatDialog} from '@angular/material/dialog';
+import {ShowTeamMembersComponent} from '../../dialog/show-team-members/show-team-members.component';
 
 @Component({
   selector: 'app-enrolled-students',
@@ -14,17 +17,19 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   styleUrls: ['./enrolled-students.component.css']
 })
 export class EnrolledStudentsComponent implements OnInit {
-
-
+  teams: GroupModel[] = [];
   corso: CourseModel;
   columns = ['email', 'firstName', 'name', 'id'];
+  columnsTeam = ['name'];
   data: StudentModel[] = [];
   fileAbsent = true;
   file: any;
   courseParam: string;
   students: StudentModel[] = [];
+  existTeam: boolean = false;
 
-  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private professorService: ProfessorService, private snackBar: MatSnackBar) {}
+  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private professorService: ProfessorService, private snackBar: MatSnackBar, private dialog: MatDialog) {
+  }
 
   ngOnInit(): void {
     // sono in ascolto sull'observable (change del corso nella sidenav)
@@ -50,6 +55,16 @@ export class EnrolledStudentsComponent implements OnInit {
           }
         }
       );
+
+      this.professorService.findTeamsByCourse(this.corso.name).subscribe(next => {
+        if (next.length > 0){
+          this.existTeam = true;
+          this.teams = next;
+        } else {
+          this.existTeam = false;
+          this.teams = [];
+        }
+      });
     });
   }
 
@@ -79,10 +94,15 @@ export class EnrolledStudentsComponent implements OnInit {
 
   addStudent($event: StudentModel) {
     this.professorService.enrollStudent(this.corso.name, $event.id).subscribe((res) => {
+      console.log("After enrolled");
+      console.log(res);
       if (res) {
         this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
-
         this.snackBar.open('Student added successfully.', 'OK', {
+          duration: 5000
+        });
+      } else {
+        this.snackBar.open('Error adding student.', 'OK', {
           duration: 5000
         });
       }
@@ -121,5 +141,11 @@ export class EnrolledStudentsComponent implements OnInit {
           });
         }
       );
+  }
+
+  showStudentsInTeam(team: GroupModel) {
+    this.dialog.open(ShowTeamMembersComponent, {data: team})
+      .afterClosed()
+      .subscribe(result => {});
   }
 }

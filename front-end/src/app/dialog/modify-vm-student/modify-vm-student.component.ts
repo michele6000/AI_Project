@@ -19,10 +19,9 @@ export class ModifyVmStudentComponent implements OnInit {
   courseName: string;
 
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService, private dialogRef: MatDialogRef<ModifyVmStudentComponent>) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService, private dialogRef: MatDialogRef<ModifyVmStudentComponent>,  private snackBar: MatSnackBar) {
     this.vmConfigAndLimitsPerTeam = data;
     this.courseName = this.vmConfigAndLimitsPerTeam.courseName;
-    console.log(this.courseName);
   }
 
   ngOnInit(): void {}
@@ -49,13 +48,24 @@ export class ModifyVmStudentComponent implements OnInit {
     if (!this.error) {
       this.studentService.modifyConfigurationVm(this.vmConfigAndLimitsPerTeam.vmConfig.id, vm).subscribe(
         res => {
+          this.snackBar.open('Vm configuration modified successfully.', 'OK', {
+            duration: 5000
+          });
           this.dialogRef.close(res);
         },
         error => {
+          this.snackBar.open('Error modifying vm configuration.', 'OK', {
+            duration: 5000
+          });
           this.dialogRef.close(error);
         }
       );
     }
   }
+
+  closeDialog() {
+    this.dialogRef.close(false);
+  }
+
 
 }

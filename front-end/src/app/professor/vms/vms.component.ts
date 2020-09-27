@@ -27,15 +27,13 @@ export class VmsComponent implements OnInit {
 
   hasVMType = false;
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService, private snackBar: MatSnackBar) {
-
-  }
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
 
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
-    if (this.corso.name.length == 0 )
+    if (this.corso.name.length === 0 )
       return;
 
     // Recupero il VM Type, se presente
@@ -66,17 +64,17 @@ export class VmsComponent implements OnInit {
     // Recupero l'elenco di VM
   }
 
-  deleteVM($event: any[]) {
-
-  }
-
   createVM($event) {
-    console.log(this.corso);
     if (this.corso.name !== '') {
       this.dialog.open(CreateVmProfessorComponent, {})
           .afterClosed()
           .subscribe(result => {
-
+            // Recupero il VM Type, se presente
+            this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {
+              this.hasVMType = true;
+            }, error => {
+              this.hasVMType = false;
+            });
           });
     } else {
       this.snackBar.open('You must to create a course first', 'OK', {

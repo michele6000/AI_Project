@@ -3,7 +3,8 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {CourseModel} from '../models/course.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {StudentService} from "../services/student.service";
-import {Subject, Subscription} from 'rxjs';
+import {Subscription} from 'rxjs';
+import {Professor} from '../models/professor.model';
 
 @Component({
   selector: 'app-student',
@@ -13,6 +14,7 @@ import {Subject, Subscription} from 'rxjs';
 export class StudentComponent implements OnInit {
 
   corsi: CourseModel[] = [];
+  professors: Professor[] = [];
 
   singoloCorso: CourseModel;
 
@@ -56,6 +58,9 @@ export class StudentComponent implements OnInit {
   changeCorso(corso: CourseModel) {
     this.singoloCorso = corso;
     this.router.navigate(['student', corso.name.toLowerCase().replace(' ', '-'), 'groups']).then();
+    this.studentService.findProfessorsByCourse(this.singoloCorso.name).subscribe(professor => {
+        this.professors = professor;
+    });
     // BehaviorSubject utilizzato per notificare il cambio di un corso nella sidenav
     this.studentService.eventsSubjectChangeCorsoSideNav.next();
   }

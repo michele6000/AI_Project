@@ -43,16 +43,16 @@ export class VmsStudentComponent implements OnInit {
           });
       }
     });
-
   }
 
   createVM() {
     this.dialog.open(EditVmStudentComponent, {data: this.team})
       .afterClosed()
       .subscribe(result => {
-        if (result){
-          this.snackBar.open('VM created successfully.', 'OK', {
-            duration: 5000
+        if (result) {
+          this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
+            // calcolo gli owner
+            this.computeOwner(vms);
           });
         }
       });
@@ -90,21 +90,11 @@ export class VmsStudentComponent implements OnInit {
           res => {
             this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
               this.computeOwner(vms);
-              if (res){
-                this.snackBar.open('VM limits updated successfully.', 'OK', {
-                  duration: 5000
-                });
-              } else {
-                this.snackBar.open('Error updating VM limits', 'OK', {
-                  duration: 5000
-                });
-              }
             });
           }
         );
       });
   }
-
 
   modifyOwnerVM(element: VmModel) {
     // recupero gli studenti del team
@@ -115,14 +105,11 @@ export class VmsStudentComponent implements OnInit {
       this.dialog.open(ModifyOwnerComponent, {data: {vm: element, students: studentInTeam}})
         .afterClosed()
         .subscribe(result => {
-          if (result){
+          if (result) {
             // recupero le vm
             this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
               // calcolo gli owner
               this.computeOwner(vms);
-              this.snackBar.open('Owner modified successfully.', 'OK', {
-                duration: 5000
-              });
             });
           }
         });
@@ -138,13 +125,10 @@ export class VmsStudentComponent implements OnInit {
       this.dialog.open(AddOwnerComponent, {data: {vm: element, students: studentInTeam}})
         .afterClosed()
         .subscribe(result => {
-          if (result){
+          if (result) {
             this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
               // calcolo gli owner
               this.computeOwner(vms);
-              this.snackBar.open('Owner added successfully.', 'OK', {
-                duration: 5000
-              });
             });
           }
         });

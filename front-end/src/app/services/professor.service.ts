@@ -214,4 +214,8 @@ export class ProfessorService {
     if (courseName.length > 0 )
       return this.http.post<boolean>(API_URL + 'courses/' + courseName + '/delete', {});
   }
+
+  findMembersByTeamId(teamId: number) {
+    return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/members');
+  }
 }

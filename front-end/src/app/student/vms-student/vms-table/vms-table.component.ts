@@ -60,6 +60,9 @@ export class VmsTableComponent implements OnInit {
     this.studentService.powerOnVm(element.id).subscribe((res) => {
       element.status = 'poweron';
     }, (error) => {
+      this.snackBar.open('Can not power on this instance.', 'OK', {
+        duration: 5000
+      });
     });
   }
 
@@ -67,6 +70,9 @@ export class VmsTableComponent implements OnInit {
     this.studentService.powerOffVm(element.id).subscribe((res) => {
       element.status = 'poweroff';
     }, (error) => {
+      this.snackBar.open('Can not power off this instance.', 'OK', {
+        duration: 5000
+      });
     });
   }
 
@@ -74,7 +80,6 @@ export class VmsTableComponent implements OnInit {
     this.onDelete.emit(element);
   }
 
-  // @TODO -> propagare al padre per riaggiornare la tabella
   addOwnerVM(element: VmModel) {
     this.onAddOwner.emit(element);
   }
