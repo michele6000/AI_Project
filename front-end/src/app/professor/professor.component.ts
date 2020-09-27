@@ -55,6 +55,7 @@ export class ProfessorComponent implements OnInit, OnDestroy {
   changeCorso(corso: CourseModel) {
     this.singoloCorso = corso;
     this.router.navigate(['teacher', corso.name.toLowerCase().replace(' ', '-'), 'students']).then();
+    this.professorService.eventsSubjectChangeCorsoSideNav.next();
   }
 
   toggleMenu() {

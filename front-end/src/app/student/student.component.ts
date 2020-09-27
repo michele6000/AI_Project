@@ -57,6 +57,6 @@ export class StudentComponent implements OnInit {
     this.singoloCorso = corso;
     this.router.navigate(['student', corso.name.toLowerCase().replace(' ', '-'), 'groups']).then();
     // BehaviorSubject utilizzato per notificare il cambio di un corso nella sidenav
-    this.studentService.eventsSubjectChangeCorsoSindeNav.next();
+    this.studentService.eventsSubjectChangeCorsoSideNav.next();
   }
 }

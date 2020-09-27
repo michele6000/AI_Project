@@ -23,7 +23,7 @@ export class GroupsComponent implements OnInit {
 
   ngOnInit() {
     // in ascolto sul BehaviorSubject per cambiare le informazioni del gruppo in base al corso
-    this.studentService.eventsSubjectChangeCorsoSindeNav.subscribe(next => {
+    this.studentService.eventsSubjectChangeCorsoSideNav.subscribe(next => {
       this.computeGroup();
     });
   }
