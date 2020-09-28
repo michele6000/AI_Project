@@ -5,6 +5,7 @@ import {FormControl} from '@angular/forms';
 import {StudentModel} from '../../models/student.model';
 import {map, startWith} from "rxjs/operators";
 import {MatPaginator} from '@angular/material/paginator';
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-insert',
@@ -20,7 +21,7 @@ export class InsertComponent implements OnInit {
 
   @Output('add') onAdd: EventEmitter<StudentModel> = new EventEmitter<StudentModel>();
 
-  constructor() {
+  constructor(private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
@@ -37,8 +38,14 @@ export class InsertComponent implements OnInit {
   }
 
   add() {
-    this.onAdd.emit(this.selected);
-
+    if (this.selected) {
+      this.onAdd.emit(this.selected);
+      this.selected = null;
+    } else {
+      this.snackBar.open('You have to select a student first.', 'OK', {
+        duration: 5000
+      });
+    }
   }
 
   displayFn(studentModel: StudentModel): string {

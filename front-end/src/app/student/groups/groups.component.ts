@@ -1,21 +1,23 @@
-import {Component, ComponentFactoryResolver, OnInit, ViewChild} from '@angular/core';
+import {Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {GroupDirective} from './group.directive';
 import {InfoGroupComponent} from './info-group/info-group.component';
 import {CreateGroupComponent} from './create-group/create-group.component';
 import {StudentService} from '../../services/student.service';
 import {CourseModel} from '../../models/course.model';
 import {Router} from '@angular/router';
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-groups',
   templateUrl: './groups.component.html',
   styleUrls: ['./groups.component.css']
 })
-export class GroupsComponent implements OnInit {
+export class GroupsComponent implements OnInit, OnDestroy {
 
   @ViewChild(GroupDirective, {static: true}) adHost: GroupDirective;
   private courseParam: string;
   private corso: CourseModel;
+  private changeCorsoSub: Subscription;
 
   constructor(private studentService: StudentService, private componentFactoryResolver: ComponentFactoryResolver,
               private router: Router) {
@@ -23,7 +25,7 @@ export class GroupsComponent implements OnInit {
 
   ngOnInit() {
     // in ascolto sul BehaviorSubject per cambiare le informazioni del gruppo in base al corso
-    this.studentService.eventsSubjectChangeCorsoSideNav.subscribe(next => {
+    this.changeCorsoSub = this.studentService.eventsSubjectChangeCorsoSideNav.subscribe(next => {
       this.computeGroup();
     });
   }
@@ -56,6 +58,12 @@ export class GroupsComponent implements OnInit {
     viewContainerRef.clear();
 
     const componentRef = viewContainerRef.createComponent(componentFactory);
+  }
+
+  ngOnDestroy() {
+    if (this.changeCorsoSub) {
+      this.changeCorsoSub.unsubscribe();
+    }
   }
 
 }

@@ -12,6 +12,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class CreateCourseComponent implements OnInit {
   error = false;
+  errorStr: string;
 
   constructor(private professorService: ProfessorService, private dialogRef: MatDialogRef<CreateCourseComponent>, private snackBar: MatSnackBar) {
   }
@@ -27,15 +28,38 @@ export class CreateCourseComponent implements OnInit {
       max: f.value.max,
       enabled: true
     };
-    if (this.professorService.createCourse(course)){
-      this.dialogRef.close();
-      this.snackBar.open('Course create successfully', 'OK', {
-        duration: 5000
-      });
-    } else {
+
+    this.errorStr = '';
+    this.error = false;
+
+    // Creo il corso
+    this.professorService.createCourse(course).subscribe((res) => {
+
+      // Aggiungo il professore al corso
+      if (localStorage.getItem('id')) {
+        this.professorService.addProfessorToCourse(course.name, localStorage.getItem('id')).subscribe((resAddProfessor) => {
+
+          this.dialogRef.close(true);
+          this.snackBar.open('Course create successfully', 'OK', {
+            duration: 5000
+          });
+
+        }, (errorAddProfessor) => {
+          this.snackBar.open('Error adding yourself to course ' + course.name, 'OK', {
+            duration: 5000
+          });
+        });
+      } else {
+        // @todo Redirect a pagina 500
+        // Non ho nello storage l'ID dell'utente loggato
+      }
+
+    }, error => {
+      this.error = true;
+      this.errorStr = error.statusText + ' ' + error.error.message;
       this.snackBar.open('Error creating course ' + course.name, 'OK', {
         duration: 5000
       });
-    }
+    });
   }
 }

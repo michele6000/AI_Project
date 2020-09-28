@@ -7,5 +7,5 @@
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
-  <button (click)="add()" class="ml-20" color="primary" mat-raised-button>Add</button>
+  <button (click)="add(); autocomplete.value = '';" class="ml-20" color="primary" mat-raised-button>Add</button>
 </form>

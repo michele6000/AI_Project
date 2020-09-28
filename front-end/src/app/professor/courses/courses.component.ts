@@ -31,6 +31,7 @@ export class CoursesComponent implements OnInit {
             .afterClosed()              // dopo la chiusura del dialog faccio le redirect
             .subscribe(result => {
               if (result) {              // se result è false => click su CANCEL -> redirect a HOME
+                this.professorService.findCoursesByProfessor(localStorage.getItem('id'), true);
                 this.router.navigate(['/teacher/courses']);
               } else {
                 this.router.navigate(['/teacher/courses']);
@@ -90,7 +91,7 @@ export class CoursesComponent implements OnInit {
     this.dialog.open(EditCourseComponent, {data: course})
       .afterClosed()
       .subscribe(result => {
-
+        this.professorService.findCoursesByProfessor(localStorage.getItem('id'), true);
       });
   }
 
