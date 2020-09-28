@@ -9,6 +9,9 @@ import {AuthService} from "../../auth/auth.service";
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {from} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
+import {ModifyVmStudentComponent} from '../../dialog/modify-vm-student/modify-vm-student.component';
+import {CourseProfessorsComponent} from '../../dialog/course-professors/course-professors.component';
+import {AddProfessorToCourseComponent} from '../../dialog/add-professor-to-course/add-professor-to-course.component';
 
 @Component({
   selector: 'app-courses',
@@ -107,5 +110,44 @@ export class CoursesComponent implements OnInit {
     if (result) {
       this.professorService.findCoursesByProfessor(this.id, true);
     }
+  }
+
+  // @Todo -> finire implementazione
+  addProfToCourse(course: CourseModel) {
+    this.professorService.findAllProfessor().subscribe(
+      allProfessors => {
+        this.dialog.open(AddProfessorToCourseComponent, {data: allProfessors})
+          .afterClosed()
+          .subscribe();
+      },
+      error => {
+
+      }
+    );
+
+  }
+
+  // @Todo -> finire implementazione -> Attenzione perche possono essere piu di un professore da rimuovere
+  removeProfFromCourse(course: CourseModel) {
+    this.professorService.deleteProfessorFromCourse(course.name, localStorage.getItem('id')).subscribe(
+      result => {
+        this.snackBar.open('Professor remove succesfully.', 'OK', {
+          duration: 5000
+        });
+    }, error => {
+        this.snackBar.open('Error removing professor.', 'OK', {
+          duration: 5000
+        });
+
+      });
+  }
+
+  showCourseProfessor(course: CourseModel) {
+    // al dialog passo il professore e il corso
+    this.professorService.findAllProsessorByCourse(course.name).subscribe( result => {
+      this.dialog.open(CourseProfessorsComponent, {data: {professors: result, courseName: course.name}})
+        .afterClosed()
+        .subscribe( res => {});
+    });
   }
 }

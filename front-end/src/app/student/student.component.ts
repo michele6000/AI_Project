@@ -4,7 +4,7 @@ import {CourseModel} from '../models/course.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {StudentService} from "../services/student.service";
 import {Subscription} from 'rxjs';
-import {Professor} from '../models/professor.model';
+import {ProfessorModel} from '../models/professor.model';
 
 @Component({
   selector: 'app-student',
@@ -14,7 +14,7 @@ import {Professor} from '../models/professor.model';
 export class StudentComponent implements OnInit {
 
   corsi: CourseModel[] = [];
-  professors: Professor[] = [];
+  professors: ProfessorModel[] = [];
 
   singoloCorso: CourseModel;
 

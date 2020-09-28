@@ -9,6 +9,7 @@ import {GroupModel} from '../models/group.model';
 import {SubmissionModel} from '../models/submission.model';
 import * as moment from 'moment';
 import {SolutionModel} from '../models/solution.model';
+import {ProfessorModel} from '../models/professor.model';
 
 const API_URL = '/api/API/';
 
@@ -213,4 +214,17 @@ export class ProfessorService {
   findMembersByTeamId(teamId: number) {
     return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/members');
   }
+
+  findAllProfessor(){
+    return this.http.get<ProfessorModel[]>('api/professors/getall');
+  }
+
+  findAllProsessorByCourse(courseName: string){
+    return this.http.get<ProfessorModel[]>(API_URL + 'courses/' + courseName + '/professors');
+  }
+
+  deleteProfessorFromCourse(courseName: string, professorId: string){
+    return this.http.post(API_URL + 'courses/' + courseName + '/deleteProfessor?professorId=' + professorId, {});
+  }
+
 }

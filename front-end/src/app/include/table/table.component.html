@@ -30,6 +30,24 @@
     </td>
   </ng-container>
 
+  <ng-container *ngIf="showAddProf" matColumnDef="addProf">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      Add Professor to Course
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      <mat-icon (click)="addProfessor(element)" class="cursor-pointer">group_add</mat-icon>
+    </td>
+  </ng-container>
+
+  <ng-container *ngIf="showRemoveProf" matColumnDef="removeProf">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      Remove Professor
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      <mat-icon (click)="removeProfessor(element)" class="cursor-pointer">delete</mat-icon>
+    </td>
+  </ng-container>
+
   <ng-container *ngIf="showEdit" matColumnDef="edit">
     <th *matHeaderCellDef mat-header-cell class="text-center">
       Modify

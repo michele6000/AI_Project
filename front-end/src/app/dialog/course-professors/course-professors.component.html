@@ -1,0 +1,11 @@
+<div class="dimensioni">
+  <mat-card-title>Professors of course "{{courseName}}"</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <ul>
+    <li class="mb-10" *ngFor="let professor of professors">{{professor.name}} {{professor.firstName}}</li>
+  </ul>
+  <br>
+  <mat-card-actions class="float-right">
+    <button (click)="closeDialog()" mat-button mat-dialog-close>Cancel</button>
+  </mat-card-actions>
+</div>
