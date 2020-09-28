@@ -3,7 +3,7 @@
 
   <h2 class="mb-10 mr-20" *ngIf="!canCreateVM">You need to create a group first.</h2>
   <h2 class="mb-10 mr-20" *ngIf="canCreateVM">Management option: </h2>
-  <button [disabled]="team == undefined || team.limit_instance == 0" class="mb-10 ml-20 float-right" *ngIf="canCreateVM" (click)="createVM()"  color="primary" mat-raised-button>Create VM</button>
+  <button [disabled]="team == undefined || team.limit_instance == 0" class="mb-10 ml-20 float-right mr-20" *ngIf="canCreateVM" (click)="createVM()"  color="primary" mat-raised-button>Create VM</button>
   <h2 class="mb-10 mr-20" *ngIf="team != undefined && team.limit_instance == 0">Professor must set up the configuration of your team </h2>
   </div>
 
