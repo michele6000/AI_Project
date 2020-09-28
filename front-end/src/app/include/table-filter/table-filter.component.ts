@@ -4,6 +4,12 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {StudentSubmissionModel} from "../../models/student-submission.model";
 import {SubmissionModel} from "../../models/submission.model";
+import {ProfessorService} from "../../services/professor.service";
+import {MatDialog} from "@angular/material/dialog";
+import {MatSnackBar} from "@angular/material/snack-bar";
+
+const API_URL_PUBLIC = '93.56.104.204:8080/API/';
+const API_URL_LOCAL = '/local/API/';
 
 @Component({
   selector: 'app-table-filter',
@@ -23,7 +29,7 @@ export class TableFilterComponent implements OnInit {
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
 
-  constructor() {
+  constructor(private professorService: ProfessorService, private snackBar: MatSnackBar) {
   }
 
   @Input('data') set data(data) {
@@ -75,8 +81,7 @@ export class TableFilterComponent implements OnInit {
   }
 
   showSolution(element: any) {
-    console.log('Show solution');
-    console.log(element);
+    window.open('//' + API_URL_PUBLIC + 'students/solutions/getImage/' + element.id, '_blank');
   }
 
   reviewSolution(element: any) {
@@ -85,6 +90,14 @@ export class TableFilterComponent implements OnInit {
   }
 
   stopRevision(element: any) {
-
+    this.professorService.stopRevisions(element.id).subscribe((res) => {
+      this.snackBar.open('Revisions stopped successfully', 'OK', {
+        duration: 5000
+      });
+    }, (error) => {
+      this.snackBar.open('Error stopping revisions for the submission', 'OK', {
+        duration: 5000
+      });
+    });
   }
 }

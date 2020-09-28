@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {CourseModel} from '../models/course.model';
 import {HttpClient} from '@angular/common/http';
 import {VmStudent} from '../models/vm-student.model';
@@ -8,6 +8,7 @@ import {GroupModel} from '../models/group.model';
 import {VmModel} from '../models/vm.model';
 import * as moment from 'moment';
 import {SolutionModel} from '../models/solution.model';
+import {Professor} from '../models/professor.model';
 
 const API_URL = '/api/API/';
 
@@ -15,6 +16,8 @@ const API_URL = '/api/API/';
   providedIn: 'root'
 })
 export class StudentService {
+
+  eventsSubjectChangeCorsoSideNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
 
   courses: Observable<CourseModel[]>;
   teams: Observable<GroupModel[]>;
@@ -81,7 +84,6 @@ export class StudentService {
   }
 
   /* VMs */
-
   createVm(teamId: number, vm: VmStudent) {
     return this.http.post<any>(API_URL + 'team/' + teamId + '/createVmInstance', vm);
   }
@@ -101,8 +103,6 @@ export class StudentService {
   getVmOwners(vmId: number) {
     return this.http.get<StudentModel[]>(API_URL + 'vm/' + vmId + '/getOwners');
   }
-
-
 
   getVmConfiguration(vmId: number) {
     return this.http.get(API_URL + 'vm/' + vmId + '/getCurrentConfiguration');
@@ -162,6 +162,11 @@ export class StudentService {
     formData.append('solution', solutionStr);
     formData.append('file', solution);
     return this.http.post<any>(API_URL + 'students/' + studentId + '/' + submissionId + '/addSolution', formData);
+  }
+
+  // /API/courses/{courseName}/professors
+  findProfessorsByCourse(courseName: string){
+    return this.http.get<Professor[]>(API_URL + 'courses/' + courseName + '/professors/');
   }
 
 }

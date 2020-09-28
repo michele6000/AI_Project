@@ -18,6 +18,7 @@ const API_URL = '/api/API/';
 export class ProfessorService {
 
   // private dataStore: {courses: CourseModel[]} = {courses: null};
+  eventsSubjectChangeCorsoSideNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
 
   courses: Observable<CourseModel[]>;
   students: Observable<StudentModel[]>;
@@ -148,24 +149,24 @@ export class ProfessorService {
   }
 
   deleteStudent(courseName: string, studentId: string) {
-    return this.http.post(
-      API_URL + 'courses/' + courseName + '/deleteOne?studentId=' + studentId, {}
-    );
+    if (courseName.length > 0 && studentId.length > 0)
+      return this.http.post(API_URL + 'courses/' + courseName + '/deleteOne?studentId=' + studentId, {});
   }
 
   getEnrolledStudents(courseName: string): Observable<StudentModel[]> {
-    return this.http.get<StudentModel[]>(API_URL + 'courses/' + courseName + '/enrolled');
+    if (courseName.length > 0)
+      return this.http.get<StudentModel[]>(API_URL + 'courses/' + courseName + '/enrolled');
   }
 
   enrollStudent(courseName: string, studentId: string) {
-    return this.http.post(
-      API_URL + 'courses/' + courseName + '/enrollOne', {id: studentId}
-    );
+    if (courseName.length > 0 && studentId.length > 0)
+      return this.http.post(API_URL + 'courses/' + courseName + '/enrollOne', {id: studentId});
   }
 
   /* TEAMS */
   findTeamsByCourse(courseName: string) {
-    return this.http.get<GroupModel[]>(API_URL + 'courses/' + courseName + '/teams');
+    if (courseName.length > 0)
+      return this.http.get<GroupModel[]>(API_URL + 'courses/' + courseName + '/teams');
   }
 
   setTeamLimits(teamId: number, team: GroupModel) {
@@ -191,11 +192,18 @@ export class ProfessorService {
   }
 
   findAssignmentsByCourse(courseName: string) {
-    return this.http.get<any[]>(API_URL + 'courses/' + courseName + '/getAllSubmissions');
+    if (courseName.length > 0)
+      return this.http.get<any[]>(API_URL + 'courses/' + courseName + '/getAllSubmissions');
   }
 
   getLatestSolution(studentId: string, submissionId: number) {
-    return this.http.get<SolutionModel>(API_URL + 'students/' + studentId + '/' + submissionId + '/getLatestSolution');
+    if (studentId.length > 0)
+
+      return this.http.get<SolutionModel>(API_URL + 'students/' + studentId + '/' + submissionId + '/getLatestSolution');
+  }
+
+  stopRevisions(solutionId: number) {
+    return this.http.post<any>(API_URL + 'courses/' + solutionId + '/stopRevisions', {});
   }
 
   updateCourse(course: CourseModel){
@@ -203,6 +211,11 @@ export class ProfessorService {
   }
 
   deleteCourse(courseName: string){
-    return this.http.post<boolean>(API_URL + 'courses/' + courseName + '/delete', {});
+    if (courseName.length > 0 )
+      return this.http.post<boolean>(API_URL + 'courses/' + courseName + '/delete', {});
+  }
+
+  findMembersByTeamId(teamId: number) {
+    return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/members');
   }
 }

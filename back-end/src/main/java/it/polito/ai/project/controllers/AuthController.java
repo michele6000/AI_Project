@@ -27,6 +27,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -94,23 +95,28 @@ public class AuthController {
 
 
     @PostMapping("/addProfessor")
-    public ProfessorDTO addProfessor(@RequestPart("user") ProfessorDTO professor,
+    public ProfessorDTO addProfessor(@RequestPart("user") UserDTO professor,
                                      @RequestPart("file") MultipartFile file) {
         if (!professor.getEmail().endsWith("@polito.it"))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not allowed");
 
-        if (!service.addProfessor(professor, file))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, professor.getId());
-        return professor;
+        try{
+            return service.addProfessor(professor, file);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @PostMapping("/addStudent")
-    public StudentDTO addProfessor(@RequestPart("user") StudentDTO student,
+    public StudentDTO addStudent(@RequestPart("user") UserDTO student,
                                    @RequestPart("file") MultipartFile file) {
         if (!student.getEmail().endsWith("@studenti.polito.it"))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not allowed");
 
-        if (!service.addStudent(student, file)) throw new ResponseStatusException(HttpStatus.CONFLICT, student.getId());
-        return student;
+        try{
+            return service.addStudent(student, file);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 }

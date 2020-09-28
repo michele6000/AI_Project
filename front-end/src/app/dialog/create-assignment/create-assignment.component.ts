@@ -28,6 +28,7 @@ export class CreateAssignmentComponent implements OnInit {
 
   private courseParam: string;
   private corso: CourseModel;
+  filename: string = "Choose file";
 
   constructor(private dialogRef: MatDialogRef<CreateAssignmentComponent>, private professorService: ProfessorService,
               private snackBar: MatSnackBar, private router: Router) {
@@ -90,6 +91,11 @@ export class CreateAssignmentComponent implements OnInit {
 
   handleFileSelect($event: any) {
     this.file = $event.target.files[0];
+    if (this.file !== undefined) {
+      this.filename = this.file.name;
+    } else {
+      this.filename = 'Choose file';
+    }
   }
 
 }

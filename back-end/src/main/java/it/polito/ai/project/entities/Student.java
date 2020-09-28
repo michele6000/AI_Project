@@ -14,7 +14,6 @@ public class Student {
     private String name;
     private String firstName;
     private String email;
-    private String password;
     @Lob
     private Byte[] image;
 

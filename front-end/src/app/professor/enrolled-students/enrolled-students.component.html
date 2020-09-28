@@ -1,4 +1,4 @@
-<div class="container">
+<div *ngIf="corso.name.length > 0" class="container">
   <div class="d-flex align-items-center">
     <app-insert (add)="addStudent($event)" [options]="students" class="w-50"></app-insert>
     <span class="fill-remaining-space"></span>
@@ -15,4 +15,8 @@
   <mat-divider class="mt-10 mb-20"></mat-divider>
   <h1>Enrolled students:</h1>
   <app-table (delete)="deleteStudent($event)" [columns]="columns" [data]="data" [showDelete]="true"></app-table>
+  <mat-divider class="mt-30 mb-20"></mat-divider>
+  <h1 class="mt-10">Teams:</h1>
+  <app-table *ngIf="existTeam" [columns]="columnsTeam" [data]="teams" (show)="showStudentsInTeam($event)" [showDetails]="true" [showCheckbox]="false"></app-table>
+  <p *ngIf="!existTeam">Nessun team ancora creato</p>
 </div>

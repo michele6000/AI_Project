@@ -1,9 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {Observable} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {StudentModel} from '../../models/student.model';
 import {map, startWith} from "rxjs/operators";
+import {MatPaginator} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-insert',
@@ -37,6 +38,7 @@ export class InsertComponent implements OnInit {
 
   add() {
     this.onAdd.emit(this.selected);
+
   }
 
   displayFn(studentModel: StudentModel): string {

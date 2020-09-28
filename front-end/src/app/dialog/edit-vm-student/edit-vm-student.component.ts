@@ -15,9 +15,11 @@ export class EditVmStudentComponent implements OnInit {
   error = false;
   team: GroupModel;
   limitError = [];
+  courseName: string;
 
   constructor(private studentService: StudentService, @Inject(MAT_DIALOG_DATA) public data: GroupModel, private snackBar: MatSnackBar, private dialogRef: MatDialogRef<EditVmStudentComponent>) {
     this.team = data;
+    // this.courseName = ; //TODO: settare sto parametro
   }
 
   ngOnInit(): void {
@@ -46,14 +48,14 @@ export class EditVmStudentComponent implements OnInit {
       this.studentService.createVm(this.team.id, vm).subscribe(
         (res) => {
           // this.studentService.addVmOwner(res.id, localStorage.getItem('id')).subscribe((resOwner) => {
-            this.dialogRef.close();
+            this.dialogRef.close(true);
             this.snackBar.open('VM created successfully', 'OK', {
               duration: 5000
             });
           // });
         },
         (error) => {
-          this.dialogRef.close();
+          this.dialogRef.close(false);
           this.snackBar.open('Error creating VM', 'OK', {
             duration: 5000
           });

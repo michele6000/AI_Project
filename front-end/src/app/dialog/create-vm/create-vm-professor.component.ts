@@ -47,14 +47,13 @@ export class CreateVmProfessorComponent implements OnInit {
         this.snackBar.open('VM created successfully', 'OK', {
           duration: 5000
         });
-        return 200;
+      //  dire al padre che è stata creata una vmType con successo e gestire lo show o meno del button add
       },
       (error) => {
         this.dialogRef.close();
         this.snackBar.open('Error creating VM, try again.', 'OK', {
           duration: 5000
         });
-        return 500;
       }
     );
   }

@@ -28,7 +28,7 @@ export class RegistrationComponent implements OnInit {
       let user = new UserModel();
       user.firstName = f.value.name;
       user.name = f.value.surname;
-      user.id = f.value.matricola;
+      user.username = f.value.matricola;
       user.password = f.value.password;
       user.email = f.value.email;
 

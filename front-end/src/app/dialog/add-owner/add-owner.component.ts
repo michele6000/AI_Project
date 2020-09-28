@@ -15,7 +15,7 @@ export class AddOwnerComponent implements OnInit {
   error: any;
   dataVMAndStudents: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private dialogRef: MatDialogRef<AddOwnerComponent>, private studentService: StudentService) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private dialogRef: MatDialogRef<AddOwnerComponent>, private studentService: StudentService, private snackBar: MatSnackBar) {
     this.dataVMAndStudents = data;
   }
 
@@ -28,9 +28,15 @@ export class AddOwnerComponent implements OnInit {
     this.studentService.addVmOwner(this.dataVMAndStudents.vm.id, studentId).subscribe(
       res => {
         this.dialogRef.close(res);
+        this.snackBar.open('Owner added successfully.', 'OK', {
+          duration: 5000
+        });
       },
       error => {
         this.dialogRef.close(error);
+        this.snackBar.open('Error adding owner.', 'OK', {
+          duration: 5000
+        });
       }
     );
   }

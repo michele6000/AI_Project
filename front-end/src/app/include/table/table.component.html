@@ -39,6 +39,15 @@
     </td>
   </ng-container>
 
+  <ng-container *ngIf="showDetails" matColumnDef="details">
+    <th *matHeaderCellDef mat-header-cell class="text-center">
+      Details
+    </th>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      <mat-icon (click)="show(element)" class="cursor-pointer">format_list_bulleted</mat-icon>
+    </td>
+  </ng-container>
+
   <tr *matHeaderRowDef="columnsWithCheckbox" mat-header-row></tr>
   <tr *matRowDef="let row; columns: columnsWithCheckbox;" mat-row></tr>
 

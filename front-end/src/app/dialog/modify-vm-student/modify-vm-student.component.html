@@ -12,23 +12,22 @@
   <form #f="ngForm" (ngSubmit)="edit(f)">
     <mat-form-field class="dialog-position-field">
       <mat-label>Number of V-CPU</mat-label>
-      <input #vcpu="ngModel" [ngModel]="vmConfig.cpu" matInput name="vcpu" placeholder="Number of V-CPU" required type="text" value="">
+      <input #vcpu="ngModel" [ngModel]="vmConfigAndLimitsPerTeam.vmConfig.cpu" matInput name="vcpu" placeholder="Number of V-CPU" required type="text" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>RAM (size in MB)</mat-label>
-      <input #ram="ngModel" [ngModel]="vmConfig.ram" matInput name="ram" placeholder="RAM" required type="text" value="">
+      <input #ram="ngModel" [ngModel]="vmConfigAndLimitsPerTeam.vmConfig.ram" matInput name="ram" placeholder="RAM" required type="text" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>Disk (size in MB)</mat-label>
-      <input #disk="ngModel" [ngModel]="vmConfig.hdd" matInput name="disk" placeholder="Disk" required type="text" value="">
+      <input #disk="ngModel" [ngModel]="vmConfigAndLimitsPerTeam.vmConfig.hdd" matInput name="disk" placeholder="Disk" required type="text" value="">
     </mat-form-field>
     <br>
     <mat-card-actions class="float-right">
       <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Save</button>
-      <!-- Gestire path statico -->
-      <button [routerLink]="['/student/applicazioni-internet/vms']" mat-button mat-dialog-close>Cancel</button>
+      <button mat-button mat-dialog-close (click)="closeDialog()">Cancel</button>
     </mat-card-actions>
   </form>
 </div>

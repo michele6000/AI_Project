@@ -60,6 +60,9 @@ export class VmsTableComponent implements OnInit {
     this.studentService.powerOnVm(element.id).subscribe((res) => {
       element.status = 'poweron';
     }, (error) => {
+      this.snackBar.open('Can not power on this instance.', 'OK', {
+        duration: 5000
+      });
     });
   }
 
@@ -67,6 +70,9 @@ export class VmsTableComponent implements OnInit {
     this.studentService.powerOffVm(element.id).subscribe((res) => {
       element.status = 'poweroff';
     }, (error) => {
+      this.snackBar.open('Can not power off this instance.', 'OK', {
+        duration: 5000
+      });
     });
   }
 
@@ -74,34 +80,11 @@ export class VmsTableComponent implements OnInit {
     this.onDelete.emit(element);
   }
 
-  // @TODO -> propagare al padre per riaggiornare la tabella
-  addOwner(element: VmModel) {
-    // open dialog
-    this.studentService.findMembersByTeamId(element.groupId).subscribe((studentInTeam) => {
-      this.dialog.open(AddOwnerComponent, {data: {vm: element, students: studentInTeam}})
-        .afterClosed()
-        .subscribe(result => {
-          if (result){
-            this.snackBar.open('Owner added successfully.', 'OK', {
-              duration: 5000
-            });
-          }
-        });
-    });
+  addOwnerVM(element: VmModel) {
+    this.onAddOwner.emit(element);
   }
 
-  // @TODO -> propagare al padre per riaggiornare la tabella
-  modifyOwner(element: VmModel) {
-    this.studentService.findMembersByTeamId(element.groupId).subscribe((studentInTeam) => {
-      this.dialog.open(ModifyOwnerComponent, {data: {vm: element, students: studentInTeam}})
-        .afterClosed()
-        .subscribe(result => {
-          if (result){
-            this.snackBar.open('Owner modified successfully.', 'OK', {
-              duration: 5000
-            });
-          }
-        });
-    });
+  modifyOwnerVM(element: VmModel) {
+    this.onModifyOwner.emit(element);
   }
 }

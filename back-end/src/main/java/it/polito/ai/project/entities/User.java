@@ -23,11 +23,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class User implements UserDetails {
     @Id
-    @NotEmpty
-    private String username;
-
-    @NotEmpty
+    private String username; //matricola
+//    private String name;
+//    private String firstName;
+//    private String email; // email completa
     private String password;
+//    @Lob
+//    private Byte[] image;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default

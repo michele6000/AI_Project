@@ -63,6 +63,7 @@ import { ModifyOwnerComponent } from './dialog/modify-owner/modify-owner.compone
 import { AddOwnerComponent } from './dialog/add-owner/add-owner.component';
 import {MatSelectModule} from '@angular/material/select';
 import {NgParticlesModule} from "ng-particles";
+import { ShowTeamMembersComponent } from './dialog/show-team-members/show-team-members.component';
 
 @NgModule({
   declarations: [
@@ -102,7 +103,8 @@ import {NgParticlesModule} from "ng-particles";
     ConfirmDeleteComponent,
     ModifyVmStudentComponent,
     ModifyOwnerComponent,
-    AddOwnerComponent
+    AddOwnerComponent,
+    ShowTeamMembersComponent
   ],
   imports: [
     NgParticlesModule,

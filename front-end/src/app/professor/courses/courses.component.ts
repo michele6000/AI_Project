@@ -21,9 +21,7 @@ export class CoursesComponent implements OnInit {
   data: CourseModel[] = [];
   id: string = null;
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {
-
-  }
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.activeRoute.queryParamMap
@@ -62,7 +60,7 @@ export class CoursesComponent implements OnInit {
     });
   }
 
-  //@Todo: aggiornare la tabella dei corsi dopo aver fatto delete
+  // @Todo: aggiornare la tabella dei corsi dopo aver fatto delete
   deleteCourse($event: CourseModel[]) {
     const res = from($event).pipe(
       concatMap(course => {
@@ -83,6 +81,8 @@ export class CoursesComponent implements OnInit {
           duration: 5000
         });
       }
+      // Aggiorno tabella
+      this.professorService.findCoursesByProfessor(localStorage.getItem('id'), true);
     });
   }
 
