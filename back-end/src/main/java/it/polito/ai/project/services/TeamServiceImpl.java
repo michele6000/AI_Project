@@ -754,11 +754,23 @@ public class TeamServiceImpl implements TeamService {
         if (!optionalCourseEntity.get().getStudents().stream().map(Student::getId).collect(Collectors.toList()).contains(studentId))
             throw new StudentNotFoundException("Student not enrolled in this course!");
 
+        List<Solution>solutions= new ArrayList();
+                optionalCourseEntity.get().getSubmissions().forEach(s->{
+            s.getSolutions().stream().filter(sol->sol.getStudent().getId().equals(studentId)).forEach(solutions::add);
+        });
+                solutions.forEach(sol->solutionRepository.delete(sol));
+
+        //Operazioni VM
+
+        Optional<Team> optionalTeam=optionalCourseEntity.get().getTeams().stream().filter(t->t.getMembers().contains(optionalStudentEntity.get())).findFirst();
+        optionalTeam.ifPresent(team -> team.removeMember(optionalStudentEntity.get()));
+
         optionalCourseEntity.get().deleteStudent(optionalStudentEntity.get());
+
         return true;
 
         //TODO:
-        // - cancellare tutte le solution di quello studente nel corso
+        // - cancellare tutte le solution di quello studente nel corso (FATTO)
         // - (michele) spostare l'ownership delle vm del team in quel corso a qualcun altro, se c'è più di un owner rimuovere soltanto
         //  if(team.getvms.foreach( vm -> vm.getOwners().stram().count() > 1  // getOwners().remove(studente)
         //  else changeOwner (vmservice) changeOwner(me, team.getMembers.stream.filter(!me).collectt(tolist).get(0) )
