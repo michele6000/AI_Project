@@ -47,7 +47,7 @@ public class VmServiceImpl implements VmService {
 
     @Override
     public List<VMDTO> getTeamVMs(Long teamId) {
-        if (!teamRepo.existsById(teamId))
+        if (!teamRepo.findById(teamId).isPresent())
             throw new TeamNotFoundException("Team not found!");
 
         return vmRepo.findAll()
@@ -383,7 +383,7 @@ public class VmServiceImpl implements VmService {
     }
 
     public TeamDTO retriveTeamFromVm (Long vmId){
-        if(!vmRepo.existsById(vmId))
+        if(!vmRepo.findById(vmId).isPresent())
             throw new TeamServiceException("Vm not found!");
         return modelMapper.map(vmRepo.getOne(vmId).getTeam(),TeamDTO.class);
     }

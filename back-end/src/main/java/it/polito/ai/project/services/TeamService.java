@@ -94,6 +94,9 @@ public interface TeamService {
     //  @PreAuthorize("hasRole('ROLE_ADMIN')")
     ProfessorDTO addProfessor(UserDTO user, MultipartFile file);
 
+    //  @PreAuthorize("hasRole('ROLE_ADMIN')")
+    boolean deleteProfessor(String professorId, String courseName);
+
     byte[] getImage(String username);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")

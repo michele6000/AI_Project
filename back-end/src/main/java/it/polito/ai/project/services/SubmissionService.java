@@ -24,9 +24,6 @@ public interface SubmissionService {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     SolutionDTO addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId, MultipartFile solutionFile);
 
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
-    String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
-
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     List<SolutionDTO> getAllSolutionsForStudentForSubmission(Long submissionId, String studentId);
 
@@ -60,5 +57,9 @@ public interface SubmissionService {
     @Deprecated
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     SubmissionDTO getLastSubmission(String courseName, String username);
+
+    @Deprecated
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
+    String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
 
 }

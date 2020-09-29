@@ -71,7 +71,7 @@ public class NotificationServiceImpl implements NotificationService {
         everythingOk.set(false);
 
         //token not existent
-        if (!tokenRepo.existsById(token))
+        if (!tokenRepo.findById(token).isPresent())
             return false;
 
         Long teamId = tokenRepo.getOne(token).getTeamId();
@@ -105,7 +105,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public boolean reject(String token) {
         //token not existent
-        if (!tokenRepo.existsById(token)) return false;
+        if (!tokenRepo.findById(token).isPresent()) return false;
         //token expired
         if (tokenRepo
                 .findAllByExpiryDateBefore(new Timestamp(new Date().getTime()))

@@ -67,7 +67,7 @@ public class TeamServiceImpl implements TeamService {
     public boolean addCourse(CourseDTO course) {
         if (course == null || course.getName().length() == 0) return false;
         Course courseEntity = modelMapper.map(course, Course.class);
-        if (courseRepo.existsById(courseEntity.getName())) return false;
+        if (courseRepo.findById(courseEntity.getName()).isPresent()) return false;
         courseRepo.save(courseEntity);
         return true;
     }
@@ -120,9 +120,9 @@ public class TeamServiceImpl implements TeamService {
     public boolean addStudentToCourse(String studentId, String courseName) {
         if (studentId.length() == 0 || courseName.length() == 0)
             return false;
-        if (!studentRepo.existsById(studentId))
+        if (!studentRepo.findById(studentId).isPresent())
             throw new StudentNotFoundException("Student not found!");
-        if (!courseRepo.existsById(courseName))
+        if (!courseRepo.findById(courseName).isPresent())
             throw new CourseNotFoundException("Course not found!");
 
         Course course = courseRepo.getOne(courseName);
@@ -145,7 +145,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Optional<CourseDTO> getCourse(String name) {
-        if (!courseRepo.existsById(name)) return Optional.empty();
+        if (!courseRepo.findById(name).isPresent()) return Optional.empty();
 
         return Optional.of(
                 modelMapper.map(courseRepo.getOne(name), CourseDTO.class)
@@ -163,7 +163,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Optional<StudentDTO> getStudent(String studentId) {
-        if (!studentRepo.existsById(studentId)) return Optional.empty();
+        if (!studentRepo.findById(studentId).isPresent()) return Optional.empty();
 
         return Optional.of(modelMapper.map(studentRepo.getOne(studentId),StudentDTO.class));
     }
@@ -179,7 +179,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getEnrolledStudents(String courseName) {
-        if (!courseRepo.existsById(courseName))
+        if (!courseRepo.findById(courseName).isPresent())
             throw new CourseNotFoundException("Course not found!");
 
         return courseRepo
@@ -193,8 +193,10 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void enableCourse(String courseName, String username) {
 
-        if (courseRepo.existsById(courseName)) {
-            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+        if (courseRepo.findById(courseName).isPresent()) {
+            if(!profRepo.findById(username).isPresent())
+                throw new ProfessorNotFoundException("Professor not found!");
+            if (!isProfessorCourse(courseName,username))
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
             courseRepo
                     .getOne(courseName)
@@ -209,8 +211,10 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void disableCourse(String courseName, String username) {
-        if (courseRepo.existsById(courseName)) {
-            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+        if (courseRepo.findById(courseName).isPresent()) {
+            if(!profRepo.findById(username).isPresent())
+                throw new ProfessorNotFoundException("Professor not found!");
+            if (!isProfessorCourse(courseName,username))
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
             courseRepo.getOne(courseName).setEnabled(false);
             courseRepo.getOne(courseName).getTeams().forEach(t -> t.setStatus(0));
@@ -224,8 +228,10 @@ public class TeamServiceImpl implements TeamService {
     // @Todo gestire con gli optional
     @Override
     public void deleteCourse(String courseName, String username) {
-        if (courseRepo.existsById(courseName)) {
-            if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+        if (courseRepo.findById(courseName).isPresent()) {
+            if(!profRepo.findById(username).isPresent())
+                throw new ProfessorNotFoundException("Professor not found!");
+            if (!isProfessorCourse(courseName,username))
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
 
             courseRepo.getOne(courseName).getTeams().forEach(t -> evictTeam(t.getId()));
@@ -260,7 +266,9 @@ public class TeamServiceImpl implements TeamService {
             throw new CourseNotFoundException("Course not found!");
         }
 
-        if (!isProfessorCourse(courseName,username) || !profRepo.existsById(username))
+        if(!profRepo.findById(username).isPresent())
+            throw new ProfessorNotFoundException("Professor not found!");
+        if (!isProfessorCourse(courseName,username))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
 
         Optional<String> _courseName = Optional.ofNullable(course.getName());
@@ -331,7 +339,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<CourseDTO> getCourses(String studentId) {
-        if (!studentRepo.existsById(studentId))
+        if (!studentRepo.findById(studentId).isPresent())
             throw new StudentNotFoundException("Student not found!");
 
         return studentRepo
@@ -345,7 +353,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<TeamDTO> getTeamsForStudent(String studentId) {
-        if (!studentRepo.existsById(studentId))
+        if (!studentRepo.findById(studentId).isPresent())
             throw new StudentNotFoundException("Student not found!");
 
         return studentRepo
@@ -358,7 +366,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getMembers(Long teamId) {
-        if (!teamRepo.existsById(teamId))
+        if (!teamRepo.findById(teamId).isPresent())
             throw new TeamNotFoundException("Team not found!");
 
         return teamRepo
@@ -371,7 +379,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getConfirmedStudents(Long teamId) {
-        if (!teamRepo.existsById(teamId))
+        if (!teamRepo.findById(teamId).isPresent())
             throw new TeamNotFoundException("Team not found!");
 
         return teamRepo
@@ -384,7 +392,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getPendentStudents(Long teamId) {
-        if (!teamRepo.existsById(teamId))
+        if (!teamRepo.findById(teamId).isPresent())
             throw new TeamNotFoundException("Team not found!");
 
         return teamRepo
@@ -397,7 +405,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDTO proposeTeam(String courseId, String name, List<String> membersIds) {
-        if (!courseRepo.existsById(courseId))
+        if (!courseRepo.findById(courseId).isPresent())
             throw new CourseNotFoundException("Course not found!");
         if (!courseRepo.getOne(courseId).isEnabled())
             throw new CourseDisabledException("Course not enabled!");
@@ -412,7 +420,7 @@ public class TeamServiceImpl implements TeamService {
             throw new DuplicatedStudentException("Duplicated members in team proposal!");
 
         for (String m : membersIds) {
-            if (!studentRepo.existsById(m))
+            if (!studentRepo.findById(m).isPresent())
                 throw new StudentNotFoundException("Student not found!");
 
             if (!courseRepo.getOne(courseId).getStudents().contains(studentRepo.getOne(m)))
@@ -452,10 +460,10 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void addMember(Long teamId, String studentId) {
-        if (!teamRepo.existsById(teamId))
+        if (!teamRepo.findById(teamId).isPresent())
             throw new TeamNotFoundException("Team not found!");
 
-        if (!studentRepo.existsById(studentId))
+        if (!studentRepo.findById(studentId).isPresent())
             throw new StudentNotFoundException("Team not found!");
 
         Team team = teamRepo.getOne(teamId);
@@ -486,7 +494,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<TeamDTO> getTeamForCourse(String courseName) {
-        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException("Course not found!");
+        if (!courseRepo.findById(courseName).isPresent()) throw new CourseNotFoundException("Course not found!");
 
         return courseRepo
                 .getOne(courseName)
@@ -498,7 +506,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getStudentsInTeams(String courseName) {
-        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException("Course not found!");
+        if (!courseRepo.findById(courseName).isPresent()) throw new CourseNotFoundException("Course not found!");
 
         return courseRepo
                 .getStudentsInTeams(courseName)
@@ -509,7 +517,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<StudentDTO> getAvailableStudents(String courseName) {
-        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException("Course not found!");
+        if (!courseRepo.findById(courseName).isPresent()) throw new CourseNotFoundException("Course not found!");
 
         return courseRepo
                 .getStudentsNotInTeams(courseName)
@@ -520,7 +528,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void setActive(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException("Team not found!");
+        if (!teamRepo.findById(teamId).isPresent()) throw new TeamNotFoundException("Team not found!");
 
         teamRepo.getOne(teamId).setStatus(1);
         teamRepo.getOne(teamId).setVmType(teamRepo.getOne(teamId).getCourse().getVmType());
@@ -528,7 +536,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void evictTeam(Long teamId) {
-        if (!teamRepo.existsById(teamId)) throw new TeamNotFoundException("Team not found!");
+        if (!teamRepo.findById(teamId).isPresent()) throw new TeamNotFoundException("Team not found!");
 
         teamRepo
                 .getOne(teamId)
@@ -547,10 +555,10 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void deleteMember(Long teamId, String studentId) {
-        if (!teamRepo.existsById(teamId))
+        if (!teamRepo.findById(teamId).isPresent())
             throw new TeamNotFoundException("Team not found!");
 
-        if (!studentRepo.existsById(studentId))
+        if (!studentRepo.findById(studentId).isPresent())
             throw new StudentNotFoundException("Student not found!");
 
         if (!teamRepo.getOne(teamId).getMembers().contains(studentRepo.getOne(studentId)))
@@ -563,7 +571,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDTO getTeam(Long teamId) {
-        if (!teamRepo.existsById(teamId))
+        if (!teamRepo.findById(teamId).isPresent())
             throw new TeamNotFoundException("Team not found!");
 
         return modelMapper.map(teamRepo
@@ -628,6 +636,28 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public boolean deleteProfessor(String professorId, String courseName) {
+        Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
+        if (!optionalCourseEntity.isPresent()) {
+            throw new CourseNotFoundException("Course not found!");
+        }
+
+        Optional<Professor> optionalProfessorEntity = profRepo.findById(
+                professorId
+        );
+
+        if (!optionalProfessorEntity.isPresent()) {
+            throw new ProfessorNotFoundException("Professor not found!");
+        }
+        if (!optionalCourseEntity.get().isEnabled()) {
+            throw new CourseDisabledException("Course not enabled");
+        }
+        optionalCourseEntity.get().getProfessors().remove(optionalProfessorEntity.get());
+        profRepo.delete(optionalProfessorEntity.get());
+        return true;
+    }
+
+    @Override
     public byte[] getImage(String username) {
 
         Byte[] image = new Byte[0];
@@ -656,7 +686,7 @@ public class TeamServiceImpl implements TeamService {
         );
 
         if (!optionalProfessorEntity.isPresent()) {
-            throw new StudentNotFoundException("Professor not found!");
+            throw new ProfessorNotFoundException("Professor not found!");
         }
         if (optionalCourseEntity.get().isEnabled()) {
             optionalCourseEntity.get().addProfessor(optionalProfessorEntity.get());

@@ -1,10 +1,7 @@
 package it.polito.ai.project.controllers;
 
 import it.polito.ai.project.dtos.*;
-import it.polito.ai.project.exceptions.CourseNotFoundException;
-import it.polito.ai.project.exceptions.StudentNotFoundException;
-import it.polito.ai.project.exceptions.SubmissionNotFoundException;
-import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.services.NotificationService;
 import it.polito.ai.project.services.SubmissionService;
 import it.polito.ai.project.services.TeamService;
@@ -258,6 +255,15 @@ public class CourseController {
             if (e instanceof StudentNotFoundException || e instanceof CourseNotFoundException)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
             else throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{courseName}/deleteProfessor")
+    public boolean deleteProfessorFromCourse(@PathVariable String courseName, @RequestParam String id) {
+        try {
+            return service.deleteProfessor(id, courseName);
+        } catch (TeamServiceException e) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
         }
     }
 
