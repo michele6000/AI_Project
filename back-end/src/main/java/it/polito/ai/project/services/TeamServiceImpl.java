@@ -562,17 +562,24 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void deleteMember(Long teamId, String studentId) {
-        if (!teamRepo.findById(teamId).isPresent())
+        Optional<Team> team = teamRepo.findById(teamId);
+        Optional<Student> student = studentRepo.findById(studentId);
+
+        if (!team.isPresent())
             throw new TeamNotFoundException("Team not found!");
 
-        if (!studentRepo.findById(studentId).isPresent())
+        if (!student.isPresent())
             throw new StudentNotFoundException("Student not found!");
 
-        if (!teamRepo.getOne(teamId).getMembers().contains(studentRepo.getOne(studentId)))
+        if (!team.get().getMembers().contains(student.get()))
             throw new StudentNotFoundException("Student is not a member of this team!");
 
-        teamRepo.getOne(teamId).removeMember(studentRepo.getOne(studentId));
-        if (teamRepo.getOne(teamId).getMembers().size() < teamRepo.getOne(teamId).getCourse().getMin())
+        team.get().removeMember(student.get());
+
+        if (team.get().getMembers().size() < team.get().getCourse().getMin())
+            evictTeam(teamId);
+
+        if (team.get().getStatus()==0)
             evictTeam(teamId);
     }
 
@@ -749,6 +756,15 @@ public class TeamServiceImpl implements TeamService {
 
         optionalCourseEntity.get().deleteStudent(optionalStudentEntity.get());
         return true;
+
+        //TODO:
+        // - cancellare tutte le solution di quello studente nel corso
+        // - (michele) spostare l'ownership delle vm del team in quel corso a qualcun altro, se c'è più di un owner rimuovere soltanto
+        //  if(team.getvms.foreach( vm -> vm.getOwners().stram().count() > 1  // getOwners().remove(studente)
+        //  else changeOwner (vmservice) changeOwner(me, team.getMembers.stream.filter(!me).collectt(tolist).get(0) )
+        // - cancellarlo dal team,
+        // -
+
     }
 
     private boolean isProfessorCourse(String courseName, String profId) {
