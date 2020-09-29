@@ -22,6 +22,7 @@ export class StudentComponent implements OnInit {
   sidenav: MatSidenav;
 
   s1: Subscription;
+  professorsList = '';
 
   constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService) {
     this.s1 = this.studentService.courses.subscribe((next) => {
@@ -60,6 +61,7 @@ export class StudentComponent implements OnInit {
     this.router.navigate(['student', corso.name.toLowerCase().replace(' ', '-'), 'groups']).then();
     this.studentService.findProfessorsByCourse(this.singoloCorso.name).subscribe(professor => {
         this.professors = professor;
+        this.professorsList = professor.map((p) => p.name + ' ' + p.firstName).join(", ");
     });
     // BehaviorSubject utilizzato per notificare il cambio di un corso nella sidenav
     this.studentService.eventsSubjectChangeCorsoSideNav.next();
