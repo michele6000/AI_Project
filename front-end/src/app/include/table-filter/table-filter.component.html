@@ -16,7 +16,7 @@
       Evaluate Solution
     </th>
     <td *matCellDef="let element" mat-cell>
-      <button mat-stroked-button color="primary" [disabled]="element.status === 'READ' || element.status === 'NOT_READ'">Evaluate</button>
+      <button (click)="evaluateSolution(element)" mat-stroked-button color="primary" [disabled]="element.status === 'READ' || element.status === 'NOT_READ'">Evaluate</button>
     </td>
   </ng-container>
 

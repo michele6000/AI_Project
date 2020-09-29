@@ -2,11 +2,11 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {StudentSubmissionModel} from "../../models/student-submission.model";
-import {SubmissionModel} from "../../models/submission.model";
-import {ProfessorService} from "../../services/professor.service";
-import {MatDialog} from "@angular/material/dialog";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {StudentSubmissionModel} from '../../models/student-submission.model';
+import {SubmissionModel} from '../../models/submission.model';
+import {ProfessorService} from '../../services/professor.service';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
@@ -99,5 +99,10 @@ export class TableFilterComponent implements OnInit {
         duration: 5000
       });
     });
+  }
+
+  evaluateSolution(element: any) {
+    console.log('Evaluate solution');
+    console.log(element);
   }
 }
