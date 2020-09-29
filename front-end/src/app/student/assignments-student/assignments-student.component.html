@@ -12,7 +12,7 @@
           <button (click)="handleShowSubmission(consegna.id)" class="submissionButton" mat-raised-button color="primary" type="button">Show submission</button>
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <input #fileInput (change)="handleFileSelect($event)" hidden id="file" type="file">
+      <input #fileInput (change)="handleFileSelect($event)" hidden accept="application/pdf" id="file" type="file">
 
       <button (click)="fileInput.click()"  mat-raised-button type="button">{{filename}}</button>
       <button (click)="uploadSolution(consegna.id)" class="ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>

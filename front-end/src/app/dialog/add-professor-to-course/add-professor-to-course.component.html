@@ -1,13 +1,13 @@
 <div class="dimensioni">
-  <mat-card-title>Modify Vm Owner</mat-card-title>
+  <mat-card-title>Add professor to course</mat-card-title>
   <mat-divider class="mt-10 mb-20"></mat-divider>
   <mat-error *ngIf="error" class="mt-10-center">
     Error
   </mat-error>
   <form #f="ngForm" (ngSubmit)="addProfessorToCourse(f)">
     <h4>Students</h4>
-    <mat-form-field appearance="fill" class="w-70">
-      <mat-label>Matricola</mat-label>
+    <mat-form-field appearance="fill" class="w-80">
+      <mat-label>ProfessorID</mat-label>
       <mat-select #professor="ngModel" name="professor" required ngModel>
         <mat-option  [value]="">
 
@@ -16,7 +16,7 @@
     </mat-form-field>
     <br>
     <mat-card-actions class="float-right">
-      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit">Modify</button>
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit">Add</button>
       <button (click)="closeDialog()" mat-button mat-dialog-close>Cancel</button>
     </mat-card-actions>
   </form>

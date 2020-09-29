@@ -119,18 +119,22 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new SubmissionNotFoundException("Submission not found!");
 
         if (!profRepo.findById(studentId).isPresent()) { //a student is requiring submission
-            if (studentRepo.getOne(studentId).getSolutions().stream()
-                    .filter(solution -> solution.getVersion() >= 0)
-                    .noneMatch(sol -> sol.getSubmission().getId().equals(submissionId))) {
-                //no solution for this submission and this student-->create an empty solution with status "READ"
-                List<Solution> ReadSol = submissionRepo.getOne(submissionId).getSolutions().stream()
-                        .filter(sol -> sol.getStudent().getId().equals(studentId))
-                        .filter(sol -> sol.getVersion() == -1)
-                        .filter(sol -> sol.getSubmission().getId().equals(submissionId))
-                        .collect(Collectors.toList() );
-                if (ReadSol.size() > 0){
-                    submissionRepo.getOne(submissionId).getSolutions().remove(ReadSol.get(0));
-                    solutionRepo.delete(ReadSol.get(0));
+            if(getLastSolVersion(submissionId,studentId).isRevisable())
+                if (studentRepo.getOne(studentId).getSolutions().stream()
+                        .filter(solution -> solution.getVersion() >= 0)
+                        .noneMatch(sol -> sol.getSubmission().getId().equals(submissionId))) {
+                    //no solution for this submission and this student-->create an empty solution with status "READ"
+                    List<Solution> ReadSol = submissionRepo.getOne(submissionId).getSolutions().stream()
+                            .filter(sol -> sol.getStudent().getId().equals(studentId))
+                            .filter(sol -> sol.getVersion() == -1)
+                            .filter(sol -> sol.getSubmission().getId().equals(submissionId))
+                            .collect(Collectors.toList() );
+                    if (ReadSol.size() > 0){
+                        submissionRepo.getOne(submissionId).getSolutions().remove(ReadSol.get(0));
+                        solutionRepo.delete(ReadSol.get(0));
+                    }
+                    if (!submissionRepo.getOne(submissionId).getExpiryDate().before(new Date()))
+                        createNewSol(studentId, submissionId);
                 }
         }
 

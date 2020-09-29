@@ -34,7 +34,7 @@
     <br>
     <mat-card-actions class="float-right">
       <button [disabled]="!f.valid" class="mr-20" color="primary" mat-button mat-raised-button>{{nameButton}}</button>
-      <button [routerLink]="['/teacher']" mat-button mat-dialog-close>Cancel</button>
+      <button (click)="closeDialog()"  mat-button mat-dialog-close>Cancel</button>
     </mat-card-actions>
   </form>
 </div>

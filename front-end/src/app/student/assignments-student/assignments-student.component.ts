@@ -121,7 +121,7 @@ export class AssignmentsStudentComponent implements OnInit {
           });
         },
         (error) => {
-          this.snackBar.open('Error uploading solution, try again.', 'OK', {
+          this.snackBar.open(error.error.message, 'OK', {
             duration: 5000
           });
         }
@@ -135,8 +135,9 @@ export class AssignmentsStudentComponent implements OnInit {
 
   handleShowSubmission(id: number) {
     this.studentService.getSubmissionById(this.corso.name, id).subscribe((res) => {
-      console.log(res);
-      console.log("HERE");
+      this.snackBar.open('Submission will open in new tab.', 'OK', {
+        duration: 5000
+      });
     });
     window.open('//' + API_URL_PUBLIC + 'courses/submissions/getImage/' + id, '_blank');
   }

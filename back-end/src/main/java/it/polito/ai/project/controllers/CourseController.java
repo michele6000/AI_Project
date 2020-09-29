@@ -328,11 +328,11 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/submissions/getImage/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/submissions/getImage/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
     public void showImage(HttpServletResponse response, @PathVariable Long id) {
         try {
             response.addHeader("Access-Control-Allow-Origin", "*");
-            response.setContentType("image/jpeg");
+            response.setContentType("application/pdf");
             response.getOutputStream().write(submissionService.getSubmissionImage(id));
             response.getOutputStream().close();
         } catch (Exception e) {

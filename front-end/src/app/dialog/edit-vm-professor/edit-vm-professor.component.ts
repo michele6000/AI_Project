@@ -47,4 +47,9 @@ export class EditVmProfessorComponent implements OnInit {
         });
       });
   }
+  closeDialog() {
+    this.dialogRef.close(false);
+  }
+
+
 }

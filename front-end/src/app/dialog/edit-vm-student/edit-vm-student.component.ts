@@ -56,7 +56,7 @@ export class EditVmStudentComponent implements OnInit {
         },
         (error) => {
           this.dialogRef.close(false);
-          this.snackBar.open('Error creating VM', 'OK', {
+          this.snackBar.open('Error creating VM: '+error.error.message, 'OK', {
             duration: 5000
           });
         });
