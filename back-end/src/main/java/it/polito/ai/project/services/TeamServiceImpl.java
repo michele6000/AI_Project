@@ -59,6 +59,9 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private SolutionRepository solutionRepository;
 
+    @Autowired
+    private VMRepository vmRepo;
+
 
     @Override
     public boolean addCourse(CourseDTO course) {
@@ -529,8 +532,16 @@ public class TeamServiceImpl implements TeamService {
 
         teamRepo
                 .getOne(teamId)
+                .getVMInstance()
+                .forEach(vm -> {
+                    teamRepo.getOne(teamId).getMembers().forEach(student -> student.getVms().remove(vm)); //elimino in student_vms
+                    teamRepo.getOne(teamId).getVMInstance().remove(vm); //elimino nella lista del team
+                    vmRepo.delete(vm); // elimino la vm dalla repo
+                });
+        teamRepo
+                .getOne(teamId)
                 .getMembers()
-                .forEach(s -> teamRepo.getOne(teamId).removeMember(s));
+                .forEach(s -> teamRepo.getOne(teamId).removeMember(s)); //cancello tutti i membri
         teamRepo.deleteById(teamId);
     }
 

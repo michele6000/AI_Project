@@ -216,7 +216,7 @@ export class ProfessorService {
   }
 
   findAllProfessor(){
-    return this.http.get<ProfessorModel[]>('api/professors/getall');
+    return this.http.get<ProfessorModel[]>(API_URL + 'professor/getAll');
   }
 
   findAllProsessorByCourse(courseName: string){
