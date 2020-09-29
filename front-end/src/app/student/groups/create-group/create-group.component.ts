@@ -18,7 +18,7 @@ import {MatDatepickerInputEvent} from "@angular/material/datepicker";
 export class CreateGroupComponent implements OnInit {
   studentsColumns = ['email', 'name', 'firstName', 'id'];
   studentsData: StudentModel[] = [];
-  groupsColumns = ['name'];
+  groupsColumns = ['name', 'proposer'];
   groupsData: GroupModel[] = [];
   innerGroupColumns = ['id', 'name', 'firstName', 'status'];
 

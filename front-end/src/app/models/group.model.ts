@@ -8,6 +8,7 @@ export class GroupModel {
   courseName: string;
   members: any[];
   vms: VmModel[];
+  proposer: string;
 
 
   limit_hdd: number;
