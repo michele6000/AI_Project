@@ -9,6 +9,7 @@ import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
@@ -43,6 +44,9 @@ public class VmServiceImpl implements VmService {
 
     @Autowired
     private VMTypeRepository vmtRepo;
+
+    @Value("${service.typeHost}")
+    private String host;
 
 
     @Override
@@ -327,7 +331,6 @@ public class VmServiceImpl implements VmService {
         _vm.setHdd(vm.getHdd());
         _vm.setCpu(vm.getCpu());
         _vm.setRam(vm.getRam());
-//        _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + optionalVMTypeEntity.get().getId());
 
         try{
 
@@ -348,7 +351,7 @@ public class VmServiceImpl implements VmService {
         }
 
         _vm = vmRepo.save(_vm);
-        _vm.setAccessLink("http://localhost:8080/API/vm/getImage/"+_vm.getId());
+        _vm.setAccessLink("http://"+host+":8080/API/vm/getImage/"+_vm.getId());
         return modelMapper.map(vmRepo.save(_vm), VMDTO.class);
     }
 

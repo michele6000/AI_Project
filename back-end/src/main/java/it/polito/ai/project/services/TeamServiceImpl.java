@@ -8,11 +8,9 @@ import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -102,7 +100,7 @@ public class TeamServiceImpl implements TeamService {
                 byteObjects[i++] = b;
             _student.setImage(byteObjects);
         } catch (IOException e) {
-            throw new TeamServiceException("Error saving image: " + e.getMessage());
+            throw new TeamServiceException("Error saving image: " + file.getName());
         }
 
         userRepo.save(_user);
@@ -197,7 +195,7 @@ public class TeamServiceImpl implements TeamService {
             if(!profRepo.findById(username).isPresent())
                 throw new ProfessorNotFoundException("Professor not found!");
             if (!isProfessorCourse(courseName,username))
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+                throw new TeamServiceException( "You are not a professor of this course!");
             courseRepo
                     .getOne(courseName)
                     .setEnabled(true);
@@ -215,7 +213,7 @@ public class TeamServiceImpl implements TeamService {
             if(!profRepo.findById(username).isPresent())
                 throw new ProfessorNotFoundException("Professor not found!");
             if (!isProfessorCourse(courseName,username))
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+                throw new TeamServiceException( "You are not a professor of this course!");
             courseRepo.getOne(courseName).setEnabled(false);
             courseRepo.getOne(courseName).getTeams().forEach(t -> t.setStatus(0));
             courseRepo.getOne(courseName).getStudents().forEach(s ->
@@ -225,14 +223,13 @@ public class TeamServiceImpl implements TeamService {
         } else throw new CourseNotFoundException("Course not found!");
     }
 
-    // @Todo gestire con gli optional
     @Override
     public void deleteCourse(String courseName, String username) {
         if (courseRepo.findById(courseName).isPresent()) {
             if(!profRepo.findById(username).isPresent())
                 throw new ProfessorNotFoundException("Professor not found!");
             if (!isProfessorCourse(courseName,username))
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+                throw new TeamServiceException( "You are not a professor of this course!");
 
             courseRepo.getOne(courseName).getTeams().forEach(t -> evictTeam(t.getId()));
             profRepo.getOne(username).getCourses().remove(courseRepo.getOne(courseName));
@@ -245,8 +242,7 @@ public class TeamServiceImpl implements TeamService {
             Optional<VMType> vmType = Optional.ofNullable(courseRepo.getOne(courseName).getVmType());
             if(vmType.isPresent())
                 vmTypeRepository.delete(courseRepo.getOne(courseName).getVmType());
-            // solution
-            // submission
+
             courseRepo.getOne(courseName).getSubmissions().forEach( s -> {
                 submissionRepository.getOne(s.getId()).getSolutions().forEach( sol -> {
                     solutionRepository.delete(sol);
@@ -269,7 +265,7 @@ public class TeamServiceImpl implements TeamService {
         if(!profRepo.findById(username).isPresent())
             throw new ProfessorNotFoundException("Professor not found!");
         if (!isProfessorCourse(courseName,username))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+            throw new TeamServiceException( "You are not a professor of this course!");
 
         Optional<String> _courseName = Optional.ofNullable(course.getName());
         _courseName.ifPresent(l -> optionalCourseEntity.get().setName(l));
@@ -286,9 +282,18 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<Boolean> addAll(List<StudentDTO> students) {
-        List<Boolean> studentsAdded = new ArrayList<>();
-//        students.forEach(s -> studentsAdded.add(addStudent(s, null)));
+    public List<StudentDTO> addAll(List<StudentDTO> students) {
+        List<StudentDTO> studentsAdded = new ArrayList<>();
+        students.forEach(s -> {
+
+            UserDTO user = new UserDTO();
+            user.setFirstName(s.getFirstName());
+            user.setName(s.getName());
+            user.setEmail(s.getEmail());
+            user.setUsername(s.getId());
+            user.setPassword("bestPassw0rd");
+            studentsAdded.add(addStudent(user, null));
+        });
         return studentsAdded;
     }
 
@@ -316,7 +321,7 @@ public class TeamServiceImpl implements TeamService {
 
         List<StudentDTO> students = csvToBean.parse();
 
-        List<Boolean> added = addAll(students);
+        List<StudentDTO> added = addAll(students);
 
         List<String> studentIds = students
                 .stream()
@@ -328,7 +333,7 @@ public class TeamServiceImpl implements TeamService {
 
             for (int i = 0; i < added.size(); i++)
                 addedAndEnrolled.add(
-                        added.get(i) || enrolled.get(i)
+                        added.get(i).getId().length() > 0 || enrolled.get(i)
                 );
 
             return addedAndEnrolled;
@@ -404,7 +409,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamDTO proposeTeam(String courseId, String name, List<String> membersIds) {
+    public TeamDTO proposeTeam(String courseId, String name, List<String> membersIds, String proposer) {
         if (!courseRepo.findById(courseId).isPresent())
             throw new CourseNotFoundException("Course not found!");
         if (!courseRepo.getOne(courseId).isEnabled())
@@ -440,6 +445,7 @@ public class TeamServiceImpl implements TeamService {
         team.setLimit_hdd(0);
         team.setLimit_ram(0);
         team.setName(name);
+        team.setProposer(proposer);
 
         Optional<VMType> optionalVMTypeEntity = Optional.ofNullable(courseRepo.getOne(courseId).getVmType());
         optionalVMTypeEntity.ifPresent(team::setVmType);
@@ -494,7 +500,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<TeamDTO> getTeamForCourse(String courseName) {
-        if (!courseRepo.findById(courseName).isPresent()) throw new CourseNotFoundException("Course not found!");
+        if (!courseRepo.existsById(courseName)) throw new CourseNotFoundException("Course not found!");
 
         return courseRepo
                 .getOne(courseName)
@@ -546,6 +552,7 @@ public class TeamServiceImpl implements TeamService {
                     teamRepo.getOne(teamId).getVMInstance().remove(vm); //elimino nella lista del team
                     vmRepo.delete(vm); // elimino la vm dalla repo
                 });
+
         teamRepo
                 .getOne(teamId)
                 .getMembers()
@@ -621,7 +628,7 @@ public class TeamServiceImpl implements TeamService {
                 byteObjects[i++] = b;
             _professor.setImage(byteObjects);
         } catch (IOException e) {
-            throw new TeamServiceException("Error saving image: " + e.getMessage());
+            throw new TeamServiceException("Error saving image: " + file.getName());
         }
 
         userRepo.save(_user);
@@ -738,7 +745,7 @@ public class TeamServiceImpl implements TeamService {
             throw new StudentNotFoundException("Student not found!");
 
         if (!optionalCourseEntity.get().getStudents().stream().map(Student::getId).collect(Collectors.toList()).contains(studentId))
-            throw new StudentNotFoundException("Student not enrolled to this course!");
+            throw new StudentNotFoundException("Student not enrolled in this course!");
 
         optionalCourseEntity.get().deleteStudent(optionalStudentEntity.get());
         return true;

@@ -201,7 +201,7 @@ public class CourseController {
         TeamDTO team;
         try {
 
-            team = service.proposeTeam(courseName, name, membersIds);
+            team = service.proposeTeam(courseName, name, membersIds, getCurrentUsername());
             notifyService.notifyTeam(team, membersIds, timestamp);
             return true;
         } catch (TeamServiceException e) {

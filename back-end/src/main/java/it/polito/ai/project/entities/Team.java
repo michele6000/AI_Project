@@ -14,6 +14,7 @@ public class Team {
     private Long id;
     private String name;
     private int status;
+    private String proposer;
 
     // Limitazioni per la VM
     private Integer limit_hdd; // espresso in MB

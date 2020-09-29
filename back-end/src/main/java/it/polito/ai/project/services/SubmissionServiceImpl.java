@@ -55,7 +55,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     public SubmissionDTO addSubmission(SubmissionDTO submissionDTO, String courseName, String profId, MultipartFile submissionFile) {
 
         if (submissionDTO == null)
-            throw new SubmissionNotFoundException("Bad request!");
+            throw new SubmissionNotFoundException("Submission not found!");
         if (courseName.length() == 0 || !courseRepo.findById(courseName).isPresent())
             throw new CourseNotFoundException("Course not found!");
 
@@ -67,7 +67,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         if (!course.getProfessors().contains(profRepo.getOne(profId))) {
             submissionRepo.delete(submissionEntity);
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+            throw new TeamServiceException("You are not a professor of this course!");
         }
 
         try{
@@ -78,7 +78,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
             submissionEntity.setImage(byteObjects);
         } catch (IOException e) {
-            throw new TeamServiceException("Error saving image: " + e.getMessage());
+            throw new TeamServiceException("Error saving image: " + submissionFile.getName());
         }
 
         submissionEntity.setCourse(course);
@@ -142,7 +142,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     public SolutionDTO addSolution(Long submissionId, SolutionDTO solutionDTO, String studentId, MultipartFile solutionFile) {
 
         if (solutionDTO == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Bad request!");
+            throw new SolutionNotFoundException("Solution not found!");
 
         if (!submissionRepo.findById(submissionId).isPresent())
             throw new SubmissionNotFoundException("Submission not found!");
@@ -195,7 +195,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
             solution.setImage(byteObjects);
         } catch (IOException e) {
-            throw new TeamServiceException("Error saving image: " + e.getMessage());
+            throw new TeamServiceException("Error saving image: " + solutionFile.getName());
         }
 
         solution = solutionRepo.save(solution);
@@ -270,7 +270,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new SolutionNotFoundException("Solution not found!");
 
         if (!isProfessorCourseSolution(solutionId, profId))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+            throw new TeamServiceException("You are not a professor of this course!");
 
         Solution sol = solutionRepo.getOne(solutionId);
         sol.setEvaluation(evaluation);
@@ -292,7 +292,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new SolutionNotFoundException("Solution not found!");
 
         if (!isProfessorCourseSolution(solutionId, profId))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
+            throw new TeamServiceException("You are not a professor of this course!");
 
         solutionRepo.getOne(solutionId).setRevisable(false);
 
@@ -363,7 +363,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     /* ----------- PRIVATE METHODS ------------ */
 
 
-    @Scheduled(fixedRate = 6000)
+    @Scheduled(fixedRate = 24*60*60*1000) // una volta al giorno + appena avvio il programma
     public void passiveSolutionAfterSubmissionExpiryDate() {
         AtomicBoolean found = new AtomicBoolean(false);
 
@@ -395,7 +395,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                         blankSolution.setStudent(student);
                         blankSolution.setSubmission(submission);
                         solutionRepo.save(blankSolution);
-                        System.out.println("Running auto wipe - " + student.getId() + " - "+ submission.getId());
+//                        System.out.println("Running auto wipe - " + student.getId() + " - "+ submission.getId());
                     }
                 });
         });

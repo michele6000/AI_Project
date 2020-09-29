@@ -146,7 +146,7 @@ export class VmsStudentComponent implements OnInit {
           studentOwners += ', ';
         });
         // elimino dalla stringa l'ultima virgola alla fine
-        studentOwners.slice(0, -1);
+        studentOwners = studentOwners.slice(0,-2)
         vm.owner = studentOwners;
         vm.groupId = this.team.id;
       });

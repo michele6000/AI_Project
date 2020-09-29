@@ -1,6 +1,6 @@
 <app-logged-header (toggleMenu)="toggleMenu()"></app-logged-header>
 <mat-toolbar>
-  {{singoloCorso ? singoloCorso.name + " - Professor/s: ": ''}}
+  {{singoloCorso ? singoloCorso.name + " - Professor(s): ": ''}}
   <span *ngFor="let professor of professors">{{professor.name + " " + professor.firstName + ", "}}</span>
   <span class="fill-remaining-space"></span>
 </mat-toolbar>
