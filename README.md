@@ -1,30 +1,5 @@
-# VirtualLabs
-
-### Progetto Applicazioni Internet a.a. 19/20
-
-## Indicazioni generali
-
-- Sviluppo di un applicazione web basata su
-    - Java Spring
-    - Angular 2+
-    - PostgreSQL/MongoDB/MariaDB
-- Il server deve esporre le funzionalità offerte al client attraverso una interfaccia REST
-    utilizzabile anche da applicazioni terze (es. dall’applicazione mobile).
-- Gruppi composti da massimo 4 persone
-    - I gruppi sono formati in modo autonomo dagli studenti
-- La consegna
-    - deve prevedere l’utilizzo di docker per istanziare server, db ed (eventualmente)
-       applicazione client tramite server web
-    - deve essere corredata da un breve testo con le istruzioni per compilazione, deploy e
-       utilizzo (es. username e password dei vari utenti già presenti)
-- Consegna e revisione su appuntamento preferibilmente in sessione esami
-    - Necessaria comunicazione ai docenti con preavviso di almeno una settimana tramite
-       email con oggetto: "Applicazioni Internet - Appuntamento x revisione progetto"
-    - Upload del codice sorgente nell’area elaborati del corso prima della richiesta di
-       appuntamento (con istruzioni per compilazione, esecuzione e utilizzo)
-    - Presenza attiva di tutti i membri del gruppo durante la revisione (presumibilmente
-       telematica)
-    - Gruppo di discussione: gruppo slack ai-polito-2020.slack.com, channel #progetto
+# Teams
+### Copyright © 2020 Michele Luigi Greco -  All Rights Reserved 
 
 ## Descrizione
 
@@ -240,16 +215,4 @@ quest’ultimo caso il docente assegnerà anche un voto o un giudizio all’elab
 Si realizzi per lo studente una vista analoga a quella disponibile per il docente. Qui lo studente
 prenderà visione della consegna, sottometterà poi gli elaborati o in seguito alla consegna o in
 seguito alle correzioni (richieste di revisione) del docente.
-
-## Valutazione
-
-La valutazione terrà conto dei seguenti aspetti:
-
-- Soddisfacimento delle specifiche e correttezza del funzionamento del sistema e gestione
-    delle varie funzionalità
-- Usabilità e funzionalità dell’interfaccia utente
-- Ingegnerizzazione e scalabilità della implementazione proposta;
-- Leggibilità del codice e documentazione tramite commenti
-- Originalità ed efficacia nel raggiungimento degli obiettivi del progetto
-
 
