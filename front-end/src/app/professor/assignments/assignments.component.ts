@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ShowHistoryComponent} from '../../dialog/edit-homework/show-history.component';
@@ -6,9 +6,9 @@ import {CreateAssignmentComponent} from '../../dialog/create-assignment/create-a
 import {CourseModel} from '../../models/course.model';
 import {ProfessorService} from '../../services/professor.service';
 import * as moment from 'moment';
-import {from} from 'rxjs';
+import {from, Subscription} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
-import {StudentSubmissionModel} from "../../models/student-submission.model";
+import {StudentSubmissionModel} from '../../models/student-submission.model';
 
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
@@ -19,7 +19,7 @@ const API_URL_LOCAL = '/local/API/';
   templateUrl: './assignments.component.html',
   styleUrls: ['./assignments.component.css']
 })
-export class AssignmentsComponent implements OnInit {
+export class AssignmentsComponent implements OnInit, OnDestroy {
 
   consegne: any[];
 
@@ -32,13 +32,7 @@ export class AssignmentsComponent implements OnInit {
   constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService) {
   }
 
-  ngOnInit(): void {
-    this.show = false;
-    this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
-    this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
-
-    if (this.corso.name.length == 0 )
-      return;
+  loadAssignments() {
 
     // 1 - Recupero l'elenco di studenti del corso
     this.professorService.getEnrolledStudents(this.corso.name).subscribe(
@@ -94,9 +88,22 @@ export class AssignmentsComponent implements OnInit {
 
       }
     );
+  }
 
+  ngOnInit(): void {
+    this.show = false;
+    this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
+    this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
 
-    // Per ogni consegna richiedo l'elenco di elaborati
+    if (this.corso.name.length === 0) {
+      return;
+    }
+
+    this.loadAssignments();
+  }
+
+  ngOnDestroy() {
+
   }
 
   showHistory(studentSub: StudentSubmissionModel) {
@@ -111,8 +118,8 @@ export class AssignmentsComponent implements OnInit {
     this.dialog.open(CreateAssignmentComponent, {})
       .afterClosed()
       .subscribe(result => {
-
-
+        // Dopo aver creato l'assignment aggiorno la tabella
+        this.loadAssignments();
       });
   }
 

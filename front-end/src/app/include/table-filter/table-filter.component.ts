@@ -2,11 +2,13 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {StudentSubmissionModel} from "../../models/student-submission.model";
-import {SubmissionModel} from "../../models/submission.model";
-import {ProfessorService} from "../../services/professor.service";
-import {MatDialog} from "@angular/material/dialog";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {StudentSubmissionModel} from '../../models/student-submission.model';
+import {SubmissionModel} from '../../models/submission.model';
+import {ProfessorService} from '../../services/professor.service';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {EditVmProfessorComponent} from '../../dialog/edit-vm-professor/edit-vm-professor.component';
+import {EvaluateSolutionComponent} from '../../dialog/evaluate-solution/evaluate-solution.component';
 
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
@@ -29,7 +31,7 @@ export class TableFilterComponent implements OnInit {
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
 
-  constructor(private professorService: ProfessorService, private snackBar: MatSnackBar) {
+  constructor(private professorService: ProfessorService, private snackBar: MatSnackBar, private dialog: MatDialog) {
   }
 
   @Input('data') set data(data) {
@@ -99,5 +101,13 @@ export class TableFilterComponent implements OnInit {
         duration: 5000
       });
     });
+  }
+
+  evaluateSolution(element: any) {
+    this.dialog.open(EvaluateSolutionComponent, {data: element})
+      .afterClosed()
+      .subscribe(result => {
+        console.log(result);
+      });
   }
 }

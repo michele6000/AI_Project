@@ -8,7 +8,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {GroupModel} from '../../../models/group.model';
 import {concatMap, toArray} from 'rxjs/operators';
 import {forkJoin, from, Observable} from 'rxjs';
-import {MatDatepickerInputEvent} from "@angular/material/datepicker";
+import {MatDatepickerInputEvent} from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-create-group',
@@ -18,7 +18,7 @@ import {MatDatepickerInputEvent} from "@angular/material/datepicker";
 export class CreateGroupComponent implements OnInit {
   studentsColumns = ['email', 'name', 'firstName', 'id'];
   studentsData: StudentModel[] = [];
-  groupsColumns = ['name'];
+  groupsColumns = ['name', 'proposer'];
   groupsData: GroupModel[] = [];
   innerGroupColumns = ['id', 'name', 'firstName', 'status'];
 
