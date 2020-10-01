@@ -15,8 +15,7 @@ export class ShowTeamMembersComponent implements OnInit {
   studentsInTeam: StudentModel[] = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data, private dialogRef: MatDialogRef<ShowTeamMembersComponent>, private professorService: ProfessorService) {
-    this.team = data
-
+    this.team = data;
   }
 
   ngOnInit(): void {

@@ -231,4 +231,8 @@ export class ProfessorService {
     return this.http.post(API_URL + 'courses/' + courseName + '/deleteProfessor?id=' + professorId, {});
   }
 
+  findStatisticsByTeam(teamId: number){
+    return this.http.get<any>(API_URL + 'team/' + teamId + '/stats');
+  }
+
 }

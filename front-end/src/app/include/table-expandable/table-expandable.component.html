@@ -22,12 +22,30 @@
     </td>
   </ng-container>
 
+  <ng-container *ngIf="showStatistics" matColumnDef="statistics">
+    <th *matHeaderCellDef mat-header-cell>
+      Statistics
+    </th>
+    <td *matCellDef="let element" mat-cell>
+      <mat-icon (click)="statistics($event, element)" class="cursor-pointer">insert_chart</mat-icon>
+    </td>
+  </ng-container>
+
   <ng-container *ngIf="showEdit" matColumnDef="modify">
     <th *matHeaderCellDef mat-header-cell>
       Modify
     </th>
     <td *matCellDef="let element" mat-cell>
       <mat-icon (click)="editGroup($event, element)" class="cursor-pointer">edit</mat-icon>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="expand">
+    <th *matHeaderCellDef mat-header-cell>
+      Expand
+    </th>
+    <td *matCellDef="let element" mat-cell>
+      <mat-icon class="cursor-pointer">keyboard_arrow_down</mat-icon>
     </td>
   </ng-container>
 

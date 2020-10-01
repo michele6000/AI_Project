@@ -9,6 +9,7 @@ import {from} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
 import {EditVmProfessorComponent} from '../../dialog/edit-vm-professor/edit-vm-professor.component';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {StatisticsVmComponent} from '../../dialog/statistics-vm/statistics-vm.component';
 
 @Component({
   selector: 'app-vms',
@@ -95,4 +96,13 @@ export class VmsComponent implements OnInit {
     });
   }
 
+  showStatistics(element: any) {
+    // 1) richiesta per avere le statistiche di quella VM
+    // 2) apertura dialog a cui passo le statistiche
+    this.professorService.findStatisticsByTeam(element.id).subscribe(
+      statistics => {
+        this.dialog.open(StatisticsVmComponent, {data: statistics});
+      }
+    );
+  }
 }

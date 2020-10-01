@@ -105,9 +105,13 @@ export class CreateGroupComponent implements OnInit {
         this.studentService.proposeTeam(this.selectedStudents, this.course.name, f.value.name, this.chosenTimeout).subscribe(
           (response) => {
             // Tutte a buon fine
-            this.snackBar.open('Team proposal created successfully.', 'OK', {
-              duration: 5000
-            });
+            this.studentService.findAvailableStudentsByCourseName(this.course.name).subscribe(
+              (result: StudentModel[]) => {
+                this.studentsData = result.filter((s) => s.id !== localStorage.getItem('id'));
+                this.snackBar.open('Team proposal created successfully.', 'OK', {
+                  duration: 5000
+                });
+              });
           },
           (error) => {
             this.snackBar.open('Error creating team proposal, try again.', 'OK', {

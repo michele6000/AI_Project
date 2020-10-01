@@ -11,17 +11,17 @@
   <form #f="ngForm" (ngSubmit)="proposeGroup(f)" class="mt-10 text-right d-flex align-items-center">
     <mat-form-field class="mr-20">
       <mat-label>Group Name</mat-label>
-      <input #name="ngModel" matInput name="name" ngModel required type="text" value="">
+      <input #name matInput name="name" ngModel required type="text" value="">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Proposal Timeout</mat-label>
-      <input (dateChange)="timeoutChoseValue($event)" [matDatepicker]="proposalTimeout" [max]="maxDate" [min]="minDate"
+      <input #date (dateChange)="timeoutChoseValue($event)" [matDatepicker]="proposalTimeout" [max]="maxDate" [min]="minDate"
              matInput name="proposalTimeout" ngModel required>
       <mat-datepicker-toggle [for]="proposalTimeout" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #proposalTimeout></mat-datepicker>
     </mat-form-field>
     <span class="fill-remaining-space"></span>
-    <button color="primary" mat-button mat-raised-button>Propose Group</button>
+    <button color="primary" mat-button mat-raised-button (click)="date.value = ''; name.value='' ">Propose Group</button>
   </form>
 </div>
 <div class="mt-10">
