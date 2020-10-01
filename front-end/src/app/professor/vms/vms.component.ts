@@ -27,14 +27,16 @@ export class VmsComponent implements OnInit {
 
   hasVMType = false;
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService, private snackBar: MatSnackBar) {}
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService, private snackBar: MatSnackBar) {
+  }
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
 
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
-    if (this.corso.name.length === 0 )
+    if (this.corso.name.length === 0) {
       return;
+    }
 
     // Recupero il VM Type, se presente
     this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {
@@ -43,6 +45,37 @@ export class VmsComponent implements OnInit {
       this.hasVMType = false;
     });
 
+    this.loadVMLimits();
+  }
+
+  createVM($event) {
+    if (this.corso.name !== '') {
+      this.dialog.open(CreateVmProfessorComponent, {})
+        .afterClosed()
+        .subscribe(result => {
+          // Recupero il VM Type, se presente
+          this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {
+            this.hasVMType = true;
+          }, error => {
+            this.hasVMType = false;
+          });
+        });
+    } else {
+      this.snackBar.open('You must to create a course first', 'OK', {
+        duration: 5000
+      });
+    }
+  }
+
+  modifyGroup($event: GroupModel) {
+    this.dialog.open(EditVmProfessorComponent, {data: $event})
+      .afterClosed()
+      .subscribe(result => {
+        this.loadVMLimits();
+      });
+  }
+
+  loadVMLimits() {
     // Recupero l'elenco di Teams
     this.professorService.findTeamsByCourse(this.corso.name).subscribe((teams) => {
       const groupsData: GroupModel[] = [];
@@ -60,34 +93,6 @@ export class VmsComponent implements OnInit {
         this.groupsData = groupsData;
       });
     });
-
-    // Recupero l'elenco di VM
   }
 
-  createVM($event) {
-    if (this.corso.name !== '') {
-      this.dialog.open(CreateVmProfessorComponent, {})
-          .afterClosed()
-          .subscribe(result => {
-            // Recupero il VM Type, se presente
-            this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {
-              this.hasVMType = true;
-            }, error => {
-              this.hasVMType = false;
-            });
-          });
-    } else {
-      this.snackBar.open('You must to create a course first', 'OK', {
-        duration: 5000
-      });
-    }
-  }
-
-  modifyGroup($event: GroupModel) {
-    this.dialog.open(EditVmProfessorComponent, {data: $event})
-      .afterClosed()
-      .subscribe(result => {
-        console.log(result);
-      });
-  }
 }

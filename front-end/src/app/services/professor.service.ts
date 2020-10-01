@@ -228,7 +228,7 @@ export class ProfessorService {
   }
 
   deleteProfessorFromCourse(courseName: string, professorId: string){
-    return this.http.post(API_URL + 'courses/' + courseName + '/deleteProfessor?professorId=' + professorId, {});
+    return this.http.post(API_URL + 'courses/' + courseName + '/deleteProfessor?id=' + professorId, {});
   }
 
 }

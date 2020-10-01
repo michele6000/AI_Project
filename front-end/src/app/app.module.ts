@@ -68,6 +68,7 @@ import { CourseTableComponent } from './professor/courses/course-table/course-ta
 import { CourseProfessorsComponent } from './dialog/course-professors/course-professors.component';
 import { AddProfessorToCourseComponent } from './dialog/add-professor-to-course/add-professor-to-course.component';
 import { EvaluateSolutionComponent } from './dialog/evaluate-solution/evaluate-solution.component';
+import { RemoveProfessorFromCourseComponent } from './dialog/remove-professor-from-course/remove-professor-from-course.component';
 
 @NgModule({
   declarations: [
@@ -112,7 +113,8 @@ import { EvaluateSolutionComponent } from './dialog/evaluate-solution/evaluate-s
     CourseTableComponent,
     CourseProfessorsComponent,
     AddProfessorToCourseComponent,
-    EvaluateSolutionComponent
+    EvaluateSolutionComponent,
+    RemoveProfessorFromCourseComponent
   ],
   imports: [
     NgParticlesModule,
