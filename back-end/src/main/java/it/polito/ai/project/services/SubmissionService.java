@@ -42,10 +42,8 @@ public interface SubmissionService {
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
     void stopRevisions(Long solutionId, String profId);
 
-//    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     byte[] getSubmissionImage(Long submissionId);
 
-//    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     byte[] getSolutionImage(Long solutionId);
 
     /* DEPRECATED */

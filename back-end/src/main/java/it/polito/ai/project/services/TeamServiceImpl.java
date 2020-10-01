@@ -431,7 +431,7 @@ public class TeamServiceImpl implements TeamService {
             if (!courseRepo.getOne(courseId).getStudents().contains(studentRepo.getOne(m)))
                 throw new StudentNotFoundException("Student not enrolled in this course!");
 
-            courseRepo.getOne(courseId).getTeams().forEach(t -> {
+            courseRepo.getOne(courseId).getTeams().stream().filter(team -> team.getStatus()!=0).forEach(t -> {
                         if (t.getMembers().contains(studentRepo.getOne(m)))
                             throw new DuplicatedStudentException("Student " + m + " is already member of a team (" + t.getName() + ") for this course!");
                     }
@@ -562,18 +562,51 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void deleteMember(Long teamId, String studentId) {
-        if (!teamRepo.findById(teamId).isPresent())
+        Optional<Team> team = teamRepo.findById(teamId);
+        Optional<Student> student = studentRepo.findById(studentId);
+
+        if (!team.isPresent())
             throw new TeamNotFoundException("Team not found!");
 
-        if (!studentRepo.findById(studentId).isPresent())
+        if (!student.isPresent())
             throw new StudentNotFoundException("Student not found!");
 
-        if (!teamRepo.getOne(teamId).getMembers().contains(studentRepo.getOne(studentId)))
+        if (!team.get().getMembers().contains(student.get()))
             throw new StudentNotFoundException("Student is not a member of this team!");
 
-        teamRepo.getOne(teamId).removeMember(studentRepo.getOne(studentId));
-        if (teamRepo.getOne(teamId).getMembers().size() < teamRepo.getOne(teamId).getCourse().getMin())
+        safeStudentRemover(team,student);
+
+        if (team.get().getMembers().size() < team.get().getCourse().getMin())
             evictTeam(teamId);
+
+    }
+
+    private void safeStudentRemover(Optional<Team> team, Optional<Student> student){
+        // cancella lo studente dal team in modo safe, eliminando il team se era l'unico a costituirlo
+        // trasferendo l'ownership delle vm in caso contrario.
+
+        if(!student.isPresent())
+            return;
+        team.ifPresent(_team -> {
+            if(_team.getMembers().size() == 1 || _team.getStatus() == 0)
+                evictTeam(_team.getId()); // cancello tutto il team
+            else{
+                _team.getVMInstance().forEach(vm -> {
+                    if (vm.getOwners().contains(student.get()))
+                        if (vm.getOwners().size() > 1) // se non sono l'unico owner
+                            vm.getOwners().remove(student.get());
+                        else {
+                            vm.getOwners().remove(student.get());
+                            _team.getMembers()
+                                    .stream()
+                                    .filter(s -> !s.equals(student.get()))
+                                    .findFirst()
+                                    .ifPresent(newOwner -> vm.getOwners().add(newOwner));
+                        }
+                });
+                _team.removeMember(student.get()); // cancello solo studente dal team
+            }
+        });
     }
 
     @Override
@@ -746,6 +779,26 @@ public class TeamServiceImpl implements TeamService {
 
         if (!optionalCourseEntity.get().getStudents().stream().map(Student::getId).collect(Collectors.toList()).contains(studentId))
             throw new StudentNotFoundException("Student not enrolled in this course!");
+
+        optionalCourseEntity.get().getSubmissions().forEach(s->{
+            s.getSolutions().stream()
+                            .filter(sol->sol.getStudent().equals(optionalStudentEntity.get()))
+                            .forEach(solutionRepository::delete);
+        });
+
+        Optional<Team> optionalTeam = optionalCourseEntity.get()
+                .getTeams()
+                .stream()
+                .filter(team -> team.getStatus()==1)
+                .filter(t->t.getMembers().contains(optionalStudentEntity.get()))
+                .findFirst();
+
+
+        safeStudentRemover(optionalTeam,optionalStudentEntity);
+
+        // Attenzione si suppone che se uno studente si elimina dal corso anche se il team va
+        // in condizioni di invalidità ( numero di membri del team minore del numero minimo richiesto )
+        // esso continua comunque a mantenere lo status di validità che aveva alla sua creazione.
 
         optionalCourseEntity.get().deleteStudent(optionalStudentEntity.get());
         return true;

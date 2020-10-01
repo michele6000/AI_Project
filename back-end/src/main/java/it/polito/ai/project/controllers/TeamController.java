@@ -84,7 +84,7 @@ public class TeamController {
     public void deleteMember(@PathVariable Long teamId, @PathVariable String studentId) {
         try {
             //se non sono professore (sono studente) e sto provando a cancellare un membro diverso da me stesso
-            if (!getCurrentRoles().contains("ROLE_PROFESSOR") && getCurrentUsername() != studentId)
+            if (!getCurrentRoles().contains("ROLE_PROFESSOR") && !getCurrentUsername().equals(studentId))
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete this member!");
             service.deleteMember(teamId, studentId);
         } catch (TeamServiceException e) {

@@ -53,7 +53,6 @@ public class NotificationServiceImpl implements NotificationService {
         //emailSender.send(message);
     }
 
-    @Override
     @Scheduled(fixedRate = 600000)
     public void deleteExpiredTokens() {
         tokenRepo
