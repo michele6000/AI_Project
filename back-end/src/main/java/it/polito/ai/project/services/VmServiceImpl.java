@@ -369,6 +369,7 @@ public class VmServiceImpl implements VmService {
         return team;
     }
 
+    @Deprecated
     @Override
     public byte[] getVmImage(Long vmId) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);

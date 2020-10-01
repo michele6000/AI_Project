@@ -399,7 +399,6 @@ public class SubmissionServiceImpl implements SubmissionService {
                         blankSolution.setStudent(student);
                         blankSolution.setSubmission(submission);
                         solutionRepo.save(blankSolution);
-//                        System.out.println("Running auto wipe - " + student.getId() + " - "+ submission.getId());
                     }
                 });
         });

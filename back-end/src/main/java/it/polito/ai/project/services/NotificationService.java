@@ -13,9 +13,7 @@ public interface NotificationService {
 
     boolean reject(String token);
 
-    public void notifyTeam(TeamDTO dto, List<String> memberIds, Timestamp expiryDate);
-
-    void deleteExpiredTokens();
+    void notifyTeam(TeamDTO dto, List<String> memberIds, Timestamp expiryDate);
 
     AtomicBoolean isEverythingOk();
 }
