@@ -20,8 +20,4 @@ export class CourseProfessorsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  closeDialog() {
-    this.dialogRef.close(false);
-  }
-
 }

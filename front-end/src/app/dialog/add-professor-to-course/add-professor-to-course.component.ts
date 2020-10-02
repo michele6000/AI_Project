@@ -40,7 +40,4 @@ export class AddProfessorToCourseComponent implements OnInit {
     );
   }
 
-  closeDialog() {
-    this.dialogRef.close(false);
-  }
 }

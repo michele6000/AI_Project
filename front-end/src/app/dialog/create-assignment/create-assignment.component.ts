@@ -71,10 +71,6 @@ export class CreateAssignmentComponent implements OnInit {
     }
   }
 
-  closeDialog() {
-    this.dialogRef.close(false);
-  }
-
   expiryChoseValue($event: MatDatepickerInputEvent<any>) {
     this.chosenExpiryDate = $event.target.value;
 

@@ -67,7 +67,4 @@ export class CreateVmProfessorComponent implements OnInit {
     }
   }
 
-  closeDialog() {
-    this.dialogRef.close(false);
-  }
 }
