@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -55,14 +56,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Scheduled(fixedRate = 600000)
     public void deleteExpiredTokens() {
+        List<Long> teams = new ArrayList<>();
         tokenRepo
                 .findAllByExpiryDateBefore(new Timestamp(new Date().getTime()))
-                .forEach(
-                        t -> {
-                            teamService.evictTeam(t.getTeamId());
+                .forEach(t -> {
+                            teams.add(t.getTeamId());
                             tokenRepo.delete(t);
                         }
                 );
+        teams.stream().distinct().forEach(teamService::evictTeam);
     }
 
     @Override
