@@ -625,6 +625,7 @@ public class TeamServiceImpl implements TeamService {
                 .map(professor ->
                     modelMapper
                             .typeMap(Professor.class,ProfessorDTO.class)
+                            .addMappings(mapper -> mapper.skip(ProfessorDTO::setImage))
                             .map(professor)
                 )
                 .collect(Collectors.toList());
@@ -717,17 +718,20 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public boolean addProfessorToCourse(String professorId, String courseName) {
         Optional<Course> optionalCourseEntity = courseRepo.findById(courseName);
-        if (!optionalCourseEntity.isPresent()) {
+        if (!optionalCourseEntity.isPresent())
             throw new CourseNotFoundException("Course not found!");
-        }
 
         Optional<Professor> optionalProfessorEntity = profRepo.findById(
                 professorId
         );
 
-        if (!optionalProfessorEntity.isPresent()) {
+        if (!optionalProfessorEntity.isPresent())
             throw new ProfessorNotFoundException("Professor not found!");
-        }
+
+
+        if(optionalCourseEntity.get().getProfessors().contains(optionalProfessorEntity.get()))
+            throw new TeamServiceException("Professor is already in the course");
+
         if (optionalCourseEntity.get().isEnabled()) {
             optionalCourseEntity.get().addProfessor(optionalProfessorEntity.get());
             return true;
