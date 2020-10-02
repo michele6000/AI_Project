@@ -64,10 +64,11 @@ import { AddOwnerComponent } from './dialog/add-owner/add-owner.component';
 import {MatSelectModule} from '@angular/material/select';
 import {NgParticlesModule} from "ng-particles";
 import { ShowTeamMembersComponent } from './dialog/show-team-members/show-team-members.component';
-import { CourseTableComponent } from './professor/courses/course-table/course-table.component';
 import { CourseProfessorsComponent } from './dialog/course-professors/course-professors.component';
 import { AddProfessorToCourseComponent } from './dialog/add-professor-to-course/add-professor-to-course.component';
 import { EvaluateSolutionComponent } from './dialog/evaluate-solution/evaluate-solution.component';
+import { RemoveProfessorFromCourseComponent } from './dialog/remove-professor-from-course/remove-professor-from-course.component';
+import { StatisticsVmComponent } from './dialog/statistics-vm/statistics-vm.component';
 
 @NgModule({
   declarations: [
@@ -109,10 +110,11 @@ import { EvaluateSolutionComponent } from './dialog/evaluate-solution/evaluate-s
     ModifyOwnerComponent,
     AddOwnerComponent,
     ShowTeamMembersComponent,
-    CourseTableComponent,
     CourseProfessorsComponent,
     AddProfessorToCourseComponent,
-    EvaluateSolutionComponent
+    EvaluateSolutionComponent,
+    RemoveProfessorFromCourseComponent,
+    StatisticsVmComponent
   ],
   imports: [
     NgParticlesModule,

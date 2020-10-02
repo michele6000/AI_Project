@@ -43,6 +43,7 @@ export class TableExpandableComponent implements OnInit {
   paginator: MatPaginator;
 
   @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
+  @Output('statistics') onStatistics: EventEmitter<any> = new EventEmitter<any>();
 
   dataSource: MatTableDataSource<any>;
   usersData: any[] = [];
@@ -51,6 +52,7 @@ export class TableExpandableComponent implements OnInit {
   innerDisplayedColumns = ['name', 'state', 'link'];
   expandedElement: any | null;
   @Input() showEdit = false;
+  @Input() showStatistics = false;
 
   constructor(private cd: ChangeDetectorRef) {
   }
@@ -84,9 +86,13 @@ export class TableExpandableComponent implements OnInit {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     if (this.showEdit) {
-      this.columnsWithEdit = [...this.columnsToDisplay, 'modify'];
+      if (this.showStatistics){
+        this.columnsWithEdit = [...this.columnsToDisplay, 'modify', 'statistics', 'expand'];
+      } else{
+        this.columnsWithEdit = [...this.columnsToDisplay, 'modify', 'expand'];
+      }
     } else {
-      this.columnsWithEdit = [...this.columnsToDisplay];
+      this.columnsWithEdit = [...this.columnsToDisplay, 'expand'];
     }
   }
 
@@ -115,7 +121,14 @@ export class TableExpandableComponent implements OnInit {
   }
 
   editGroup($event, element: GroupModel) {
+    // event necessario per evitare che si apra l'expandable
     $event.stopPropagation();
     this.onEdit.emit(element);
+  }
+
+  statistics($event, element: any) {
+    // event necessario per evitare che si apra l'expandable
+    $event.stopPropagation();
+    this.onStatistics.emit(element);
   }
 }

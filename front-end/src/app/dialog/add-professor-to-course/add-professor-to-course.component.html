@@ -4,13 +4,16 @@
   <mat-error *ngIf="error" class="mt-10-center">
     Error
   </mat-error>
+  <mat-error *ngIf="errorAddProfessor" class="mt-10-center mb-20">
+    Error adding a new professor to course {{courseName}}
+  </mat-error>
   <form #f="ngForm" (ngSubmit)="addProfessorToCourse(f)">
-    <h4>Students</h4>
+    <h4>Professors</h4>
     <mat-form-field appearance="fill" class="w-80">
-      <mat-label>ProfessorID</mat-label>
+      <mat-label>Professors</mat-label>
       <mat-select #professor="ngModel" name="professor" required ngModel>
-        <mat-option  [value]="">
-
+        <mat-option  *ngFor="let professor of professors" [value]="professor.id">
+          {{professor.id}} - {{professor.name}} {{professor.firstName}}
         </mat-option>
       </mat-select>
     </mat-form-field>
