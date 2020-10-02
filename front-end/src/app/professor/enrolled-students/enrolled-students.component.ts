@@ -20,7 +20,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   teams: GroupModel[] = [];
   corso: CourseModel;
   columns = ['email', 'firstName', 'name', 'id'];
-  columnsTeam = ['name'];
+  columnsTeam = ['id','name', 'status'];
   data: StudentModel[] = [];
   fileAbsent = true;
   file: any;

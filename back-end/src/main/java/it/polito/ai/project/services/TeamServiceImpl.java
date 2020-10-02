@@ -694,7 +694,6 @@ public class TeamServiceImpl implements TeamService {
             throw new CourseDisabledException("Course not enabled");
         }
         optionalCourseEntity.get().getProfessors().remove(optionalProfessorEntity.get());
-        profRepo.delete(optionalProfessorEntity.get());
         return true;
     }
 
