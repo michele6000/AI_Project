@@ -15,16 +15,17 @@ export class AddOwnerComponent implements OnInit {
   error: any;
   dataVMAndStudents: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private dialogRef: MatDialogRef<AddOwnerComponent>, private studentService: StudentService, private snackBar: MatSnackBar) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private dialogRef: MatDialogRef<AddOwnerComponent>,
+              private studentService: StudentService, private snackBar: MatSnackBar) {
     this.dataVMAndStudents = data;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   // addVmOwner(vmId: number, ownerId: string) {
   addOwner(f: NgForm) {
     const studentId = f.value.matricola;
-    console.log(studentId);
     this.studentService.addVmOwner(this.dataVMAndStudents.vm.id, studentId).subscribe(
       res => {
         this.dialogRef.close(res);
@@ -40,5 +41,4 @@ export class AddOwnerComponent implements OnInit {
       }
     );
   }
-
 }

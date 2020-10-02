@@ -63,9 +63,5 @@ export class ModifyVmStudentComponent implements OnInit {
     }
   }
 
-  closeDialog() {
-    this.dialogRef.close(false);
-  }
-
 
 }

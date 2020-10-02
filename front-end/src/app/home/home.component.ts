@@ -157,7 +157,7 @@ export class HomeComponent implements OnInit {
   };
 
   particlesLoaded(container): void {
-    console.log(container);
+
   }
 
 }

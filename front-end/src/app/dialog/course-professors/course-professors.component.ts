@@ -10,7 +10,7 @@ import {ProfessorModel} from '../../models/professor.model';
 export class CourseProfessorsComponent implements OnInit {
 
   professors: ProfessorModel[] = [];
-  courseName: string = '';
+  courseName = '';
 
   constructor(@Inject(MAT_DIALOG_DATA) public data, private dialogRef: MatDialogRef<CourseProfessorsComponent>) {
     this.professors = data.professors;

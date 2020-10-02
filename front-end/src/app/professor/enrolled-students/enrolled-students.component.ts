@@ -108,7 +108,6 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   }
 
   handleFileSelect($event: any) {
-    console.log($event);
     this.file = $event.target.files[0];
     this.fileAbsent = false;
   }
@@ -142,10 +141,13 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   }
 
   showStudentsInTeam(team: GroupModel) {
-    this.dialog.open(ShowTeamMembersComponent, {data: team})
-      .afterClosed()
-      .subscribe(result => {
-      });
+    this.professorService.findMembersByTeamId(team.id).subscribe( students => {
+      this.dialog.open(ShowTeamMembersComponent, {data: {students, teamName: team.name}})
+        .afterClosed()
+        .subscribe(result => {
+
+        });
+    });
   }
 
   ngOnDestroy(): void {

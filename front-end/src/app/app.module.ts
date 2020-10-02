@@ -69,6 +69,7 @@ import { AddProfessorToCourseComponent } from './dialog/add-professor-to-course/
 import { EvaluateSolutionComponent } from './dialog/evaluate-solution/evaluate-solution.component';
 import { RemoveProfessorFromCourseComponent } from './dialog/remove-professor-from-course/remove-professor-from-course.component';
 import { StatisticsVmComponent } from './dialog/statistics-vm/statistics-vm.component';
+import { ReviewSolutionComponent } from './dialog/review-solution/review-solution.component';
 
 @NgModule({
   declarations: [
@@ -114,7 +115,8 @@ import { StatisticsVmComponent } from './dialog/statistics-vm/statistics-vm.comp
     AddProfessorToCourseComponent,
     EvaluateSolutionComponent,
     RemoveProfessorFromCourseComponent,
-    StatisticsVmComponent
+    StatisticsVmComponent,
+    ReviewSolutionComponent
   ],
   imports: [
     NgParticlesModule,

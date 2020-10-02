@@ -14,12 +14,15 @@
       </mat-expansion-panel-header>
       <input #fileInput (change)="handleFileSelect($event)" hidden accept="application/pdf" id="file" type="file">
 
-      <button (click)="fileInput.click()"  mat-raised-button type="button">{{filename}}</button>
-      <button (click)="uploadSolution(consegna.id)" class="ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>
+      <div *ngIf="consegna.isRevisable">
+        <button (click)="fileInput.click()"  mat-raised-button type="button">{{filename}}</button>
+        <button (click)="uploadSolution(consegna.id)" class="ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>
+      </div>
 
       <mat-divider class="mt-10 mb-20"></mat-divider>
 
       <h2>History</h2>
+      <p *ngIf="consegna.history.length < 1">No history available.</p>
       <mat-list>
         <mat-list-item *ngFor="let solution of consegna.history ">
           Version: {{solution.version}} - Status: {{solution.status}}

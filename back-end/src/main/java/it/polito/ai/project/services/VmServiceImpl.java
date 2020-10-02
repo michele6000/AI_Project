@@ -242,7 +242,7 @@ public class VmServiceImpl implements VmService {
                     .filter(vm -> vm.getTeam().getId().equals(team))
                     .filter(vm -> vm.getVmType().getId().equals(type))
                     .filter(vm -> vm.getStatus().equals("poweron"))
-                    .count() <= max_instance) {
+                    .count() < max_instance) {
                 optionalVMEntity.get().setStatus("poweron");
                 return true;
             }

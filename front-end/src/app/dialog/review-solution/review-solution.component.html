@@ -1,0 +1,17 @@
+<div class="dimensioni">
+  <mat-card-title>Review Solution</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <mat-error *ngIf="error" class="mt-10-center mb-10">
+    {{errorStr}}
+  </mat-error>
+  <form #f="ngForm" (ngSubmit)="review(f)">
+    <mat-form-field class="w-100">
+      <mat-label>Message</mat-label>
+      <input matInput type="text" required [ngModel]="revision" name="revision">
+    </mat-form-field>
+    <mat-card-actions class="mt-10 float-right">
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Send</button>
+      <button mat-button mat-dialog-close>Dismiss</button>
+    </mat-card-actions>
+  </form>
+</div>

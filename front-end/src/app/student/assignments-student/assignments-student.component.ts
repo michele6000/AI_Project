@@ -19,7 +19,7 @@ const API_URL_LOCAL = '/local/API/';
 })
 export class AssignmentsStudentComponent implements OnInit {
 
-  file: any;
+  file: File;
   consegne: SubmissionModel[] = [];
   private courseParam: string;
   private corso: CourseModel;
@@ -56,6 +56,10 @@ export class AssignmentsStudentComponent implements OnInit {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
     this.corso = this.studentService.findCourseByNameUrl(this.courseParam);
 
+    this.initData();
+  }
+
+  initData() {
     // Recupero l'elenco di Submissions per questo corso
     this.studentService.findSubmissions(this.corso.name).subscribe(
       (submissions) => {
@@ -83,6 +87,14 @@ export class AssignmentsStudentComponent implements OnInit {
             singleSubmission.expiryString = moment(singleSubmission.expiryDate).format('L');
             singleSubmission.releaseString = moment(singleSubmission.releaseDate).format('L');
             singleSubmission.history = historySolutions[key];
+
+            singleSubmission.isRevisable = true;
+
+            historySolutions[key].forEach((solution) => {
+              if (!solution.revisable || solution.evaluation != null) {
+                singleSubmission.isRevisable = false;
+              }
+            });
 
             // Aggiungo la Submission aggiornata all'array
             consegne.push(singleSubmission);
@@ -119,6 +131,8 @@ export class AssignmentsStudentComponent implements OnInit {
           this.snackBar.open('Solution uploaded successfully.', 'OK', {
             duration: 5000
           });
+          this.filename = 'Choose file';
+          this.initData();
         },
         (error) => {
           this.snackBar.open(error.error.message, 'OK', {
@@ -139,10 +153,10 @@ export class AssignmentsStudentComponent implements OnInit {
         duration: 5000
       });
     });
-    window.open('//' + API_URL_PUBLIC + 'courses/submissions/getImage/' + id, '_blank');
+    window.open('//' + API_URL_LOCAL + 'courses/submissions/getImage/' + id, '_blank');
   }
 
   handleShowSolution(solutionId: number) {
-    window.open('//' + API_URL_PUBLIC + 'students/solutions/getImage/'  + solutionId , '_blank');
+    window.open('//' + API_URL_LOCAL + 'students/solutions/getImage/' + solutionId, '_blank');
   }
 }

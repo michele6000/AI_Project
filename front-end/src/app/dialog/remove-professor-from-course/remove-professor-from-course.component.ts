@@ -26,11 +26,17 @@ export class RemoveProfessorFromCourseComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  closeDialog() {
-    this.dialogRef.close(false);
-  }
-
   deleteProfessor(professors: any[]) {
+
+    // Controllo che non siano selezionati tutti i professori
+
+    if (professors.length === this.professors.length) {
+      this.snackBar.open('You cannot remove all professors from a course.', 'OK', {
+        duration: 5000
+      });
+      return;
+    }
+
     const res = from(professors).pipe(
       concatMap(professor => {
         return this.professorService.deleteProfessorFromCourse(this.courseName, professor.id);

@@ -16,7 +16,7 @@
       Evaluate Solution
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <button (click)="evaluateSolution(element)" style="width: 140px; text-align: center" mat-stroked-button color="primary" [disabled]="element.status === 'READ' || element.status === 'NOT_READ'">
+      <button (click)="evaluateSolution.emit(element);" style="width: 140px; text-align: center" mat-stroked-button color="primary" [disabled]="element.status === 'READ' || element.status === 'NOT_READ'">
         {{element.evaluation==null ? 'Evaluate Solution' : 'Change Mark'}}
       </button>
     </td>
@@ -43,7 +43,7 @@
       Stop Revision
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="stopRevision(element)" *ngIf="element.evaluation==null" class="cursor-pointer color-red">block</mat-icon>
+      <mat-icon (click)="stopRevision(element)" *ngIf="element.evaluation == null && element.revisable == true" class="cursor-pointer color-red">block</mat-icon>
     </td>
   </ng-container>
 
@@ -52,7 +52,7 @@
       Review Solution
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="reviewSolution(element)" class="cursor-pointer color-green" *ngIf="element.status !== 'READ' && element.status !== 'NOT_READ' && element.evaluation==null">done_all</mat-icon>
+      <mat-icon (click)="reviewSolution.emit(element)" class="cursor-pointer color-green" *ngIf="element.status !== 'READ' && element.status !== 'NOT_READ' && element.evaluation==null">done_all</mat-icon>
     </td>
   </ng-container>
 

@@ -6,15 +6,17 @@
   </ng-container>
 
   <ng-container matColumnDef="expandedDetail">
-    <td *matCellDef="let element" [attr.colspan]="columnsToDisplay.length" mat-cell>
-      <div *ngIf="element.nestedData?.data.length"
-           [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
+    <td *matCellDef="let element" [attr.colspan]="columnsWithEdit.length" mat-cell>
+      <div *ngIf="element.nestedData?.data.length" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
            class="example-element-detail">
         <div *ngIf="expandedElement" class="inner-table mat-elevation-z8">
           <table #innerSort="matSort" #innerTables [dataSource]="element.nestedData" class="w-100" mat-table matSort>
             <ng-container *ngFor="let innerColumn of innerDisplayedColumns" matColumnDef="{{innerColumn}}">
               <th *matHeaderCellDef mat-header-cell mat-sort-header> {{innerColumn}} </th>
-              <td *matCellDef="let element" mat-cell> {{element[innerColumn]}} </td>
+              <td *matCellDef="let element" mat-cell>
+                <span *ngIf="innerColumn != 'accessLink'">{{element[innerColumn]}}</span>
+                <a *ngIf="innerColumn == 'accessLink'" href="{{element[innerColumn]}}" target="_blank">{{element[innerColumn]}}</a>
+              </td>
             </ng-container>
             <tr *matHeaderRowDef="innerDisplayedColumns" mat-header-row></tr>
             <tr *matRowDef="let row; columns: innerDisplayedColumns;" mat-row></tr>
@@ -25,10 +27,10 @@
   </ng-container>
 
   <ng-container *ngIf="showStatistics" matColumnDef="statistics">
-    <th *matHeaderCellDef mat-header-cell>
+    <th *matHeaderCellDef mat-header-cell class="text-center">
       Statistics
     </th>
-    <td *matCellDef="let element" mat-cell>
+    <td *matCellDef="let element" mat-cell class="text-center">
       <mat-icon (click)="statistics($event, element)" class="cursor-pointer">insert_chart</mat-icon>
     </td>
   </ng-container>

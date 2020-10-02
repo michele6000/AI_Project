@@ -3,7 +3,7 @@
     <th *matHeaderCellDef mat-header-cell>
       <mat-checkbox (change)="changeStatusAll($event.checked)" [checked]="isAllChecked()"
                     [indeterminate]="isIndeterminated()"></mat-checkbox>
-      <button style="margin-left: 5px" mat-icon-button color="warn" matTooltip="Delete selected student(s)" (click)="delete()">
+      <button style="margin-left: 5px" mat-icon-button color="warn" matTooltip="Delete selected" (click)="delete()">
         <mat-icon>delete</mat-icon>
       </button>
     </th>

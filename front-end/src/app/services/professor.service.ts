@@ -205,6 +205,10 @@ export class ProfessorService {
     return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/evaluateSolution?evaluation=' + evaluation, {});
   }
 
+  reviewSolution(studentId: string, solutionId: number, review: string) {
+    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/reviewSolution', {review});
+  }
+
   updateCourse(course: CourseModel){
     return this.http.post<boolean>(API_URL + 'courses/' + course.name + '/update', course);
   }

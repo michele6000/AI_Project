@@ -9,6 +9,10 @@ import * as moment from 'moment';
 import {from, Subscription} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
 import {StudentSubmissionModel} from '../../models/student-submission.model';
+import {SolutionModel} from '../../models/solution.model';
+import {EvaluateSolutionComponent} from '../../dialog/evaluate-solution/evaluate-solution.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {ReviewSolutionComponent} from '../../dialog/review-solution/review-solution.component';
 
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
@@ -29,7 +33,8 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
   corso: CourseModel;
   show: boolean;
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService) {
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute,
+              private snackBar: MatSnackBar, private professorService: ProfessorService) {
   }
 
   loadAssignments() {
@@ -82,7 +87,10 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
             });
           },
           (error) => {
-            console.log(error);
+            this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+              duration: 5000
+            });
+            location.reload();
           }
         );
 
@@ -115,15 +123,39 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
   }
 
   createAssignment($event) {
-    this.dialog.open(CreateAssignmentComponent, {})
+    this.dialog.open(CreateAssignmentComponent, {restoreFocus: false})
       .afterClosed()
       .subscribe(result => {
-        // Dopo aver creato l'assignment aggiorno la tabella
-        this.loadAssignments();
+        // Dopo aver creato l'assignment aggiorno la tabella (se non è click su cancel)
+        if (result) {
+          this.loadAssignments();
+        }
       });
   }
 
   handleShowSubmission(id: string) {
     window.open('//' + API_URL_PUBLIC + 'courses/submissions/getImage/' + id, '_blank');
+  }
+
+  evaluateSolution($event: SolutionModel) {
+    // restoreFocus: false
+    //  per non riportare il focus sul bottone dopo la chiusura della dialog
+    this.dialog.open(EvaluateSolutionComponent, {data: $event, restoreFocus: false})
+      .afterClosed()
+      .subscribe(result => {
+        if (result) {
+          this.loadAssignments();
+        }
+      });
+  }
+
+  reviewSolution($event: SolutionModel) {
+    this.dialog.open(ReviewSolutionComponent, {data: $event})
+      .afterClosed()
+      .subscribe(result => {
+        if (result) {
+          this.loadAssignments();
+        }
+      });
   }
 }

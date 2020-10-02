@@ -123,12 +123,12 @@ export class CoursesComponent implements OnInit {
       allProfessors => {
         this.professorService.findAllProsessorByCourse(course.name).subscribe(
           allProfessorOfCourse => {
-            var professorsAfterIntersection;
+            let professorsAfterIntersection;
+
+            const professorsIds = allProfessorOfCourse.map(p => p.id);
+
             // filtro solo i professori che non sono già prof di quel corso
-            // @TODO -> Non funziona sto cazzo di filtro!!!!!!!!!!! e ci ho perso mezzora!!!!!!!!!!CAZZOOOOO
-            allProfessorOfCourse.forEach(prof => {
-              professorsAfterIntersection = allProfessors.filter(p => p.id !== prof.id);
-            });
+            professorsAfterIntersection = allProfessors.filter(p => !professorsIds.includes(p.id));
             this.dialog.open(AddProfessorToCourseComponent, {data: {professors: professorsAfterIntersection, courseName: course.name}});
           }
         );
@@ -146,7 +146,7 @@ export class CoursesComponent implements OnInit {
           this.snackBar.open('Warning. If you remove yourself from this course, all things attached to it will be removed too.', 'OK', {
             duration: 10000
           });
-        } else{
+        } else {
           this.dialog.open(RemoveProfessorFromCourseComponent, {data: {professors: allProfessor, courseName: course.name}});
         }
       });

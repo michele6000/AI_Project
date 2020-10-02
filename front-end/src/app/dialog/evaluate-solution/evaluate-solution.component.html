@@ -1,12 +1,17 @@
 <div class="dimensioni">
   <mat-card-title>Evaluate Solution</mat-card-title>
   <mat-divider class="mt-10 mb-20"></mat-divider>
-  <mat-form-field class="w-100">
-    <mat-label>Evaluation</mat-label>
-    <input matInput type="number">
-  </mat-form-field>
+  <mat-error *ngIf="error" class="mt-10-center mb-10">
+    {{errorStr}}
+  </mat-error>
+  <form #f="ngForm" (ngSubmit)="evaluate(f)">
+    <mat-form-field class="w-100">
+      <mat-label>Evaluation</mat-label>
+      <input matInput min="1" max="31" type="number" required [ngModel]="evaluation" name="evaluation">
+    </mat-form-field>
   <mat-card-actions class="mt-10 float-right">
-    <button color="primary" mat-button mat-raised-button>Evaluate</button>
-    <button mat-button mat-dialog-close>Dismiss</button>
-  </mat-card-actions>
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Evaluate</button>
+      <button mat-button mat-dialog-close>Dismiss</button>
+    </mat-card-actions>
+  </form>
 </div>

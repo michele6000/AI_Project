@@ -13,13 +13,12 @@ export class StatisticsVmComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data, private dialogRef: MatDialogRef<StatisticsVmComponent>) {
     this.statistics = data.genericResponse.split('\n');
     // rimuovo la scritta "current usage"
+    // @todo Cambiare API
     this.statistics.splice(0, 1);
   }
 
-  ngOnInit(): void {}
-
-  closeDialog() {
-    this.dialogRef.close(false);
+  ngOnInit(): void {
   }
+
 
 }

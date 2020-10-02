@@ -9,6 +9,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {EditVmProfessorComponent} from '../../dialog/edit-vm-professor/edit-vm-professor.component';
 import {EvaluateSolutionComponent} from '../../dialog/evaluate-solution/evaluate-solution.component';
+import {SolutionModel} from '../../models/solution.model';
 
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
@@ -26,6 +27,8 @@ export class TableFilterComponent implements OnInit {
   @Input() filterColumn: string;
   @Input() submission: SubmissionModel;
   @Output('showHistory') onShowHistory: EventEmitter<StudentSubmissionModel> = new EventEmitter<StudentSubmissionModel>();
+  @Output() evaluateSolution: EventEmitter<SolutionModel> = new EventEmitter<SolutionModel>();
+  @Output() reviewSolution: EventEmitter<SolutionModel> = new EventEmitter<SolutionModel>();
   @ViewChild(MatPaginator, {static: true})
   paginator: MatPaginator;
   @ViewChild(MatSort, {static: true})
@@ -86,11 +89,6 @@ export class TableFilterComponent implements OnInit {
     window.open('//' + API_URL_PUBLIC + 'students/solutions/getImage/' + element.id, '_blank');
   }
 
-  reviewSolution(element: any) {
-    console.log('Review solution');
-    console.log(element);
-  }
-
   stopRevision(element: any) {
     this.professorService.stopRevisions(element.id).subscribe((res) => {
       this.snackBar.open('Revisions stopped successfully', 'OK', {
@@ -101,13 +99,5 @@ export class TableFilterComponent implements OnInit {
         duration: 5000
       });
     });
-  }
-
-  evaluateSolution(element: any) {
-    this.dialog.open(EvaluateSolutionComponent, {data: element})
-      .afterClosed()
-      .subscribe(result => {
-        console.log(result);
-      });
   }
 }
