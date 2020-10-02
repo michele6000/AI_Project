@@ -24,6 +24,10 @@
         <mat-list-item *ngFor="let solution of consegna.history ">
           Version: {{solution.version}} - Status: {{solution.status}}
           <a mat-stroked-button (click)="handleShowSolution(solution.id)" class="ml-20">Show solution</a>
+          <div *ngIf="solution.evaluation!=null" class="ml-20">
+            <b> Mark: {{solution.evaluation}}</b>
+            <i style="margin-left: 5px">(31 = 30 cum laude)</i>
+          </div>
         </mat-list-item>
       </mat-list>
     </mat-expansion-panel>

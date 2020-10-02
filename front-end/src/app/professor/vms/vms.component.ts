@@ -23,7 +23,7 @@ export class VmsComponent implements OnInit {
   courseParam: string;
   corso: CourseModel;
   groupsData: GroupModel[] = [];
-  groupsColumns = ['name'];
+  groupsColumns = ['id','name'];
   innerGroupColumns = ['accessLink', 'owner', 'status'];
 
   hasVMType = false;
@@ -88,8 +88,10 @@ export class VmsComponent implements OnInit {
         toArray()
       ).subscribe((vms) => {
         teams.forEach((t, i) => {
-          t.vms = vms[i];
-          groupsData.push(t);
+          if(t.status!=0){
+            t.vms = vms[i];
+            groupsData.push(t);
+          }
         });
         this.groupsData = groupsData;
       });
