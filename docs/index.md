@@ -45,3 +45,33 @@ Access data:
 
 | Username | Password | Role |
 | ------ | ------ | ------ |
+s000001@studenti.polito.it | student | ROLE_STUDENT
+s000002@studenti.polito.it | student | ROLE_STUDENT
+s000003@studenti.polito.it | student | ROLE_STUDENT
+s000004@studenti.polito.it | student | ROLE_STUDENT
+s000005@studenti.polito.it | student | ROLE_STUDENT
+s000006@studenti.polito.it | student | ROLE_STUDENT
+s000007@studenti.polito.it | student | ROLE_STUDENT
+s000008@studenti.polito.it | student | ROLE_STUDENT
+s000009@studenti.polito.it | student | ROLE_STUDENT
+s000010@studenti.polito.it | student | ROLE_STUDENT
+s000011@studenti.polito.it | student | ROLE_STUDENT
+s000012@studenti.polito.it | student | ROLE_STUDENT
+s000013@studenti.polito.it | student | ROLE_STUDENT
+s000014@studenti.polito.it | student | ROLE_STUDENT
+s000015@studenti.polito.it | student | ROLE_STUDENT
+s000016@studenti.polito.it | student | ROLE_STUDENT
+s000017@studenti.polito.it | student | ROLE_STUDENT
+s000018@studenti.polito.it | student | ROLE_STUDENT
+s000019@studenti.polito.it | student | ROLE_STUDENT
+s000020@studenti.polito.it | student | ROLE_STUDENT
+s000021@studenti.polito.it | student | ROLE_STUDENT
+s000022@studenti.polito.it | student | ROLE_STUDENT
+s000023@studenti.polito.it | student | ROLE_STUDENT
+s000024@studenti.polito.it | student | ROLE_STUDENT
+s000025@studenti.polito.it | student | ROLE_STUDENT
+s000026@studenti.polito.it | student | ROLE_STUDENT
+s000027@studenti.polito.it | student | ROLE_STUDENT
+s000028@studenti.polito.it | student | ROLE_STUDENT
+s000029@studenti.polito.it | student | ROLE_STUDENT
+s000030@studenti.polito.it | student | ROLE_STUDENT
