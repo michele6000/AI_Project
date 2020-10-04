@@ -284,13 +284,13 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<Boolean> addAll(List<StudentDTO> students) {
-        List<Boolean> studentsAdded = new ArrayList<>();
+    public List<StudentDTO> addAll(List<StudentDTO> students) {
+        List<StudentDTO> studentsAdded = new ArrayList<>();
 
         List<String> avatars = Arrays.asList("Bradipo.jpg", "Bue.jpg","Canguro.jpg","Cervo.jpg","Cinghiale.jpg",
                 "Coniglio.jpg", "Elefante.jpg", "Gatto.jpg", "Ghepardo.jpg", "Giraffa.jpg", "Gorilla.jpg", "Husky.jpg",
                 "Ippopotamo.jpg" , "Lupo.jpg", "Montone.jpg", "Orso.jpg", "Pantera.jpg", "Pastore.jpg", "Pinguino.jpg",
-                "Procione,jpg", "Rinoceronte.jpg", "Scimmia.jpg", "Tigre.jpg", "Topo.jpg", "Toro.jpg");
+                "Procione.jpg", "Rinoceronte.jpg", "Scimmia.jpg", "Tigre.jpg", "Topo.jpg", "Toro.jpg");
 
         students.forEach(s -> {
 
@@ -301,16 +301,16 @@ public class TeamServiceImpl implements TeamService {
         user.setEmail(s.getId()+"@studenti.polito.it");
         user.setUsername(s.getId());
 
-        String randomAvatar = avatars.get(new Random().nextInt()%24);
+        String randomAvatar = avatars.get(new Random().nextInt(25));
 
         Resource resource = new ClassPathResource("./templates/avatars/"+randomAvatar);
 
         try {
             FileInputStream input = new FileInputStream(resource.getFile());
             MultipartFile multipartFile = new MockMultipartFile(randomAvatar, input);
-            studentsAdded.add(addStudent(user, multipartFile).getId() != null);
+            studentsAdded.add(addStudent(user, multipartFile));
         } catch (IOException e) {
-            throw new TeamServiceException("Error during add students by csv operation. Student: " + user.getUsername());
+            throw new TeamServiceException("Error during add students by csv operation. Student: " + user.getUsername() + " Avatar: " + randomAvatar);
         }
 
         });
