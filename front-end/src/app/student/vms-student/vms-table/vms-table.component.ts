@@ -2,13 +2,14 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {VmModel} from "../../../models/vm.model";
-import {StudentService} from "../../../services/student.service";
+import {VmModel} from '../../../models/vm.model';
+import {StudentService} from '../../../services/student.service';
 import {CreateAssignmentComponent} from '../../../dialog/create-assignment/create-assignment.component';
 import {MatDialog} from '@angular/material/dialog';
 import {ModifyOwnerComponent} from '../../../dialog/modify-owner/modify-owner.component';
 import {AddOwnerComponent} from '../../../dialog/add-owner/add-owner.component';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {GroupModel} from '../../../models/group.model';
 
 @Component({
   selector: 'app-vms-table',
@@ -32,7 +33,10 @@ export class VmsTableComponent implements OnInit {
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
 
-  constructor(private studentService: StudentService, private dialog: MatDialog, private snackBar: MatSnackBar) { }
+  constructor(private studentService: StudentService, private dialog: MatDialog, private snackBar: MatSnackBar) {
+  }
+
+  @Input() team: GroupModel;
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
@@ -58,7 +62,13 @@ export class VmsTableComponent implements OnInit {
 
   powerOn(element: VmModel) {
     this.studentService.powerOnVm(element.id).subscribe((res) => {
-      element.status = 'poweron';
+      if (res) {
+        element.status = 'poweron';
+      } else {
+        this.snackBar.open('Quota exceeded. Too many active VMs.', 'OK', {
+          duration: 5000
+        });
+      }
     }, (error) => {
       this.snackBar.open('Can not power on this instance.', 'OK', {
         duration: 5000

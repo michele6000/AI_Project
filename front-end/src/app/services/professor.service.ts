@@ -7,8 +7,9 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {StudentModel} from '../models/student.model';
 import {GroupModel} from '../models/group.model';
 import {SubmissionModel} from '../models/submission.model';
-import * as moment from "moment";
-import {SolutionModel} from "../models/solution.model";
+import * as moment from 'moment';
+import {SolutionModel} from '../models/solution.model';
+import {ProfessorModel} from '../models/professor.model';
 
 const API_URL = '/api/API/';
 
@@ -38,26 +39,14 @@ export class ProfessorService {
     return this.http.post(
       API_URL + 'courses',
       course
-    ).subscribe(
-      (payload: any) => {
-        // @todo Remove after API change
-        if (localStorage.getItem('id')) {
-          this.addProfessorToCourse(course.name, localStorage.getItem('id'));
-        } else {
-          // @todo Redirect a pagina 500
-        }
-        // this.findCoursesByProfessor('1');
-      },
-      (error: any) => {
-
-      }
     );
   }
 
   addProfessorToCourse(courseName: string, teacherMatricola: string) {
     return this.http.post(
       API_URL + 'courses/' + courseName + '/addProfessor?id=' + teacherMatricola, {}
-    ).subscribe(
+    );
+    /* .subscribe(
       (payload: any) => {
         if (localStorage.getItem('id')) {
           this.findCoursesByProfessor(localStorage.getItem('id'));
@@ -68,7 +57,7 @@ export class ProfessorService {
       (error: any) => {
 
       }
-    );
+    );*/
   }
 
   findCourseByIdentifier(courseIdentifier: string): Observable<CourseModel> {
@@ -149,24 +138,28 @@ export class ProfessorService {
   }
 
   deleteStudent(courseName: string, studentId: string) {
-    if (courseName.length > 0 && studentId.length > 0)
+    if (courseName.length > 0 && studentId.length > 0) {
       return this.http.post(API_URL + 'courses/' + courseName + '/deleteOne?studentId=' + studentId, {});
+    }
   }
 
   getEnrolledStudents(courseName: string): Observable<StudentModel[]> {
-    if (courseName.length > 0)
+    if (courseName.length > 0) {
       return this.http.get<StudentModel[]>(API_URL + 'courses/' + courseName + '/enrolled');
+    }
   }
 
   enrollStudent(courseName: string, studentId: string) {
-    if (courseName.length > 0 && studentId.length > 0)
+    if (courseName.length > 0 && studentId.length > 0) {
       return this.http.post(API_URL + 'courses/' + courseName + '/enrollOne', {id: studentId});
+    }
   }
 
   /* TEAMS */
   findTeamsByCourse(courseName: string) {
-    if (courseName.length > 0)
+    if (courseName.length > 0) {
       return this.http.get<GroupModel[]>(API_URL + 'courses/' + courseName + '/teams');
+    }
   }
 
   setTeamLimits(teamId: number, team: GroupModel) {
@@ -192,18 +185,28 @@ export class ProfessorService {
   }
 
   findAssignmentsByCourse(courseName: string) {
-    if (courseName.length > 0)
+    if (courseName.length > 0) {
       return this.http.get<any[]>(API_URL + 'courses/' + courseName + '/getAllSubmissions');
+    }
   }
 
   getLatestSolution(studentId: string, submissionId: number) {
-    if (studentId.length > 0)
+    if (studentId.length > 0) {
 
       return this.http.get<SolutionModel>(API_URL + 'students/' + studentId + '/' + submissionId + '/getLatestSolution');
+    }
   }
 
   stopRevisions(solutionId: number) {
     return this.http.post<any>(API_URL + 'courses/' + solutionId + '/stopRevisions', {});
+  }
+
+  evaluateSolution(studentId: string, solutionId: number, evaluation: number) {
+    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/evaluateSolution?evaluation=' + evaluation, {});
+  }
+
+  reviewSolution(studentId: string, solutionId: number, review: string) {
+    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/reviewSolution', {review});
   }
 
   updateCourse(course: CourseModel){
@@ -211,11 +214,29 @@ export class ProfessorService {
   }
 
   deleteCourse(courseName: string){
-    if (courseName.length > 0 )
+    if (courseName.length > 0 ) {
       return this.http.post<boolean>(API_URL + 'courses/' + courseName + '/delete', {});
+    }
   }
 
   findMembersByTeamId(teamId: number) {
     return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/members');
   }
+
+  findAllProfessor(){
+    return this.http.get<ProfessorModel[]>(API_URL + 'professor/getAll');
+  }
+
+  findAllProsessorByCourse(courseName: string){
+    return this.http.get<ProfessorModel[]>(API_URL + 'courses/' + courseName + '/professors');
+  }
+
+  deleteProfessorFromCourse(courseName: string, professorId: string){
+    return this.http.post(API_URL + 'courses/' + courseName + '/deleteProfessor?id=' + professorId, {});
+  }
+
+  findStatisticsByTeam(teamId: number){
+    return this.http.get<any>(API_URL + 'team/' + teamId + '/stats');
+  }
+
 }

@@ -1,4 +1,4 @@
-export class Professor {
+export class ProfessorModel {
   id: string;
   name: string;
   firstName: string;

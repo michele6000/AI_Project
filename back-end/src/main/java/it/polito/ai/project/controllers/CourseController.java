@@ -1,10 +1,7 @@
 package it.polito.ai.project.controllers;
 
 import it.polito.ai.project.dtos.*;
-import it.polito.ai.project.exceptions.CourseNotFoundException;
-import it.polito.ai.project.exceptions.StudentNotFoundException;
-import it.polito.ai.project.exceptions.SubmissionNotFoundException;
-import it.polito.ai.project.exceptions.TeamServiceException;
+import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.services.NotificationService;
 import it.polito.ai.project.services.SubmissionService;
 import it.polito.ai.project.services.TeamService;
@@ -30,6 +27,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/API/courses")
 public class CourseController {
+
     @Autowired
     TeamService service;
 
@@ -204,7 +202,7 @@ public class CourseController {
         TeamDTO team;
         try {
 
-            team = service.proposeTeam(courseName, name, membersIds);
+            team = service.proposeTeam(courseName, name, membersIds, getCurrentUsername());
             notifyService.notifyTeam(team, membersIds, timestamp);
             return true;
         } catch (TeamServiceException e) {
@@ -258,6 +256,15 @@ public class CourseController {
             if (e instanceof StudentNotFoundException || e instanceof CourseNotFoundException)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
             else throw new ResponseStatusException(HttpStatus.CONFLICT, "Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{courseName}/deleteProfessor")
+    public boolean deleteProfessorFromCourse(@PathVariable String courseName, @RequestParam String id) {
+        try {
+            return service.deleteProfessor(id, courseName);
+        } catch (TeamServiceException e) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: " + e.getMessage());
         }
     }
 
@@ -322,11 +329,11 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/submissions/getImage/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/submissions/getImage/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
     public void showImage(HttpServletResponse response, @PathVariable Long id) {
         try {
             response.addHeader("Access-Control-Allow-Origin", "*");
-            response.setContentType("image/jpeg");
+            response.setContentType("application/pdf");
             response.getOutputStream().write(submissionService.getSubmissionImage(id));
             response.getOutputStream().close();
         } catch (Exception e) {

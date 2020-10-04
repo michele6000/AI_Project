@@ -1,0 +1,27 @@
+<div class="dimensioni">
+  <mat-card-title>Add professor to course</mat-card-title>
+  <mat-divider class="mt-10 mb-20"></mat-divider>
+  <mat-error *ngIf="error" class="mt-10-center">
+    Error
+  </mat-error>
+  <mat-error *ngIf="errorAddProfessor" class="mt-10-center mb-20">
+    Error adding a new professor to course {{courseName}}
+  </mat-error>
+  <form #f="ngForm" (ngSubmit)="addProfessorToCourse(f)">
+    <h4>Professors</h4>
+    <mat-form-field appearance="fill" class="w-80">
+      <mat-label>Professors</mat-label>
+      <mat-select #professor="ngModel" name="professor" required ngModel>
+        <mat-option  *ngFor="let professor of professors" [value]="professor.id">
+          {{professor.id}} - {{professor.name}} {{professor.firstName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <br>
+    <mat-card-actions class="float-right">
+      <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit">Add</button>
+      <button mat-button mat-dialog-close>Cancel</button>
+    </mat-card-actions>
+  </form>
+</div>
+

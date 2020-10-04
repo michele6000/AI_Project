@@ -18,9 +18,6 @@ public interface TeamService {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     List<CourseDTO> getAllCourses();
 
-    //  @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    StudentDTO addStudent(UserDTO user, MultipartFile file);
-
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     Optional<StudentDTO> getStudent(String studentId);
 
@@ -46,7 +43,7 @@ public interface TeamService {
     void updateCourse(String courseName, CourseDTO course, String username);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    List<Boolean> addAll(List<StudentDTO> students);
+    List<StudentDTO> addAll(List<StudentDTO> students);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
     List<Boolean> enrollAll(List<String> studentsIds, String courseName);
@@ -73,7 +70,7 @@ public interface TeamService {
     void deleteMember(Long teamId, String studentId);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    TeamDTO proposeTeam(String courseId, String name, List<String> membersIds);
+    TeamDTO proposeTeam(String courseId, String name, List<String> membersIds, String proposer);
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     void addMember(Long teamId, String studentId);
@@ -87,14 +84,8 @@ public interface TeamService {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     List<StudentDTO> getAvailableStudents(String courseName);
 
-    void setActive(Long id);
-
-    void evictTeam(Long id);
-
-    //  @PreAuthorize("hasRole('ROLE_ADMIN')")
-    ProfessorDTO addProfessor(UserDTO user, MultipartFile file);
-
-    byte[] getImage(String username);
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    boolean deleteProfessor(String professorId, String courseName);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     boolean addProfessorToCourse(String professorId, String courseName);
@@ -113,4 +104,15 @@ public interface TeamService {
 
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     List<ProfessorDTO> getAllProfessors();
+
+    void setActive(Long id);
+
+    void evictTeam(Long id);
+
+    ProfessorDTO addProfessor(UserDTO user, MultipartFile file);
+
+    StudentDTO addStudent(UserDTO user, MultipartFile file);
+
+    byte[] getImage(String username);
+
 }

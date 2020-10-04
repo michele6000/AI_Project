@@ -8,7 +8,7 @@ import {GroupModel} from '../models/group.model';
 import {VmModel} from '../models/vm.model';
 import * as moment from 'moment';
 import {SolutionModel} from '../models/solution.model';
-import {Professor} from '../models/professor.model';
+import {ProfessorModel} from '../models/professor.model';
 
 const API_URL = '/api/API/';
 
@@ -166,7 +166,7 @@ export class StudentService {
 
   // /API/courses/{courseName}/professors
   findProfessorsByCourse(courseName: string){
-    return this.http.get<Professor[]>(API_URL + 'courses/' + courseName + '/professors/');
+    return this.http.get<ProfessorModel[]>(API_URL + 'courses/' + courseName + '/professors/');
   }
 
 }

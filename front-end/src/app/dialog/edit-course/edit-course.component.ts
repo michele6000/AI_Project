@@ -14,7 +14,8 @@ export class EditCourseComponent implements OnInit {
   error = false;
   course: CourseModel;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: CourseModel, private professorService: ProfessorService, private dialogRef: MatDialogRef<EditCourseComponent>, private snackBar: MatSnackBar) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: CourseModel, private professorService: ProfessorService,
+              private dialogRef: MatDialogRef<EditCourseComponent>, private snackBar: MatSnackBar) {
     this.course = data;
   }
 
@@ -27,7 +28,6 @@ export class EditCourseComponent implements OnInit {
     this.course.acronymous = f.value.identifier;
     this.course.min = f.value.min;
     this.course.max = f.value.max;
-    console.log(this.course);
 
     this.professorService.updateCourse(this.course).subscribe(
       res => {

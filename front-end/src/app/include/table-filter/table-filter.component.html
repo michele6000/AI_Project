@@ -11,20 +11,22 @@
 
   <!-- 'evaluate', 'evaluation', 'solution', 'review' -->
 <!--  DISATTIVARE EVALUATE se lo stato è READ, NOT_READ-->
-  <ng-container matColumnDef="evaluate">
-    <th *matHeaderCellDef mat-header-cell>
+  <ng-container matColumnDef="evaluate" >
+    <th *matHeaderCellDef mat-header-cell class="text-center" >
       Evaluate Solution
     </th>
-    <td *matCellDef="let element" mat-cell>
-      <button mat-stroked-button color="primary" [disabled]="element.status === 'READ' || element.status === 'NOT_READ'">Evaluate</button>
+    <td *matCellDef="let element" mat-cell class="text-center">
+      <button (click)="evaluateSolution.emit(element);" style="width: 140px; text-align: center" mat-stroked-button color="primary" [disabled]="element.status === 'READ' || element.status === 'NOT_READ'">
+        {{element.evaluation==null ? 'Evaluate Solution' : 'Change Mark'}}
+      </button>
     </td>
   </ng-container>
 
   <ng-container matColumnDef="evaluation">
-    <th *matHeaderCellDef mat-header-cell>
+    <th *matHeaderCellDef mat-header-cell class="text-center">
       Evaluation
     </th>
-    <td *matCellDef="let element" mat-cell> {{element['evaluation']}} </td>
+    <td *matCellDef="let element" mat-cell class="text-center"> {{element['evaluation']}} </td>
   </ng-container>
 
   <ng-container matColumnDef="showSolution">
@@ -41,7 +43,7 @@
       Stop Revision
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="stopRevision(element)" class="cursor-pointer color-red">block</mat-icon>
+      <mat-icon (click)="stopRevision(element)" *ngIf="element.evaluation == null && element.revisable == true" class="cursor-pointer color-red">block</mat-icon>
     </td>
   </ng-container>
 
@@ -50,7 +52,7 @@
       Review Solution
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="reviewSolution(element)" class="cursor-pointer color-green" *ngIf="element.status !== 'READ' && element.status !== 'NOT_READ'">done_all</mat-icon>
+      <mat-icon (click)="reviewSolution.emit(element)" class="cursor-pointer color-green" *ngIf="element.status !== 'READ' && element.status !== 'NOT_READ' && element.evaluation==null">done_all</mat-icon>
     </td>
   </ng-container>
 
@@ -59,7 +61,7 @@
       View history
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
-      <mat-icon (click)="showHistory(element.matricola)" class="cursor-pointer">edit</mat-icon>
+      <mat-icon (click)="showHistory(element.matricola)" *ngIf="element.evaluation==null" class="cursor-pointer">edit</mat-icon>
     </td>
   </ng-container>
 

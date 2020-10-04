@@ -3,6 +3,7 @@ export class SolutionModel {
   version: string;
   evaluation: number;
   status: string;
-  isRevisable: boolean;
+  revisable: boolean;
+  matricola: string;
   image: any[];
 }

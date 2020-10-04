@@ -8,7 +8,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {GroupModel} from '../../../models/group.model';
 import {concatMap, toArray} from 'rxjs/operators';
 import {forkJoin, from, Observable} from 'rxjs';
-import {MatDatepickerInputEvent} from "@angular/material/datepicker";
+import {MatDatepickerInputEvent} from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-create-group',
@@ -18,7 +18,7 @@ import {MatDatepickerInputEvent} from "@angular/material/datepicker";
 export class CreateGroupComponent implements OnInit {
   studentsColumns = ['email', 'name', 'firstName', 'id'];
   studentsData: StudentModel[] = [];
-  groupsColumns = ['name'];
+  groupsColumns = ['name', 'proposer'];
   groupsData: GroupModel[] = [];
   innerGroupColumns = ['id', 'name', 'firstName', 'status'];
 
@@ -47,14 +47,19 @@ export class CreateGroupComponent implements OnInit {
     // Recupero i parametri del corso
     this.course = this.studentService.findCourseByNameUrl(this.courseParam);
 
+    this.initData();
+  }
+
+  initData() {
     // Recupero l'elenco degli studenti ancora disponibili
-    this.studentService.findAvailableStudentsByCourseName(this.course.name).subscribe(
-      (result: StudentModel[]) => {
+    this.studentService.findAvailableStudentsByCourseName(this.course.name).subscribe((result: StudentModel[]) => {
         this.studentsData = result.filter((s) => s.id !== localStorage.getItem('id'));
       },
       (error: any) => {
-        // @todo
-        console.log(error);
+        this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+          duration: 5000
+        });
+        location.reload();
       }
     );
 
@@ -105,6 +110,7 @@ export class CreateGroupComponent implements OnInit {
         this.studentService.proposeTeam(this.selectedStudents, this.course.name, f.value.name, this.chosenTimeout).subscribe(
           (response) => {
             // Tutte a buon fine
+            this.initData();
             this.snackBar.open('Team proposal created successfully.', 'OK', {
               duration: 5000
             });

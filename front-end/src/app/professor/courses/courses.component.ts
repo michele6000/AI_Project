@@ -4,11 +4,15 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {CreateCourseComponent} from '../../dialog/create-course/create-course.component';
 import {CourseModel} from '../../models/course.model';
 import {EditCourseComponent} from '../../dialog/edit-course/edit-course.component';
-import {ProfessorService} from "../../services/professor.service";
-import {AuthService} from "../../auth/auth.service";
+import {ProfessorService} from '../../services/professor.service';
+import {AuthService} from '../../auth/auth.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {from} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
+import {ModifyVmStudentComponent} from '../../dialog/modify-vm-student/modify-vm-student.component';
+import {CourseProfessorsComponent} from '../../dialog/course-professors/course-professors.component';
+import {AddProfessorToCourseComponent} from '../../dialog/add-professor-to-course/add-professor-to-course.component';
+import {RemoveProfessorFromCourseComponent} from '../../dialog/remove-professor-from-course/remove-professor-from-course.component';
 
 @Component({
   selector: 'app-courses',
@@ -21,7 +25,8 @@ export class CoursesComponent implements OnInit {
   data: CourseModel[] = [];
   id: string = null;
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {}
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {
+  }
 
   ngOnInit(): void {
     this.activeRoute.queryParamMap
@@ -31,6 +36,7 @@ export class CoursesComponent implements OnInit {
             .afterClosed()              // dopo la chiusura del dialog faccio le redirect
             .subscribe(result => {
               if (result) {              // se result è false => click su CANCEL -> redirect a HOME
+                this.professorService.findCoursesByProfessor(localStorage.getItem('id'), true);
                 this.router.navigate(['/teacher/courses']);
               } else {
                 this.router.navigate(['/teacher/courses']);
@@ -90,7 +96,7 @@ export class CoursesComponent implements OnInit {
     this.dialog.open(EditCourseComponent, {data: course})
       .afterClosed()
       .subscribe(result => {
-
+        this.professorService.findCoursesByProfessor(localStorage.getItem('id'), true);
       });
   }
 
@@ -106,5 +112,53 @@ export class CoursesComponent implements OnInit {
     if (result) {
       this.professorService.findCoursesByProfessor(this.id, true);
     }
+  }
+
+  addProfToCourse(course: CourseModel) {
+    // 1) cerco tutti i professori della piattaforma
+    // 2) cerco i prof gia di quel corso
+    // 3) filtro
+    // 4) add prof to course
+    this.professorService.findAllProfessor().subscribe(
+      allProfessors => {
+        this.professorService.findAllProsessorByCourse(course.name).subscribe(
+          allProfessorOfCourse => {
+            let professorsAfterIntersection;
+
+            const professorsIds = allProfessorOfCourse.map(p => p.id);
+
+            // filtro solo i professori che non sono già prof di quel corso
+            professorsAfterIntersection = allProfessors.filter(p => !professorsIds.includes(p.id));
+            this.dialog.open(AddProfessorToCourseComponent, {data: {professors: professorsAfterIntersection, courseName: course.name}});
+          }
+        );
+      }
+    );
+  }
+
+  // @Todo -> finire implementazione -> Attenzione perche possono essere piu di un professore da rimuovere
+  removeProfFromCourse(course: CourseModel) {
+    // 1) recupero tutti i prof di quel corso
+    // 2) li passo al dialog
+    this.professorService.findAllProsessorByCourse(course.name).subscribe(
+      allProfessor => {
+        if (allProfessor.length === 1) {
+          this.snackBar.open('Warning. If you remove yourself from this course, all things attached to it will be removed too.', 'OK', {
+            duration: 10000
+          });
+        } else {
+          this.dialog.open(RemoveProfessorFromCourseComponent, {data: {professors: allProfessor, courseName: course.name}});
+        }
+      });
+  }
+
+  showCourseProfessor(course: CourseModel) {
+    // al dialog passo il professore e il corso
+    this.professorService.findAllProsessorByCourse(course.name).subscribe(result => {
+      this.dialog.open(CourseProfessorsComponent, {data: {professors: result, courseName: course.name}})
+        .afterClosed()
+        .subscribe(res => {
+        });
+    });
   }
 }

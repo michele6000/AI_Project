@@ -53,7 +53,7 @@ export class CreateAssignmentComponent implements OnInit {
       this.professorService.createAssignment(this.corso.name, submission, this.file).subscribe(
         (res) => {
           // @Todo -> fare la richiesta per avere anche l'assignment appena inserito
-          this.dialogRef.close();
+          this.dialogRef.close(true);
           this.snackBar.open('Assignment created successfully.', 'OK', {
             duration: 5000
           });
@@ -69,10 +69,6 @@ export class CreateAssignmentComponent implements OnInit {
       // expiryDate è minore di releaseDate, mostro l'errore
       this.errorExpiryDate = true;
     }
-  }
-
-  closeDialog() {
-    this.dialogRef.close(false);
   }
 
   expiryChoseValue($event: MatDatepickerInputEvent<any>) {

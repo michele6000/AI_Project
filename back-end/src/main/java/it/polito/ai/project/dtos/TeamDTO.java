@@ -8,6 +8,8 @@ public class TeamDTO {
     private String name;
     private int status;
     private String courseName;
+    private String proposer;
+
 
     // Limitazioni per la VM
     private Integer limit_hdd;

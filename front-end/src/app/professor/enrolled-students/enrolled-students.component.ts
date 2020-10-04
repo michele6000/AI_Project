@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {concatMap, toArray} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
-import {from} from 'rxjs';
+import {from, Subscription} from 'rxjs';
 import {CourseModel} from '../../models/course.model';
 import {StudentModel} from '../../models/student.model';
 import {HttpClient} from '@angular/common/http';
@@ -16,24 +16,22 @@ import {ShowTeamMembersComponent} from '../../dialog/show-team-members/show-team
   templateUrl: './enrolled-students.component.html',
   styleUrls: ['./enrolled-students.component.css']
 })
-export class EnrolledStudentsComponent implements OnInit {
+export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   teams: GroupModel[] = [];
   corso: CourseModel;
   columns = ['email', 'firstName', 'name', 'id'];
-  columnsTeam = ['name'];
+  columnsTeam = ['id','name', 'status'];
   data: StudentModel[] = [];
   fileAbsent = true;
   file: any;
   courseParam: string;
   students: StudentModel[] = [];
   existTeam: boolean = false;
+  private changeCorsoSub: Subscription;
 
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private professorService: ProfessorService, private snackBar: MatSnackBar, private dialog: MatDialog) {
-  }
-
-  ngOnInit(): void {
     // sono in ascolto sull'observable (change del corso nella sidenav)
-    this.professorService.eventsSubjectChangeCorsoSideNav.subscribe(next => {
+    this.changeCorsoSub = this.professorService.eventsSubjectChangeCorsoSideNav.subscribe(next => {
       this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
       this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
 
@@ -56,16 +54,20 @@ export class EnrolledStudentsComponent implements OnInit {
         }
       );
 
-      this.professorService.findTeamsByCourse(this.corso.name).subscribe(next => {
-        if (next.length > 0){
+      this.professorService.findTeamsByCourse(this.corso.name).subscribe(teams => {
+        if (teams.length > 0) {
           this.existTeam = true;
-          this.teams = next;
+          this.teams = teams;
         } else {
           this.existTeam = false;
           this.teams = [];
         }
       });
     });
+  }
+
+  ngOnInit(): void {
+
   }
 
   deleteStudent($event: StudentModel[]) {
@@ -94,23 +96,18 @@ export class EnrolledStudentsComponent implements OnInit {
 
   addStudent($event: StudentModel) {
     this.professorService.enrollStudent(this.corso.name, $event.id).subscribe((res) => {
-      console.log("After enrolled");
-      console.log(res);
-      if (res) {
-        this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
-        this.snackBar.open('Student added successfully.', 'OK', {
-          duration: 5000
-        });
-      } else {
-        this.snackBar.open('Error adding student.', 'OK', {
-          duration: 5000
-        });
-      }
+      this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
+      this.snackBar.open('Student added successfully.', 'OK', {
+        duration: 5000
+      });
+    }, (error) => {
+      this.snackBar.open('Error adding student. ' + error.statusText + ' ' + error.error.message, 'OK', {
+        duration: 5000
+      });
     });
   }
 
   handleFileSelect($event: any) {
-    console.log($event);
     this.file = $event.target.files[0];
     this.fileAbsent = false;
   }
@@ -144,8 +141,20 @@ export class EnrolledStudentsComponent implements OnInit {
   }
 
   showStudentsInTeam(team: GroupModel) {
-    this.dialog.open(ShowTeamMembersComponent, {data: team})
-      .afterClosed()
-      .subscribe(result => {});
+    this.professorService.findMembersByTeamId(team.id).subscribe( students => {
+      this.dialog.open(ShowTeamMembersComponent, {data: {students, teamName: team.name}})
+        .afterClosed()
+        .subscribe(result => {
+
+        });
+    });
   }
+
+  ngOnDestroy(): void {
+    if (this.changeCorsoSub) {
+      this.changeCorsoSub.unsubscribe();
+    }
+  }
+
+
 }

@@ -28,7 +28,7 @@ public class ProjectApplication {
             PasswordEncoder passwordEncoder
     ) {
         return args -> {
-            if (!userRepo.existsById("admin")) {
+            if (!userRepo.findById("admin").isPresent()) {
                 User admin = new User();
                 admin.setUsername("admin");
                 admin.setPassword(passwordEncoder.encode("admin"));

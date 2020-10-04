@@ -6,4 +6,5 @@ export class SubmissionModel {
   history: any[];
   expiryString: string;
   releaseString: string;
+  isRevisable: boolean;
 }

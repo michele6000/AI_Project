@@ -137,11 +137,11 @@ public class StudentController {
         }
     }
 
-    @GetMapping(value = "/solutions/getImage/{solutionId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/solutions/getImage/{solutionId}", produces = MediaType.APPLICATION_PDF_VALUE)
     public void showImage(HttpServletResponse response,@PathVariable Long solutionId) {
         try {
             response.addHeader("Access-Control-Allow-Origin","*");
-            response.setContentType("image/jpeg");
+            response.setContentType("application/pdf");
             response.getOutputStream().write(submissionService.getSolutionImage(solutionId));
             response.getOutputStream().close();
         }catch (Exception e){

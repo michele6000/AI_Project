@@ -13,5 +13,5 @@
   </div>
   <app-table (changeActive)="changeActive($event)" (delete)="deleteCourse($event)" (edit)="editCourse($event)" [columns]="columns"
              [data]="data" [showChangeStatus]="true" [showDelete]="true"
-             [showEdit]="true"></app-table>
+             [showEdit]="true" [showDetails]="true" (addProf)="addProfToCourse($event)" (removeProf)="removeProfFromCourse($event)" (show)="showCourseProfessor($event)"></app-table>
 </div>

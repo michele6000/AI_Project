@@ -9,6 +9,7 @@ import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
@@ -44,10 +45,13 @@ public class VmServiceImpl implements VmService {
     @Autowired
     private VMTypeRepository vmtRepo;
 
+    @Value("${service.typeHost}")
+    private String host;
+
 
     @Override
     public List<VMDTO> getTeamVMs(Long teamId) {
-        if (!teamRepo.existsById(teamId))
+        if (!teamRepo.findById(teamId).isPresent())
             throw new TeamNotFoundException("Team not found!");
 
         return vmRepo.findAll()
@@ -238,7 +242,7 @@ public class VmServiceImpl implements VmService {
                     .filter(vm -> vm.getTeam().getId().equals(team))
                     .filter(vm -> vm.getVmType().getId().equals(type))
                     .filter(vm -> vm.getStatus().equals("poweron"))
-                    .count() <= max_instance) {
+                    .count() < max_instance) {
                 optionalVMEntity.get().setStatus("poweron");
                 return true;
             }
@@ -327,7 +331,6 @@ public class VmServiceImpl implements VmService {
         _vm.setHdd(vm.getHdd());
         _vm.setCpu(vm.getCpu());
         _vm.setRam(vm.getRam());
-//        _vm.setAccessLink("localhost:4200/genericVmPage/" + teamId + "/" + optionalVMTypeEntity.get().getId());
 
         try{
 
@@ -348,7 +351,7 @@ public class VmServiceImpl implements VmService {
         }
 
         _vm = vmRepo.save(_vm);
-        _vm.setAccessLink("http://localhost:8080/API/vm/getImage/"+_vm.getId());
+        _vm.setAccessLink("http://"+host+":8080/API/vm/getImage/"+_vm.getId());
         return modelMapper.map(vmRepo.save(_vm), VMDTO.class);
     }
 
@@ -366,6 +369,7 @@ public class VmServiceImpl implements VmService {
         return team;
     }
 
+    @Deprecated
     @Override
     public byte[] getVmImage(Long vmId) {
         Optional<VM> optionalVMEntity = vmRepo.findById(vmId);
@@ -383,7 +387,7 @@ public class VmServiceImpl implements VmService {
     }
 
     public TeamDTO retriveTeamFromVm (Long vmId){
-        if(!vmRepo.existsById(vmId))
+        if(!vmRepo.findById(vmId).isPresent())
             throw new TeamServiceException("Vm not found!");
         return modelMapper.map(vmRepo.getOne(vmId).getTeam(),TeamDTO.class);
     }

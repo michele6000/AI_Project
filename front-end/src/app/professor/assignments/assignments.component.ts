@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ShowHistoryComponent} from '../../dialog/edit-homework/show-history.component';
@@ -6,9 +6,13 @@ import {CreateAssignmentComponent} from '../../dialog/create-assignment/create-a
 import {CourseModel} from '../../models/course.model';
 import {ProfessorService} from '../../services/professor.service';
 import * as moment from 'moment';
-import {from} from 'rxjs';
+import {from, Subscription} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
-import {StudentSubmissionModel} from "../../models/student-submission.model";
+import {StudentSubmissionModel} from '../../models/student-submission.model';
+import {SolutionModel} from '../../models/solution.model';
+import {EvaluateSolutionComponent} from '../../dialog/evaluate-solution/evaluate-solution.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {ReviewSolutionComponent} from '../../dialog/review-solution/review-solution.component';
 
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
@@ -19,7 +23,7 @@ const API_URL_LOCAL = '/local/API/';
   templateUrl: './assignments.component.html',
   styleUrls: ['./assignments.component.css']
 })
-export class AssignmentsComponent implements OnInit {
+export class AssignmentsComponent implements OnInit, OnDestroy {
 
   consegne: any[];
 
@@ -29,16 +33,11 @@ export class AssignmentsComponent implements OnInit {
   corso: CourseModel;
   show: boolean;
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService) {
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute,
+              private snackBar: MatSnackBar, private professorService: ProfessorService) {
   }
 
-  ngOnInit(): void {
-    this.show = false;
-    this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
-    this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
-
-    if (this.corso.name.length == 0 )
-      return;
+  loadAssignments() {
 
     // 1 - Recupero l'elenco di studenti del corso
     this.professorService.getEnrolledStudents(this.corso.name).subscribe(
@@ -88,15 +87,31 @@ export class AssignmentsComponent implements OnInit {
             });
           },
           (error) => {
-            console.log(error);
+            this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+              duration: 5000
+            });
+            location.reload();
           }
         );
 
       }
     );
+  }
 
+  ngOnInit(): void {
+    this.show = false;
+    this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
+    this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
 
-    // Per ogni consegna richiedo l'elenco di elaborati
+    if (this.corso.name.length === 0) {
+      return;
+    }
+
+    this.loadAssignments();
+  }
+
+  ngOnDestroy() {
+
   }
 
   showHistory(studentSub: StudentSubmissionModel) {
@@ -108,15 +123,39 @@ export class AssignmentsComponent implements OnInit {
   }
 
   createAssignment($event) {
-    this.dialog.open(CreateAssignmentComponent, {})
+    this.dialog.open(CreateAssignmentComponent, {restoreFocus: false})
       .afterClosed()
       .subscribe(result => {
-
-
+        // Dopo aver creato l'assignment aggiorno la tabella (se non è click su cancel)
+        if (result) {
+          this.loadAssignments();
+        }
       });
   }
 
   handleShowSubmission(id: string) {
     window.open('//' + API_URL_PUBLIC + 'courses/submissions/getImage/' + id, '_blank');
+  }
+
+  evaluateSolution($event: SolutionModel) {
+    // restoreFocus: false
+    //  per non riportare il focus sul bottone dopo la chiusura della dialog
+    this.dialog.open(EvaluateSolutionComponent, {data: $event, restoreFocus: false})
+      .afterClosed()
+      .subscribe(result => {
+        if (result) {
+          this.loadAssignments();
+        }
+      });
+  }
+
+  reviewSolution($event: SolutionModel) {
+    this.dialog.open(ReviewSolutionComponent, {data: $event})
+      .afterClosed()
+      .subscribe(result => {
+        if (result) {
+          this.loadAssignments();
+        }
+      });
   }
 }

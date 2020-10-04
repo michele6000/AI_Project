@@ -44,14 +44,14 @@ export class CreateVmProfessorComponent implements OnInit {
       (res) => {
         this.dialogRef.close();
         // res è l'ID del VM Type se creata con successo
-        this.snackBar.open('VM created successfully', 'OK', {
+        this.snackBar.open('VM Type created successfully', 'OK', {
           duration: 5000
         });
       //  dire al padre che è stata creata una vmType con successo e gestire lo show o meno del button add
       },
       (error) => {
         this.dialogRef.close();
-        this.snackBar.open('Error creating VM, try again.', 'OK', {
+        this.snackBar.open('Error creating VM Type, try again.', 'OK', {
           duration: 5000
         });
       }
@@ -65,9 +65,5 @@ export class CreateVmProfessorComponent implements OnInit {
     } else {
       this.filename = 'Choose file';
     }
-  }
-
-  closeDialog() {
-    this.dialogRef.close(false);
   }
 }

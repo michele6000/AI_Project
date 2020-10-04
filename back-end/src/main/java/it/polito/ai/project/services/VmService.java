@@ -24,9 +24,6 @@ public interface VmService {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     VMTypeDTO getVMType(String courseName);
 
-//    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    VMDTO getVMConfig(Long vmId);
-
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     Boolean modifyVMConfiguration(Long vmId, VMDTO vm, String me);
 
@@ -54,8 +51,10 @@ public interface VmService {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     TeamDTO setTeamLimit(TeamDTO team);
 
-//    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    byte[] getVmImage(Long vmId);
+    TeamDTO retriveTeamFromVm (Long vmId);
 
-     TeamDTO retriveTeamFromVm (Long vmId);
+    VMDTO getVMConfig(Long vmId);
+
+    @Deprecated
+    byte[] getVmImage(Long vmId);
 }

@@ -25,7 +25,7 @@
     <div class="dialog-position-field">
       <span>Assignment Content</span>
       <button (click)="fileInput.click()" class="ml-20" mat-raised-button type="button">{{filename}}</button>
-      <input #fileInput (change)="handleFileSelect($event)" accept="image/jpeg,image/png,application/pdf" hidden
+      <input #fileInput (change)="handleFileSelect($event)" accept="application/pdf" hidden
              id="file" type="file">
     </div>
 
@@ -35,7 +35,7 @@
 
     <mat-card-actions class="float-right mb-0">
       <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit">Create</button>
-      <button (click)="closeDialog()" mat-button mat-dialog-close>Cancel</button>
+      <button mat-button mat-dialog-close>Cancel</button>
     </mat-card-actions>
   </form>
 </div>
