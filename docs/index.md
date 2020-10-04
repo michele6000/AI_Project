@@ -13,30 +13,30 @@ We recommend using the first procedure, to reduce waiting times due to local cod
     ```
   - Docker will pull latest image of database (michele6000/ai-project-db), back-end (michele6000/back-end) and front-end (michele6000/front-end) from our personal DockerHub account, then will run: project-db listening on port 3306, back-end listening on port 8080, and front-end listening on port 4200. Make shure this port are not used from other applications on your pc. Note that the image are auto-builded, tagged and pushed by an automatic workflow configured on GitHub, in particular it will push a new version when master branch is updated.
 
-### DockerHub based build
+### Local compile based build
   - To build and Run Teams simply type: (make shure you have rwx permission in this file)
     ```sh
     $ ./autorun.sh
     ```
-  - The script first of all will build back-end by calling:
+  - The script first of all will build back-end and package the application using Maven by calling:
     ```sh
-    $ cd ./back-end
+    $ mvn clean ; mvn package
     $ docker build -f Dockerfile -t back-end .
     ```
-    after that it will build front-end in the same way:
+    after that it will build front-end by calling Node Packet Manager, installing dependencies and then building the Angular Application:
     ```sh
-    $ cd ./front-end
+    $ npm i ; sudo npm run build
     $ docker build -f Dockerfile -t front-end .
     ```
     after front-end also il builded, the script will pull latest mariadb image:
      ```sh
     $ docker pull mariadb:latest
     ```
-    finally is called docker-compose script to create and start all the container:
+    finally is called docker-compose script to create and start all the containers:
     ```sh
     $ docker-compose -f docker-compose-offline.yml up
     ```
-    as same as online based build phase docker will run: project-db listening on port 3306, back-end listening on port 8080, and front-end listening on port 4200.
+    as same as dockerhub based build phase docker will run: project-db listening on port 3306, back-end listening on port 8080, and front-end listening on port 4200.
 
 # Basic scenario
 Both build procedures are configured in such a way as to load the files present in the ./mariadb-files folder, which already contains registered users, enabled courses, submissions, solutions, etc.
@@ -45,8 +45,3 @@ Access data:
 
 | Username | Password | Role |
 | ------ | ------ | ------ |
-| s222942@studenti.polito.it | b3stPassword | ROLE_STUDENT
-| s222942@studenti.polito.it | b3stPassword | ROLE_STUDENT
-| s222942@studenti.polito.it | b3stPassword | ROLE_PROFESSOR
-| s222942@studenti.polito.it | b3stPassword | ROLE_PROFESSOR
-| s222942@studenti.polito.it | b3stPassword | ROLE_PROFESSOR
