@@ -8,10 +8,13 @@ import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,6 +65,10 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private VMRepository vmRepo;
 
+    @Qualifier("threadPoolTaskExecutor")
+    @Autowired
+    private TaskExecutor executor;
+
 
     @Override
     public boolean addCourse(CourseDTO course) {
@@ -107,12 +114,12 @@ public class TeamServiceImpl implements TeamService {
 
         userRepo.save(_user);
         studentRepo.save(_student);
-
-        notification.sendMessage(
+        executor.execute(() -> notification.sendMessage(
                 user.getEmail(),
                 "New Registration",
                 "Username: " + user.getUsername() + " password: " + user.getPassword()
-        );
+        ));
+
         return modelMapper.map(_student,StudentDTO.class);
     }
 
@@ -218,10 +225,16 @@ public class TeamServiceImpl implements TeamService {
                 throw new TeamServiceException( "You are not a professor of this course!");
             courseRepo.getOne(courseName).setEnabled(false);
             courseRepo.getOne(courseName).getTeams().forEach(t -> t.setStatus(0));
-            courseRepo.getOne(courseName).getStudents().forEach(s ->
-                    notification.sendMessage(s.getEmail(),
-                            "Course disabled",
-                            "We inform you that the course " + courseName + " has been disabled."));
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    courseRepo.getOne(courseName).getStudents().forEach(s ->
+                            notification.sendMessage(s.getEmail(),
+                                    "Course disabled",
+                                    "We inform you that the course " + courseName + " has been disabled."));
+                }
+            });
+
         } else throw new CourseNotFoundException("Course not found!");
     }
 
@@ -235,12 +248,13 @@ public class TeamServiceImpl implements TeamService {
 
             courseRepo.getOne(courseName).getTeams().forEach(t -> evictTeam(t.getId()));
             profRepo.getOne(username).getCourses().remove(courseRepo.getOne(courseName));
-            courseRepo.getOne(courseName).getStudents().forEach(s ->{
-                    s.getCourses().remove(courseRepo.getOne(courseName));
-                    notification.sendMessage(s.getEmail(),
+            courseRepo.getOne(courseName).getStudents().forEach(s -> s.getCourses().remove(courseRepo.getOne(courseName)));
+            List<String> studentsMail = courseRepo.getOne(courseName).getStudents().stream().map(Student::getEmail).collect(Collectors.toList());
+            executor.execute(() -> studentsMail.forEach(s->
+                    notification.sendMessage(s,
                             "Course deleted",
-                            "We inform you that the course " + courseName + " has been deleted.");
-            });
+                            "We inform you that the course " + courseName + " has been deleted.")));
+
             Optional<VMType> vmType = Optional.ofNullable(courseRepo.getOne(courseName).getVmType());
             if(vmType.isPresent())
                 vmTypeRepository.delete(courseRepo.getOne(courseName).getVmType());
@@ -688,11 +702,13 @@ public class TeamServiceImpl implements TeamService {
         userRepo.save(_user);
         profRepo.save(_professor);
 
-        notification.sendMessage(
+        executor.execute(() -> notification.sendMessage(
                 user.getEmail(),
                 "New Registration",
                 "Username: " + user.getUsername() + " password: " + user.getPassword()
-        );
+        ));
+
+
         return modelMapper.map(_professor,ProfessorDTO.class);
     }
 

@@ -11,6 +11,8 @@ import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -51,6 +53,10 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Autowired
     private ProfessorRepository profRepo;
 
+    @Qualifier("threadPoolTaskExecutor")
+    @Autowired
+    private TaskExecutor executor;
+
     @Override
     public SubmissionDTO addSubmission(SubmissionDTO submissionDTO, String courseName, String profId, MultipartFile submissionFile) {
 
@@ -85,12 +91,18 @@ public class SubmissionServiceImpl implements SubmissionService {
         submissionEntity = submissionRepo.save(submissionEntity);
         course.addSubmission(submissionEntity);
 
-        for (Student s : course.getStudents())
-            notification.sendMessage(
-                    s.getEmail(),
-                    "Submission",
-                    "The professor created a new submission for you.\nSubmission id:" + submissionEntity.getId() + "\nExpiry date: " + submissionEntity.getExpiryDate()
-            );
+        Submission finalSubmissionEntity = submissionEntity;
+        executor.execute(() -> {
+            for (Student s : course.getStudents())
+                notification.sendMessage(
+                        s.getEmail(),
+                        "Submission",
+                        "The professor created a new submission for you.\n" +
+                                "Submission id:" + finalSubmissionEntity.getId() + "\n" +
+                                "Expiry date: " + finalSubmissionEntity.getExpiryDate()
+                );
+        });
+
 
         return modelMapper.map(submissionEntity, SubmissionDTO.class);
     }
@@ -279,12 +291,14 @@ public class SubmissionServiceImpl implements SubmissionService {
         Solution sol = solutionRepo.getOne(solutionId);
         sol.setEvaluation(evaluation);
         sol.setStatus("EVALUATED");
-        notification.sendMessage(
+
+        executor.execute(() -> notification.sendMessage(
                 sol.getStudent().getEmail(),
                 "Evaluation",
                 "The professor has evaluated your solution.\nSolution_id = " + sol.getId() +
                         "\n Final score: " + evaluation
-        );
+        ));
+
         return true;
 
 
@@ -487,12 +501,12 @@ public class SubmissionServiceImpl implements SubmissionService {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
             solutionRepo.getOne(sol.getId()).setEvaluation(evaluation);
             solutionRepo.getOne(sol.getId()).setStatus("EVALUATED");
-            notification.sendMessage(
+            executor.execute(() -> notification.sendMessage(
                     studentRepo.getOne(studentId).getEmail(),
                     "Evaluation",
                     "The professor has evaluated your solution.\nSolution_id = " + sol.getId() +
                             "\n Final score: " + evaluation
-            );
+            ));
 
             return true;
         } catch (TeamServiceException e) {
