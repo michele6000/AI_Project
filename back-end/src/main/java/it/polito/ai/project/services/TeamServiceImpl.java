@@ -8,19 +8,20 @@ import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -277,7 +278,34 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<Boolean> addAll(List<StudentDTO> students) {
         List<Boolean> studentsAdded = new ArrayList<>();
-//        students.forEach(s -> studentsAdded.add(addStudent(s, null)));
+
+        List<String> avatars = Arrays.asList("Bradipo.jpg", "Bue.jpg","Canguro.jpg","Cervo.jpg","Cinghiale.jpg",
+                "Coniglio.jpg", "Elefante.jpg", "Gatto.jpg", "Ghepardo.jpg", "Giraffa.jpg", "Gorilla.jpg", "Husky.jpg",
+                "Ippopotamo.jpg" , "Lupo.jpg", "Montone.jpg", "Orso.jpg", "Pantera.jpg", "Pastore.jpg", "Pinguino.jpg",
+                "Procione,jpg", "Rinoceronte.jpg", "Scimmia.jpg", "Tigre.jpg", "Topo.jpg", "Toro.jpg");
+
+        students.forEach(s -> {
+
+        UserDTO user = new UserDTO();
+        user.setName(s.getName());
+        user.setFirstName(s.getFirstName());
+        user.setPassword("student");
+        user.setEmail(s.getId()+"@studenti.polito.it");
+        user.setUsername(s.getId());
+
+        String randomAvatar = avatars.get(new Random().nextInt()%24);
+
+        Resource resource = new ClassPathResource("./templates/avatars/"+randomAvatar);
+
+        try {
+            FileInputStream input = new FileInputStream(resource.getFile());
+            MultipartFile multipartFile = new MockMultipartFile(randomAvatar, input);
+            studentsAdded.add(addStudent(user, multipartFile).getId() != null);
+        } catch (IOException e) {
+            throw new TeamServiceException("Error during add students by csv operation. Student: " + user.getUsername());
+        }
+
+        });
         return studentsAdded;
     }
 
