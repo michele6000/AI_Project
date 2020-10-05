@@ -41,11 +41,11 @@ export class ProfessorComponent implements OnInit, OnDestroy {
   checkUrl() {
     this.route.paramMap.subscribe(param => {
       const courseName = param.get('course');
-      const course = this.corsi.filter(c => c.name.toLowerCase().replace(' ', '-') === courseName);
+      const course = this.corsi.filter(c => c.name.toLowerCase().replace(/\s+/g, '-') === courseName);
       if (course.length > 0) {
         this.changeCorso(course[0]);
       } else if (this.corsi.length > 0) {
-        this.router.navigate(['teacher', this.corsi[0].name.toLowerCase().replace(' ', '-')]);
+        this.router.navigate(['teacher', this.corsi[0].name.toLowerCase().replace(/\s+/g, '-')]);
       } else {
         console.log('Nessun corso!');
       }
@@ -54,7 +54,7 @@ export class ProfessorComponent implements OnInit, OnDestroy {
 
   changeCorso(corso: CourseModel) {
     this.singoloCorso = corso;
-    this.router.navigate(['teacher', corso.name.toLowerCase().replace(' ', '-'), 'students']).then();
+    this.router.navigate(['teacher', corso.name.toLowerCase().replace(/\s+/g, '-'), 'students']).then();
     this.professorService.eventsSubjectChangeCorsoSideNav.next();
   }
 

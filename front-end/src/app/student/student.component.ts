@@ -41,11 +41,11 @@ export class StudentComponent implements OnInit {
   checkUrl() {
     this.route.paramMap.subscribe(param => {
       const courseName = param.get('course');
-      const course = this.corsi.filter(c => c.name.toLowerCase().replace(' ', '-') === courseName);
+      const course = this.corsi.filter(c => c.name.toLowerCase().replace(/\s+/g, '-') === courseName);
       if (course.length > 0) {
         this.changeCorso(course[0]);
       } else if (this.corsi.length > 0) {
-        this.router.navigate(['student', this.corsi[0].name.toLowerCase().replace(' ', '-')]);
+        this.router.navigate(['student', this.corsi[0].name.toLowerCase().replace(/\s+/g, '-')]);
       } else {
         console.log('Nessun corso!');
       }
@@ -58,7 +58,7 @@ export class StudentComponent implements OnInit {
 
   changeCorso(corso: CourseModel) {
     this.singoloCorso = corso;
-    this.router.navigate(['student', corso.name.toLowerCase().replace(' ', '-'), 'groups']).then();
+    this.router.navigate(['student', corso.name.toLowerCase().replace(/\s+/g, '-'), 'groups']).then();
     this.studentService.findProfessorsByCourse(this.singoloCorso.name).subscribe(professor => {
         this.professors = professor;
         this.professorsList = professor.map((p) => p.name + ' ' + p.firstName).join(", ");
