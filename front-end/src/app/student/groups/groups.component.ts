@@ -5,7 +5,8 @@ import {CreateGroupComponent} from './create-group/create-group.component';
 import {StudentService} from '../../services/student.service';
 import {CourseModel} from '../../models/course.model';
 import {Router} from '@angular/router';
-import {Subscription} from "rxjs";
+import {Subscription} from 'rxjs';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-groups',
@@ -19,15 +20,16 @@ export class GroupsComponent implements OnInit, OnDestroy {
   private corso: CourseModel;
   private changeCorsoSub: Subscription;
 
-  constructor(private studentService: StudentService, private componentFactoryResolver: ComponentFactoryResolver,
-              private router: Router) {
-  }
+  constructor(private studentService: StudentService, private componentFactoryResolver: ComponentFactoryResolver, private router: Router, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     // in ascolto sul BehaviorSubject per cambiare le informazioni del gruppo in base al corso
     this.changeCorsoSub = this.studentService.eventsSubjectChangeCorsoSideNav.subscribe(next => {
-      this.computeGroup();
-    });
+        this.computeGroup();
+      },
+      error => {
+        this.genericError();
+      });
   }
 
   computeGroup() {
@@ -42,6 +44,8 @@ export class GroupsComponent implements OnInit, OnDestroy {
       } else if (teams) {
         this.loadComponent(2);
       }
+    }, error => {
+      this.genericError();
     });
   }
 
@@ -64,6 +68,13 @@ export class GroupsComponent implements OnInit, OnDestroy {
     if (this.changeCorsoSub) {
       this.changeCorsoSub.unsubscribe();
     }
+  }
+
+  genericError() {
+    this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+      duration: 5000
+    });
+    location.reload();
   }
 
 }

@@ -94,15 +94,6 @@ export class AuthService {
 
           // this.isUserLoggedIn = true;
           this.userSubject.next(this.localUser);
-          /*
-          this.setSession(payload, email);
-          let user : UserModule = new UserModule();
-          user.email = email;
-          user.accessToken = payload.accessToken;
-          user.isLogged = true;
-          this.userSubject.next(user);
-          this.userLogged.emit(true);
-          */
         },
         (error: any) => {
           this.userSubject.next(null);
@@ -122,8 +113,8 @@ export class AuthService {
 
   logout() {
     this.clearStorage();
-
     this.userSubject.next(null);
+    this.tokenExpiredSubject.next(null);
     this.router.navigate(['home']);
   }
 

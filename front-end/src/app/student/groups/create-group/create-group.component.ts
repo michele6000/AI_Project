@@ -53,47 +53,39 @@ export class CreateGroupComponent implements OnInit {
   initData() {
     // Recupero l'elenco degli studenti ancora disponibili
     this.studentService.findAvailableStudentsByCourseName(this.course.name).subscribe((result: StudentModel[]) => {
+        // filtro per rimuovere lo studente loggato da quelli disponibili
         this.studentsData = result.filter((s) => s.id !== localStorage.getItem('id'));
       },
-      (error: any) => {
-        this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
-          duration: 5000
-        });
-        location.reload();
+      (error) => {
+        this.genericError();
       }
     );
 
     // Recupero l'elenco delle proposte inviate / ricevute
     this.studentService.teams.subscribe((teams) => {
       const groupData = teams ? teams.filter(t => t.courseName === this.course.name) : [];
-
-      /*from(groupData).pipe(
-        concatMap((t) => this.studentService.findMembersByTeamId(t.id) as Observable<StudentModel[]>),
-        toArray()
-      ).subscribe((res) => console.log(res));*/
-
       // Per ogni gruppo del corso recupero l'elenco degli studenti e lo stato
       groupData.forEach((t) => {
-
         forkJoin(
-          // as of RxJS 6.5+ we can use a dictionary of sources
           {
             pendent: this.studentService.findPendentStudentsByTeamId(t.id),
             confirmed: this.studentService.findConfirmedStudentsByTeamId(t.id),
           }
         ).subscribe((res) => {
-          t.members = [];
-          res.confirmed.forEach((c) => {
-            c.status = 'Confirmed';
-            t.members.push(c);
+            t.members = [];
+            res.confirmed.forEach((c) => {
+              c.status = 'Confirmed';
+              t.members.push(c);
+            });
+            res.pendent.forEach(c => {
+              c.status = 'Pendent';
+              t.members.push(c);
+            });
+            this.groupsData = [...this.groupsData, t];
+          },
+          error => {
+            this.genericError();
           });
-          res.pendent.forEach(c => {
-            c.status = 'Pendent';
-            t.members.push(c);
-          });
-          this.groupsData = [...this.groupsData, t];
-        });
-
       });
     });
   }
@@ -127,5 +119,12 @@ export class CreateGroupComponent implements OnInit {
 
   timeoutChoseValue($event: MatDatepickerInputEvent<any>) {
     this.chosenTimeout = $event.target.value;
+  }
+
+  genericError() {
+    this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+      duration: 5000
+    });
+    location.reload();
   }
 }

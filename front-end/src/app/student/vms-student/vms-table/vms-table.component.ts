@@ -16,6 +16,8 @@ import {GroupModel} from '../../../models/group.model';
   templateUrl: './vms-table.component.html',
   styleUrls: ['./vms-table.component.css']
 })
+
+// Componente padre: VmsStudentComponent
 export class VmsTableComponent implements OnInit {
 
   columnsToDisplay = [];
@@ -51,7 +53,6 @@ export class VmsTableComponent implements OnInit {
 
   ngOnInit(): void {
     this.columnsWithCheckbox = [...this.columnsToDisplay, 'accessLink', 'status', 'power', 'delete', 'edit', 'addOwner', 'changeOwner'];
-
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
   }

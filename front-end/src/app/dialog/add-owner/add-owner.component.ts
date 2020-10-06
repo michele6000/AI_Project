@@ -20,21 +20,19 @@ export class AddOwnerComponent implements OnInit {
     this.dataVMAndStudents = data;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  // addVmOwner(vmId: number, ownerId: string) {
   addOwner(f: NgForm) {
     const studentId = f.value.matricola;
     this.studentService.addVmOwner(this.dataVMAndStudents.vm.id, studentId).subscribe(
       res => {
-        this.dialogRef.close(res);
+        this.dialogRef.close(true);
         this.snackBar.open('Owner added successfully.', 'OK', {
           duration: 5000
         });
       },
       error => {
-        this.dialogRef.close(error);
+        this.dialogRef.close(false);
         this.snackBar.open('Error adding owner.', 'OK', {
           duration: 5000
         });

@@ -51,13 +51,13 @@ export class ModifyVmStudentComponent implements OnInit {
           this.snackBar.open('Vm configuration modified successfully.', 'OK', {
             duration: 5000
           });
-          this.dialogRef.close(res);
+          this.dialogRef.close(true);
         },
         error => {
           this.snackBar.open('Error modifying vm configuration.', 'OK', {
             duration: 5000
           });
-          this.dialogRef.close(error);
+          this.dialogRef.close(false);
         }
       );
     }
