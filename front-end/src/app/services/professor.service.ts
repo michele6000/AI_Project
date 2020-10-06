@@ -83,7 +83,7 @@ export class ProfessorService {
   // Cerca nell'array locale di corsi il corso dato il path nell'URL
   findCourseByNameUrl(nameUrl: string): CourseModel {
     const filteredCourses = this.coursesSubject.value
-      .filter((c) => c.name.replace(' ', '-').toLowerCase() === nameUrl);
+      .filter((c) => c.name.replace(/\s+/g, '-').toLowerCase() === nameUrl);
     if (filteredCourses.length > 0) {
       return filteredCourses[0];
     } else {
