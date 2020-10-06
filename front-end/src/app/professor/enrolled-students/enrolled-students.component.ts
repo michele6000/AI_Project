@@ -20,7 +20,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   teams: GroupModel[] = [];
   corso: CourseModel;
   columns = ['email', 'firstName', 'name', 'id'];
-  columnsTeam = ['id','name', 'status'];
+  columnsTeam = ['id', 'name', 'status'];
   data: StudentModel[] = [];
   fileAbsent = true;
   file: any;
@@ -29,7 +29,8 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   existTeam: boolean = false;
   private changeCorsoSub: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private professorService: ProfessorService, private snackBar: MatSnackBar, private dialog: MatDialog) {
+  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient,
+              private professorService: ProfessorService, private snackBar: MatSnackBar, private dialog: MatDialog) {
     // sono in ascolto sull'observable (change del corso nella sidenav)
     this.changeCorsoSub = this.professorService.eventsSubjectChangeCorsoSideNav.subscribe(next => {
       this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
@@ -40,8 +41,10 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
         this.professorService.getEnrolledStudents(this.corso.name).subscribe(
           (res) => {
             this.data = res;
-          }
-        );
+          },
+          error => {
+            this.genericError();
+          });
       }
       // recupero la lista di studenti da cui pescare gli studenti per iscriverli al corso
       this.professorService.getStudents().subscribe(
@@ -51,27 +54,31 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
           } else {
             this.students = [];
           }
+        },
+        error => {
+          this.genericError();
         }
       );
 
       this.professorService.findTeamsByCourse(this.corso.name).subscribe(teams => {
-        if (teams.length > 0) {
-          this.existTeam = true;
-          this.teams = teams;
-        } else {
-          this.existTeam = false;
-          this.teams = [];
-        }
-      });
+          if (teams.length > 0) {
+            this.existTeam = true;
+            this.teams = teams;
+          } else {
+            this.existTeam = false;
+            this.teams = [];
+          }
+        },
+        error => {
+          this.genericError();
+        });
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
 
-  }
-
-  deleteStudent($event: StudentModel[]) {
-    const res = from($event).pipe(
+  deleteStudent(selectedStudents: StudentModel[]) {
+    const res = from(selectedStudents).pipe(
       concatMap(s => {
         return this.professorService.deleteStudent(this.corso.name, s.id);
       }),
@@ -79,24 +86,37 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
     );
 
     res.subscribe((result: boolean[]) => {
-      this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
-      if (result.filter(e => !e).length > 0) {
-        // Almeno una ha fallito
-        this.snackBar.open('Error deleting successfully.', 'OK', {
-          duration: 5000
-        });
-      } else {
-        // Tutte a buon fine
-        this.snackBar.open('Students deleted successfully.', 'OK', {
-          duration: 5000
-        });
-      }
-    });
+        if (result.filter(e => !e).length > 0) {
+          // Almeno una ha fallito
+          this.snackBar.open('Error deleting successfully.', 'OK', {
+            duration: 5000
+          });
+        } else {
+          // Tutte a buon fine
+          this.snackBar.open('Students deleted successfully.', 'OK', {
+            duration: 5000
+          });
+        }
+        this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => {
+            this.data = students;
+          },
+          error => {
+            this.genericError();
+          });
+      },
+      error => {
+        this.genericError();
+      });
   }
 
-  addStudent($event: StudentModel) {
-    this.professorService.enrollStudent(this.corso.name, $event.id).subscribe((res) => {
-      this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => this.data = students);
+  addStudent(student: StudentModel) {
+    this.professorService.enrollStudent(this.corso.name, student.id).subscribe((res) => {
+      this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => {
+          this.data = students;
+        },
+        error => {
+          this.genericError();
+        });
       this.snackBar.open('Student added successfully.', 'OK', {
         duration: 5000
       });
@@ -141,12 +161,14 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   }
 
   showStudentsInTeam(team: GroupModel) {
-    this.professorService.findMembersByTeamId(team.id).subscribe( students => {
+    // passo al dialog la lista di studenti nel team e il nome del team
+    this.professorService.findMembersByTeamId(team.id).subscribe(students => {
       this.dialog.open(ShowTeamMembersComponent, {data: {students, teamName: team.name}})
         .afterClosed()
         .subscribe(result => {
-
         });
+    }, error => {
+      this.genericError();
     });
   }
 
@@ -156,5 +178,11 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
     }
   }
 
+  genericError() {
+    this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+      duration: 5000
+    });
+    location.reload();
+  }
 
 }

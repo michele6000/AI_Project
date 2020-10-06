@@ -32,11 +32,12 @@ export class EditCourseComponent implements OnInit {
     this.professorService.updateCourse(this.course).subscribe(
       res => {
         if (res) {
-          this.dialogRef.close();
+          this.dialogRef.close(true);
           this.snackBar.open('Course update successfully', 'OK', {
             duration: 5000
           });
         } else {
+          this.dialogRef.close(false);
           this.snackBar.open('Error updating course', 'OK', {
             duration: 5000
           });

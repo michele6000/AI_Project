@@ -26,10 +26,8 @@ export class RemoveProfessorFromCourseComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  deleteProfessor(professors: any[]) {
-
+  deleteProfessor(professors: ProfessorModel[]) {
     // Controllo che non siano selezionati tutti i professori
-
     if (professors.length === this.professors.length) {
       this.snackBar.open('You cannot remove all professors from a course.', 'OK', {
         duration: 5000
@@ -58,6 +56,16 @@ export class RemoveProfessorFromCourseComponent implements OnInit {
           duration: 5000
         });
       }
+    },
+      error => {
+        this.genericError();
+      });
+  }
+
+  genericError() {
+    this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+      duration: 5000
     });
+    location.reload();
   }
 }

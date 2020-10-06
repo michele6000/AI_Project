@@ -21,8 +21,7 @@ export class AddProfessorToCourseComponent implements OnInit {
     this.courseName = data.courseName;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   addProfessorToCourse(f: NgForm) {
     const professorId = f.value.professor;

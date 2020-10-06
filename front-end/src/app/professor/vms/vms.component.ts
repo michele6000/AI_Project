@@ -23,22 +23,19 @@ export class VmsComponent implements OnInit {
   courseParam: string;
   corso: CourseModel;
   groupsData: GroupModel[] = [];
-  groupsColumns = ['id','name'];
+  groupsColumns = ['id', 'name'];
   innerGroupColumns = ['accessLink', 'owner', 'status'];
 
   hasVMType = false;
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService, private snackBar: MatSnackBar) {
-  }
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
-
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
     if (this.corso.name.length === 0) {
       return;
     }
-
     // Recupero il VM Type, se presente
     this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {
       this.hasVMType = true;
@@ -49,17 +46,19 @@ export class VmsComponent implements OnInit {
     this.loadVMLimits();
   }
 
-  createVM($event) {
+  createVM() {
     if (this.corso.name !== '') {
-      this.dialog.open(CreateVmProfessorComponent, {})
+      this.dialog.open(CreateVmProfessorComponent, {data: this.corso.name})
         .afterClosed()
         .subscribe(result => {
-          // Recupero il VM Type, se presente
-          this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {
-            this.hasVMType = true;
-          }, error => {
-            this.hasVMType = false;
-          });
+          if (result) {
+            // Recupero il VM Type, se presente
+            this.professorService.findVmTypeByCourse(this.corso.name).subscribe((vms) => {
+              this.hasVMType = true;
+            }, error => {
+              this.hasVMType = false;
+            });
+          }
         });
     } else {
       this.snackBar.open('You must to create a course first', 'OK', {
@@ -72,30 +71,37 @@ export class VmsComponent implements OnInit {
     this.dialog.open(EditVmProfessorComponent, {data: $event})
       .afterClosed()
       .subscribe(result => {
-        this.loadVMLimits();
+        if (result) {
+          this.loadVMLimits();
+        }
       });
   }
 
   loadVMLimits() {
     // Recupero l'elenco di Teams
     this.professorService.findTeamsByCourse(this.corso.name).subscribe((teams) => {
-      const groupsData: GroupModel[] = [];
-
-      from(teams).pipe(
-        concatMap(t => {
-          return this.professorService.findVmsByTeam(t.id);
-        }),
-        toArray()
-      ).subscribe((vms) => {
-        teams.forEach((t, i) => {
-          if(t.status!=0){
-            t.vms = vms[i];
-            groupsData.push(t);
-          }
-        });
-        this.groupsData = groupsData;
+        const groupsData: GroupModel[] = [];
+        from(teams).pipe(
+          concatMap(t => {
+            return this.professorService.findVmsByTeam(t.id);
+          }),
+          toArray()
+        ).subscribe((vms) => {
+            teams.forEach((t, i) => {
+              if (t.status !== 0) {
+                t.vms = vms[i];
+                groupsData.push(t);
+              }
+            });
+            this.groupsData = groupsData;
+          },
+          error => {
+            this.genericError();
+          });
+      },
+      error => {
+        this.genericError();
       });
-    });
   }
 
   showStatistics(element: any) {
@@ -104,7 +110,17 @@ export class VmsComponent implements OnInit {
     this.professorService.findStatisticsByTeam(element.id).subscribe(
       statistics => {
         this.dialog.open(StatisticsVmComponent, {data: statistics});
+      },
+      error => {
+        this.genericError();
       }
     );
+  }
+
+  genericError() {
+    this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+      duration: 5000
+    });
+    location.reload();
   }
 }

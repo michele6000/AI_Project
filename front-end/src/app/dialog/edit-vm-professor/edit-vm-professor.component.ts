@@ -18,7 +18,7 @@ export class EditVmProfessorComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private professorService: ProfessorService, private snackBar: MatSnackBar, private dialogRef: MatDialogRef<EditVmProfessorComponent>) {
     this.group = data;
-    if (this.group !== undefined){
+    if (this.group !== undefined) {
       this.nameButton = 'Update';
     }
   }
@@ -35,18 +35,17 @@ export class EditVmProfessorComponent implements OnInit {
     groupForm.limit_active_instance = f.value.maxActiveVmSimultaneously;
     this.professorService.setTeamLimits(this.group.id, groupForm).subscribe(
       (res) => {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
         this.snackBar.open('VM limits setted successfully', 'OK', {
           duration: 5000
         });
       },
       (error) => {
-        this.dialogRef.close();
+        this.dialogRef.close(false);
         this.snackBar.open('Error setting limits', 'OK', {
           duration: 5000
         });
       });
   }
-
 
 }

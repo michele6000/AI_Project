@@ -124,19 +124,20 @@ export class CoursesComponent implements OnInit {
         this.professorService.findAllProsessorByCourse(course.name).subscribe(
           allProfessorOfCourse => {
             let professorsAfterIntersection;
-
             const professorsIds = allProfessorOfCourse.map(p => p.id);
-
             // filtro solo i professori che non sono già prof di quel corso
             professorsAfterIntersection = allProfessors.filter(p => !professorsIds.includes(p.id));
             this.dialog.open(AddProfessorToCourseComponent, {data: {professors: professorsAfterIntersection, courseName: course.name}});
           }
         );
+      },
+      error => {
+        this.genericError();
       }
     );
   }
 
-  // @Todo -> finire implementazione -> Attenzione perche possono essere piu di un professore da rimuovere
+  // Attenzione perche possono essere piu di un professore da rimuovere
   removeProfFromCourse(course: CourseModel) {
     // 1) recupero tutti i prof di quel corso
     // 2) li passo al dialog
@@ -149,16 +150,30 @@ export class CoursesComponent implements OnInit {
         } else {
           this.dialog.open(RemoveProfessorFromCourseComponent, {data: {professors: allProfessor, courseName: course.name}});
         }
+      },
+      error => {
+        this.genericError();
       });
   }
 
   showCourseProfessor(course: CourseModel) {
     // al dialog passo il professore e il corso
     this.professorService.findAllProsessorByCourse(course.name).subscribe(result => {
-      this.dialog.open(CourseProfessorsComponent, {data: {professors: result, courseName: course.name}})
-        .afterClosed()
-        .subscribe(res => {
-        });
-    });
+        this.dialog.open(CourseProfessorsComponent, {data: {professors: result, courseName: course.name}})
+          .afterClosed()
+          .subscribe(res => {
+          });
+      },
+      error => {
+        this.genericError();
+      });
   }
+
+  genericError() {
+    this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+      duration: 5000
+    });
+    location.reload();
+  }
+
 }

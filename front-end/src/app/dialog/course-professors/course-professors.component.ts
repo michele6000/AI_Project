@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {ProfessorModel} from '../../models/professor.model';
 
 @Component({
@@ -12,12 +12,11 @@ export class CourseProfessorsComponent implements OnInit {
   professors: ProfessorModel[] = [];
   courseName = '';
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data, private dialogRef: MatDialogRef<CourseProfessorsComponent>) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data) {
     this.professors = data.professors;
     this.courseName = data.courseName;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
 }
