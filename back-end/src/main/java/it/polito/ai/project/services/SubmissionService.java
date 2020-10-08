@@ -46,18 +46,4 @@ public interface SubmissionService {
 
     byte[] getSolutionImage(Long solutionId);
 
-    /* DEPRECATED */
-
-    @Deprecated
-    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
-    boolean evaluateLastSolution(String studentId, Long submissionId, Long evaluation, String profId);
-
-    @Deprecated
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
-    SubmissionDTO getLastSubmission(String courseName, String username);
-
-    @Deprecated
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
-    String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
-
 }

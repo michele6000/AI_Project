@@ -8,6 +8,7 @@ import it.polito.ai.project.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,14 +37,6 @@ public class StudentController {
         return students;
     }
 
-//  @PostMapping({ "", "/" })
-//  public StudentDTO addStudent(@RequestBody StudentDTO dto) {
-//    if (!service.addStudent(dto)) throw new ResponseStatusException(
-//            HttpStatus.CONFLICT,
-//            dto.getId()
-//    ); else return ModelHelper.enrich(dto);
-//  }
-
     @GetMapping("/{id}")
     public StudentDTO getOne(@PathVariable String id) {
         Optional<StudentDTO> student = service.getStudent(id);
@@ -55,7 +48,6 @@ public class StudentController {
             return ModelHelper.enrich(studentDTO);
         }
     }
-
 
     @GetMapping("/{id}/courses")
     public List<CourseDTO> getCourses(@PathVariable String id) {
@@ -195,46 +187,11 @@ public class StudentController {
                 .getAuthentication()
                 .getAuthorities()
                 .stream()
-                .map(a -> a.getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
     }
 
     private boolean isMe(String id) {
-        return (
-                id.equals(getCurrentUsername()) ||
-                        !getCurrentRoles().contains("ROLE_STUDENT")
-        );
+        return (id.equals(getCurrentUsername()) ||  !getCurrentRoles().contains("ROLE_STUDENT"));
     }
-
-
-    /* DEPRECATED END-POINTS */
-
-    @Deprecated
-    @PostMapping("/{studentId}/{submissionId}/evaluateLatestSolution")
-    public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
-//    if (!getCurrentRoles().contains("ROLE_PROFESSOR"))  throw new ResponseStatusException(
-//            HttpStatus.FORBIDDEN,
-//            "You are not allowed to evaluate a solution!"
-//    );
-        try {
-            return submissionService.evaluateLastSolution(studentId, submissionId, evaluation, getCurrentUsername());
-        } catch (TeamServiceException | ResponseStatusException e) {
-            if (e instanceof TeamServiceException)
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-            else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
-        }
-    }
-
-    @Deprecated
-    @PostMapping("/{studentId}/{submissionId}/updateSolution")
-    public String updateSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
-        if (!isMe(studentId))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to add a solution!");
-        try {
-            return submissionService.updateSolution(submissionId, sol, studentId);
-        } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-
 }
