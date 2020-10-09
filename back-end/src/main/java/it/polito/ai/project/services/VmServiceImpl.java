@@ -361,11 +361,27 @@ public class VmServiceImpl implements VmService {
         if (!optionalTeamEntity.isPresent())
             throw new TeamNotFoundException("Team not found!");
 
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getRam).sum() > team.getLimit_ram())
+            throw new TeamServiceException("Error, RAM used by team is greater than proposed");
+
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getCpu).sum() > team.getLimit_cpu())
+            throw new TeamServiceException("Error, CPU used by team is greater than proposed");
+
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getHdd).sum() > team.getLimit_hdd())
+            throw new TeamServiceException("Error, HDD used by team is greater than proposed");
+
+        if (optionalTeamEntity.get().getVMInstance().stream().filter(vm -> vm.getStatus().equals("poweron")).count() > team.getLimit_active_instance())
+            throw new TeamServiceException("Error, current allowed active instance number is greater than proposed");
+
+        if (optionalTeamEntity.get().getVMInstance().size() > team.getLimit_instance())
+            throw new TeamServiceException("Error, current allowed instance number is greater than proposed");
+
         optionalTeamEntity.get().setLimit_ram(team.getLimit_ram());
         optionalTeamEntity.get().setLimit_cpu(team.getLimit_cpu());
         optionalTeamEntity.get().setLimit_hdd(team.getLimit_hdd());
         optionalTeamEntity.get().setLimit_instance(team.getLimit_instance());
         optionalTeamEntity.get().setLimit_active_instance(team.getLimit_active_instance());
+
         return team;
     }
 

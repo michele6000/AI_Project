@@ -126,7 +126,7 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/setTeamLimits")
-    public TeamDTO createVmInstance(@PathVariable Long teamId, @RequestBody TeamDTO team) {
+    public TeamDTO setTeamLimit(@PathVariable Long teamId, @RequestBody TeamDTO team) {
         try {
             if (!getCurrentRoles().contains("ROLE_PROFESSOR")) throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
