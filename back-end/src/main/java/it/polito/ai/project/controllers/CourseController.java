@@ -361,19 +361,4 @@ public class CourseController {
                 .split("@")[0];
     }
 
-
-    /* DEPRECATED END-POINTS */
-    @Deprecated
-    @GetMapping("/{courseName}/getLastSubmission")
-    public SubmissionDTO getLastSubmission(@PathVariable String courseName) {
-        try {
-            return submissionService.getLastSubmission(courseName, getCurrentUsername());
-        } catch (TeamServiceException e) {
-            if (e instanceof CourseNotFoundException || e instanceof SubmissionNotFoundException)
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-    }
-
-
 }

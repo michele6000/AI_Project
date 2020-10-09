@@ -5,6 +5,7 @@ import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.UserDTO;
 import it.polito.ai.project.repositories.StudentRepository;
 import it.polito.ai.project.security.jwt.JwtTokenProvider;
+import it.polito.ai.project.services.CustomUserDetailsService;
 import it.polito.ai.project.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +17,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,9 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -49,13 +49,16 @@ public class AuthController {
     TeamService service;
     @Autowired
     StudentRepository studentRepository;
+    @Autowired
+    CustomUserDetailsService userService;
 
     @PostMapping("/signin")
-    public ResponseEntity<Map<Object, Object>> signin(
-            @Valid @RequestBody UserDTO data
-    ) {
+    public ResponseEntity<Map<Object, Object>> signin( @Valid @RequestBody UserDTO data) {
         try {
             String username = data.getUsername();
+            if (!service.checkActiveUser(username))
+                throw new BadCredentialsException("You must verify your email!");
+
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, data.getPassword())
             );
@@ -76,6 +79,17 @@ public class AuthController {
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid username/password supplied!");
         }
+    }
+
+    @GetMapping("/verifyEmail/{codedToken}")
+    public String enableUser(@PathVariable String codedToken){
+        byte[] decodedBytes = Base64.getDecoder().decode(codedToken);
+        String plainToken = new String(decodedBytes);
+        if(service.checkToken(plainToken.split("_")[0])){
+            service.enableUser(plainToken.split("_")[1]);
+            return "Your account is now active!";
+        }
+        return "Token expired, please do registration again!";
     }
 
     @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)

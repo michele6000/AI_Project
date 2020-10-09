@@ -23,6 +23,7 @@ import javax.transaction.Transactional;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,6 +70,12 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private TaskExecutor executor;
 
+    @Autowired
+    private TokenRepository tokenRepo;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Override
     public boolean addCourse(CourseDTO course) {
@@ -114,11 +121,22 @@ public class TeamServiceImpl implements TeamService {
 
         userRepo.save(_user);
         studentRepo.save(_student);
-        executor.execute(() -> notification.sendMessage(
-                user.getEmail(),
-                "New Registration",
-                "Username: " + user.getUsername() + " password: " + user.getPassword()
-        ));
+
+        executor.execute(() -> {
+            String id = UUID.randomUUID().toString();
+            Token token = new Token();
+            token.setId(id);
+            token.setTeamId(-1L);
+            token.setExpiryDate(new Timestamp(new Date().getTime()+60000000)); //TODO: vedere che fa
+            tokenRepo.save(token);
+
+            String codedToken = Base64.getEncoder().encodeToString((token.getId()+"_"+_user.getUsername()).getBytes());
+            notification.sendMessage(
+                    user.getEmail(),
+                    "Activate your Teams account",
+                    "Username: " + user.getUsername() + " password: " + user.getPassword() + "\n"+
+                            "Click here to activate your account: http://localhost:8080/auth/verifyEmail/"+codedToken);
+        });
 
         return modelMapper.map(_student,StudentDTO.class);
     }
@@ -576,22 +594,22 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void evictTeam(Long teamId) {
-        if (!teamRepo.findById(teamId).isPresent()) throw new TeamNotFoundException("Team not found!");
-
-        teamRepo
-                .getOne(teamId)
-                .getVMInstance()
-                .forEach(vm -> {
-                    teamRepo.getOne(teamId).getMembers().forEach(student -> student.getVms().remove(vm)); //elimino in student_vms
-                    teamRepo.getOne(teamId).getVMInstance().remove(vm); //elimino nella lista del team
-                    vmRepo.delete(vm); // elimino la vm dalla repo
-                });
-
-        teamRepo
-                .getOne(teamId)
-                .getMembers()
-                .forEach(s -> teamRepo.getOne(teamId).removeMember(s)); //cancello tutti i membri
-        teamRepo.deleteById(teamId);
+//        if (!teamRepo.findById(teamId).isPresent()) throw new TeamNotFoundException("Team not found!");
+//
+//        teamRepo
+//                .getOne(teamId)
+//                .getVMInstance()
+//                .forEach(vm -> {
+//                    teamRepo.getOne(teamId).getMembers().forEach(student -> student.getVms().remove(vm)); //elimino in student_vms
+//                    teamRepo.getOne(teamId).getVMInstance().remove(vm); //elimino nella lista del team
+//                    vmRepo.delete(vm); // elimino la vm dalla repo
+//                });
+//
+//        teamRepo
+//                .getOne(teamId)
+//                .getMembers()
+//                .forEach(s -> teamRepo.getOne(teamId).removeMember(s)); //cancello tutti i membri
+//        teamRepo.deleteById(teamId);
     }
 
     @Override
@@ -682,6 +700,7 @@ public class TeamServiceImpl implements TeamService {
         _user.setUsername(user.getEmail());
         _user.setPassword(passwordEncoder.encode(user.getPassword()));
         _user.setRoles(Collections.singletonList("ROLE_PROFESSOR"));
+        _user.setActive_user(false);
 
         Professor _professor = new Professor();
         _professor.setId(user.getUsername());
@@ -702,11 +721,21 @@ public class TeamServiceImpl implements TeamService {
         userRepo.save(_user);
         profRepo.save(_professor);
 
-        executor.execute(() -> notification.sendMessage(
+        executor.execute(() -> {
+            String id = UUID.randomUUID().toString();
+            Token token = new Token();
+            token.setId(id);
+            token.setTeamId(-1L);
+            token.setExpiryDate(new Timestamp(new Date().getTime()+60000000)); //TODO: vedere che fa
+            tokenRepo.save(token);
+
+            String codedToken = Base64.getEncoder().encodeToString((token.getId()+"_"+_user.getUsername()).getBytes());
+            notification.sendMessage(
                 user.getEmail(),
-                "New Registration",
-                "Username: " + user.getUsername() + " password: " + user.getPassword()
-        ));
+                "Activate your Teams account",
+                "Username: " + user.getUsername() + " password: " + user.getPassword() + "\n"+
+                        "Click here to activate your account: http://localhost:8080/auth/verifyEmail/"+codedToken);
+        });
 
 
         return modelMapper.map(_professor,ProfessorDTO.class);
@@ -719,9 +748,7 @@ public class TeamServiceImpl implements TeamService {
             throw new CourseNotFoundException("Course not found!");
         }
 
-        Optional<Professor> optionalProfessorEntity = profRepo.findById(
-                professorId
-        );
+        Optional<Professor> optionalProfessorEntity = profRepo.findById(professorId);
 
         if (!optionalProfessorEntity.isPresent()) {
             throw new ProfessorNotFoundException("Professor not found!");
@@ -847,6 +874,24 @@ public class TeamServiceImpl implements TeamService {
     private boolean isProfessorCourse(String courseName, String profId) {
         return courseRepo.getOne(courseName).getProfessors()
                 .contains(profRepo.getOne(profId));
+    }
+
+    @Override
+    public boolean checkActiveUser (String username){
+        return userRepository.getOne(username).isEnabled();
+    }
+
+    @Override
+    public boolean checkToken (String token){
+        if (!tokenRepo.existsById(token))
+            return false;
+        tokenRepo.deleteById(token);
+        return true;
+    }
+
+    @Override
+    public void enableUser(String username) {
+        userRepository.getOne(username).setActive_user(true);
     }
 
 }

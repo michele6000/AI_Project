@@ -115,4 +115,11 @@ public interface TeamService {
 
     byte[] getImage(String username);
 
+
+    boolean checkActiveUser (String username);
+
+    boolean checkToken (String token);
+
+    void enableUser(String username);
+
 }

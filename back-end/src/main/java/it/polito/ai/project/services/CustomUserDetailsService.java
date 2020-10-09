@@ -1,6 +1,7 @@
 package it.polito.ai.project.services;
 
 import it.polito.ai.project.entities.User;
+import it.polito.ai.project.repositories.TokenRepository;
 import it.polito.ai.project.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,8 +17,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    TokenRepository tokenRepo;
+
     @Override
-    public UserDetails loadUserByUsername(String username)
+    public User loadUserByUsername(String username)
             throws UsernameNotFoundException {
         Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
         if (!user.isPresent()) {
@@ -25,4 +29,5 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         return user.get();
     }
+
 }
