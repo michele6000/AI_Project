@@ -476,6 +476,9 @@ public class TeamServiceImpl implements TeamService {
         if (membersIds.size() > membersIds.stream().distinct().count())
             throw new DuplicatedStudentException("Duplicated members in team proposal!");
 
+        if (teamRepo.findAll().stream().map(Team::getName).collect(Collectors.toList()).contains(name))
+            throw new TeamServiceException("This team name is not available!");
+
         for (String m : membersIds) {
             if (!studentRepo.findById(m).isPresent())
                 throw new StudentNotFoundException("Student not found!");
