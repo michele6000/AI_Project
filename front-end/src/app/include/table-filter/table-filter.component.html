@@ -13,10 +13,10 @@
 <!--  DISATTIVARE EVALUATE se lo stato è READ, NOT_READ-->
 
   <ng-container matColumnDef="creationDate">
-    <th *matHeaderCellDef mat-header-cell class="text-center">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header >
       Creation Date
     </th>
-    <td *matCellDef="let element" mat-cell class="text-center"> {{element['creationDate'] | date:'H:m d/M/y'}} </td>
+    <td *matCellDef="let element" mat-cell > {{element['creationDate'] | date:'H:m d/M/y'}} </td>
   </ng-container>
 
   <ng-container matColumnDef="evaluate" >
