@@ -142,6 +142,10 @@ export class StudentService {
     return this.http.post<boolean>(API_URL + 'vm/' + vmId + '/delete', {});
   }
 
+  getTeamStat(teamId: number){
+    return this.http.get<any>(API_URL + 'team/' + teamId + '/usage');
+  }
+
   /* SUBMISSIONS */
   findSubmissions(courseName: string) {
     return this.http.get<any[]>(API_URL + 'courses/' + courseName + '/getAllSubmissions');

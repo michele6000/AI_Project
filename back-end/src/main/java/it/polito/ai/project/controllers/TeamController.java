@@ -62,6 +62,15 @@ public class TeamController {
         }
     }
 
+    @GetMapping("/{teamId}/usage")
+    public TeamDTO getTeamUsage(@PathVariable Long teamId) {
+        try {
+            return vmService.getTeamUsage(teamId);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
     @GetMapping("/{teamId}/confirmedStudents")
     public List<StudentDTO> getTeamConfirmedStudents(@PathVariable Long teamId) {
         try {

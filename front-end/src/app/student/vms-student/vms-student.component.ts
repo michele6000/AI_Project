@@ -23,6 +23,7 @@ export class VmsStudentComponent implements OnInit {
   courseParam: string;
   corso: CourseModel;
   team: GroupModel;
+  usage: GroupModel;
   canCreateVM = false;
 
   constructor(private dialog: MatDialog, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {}
@@ -46,11 +47,19 @@ export class VmsStudentComponent implements OnInit {
             error => {
               this.genericError();
             });
+          this.studentService.getTeamStat(this.team.id).subscribe(
+            (teamUsage) =>{this.usage = teamUsage;},
+            error => {this.genericError()}
+          );
         }
       },
       error => {
         this.genericError();
       });
+
+
+
+
   }
 
   createVM() {
@@ -200,6 +209,6 @@ export class VmsStudentComponent implements OnInit {
     this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
       duration: 5000
     });
-    location.reload();
+    // location.reload();
   }
 }

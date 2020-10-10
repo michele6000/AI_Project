@@ -42,7 +42,7 @@ export class EditVmProfessorComponent implements OnInit {
       },
       (error) => {
         this.dialogRef.close(false);
-        this.snackBar.open('Error setting limits', 'OK', {
+        this.snackBar.open(error.error.message, 'OK', {
           duration: 5000
         });
       });

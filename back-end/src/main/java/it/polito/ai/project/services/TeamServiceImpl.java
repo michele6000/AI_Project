@@ -597,22 +597,22 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void evictTeam(Long teamId) {
-//        if (!teamRepo.findById(teamId).isPresent()) throw new TeamNotFoundException("Team not found!");
-//
-//        teamRepo
-//                .getOne(teamId)
-//                .getVMInstance()
-//                .forEach(vm -> {
-//                    teamRepo.getOne(teamId).getMembers().forEach(student -> student.getVms().remove(vm)); //elimino in student_vms
-//                    teamRepo.getOne(teamId).getVMInstance().remove(vm); //elimino nella lista del team
-//                    vmRepo.delete(vm); // elimino la vm dalla repo
-//                });
-//
-//        teamRepo
-//                .getOne(teamId)
-//                .getMembers()
-//                .forEach(s -> teamRepo.getOne(teamId).removeMember(s)); //cancello tutti i membri
-//        teamRepo.deleteById(teamId);
+        if (!teamRepo.findById(teamId).isPresent())
+            throw new TeamNotFoundException("Team not found!");
+
+        teamRepo.getOne(teamId)
+                .getVMInstance()
+                .forEach(vm -> {
+                    teamRepo.getOne(teamId).getMembers().forEach(student -> student.getVms().remove(vm)); //elimino in student_vms
+                    teamRepo.getOne(teamId).getVMInstance().remove(vm); //elimino nella lista del team
+                    vmRepo.delete(vm); // elimino la vm dalla repo
+                });
+
+        teamRepo.getOne(teamId)
+                .getMembers()
+                .forEach(s -> teamRepo.getOne(teamId).removeMember(s)); //cancello tutti i membri
+
+        teamRepo.deleteById(teamId);
     }
 
     @Override

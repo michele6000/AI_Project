@@ -299,18 +299,18 @@ public class VmServiceImpl implements VmService {
         }
 
 
-        boolean quota = false;
-        if (vm.getRam() > optionalTeamEntity.get().getLimit_ram()) quota = true;
-        if (vm.getCpu() > optionalTeamEntity.get().getLimit_cpu()) quota = true;
-        if (vm.getHdd() > optionalTeamEntity.get().getLimit_hdd()) quota = true;
-        if (vmRepo.findAll().stream()
-                .filter(_vm -> _vm.getTeam().getId().equals(teamId))
-                .filter(_vm -> _vm.getVmType().getId().equals(optionalVMTypeEntity.get().getId()))
-                .count() + 1 > optionalTeamEntity.get().getLimit_instance())
-            quota = true;
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getRam).sum() + vm.getRam() > optionalTeamEntity.get().getLimit_ram())
+            throw new TeamServiceException("RAM used by team is greater than quota");
 
-        if (quota)
-            throw new TeamServiceException("Quota excedeed!");
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getCpu).sum() + vm.getCpu() > optionalTeamEntity.get().getLimit_cpu())
+            throw new TeamServiceException("CPU used by team is greater than quota");
+
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getHdd).sum() + vm.getHdd() > optionalTeamEntity.get().getLimit_hdd())
+            throw new TeamServiceException("HDD used by team is greater than quota");
+
+        if (optionalTeamEntity.get().getVMInstance().size() + 1 > optionalTeamEntity.get().getLimit_instance())
+            throw new TeamServiceException("Instance number is greater than quota");
+
 
         VM _vm = new VM();
         _vm.setStatus("poweroff");
@@ -362,19 +362,19 @@ public class VmServiceImpl implements VmService {
             throw new TeamNotFoundException("Team not found!");
 
         if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getRam).sum() > team.getLimit_ram())
-            throw new TeamServiceException("Error, RAM used by team is greater than proposed");
+            throw new TeamServiceException("RAM used by team is greater than proposed");
 
         if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getCpu).sum() > team.getLimit_cpu())
-            throw new TeamServiceException("Error, CPU used by team is greater than proposed");
+            throw new TeamServiceException("CPU used by team is greater than proposed");
 
         if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getHdd).sum() > team.getLimit_hdd())
-            throw new TeamServiceException("Error, HDD used by team is greater than proposed");
+            throw new TeamServiceException("HDD used by team is greater than proposed");
 
         if (optionalTeamEntity.get().getVMInstance().stream().filter(vm -> vm.getStatus().equals("poweron")).count() > team.getLimit_active_instance())
-            throw new TeamServiceException("Error, current allowed active instance number is greater than proposed");
+            throw new TeamServiceException("Current allowed active instance number is greater than proposed");
 
         if (optionalTeamEntity.get().getVMInstance().size() > team.getLimit_instance())
-            throw new TeamServiceException("Error, current allowed instance number is greater than proposed");
+            throw new TeamServiceException("Current allowed instance number is greater than proposed");
 
         optionalTeamEntity.get().setLimit_ram(team.getLimit_ram());
         optionalTeamEntity.get().setLimit_cpu(team.getLimit_cpu());
@@ -383,6 +383,23 @@ public class VmServiceImpl implements VmService {
         optionalTeamEntity.get().setLimit_active_instance(team.getLimit_active_instance());
 
         return team;
+    }
+
+    @Override
+    public TeamDTO getTeamUsage(Long teamId) {
+        Optional<Team> optionalTeamEntity = teamRepo.findById(teamId);
+        if (!optionalTeamEntity.isPresent())
+            throw new TeamNotFoundException("Team not found!");
+
+        TeamDTO usage = new TeamDTO();
+        usage.setId(teamId);
+        usage.setLimit_ram(optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getRam).sum());
+        usage.setLimit_cpu(optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getCpu).sum());
+        usage.setLimit_hdd(optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getHdd).sum());
+        usage.setLimit_active_instance((int) optionalTeamEntity.get().getVMInstance().stream().filter(vm -> vm.getStatus().equals("poweron")).count());
+        usage.setLimit_instance(optionalTeamEntity.get().getVMInstance().size());
+
+        return usage;
     }
 
     @Deprecated
