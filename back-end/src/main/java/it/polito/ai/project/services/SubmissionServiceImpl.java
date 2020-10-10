@@ -1,11 +1,9 @@
 package it.polito.ai.project.services;
 
+import it.polito.ai.project.dtos.ProfessorDTO;
 import it.polito.ai.project.dtos.SolutionDTO;
 import it.polito.ai.project.dtos.SubmissionDTO;
-import it.polito.ai.project.entities.Course;
-import it.polito.ai.project.entities.Solution;
-import it.polito.ai.project.entities.Student;
-import it.polito.ai.project.entities.Submission;
+import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
@@ -117,7 +115,11 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .getOne(courseName)
                 .getSubmissions().stream()
                 .sorted(Comparator.comparing(Submission::getExpiryDate))
-                .map(s -> modelMapper.map(s, SubmissionDTO.class)).collect(Collectors.toList());
+                .map(s -> modelMapper
+                        .typeMap(Submission.class, SubmissionDTO.class)
+                        .addMappings(mapper -> mapper.skip(SubmissionDTO::setImage))
+                        .map(s)).collect(Collectors.toList()
+                );
     }
 
     @Override
@@ -386,7 +388,11 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (!course.isEnabled())
             throw new CourseDisabledException("Course not enabled!");
 
-        return modelMapper.map(getLastSolVersion(submissionId, studentId), SolutionDTO.class);
+        return modelMapper
+                .typeMap(Solution.class,SolutionDTO.class)
+                .addMappings(mapper -> mapper.skip(SolutionDTO::setImage))
+                .map(getLastSolVersion(submissionId, studentId)
+                );
 
     }
 
