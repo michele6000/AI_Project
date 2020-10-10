@@ -1,3 +1,9 @@
+<mat-toolbar *ngIf="constraintMasterCheckbox && this.showCheckbox">
+    <p class="font-size-1rem centered">
+      <span *ngIf="constraintMasterCheckboxSelectAll">All {{numberOfEntrySelected}} elements in this page was selected.&nbsp;</span><span *ngIf="constraintMasterCheckboxSelectAll" class="cursor-pointer here" (click)="selectAll()">Click here and select all</span>
+      <span *ngIf="constraintMasterCheckboxDeselectAll">All {{numberOfEntrySelected}} elements was selected.&nbsp;</span><span *ngIf="constraintMasterCheckboxDeselectAll" class="cursor-pointer here" (click)="deselctAll()">Deselect all</span>
+    </p>
+</mat-toolbar>
 <table [dataSource]="dataSource" style="margin-top: 20px" class="mat-elevation-z4 w-100" mat-table matSort>
   <ng-container matColumnDef="select">
     <th *matHeaderCellDef mat-header-cell>

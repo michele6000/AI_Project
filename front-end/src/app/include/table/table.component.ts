@@ -41,8 +41,13 @@ export class TableComponent implements OnInit {
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
 
-  constructor(private dialog: MatDialog, private snackBar: MatSnackBar) {
-  }
+  /* checkbox like gmail */
+  numberOfEntrySelected: number;
+  constraintMasterCheckbox: boolean = false;
+  constraintMasterCheckboxSelectAll: boolean = false;
+  constraintMasterCheckboxDeselectAll: boolean = false;
+
+  constructor(private dialog: MatDialog, private snackBar: MatSnackBar) {}
 
   @Input('data') set data(data) {
     this.dataSource.data = data;
@@ -58,7 +63,7 @@ export class TableComponent implements OnInit {
   ngOnInit(): void {
     if (this.showEdit) {
       if (this.showChangeStatus) {
-        if (this.showDetails){
+        if (this.showDetails) {
           this.showAddProf = true;
           this.showRemoveProf = true;
           this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'enabled', 'addProf', 'removeProf', 'edit', 'details'];
@@ -99,13 +104,28 @@ export class TableComponent implements OnInit {
   }
 
   changeStatusAll(checked: boolean) {
+    this.numberOfEntrySelected = this.paginator.pageSize;
     if (checked) {
-      for (const s of this.dataSource.data) {
-        if (this.checkedObjects.indexOf(s) === -1) {
-          this.checkedObjects.push(s);
+      if (this.dataSource.data.length >= this.numberOfEntrySelected) {
+        // gestione like gmail solo se è necessario, ovvero il numero di entri nella tabella è maggiore del size del paginator
+        this.constraintMasterCheckbox = true;
+        this.constraintMasterCheckboxSelectAll = true;
+        this.constraintMasterCheckboxDeselectAll = false;
+        for (let i = 0; i < this.numberOfEntrySelected; i++) {
+          if (this.checkedObjects.indexOf(this.dataSource.data[i]) === -1) {
+            this.checkedObjects.push(this.dataSource.data[i]);
+          }
+        }
+      } else {
+        for (const s of this.dataSource.data) {
+          if (this.checkedObjects.indexOf(s) === -1) {
+            this.checkedObjects.push(s);
+          }
         }
       }
     } else {
+      this.constraintMasterCheckbox = false;
+      this.constraintMasterCheckboxSelectAll = false;
       this.checkedObjects = [];
     }
   }
@@ -128,11 +148,11 @@ export class TableComponent implements OnInit {
   }
 
   delete() {
-    if (this.checkedObjects.length > 0){
+    if (this.checkedObjects.length > 0) {
       this.dialog.open(ConfirmDeleteComponent)
         .afterClosed()
         .subscribe(result => {
-          if (result){
+          if (result) {
             this.onDelete.emit(this.checkedObjects);
           }
           this.checkedObjects = [];
@@ -166,5 +186,24 @@ export class TableComponent implements OnInit {
 
   addProfessor(element: any) {
     this.onAddProf.emit(element);
+  }
+
+  // select all
+  selectAll() {
+    this.numberOfEntrySelected = this.dataSource.data.length;
+    for (const s of this.dataSource.data) {
+      if (this.checkedObjects.indexOf(s) === -1) {
+        this.constraintMasterCheckboxSelectAll = false;
+        this.constraintMasterCheckboxDeselectAll = true;
+        this.checkedObjects.push(s);
+      }
+    }
+  }
+
+  deselctAll() {
+    this.constraintMasterCheckbox = false;
+    this.constraintMasterCheckboxSelectAll = false;
+    this.constraintMasterCheckboxDeselectAll = false;
+    this.checkedObjects = [];
   }
 }
