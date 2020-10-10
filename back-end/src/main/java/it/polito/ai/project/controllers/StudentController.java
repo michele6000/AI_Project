@@ -149,10 +149,25 @@ public class StudentController {
             return submissionService.evaluateSolution(solutionId, evaluation, getCurrentUsername());
         } catch (TeamServiceException | ResponseStatusException e) {
             if (e instanceof TeamServiceException)
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-            else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            else throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
+    @PostMapping("/{studentId}/{solutionId}/addCorrection")
+    public SolutionDTO addCorrection(@PathVariable String studentId, @PathVariable Long solutionId, @RequestPart("file") MultipartFile file) {
+        if (getCurrentRoles().contains("ROLE_STUDENT"))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to evaluate a solution!");
+        try {
+            return submissionService.addCorrection(solutionId,getCurrentUsername(),file);
+        } catch (TeamServiceException | ResponseStatusException e) {
+            if (e instanceof TeamServiceException)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            else throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+
 
     @PostMapping("/{studentId}/{submissionId}/addSolution") //
     public SolutionDTO addSolution(@PathVariable String studentId, @PathVariable Long submissionId,
