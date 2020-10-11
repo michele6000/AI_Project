@@ -201,12 +201,21 @@ export class ProfessorService {
     return this.http.post<any>(API_URL + 'courses/' + solutionId + '/stopRevisions', {});
   }
 
-  evaluateSolution(studentId: string, solutionId: number, evaluation: number) {
-    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/evaluateSolution?evaluation=' + evaluation, {});
+  evaluateSolution(studentId: string, solutionId: number, evaluation: number, file: File) {
+    const formData = new FormData();
+    const evaluationStr = new Blob([JSON.stringify(evaluation)], { type: 'application/json'});
+    // se lo mando come number me lo sottolinea di rosso -> @TODO: Testare entrambi i casi
+    formData.append('mark', evaluationStr);
+    formData.append('file', file);
+    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/addCorrection', formData);
   }
 
-  reviewSolution(studentId: string, solutionId: number, review: string) {
-    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/reviewSolution', {review});
+  reviewSolution(studentId: string, solutionId: number, review: string, file: File) {
+    const formData = new FormData();
+    // const reviewStr = new Blob([JSON.stringify(review)], { type: 'application/json'});
+    formData.append('message', review);
+    formData.append('file', file);
+    return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/addCorrection', formData);
   }
 
   updateCourse(course: CourseModel){

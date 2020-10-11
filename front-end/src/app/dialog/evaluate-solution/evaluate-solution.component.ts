@@ -16,6 +16,8 @@ export class EvaluateSolutionComponent implements OnInit {
   evaluation: number;
   error = false;
   errorStr = '';
+  filename: string = 'Choose File';
+  file: File;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: SolutionModel, private professorService: ProfessorService,
               private dialogRef: MatDialogRef<EvaluateSolutionComponent>, private snackBar: MatSnackBar) {
@@ -33,7 +35,7 @@ export class EvaluateSolutionComponent implements OnInit {
     } else {
       this.error = false;
 
-      this.professorService.evaluateSolution(this.solution.matricola, this.solution.id, evaluation).subscribe((res) => {
+      this.professorService.evaluateSolution(this.solution.matricola, this.solution.id, evaluation, this.file).subscribe((res) => {
         this.snackBar.open('Solution evaluated successfully.', 'OK', {
           duration: 5000
         });
@@ -43,6 +45,15 @@ export class EvaluateSolutionComponent implements OnInit {
           duration: 5000
         });
       });
+    }
+  }
+
+  handleFileSelect($event: any) {
+    this.file = $event.target.files[0];
+    if (this.file !== undefined) {
+      this.filename = this.file.name;
+    } else {
+      this.filename = 'Choose file';
     }
   }
 }
