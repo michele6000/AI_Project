@@ -6,7 +6,7 @@ import {CreateAssignmentComponent} from '../../dialog/create-assignment/create-a
 import {CourseModel} from '../../models/course.model';
 import {ProfessorService} from '../../services/professor.service';
 import * as moment from 'moment';
-import {from, Subscription} from 'rxjs';
+import {from} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
 import {StudentSubmissionModel} from '../../models/student-submission.model';
 import {SolutionModel} from '../../models/solution.model';
@@ -24,11 +24,8 @@ const API_URL_LOCAL = '/local/API/';
   styleUrls: ['./assignments.component.css']
 })
 export class AssignmentsComponent implements OnInit, OnDestroy {
-
   consegne: any[];
-
   columnsElaborati = ['name', 'surname', 'matricola', 'status'];
-
   private courseParam: string;
   corso: CourseModel;
   show: boolean;
@@ -38,7 +35,6 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
   }
 
   loadAssignments() {
-
     // 1 - Recupero l'elenco di studenti del corso
     this.professorService.getEnrolledStudents(this.corso.name).subscribe(
       (resStudents) => {
@@ -106,20 +102,16 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
     if (this.corso.name.length === 0) {
       return;
     }
-
     this.loadAssignments();
   }
 
   ngOnDestroy() {
-
   }
 
   showHistory(studentSub: StudentSubmissionModel) {
     this.dialog.open(ShowHistoryComponent, {data: studentSub})
       .afterClosed()
-      .subscribe(result => {
-
-      });
+      .subscribe(result => {});
   }
 
   createAssignment($event) {

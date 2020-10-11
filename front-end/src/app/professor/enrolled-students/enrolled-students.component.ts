@@ -75,7 +75,8 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   deleteStudent(selectedStudents: StudentModel[]) {
     const res = from(selectedStudents).pipe(

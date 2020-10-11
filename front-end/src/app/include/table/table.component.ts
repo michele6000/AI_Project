@@ -47,7 +47,8 @@ export class TableComponent implements OnInit {
   constraintMasterCheckboxSelectAll: boolean = false;
   constraintMasterCheckboxDeselectAll: boolean = false;
 
-  constructor(private dialog: MatDialog, private snackBar: MatSnackBar) {}
+  constructor(private dialog: MatDialog, private snackBar: MatSnackBar) {
+  }
 
   @Input('data') set data(data) {
     this.dataSource.data = data;

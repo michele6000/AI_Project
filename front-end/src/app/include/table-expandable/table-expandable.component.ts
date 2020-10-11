@@ -12,8 +12,8 @@ import {
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {MatSort} from '@angular/material/sort';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {MatPaginator} from "@angular/material/paginator";
-import {GroupModel} from "../../models/group.model";
+import {MatPaginator} from '@angular/material/paginator';
+import {GroupModel} from '../../models/group.model';
 
 /**
  * @title Table with expandable rows
@@ -86,9 +86,9 @@ export class TableExpandableComponent implements OnInit {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     if (this.showEdit) {
-      if (this.showStatistics){
+      if (this.showStatistics) {
         this.columnsWithEdit = [...this.columnsToDisplay, 'modify', 'statistics', 'expand'];
-      } else{
+      } else {
         this.columnsWithEdit = [...this.columnsToDisplay, 'modify', 'expand'];
       }
     } else {

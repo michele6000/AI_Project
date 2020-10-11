@@ -17,6 +17,7 @@ export class StatisticsVmComponent implements OnInit {
     this.statistics.splice(0, 1);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
 }

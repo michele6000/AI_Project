@@ -15,10 +15,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 export class ProfessorComponent implements OnInit, OnDestroy {
   corsi: CourseModel[] = [];
   singoloCorso: CourseModel;
-
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
-
   s1: Subscription;
 
   constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService, private professorService: ProfessorService, private snackBar: MatSnackBar) {
@@ -39,7 +37,8 @@ export class ProfessorComponent implements OnInit, OnDestroy {
     this.s1.unsubscribe();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   checkUrl() {
     this.route.paramMap.subscribe(param => {

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {CourseModel} from '../models/course.model';
 import {VmModel} from '../models/vm.model';
 import {VmType} from '../models/vm-type.model';
@@ -7,7 +7,6 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {StudentModel} from '../models/student.model';
 import {GroupModel} from '../models/group.model';
 import {SubmissionModel} from '../models/submission.model';
-import * as moment from 'moment';
 import {SolutionModel} from '../models/solution.model';
 import {ProfessorModel} from '../models/professor.model';
 
@@ -17,10 +16,8 @@ const API_URL = '/api/API/';
   providedIn: 'root'
 })
 export class ProfessorService {
-
   // private dataStore: {courses: CourseModel[]} = {courses: null};
   eventsSubjectChangeCorsoSideNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
-
   courses: Observable<CourseModel[]>;
   students: Observable<StudentModel[]>;
   private coursesSubject: BehaviorSubject<CourseModel[]>;
@@ -34,7 +31,6 @@ export class ProfessorService {
   }
 
   /* COURSES */
-
   createCourse(course: CourseModel) {
     return this.http.post(
       API_URL + 'courses',
@@ -46,18 +42,6 @@ export class ProfessorService {
     return this.http.post(
       API_URL + 'courses/' + courseName + '/addProfessor?id=' + teacherMatricola, {}
     );
-    /* .subscribe(
-      (payload: any) => {
-        if (localStorage.getItem('id')) {
-          this.findCoursesByProfessor(localStorage.getItem('id'));
-        } else {
-          // @todo Redirect a pagina 500
-        }
-      },
-      (error: any) => {
-
-      }
-    );*/
   }
 
   findCourseByIdentifier(courseIdentifier: string): Observable<CourseModel> {
@@ -104,7 +88,6 @@ export class ProfessorService {
   }
 
   /* VMs */
-
   createVMType(courseName: string, vm: VmType) {
     return this.http.post<string>(API_URL + 'courses/' + courseName + '/createVMType', vm);
   }
@@ -117,12 +100,11 @@ export class ProfessorService {
     return this.http.get<VmModel[]>(API_URL + 'team/' + teamId + '/vms');
   }
 
-  findVmTypeByCourse(courseName: string){
+  findVmTypeByCourse(courseName: string) {
     return this.http.get<VmModel>(API_URL + 'courses/' + courseName + '/getVMType');
   }
 
   /* STUDENTS */
-
   // Richiede l'elenco degli studenti al server se non ancora noti,
   //  altrimenti li recupera dalla variabile locale
   getStudents(refresh = false) {
@@ -169,7 +151,7 @@ export class ProfessorService {
   /* SUBMISSIONS */
   createAssignment(courseName: string, submission: SubmissionModel, file: File) {
     const formData = new FormData();
-    const submissionStr = new Blob([JSON.stringify(submission)], { type: 'application/json'});
+    const submissionStr = new Blob([JSON.stringify(submission)], {type: 'application/json'});
     formData.append('submission', submissionStr);
     /*formData.append('submission.submissionDTO.content', submission.content);
     formData.append('submission.submissionDTO.expiryDate', moment(submission.expiryDate).format('YYYY-MM-DD HH:mm:ss'));
@@ -203,7 +185,7 @@ export class ProfessorService {
 
   evaluateSolution(studentId: string, solutionId: number, evaluation: number, file: File) {
     const formData = new FormData();
-    const evaluationStr = new Blob([JSON.stringify(evaluation)], { type: 'application/json'});
+    const evaluationStr = new Blob([JSON.stringify(evaluation)], {type: 'application/json'});
     // se lo mando come number me lo sottolinea di rosso -> @TODO: Testare entrambi i casi
     formData.append('mark', evaluationStr);
     formData.append('file', file);
@@ -218,12 +200,12 @@ export class ProfessorService {
     return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/addCorrection', formData);
   }
 
-  updateCourse(course: CourseModel){
+  updateCourse(course: CourseModel) {
     return this.http.post<boolean>(API_URL + 'courses/' + course.name + '/update', course);
   }
 
-  deleteCourse(courseName: string){
-    if (courseName.length > 0 ) {
+  deleteCourse(courseName: string) {
+    if (courseName.length > 0) {
       return this.http.post<boolean>(API_URL + 'courses/' + courseName + '/delete', {});
     }
   }
@@ -232,19 +214,19 @@ export class ProfessorService {
     return this.http.get<StudentModel[]>(API_URL + 'team/' + teamId + '/members');
   }
 
-  findAllProfessor(){
+  findAllProfessor() {
     return this.http.get<ProfessorModel[]>(API_URL + 'professor/getAll');
   }
 
-  findAllProsessorByCourse(courseName: string){
+  findAllProsessorByCourse(courseName: string) {
     return this.http.get<ProfessorModel[]>(API_URL + 'courses/' + courseName + '/professors');
   }
 
-  deleteProfessorFromCourse(courseName: string, professorId: string){
+  deleteProfessorFromCourse(courseName: string, professorId: string) {
     return this.http.post(API_URL + 'courses/' + courseName + '/deleteProfessor?id=' + professorId, {});
   }
 
-  findStatisticsByTeam(teamId: number){
+  findStatisticsByTeam(teamId: number) {
     return this.http.get<any>(API_URL + 'team/' + teamId + '/stats');
   }
 

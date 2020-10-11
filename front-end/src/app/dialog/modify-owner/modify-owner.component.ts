@@ -3,7 +3,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {NgForm} from '@angular/forms';
 import {StudentService} from '../../services/student.service';
 import {GroupModel} from '../../models/group.model';
-import {VmModel} from '../../models/vm.model';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
@@ -15,7 +14,8 @@ export class ModifyOwnerComponent implements OnInit {
   error = false;
   dataVMAndStudents: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private dialogRef: MatDialogRef<ModifyOwnerComponent>, private studentService: StudentService,  private snackBar: MatSnackBar) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: GroupModel, private dialogRef: MatDialogRef<ModifyOwnerComponent>,
+              private studentService: StudentService, private snackBar: MatSnackBar) {
     this.dataVMAndStudents = data;
   }
 

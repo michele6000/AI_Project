@@ -10,11 +10,7 @@ export class RouteGuardService implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-
-    // this will be passed from the route config
-    // on the data property
     const expectedRole = route.data.expectedRole;
-
     const rolesStr = localStorage.getItem('roles');
     const roles = rolesStr ? rolesStr.split(',') : [];
 

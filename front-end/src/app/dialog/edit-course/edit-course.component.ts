@@ -20,7 +20,6 @@ export class EditCourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
   }
 
   updateCourse(f: NgForm) {

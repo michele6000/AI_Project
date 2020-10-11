@@ -6,8 +6,7 @@ import {CourseModel} from '../../../models/course.model';
 import {StudentService} from '../../../services/student.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {GroupModel} from '../../../models/group.model';
-import {concatMap, toArray} from 'rxjs/operators';
-import {forkJoin, from, Observable} from 'rxjs';
+import {forkJoin} from 'rxjs';
 import {MatDatepickerInputEvent} from '@angular/material/datepicker';
 
 @Component({
@@ -21,19 +20,17 @@ export class CreateGroupComponent implements OnInit {
   groupsColumns = ['name', 'proposer'];
   groupsData: GroupModel[] = [];
   innerGroupColumns = ['id', 'name', 'firstName', 'status'];
-
   course: CourseModel;
-
   selectedStudents: StudentModel[] = [];
   error = false;
   message = '';
   private courseParam: string;
-
   minDate: Date;
   maxDate: Date;
   chosenTimeout: Date;
 
-  constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {
+  constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService,
+              private snackBar: MatSnackBar) {
     const today = new Date();
     this.minDate = new Date();
     this.minDate.setDate(today.getDate() + 1);
@@ -43,10 +40,8 @@ export class CreateGroupComponent implements OnInit {
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
-
     // Recupero i parametri del corso
     this.course = this.studentService.findCourseByNameUrl(this.courseParam);
-
     this.initData();
   }
 
@@ -60,7 +55,6 @@ export class CreateGroupComponent implements OnInit {
         this.genericError();
       }
     );
-
     // Recupero l'elenco delle proposte inviate / ricevute
     this.studentService.teams.subscribe((teams) => {
       const groupData = teams ? teams.filter(t => t.courseName === this.course.name) : [];

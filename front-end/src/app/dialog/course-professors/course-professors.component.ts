@@ -17,6 +17,7 @@ export class CourseProfessorsComponent implements OnInit {
     this.courseName = data.courseName;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
 }

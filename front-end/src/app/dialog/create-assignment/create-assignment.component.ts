@@ -2,11 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {FormGroup, NgForm} from '@angular/forms';
 import {MatDialogRef} from '@angular/material/dialog';
 import {MatDatepickerInputEvent} from '@angular/material/datepicker';
-import {SubmissionModel} from "../../models/submission.model";
-import {ProfessorService} from "../../services/professor.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {SubmissionModel} from '../../models/submission.model';
+import {ProfessorService} from '../../services/professor.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {CourseModel} from '../../models/course.model';
-import {Router} from "@angular/router";
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-create-assignment',
@@ -28,7 +28,7 @@ export class CreateAssignmentComponent implements OnInit {
 
   private courseParam: string;
   private corso: CourseModel;
-  filename: string = "Choose file";
+  filename: string = 'Choose file';
 
   constructor(private dialogRef: MatDialogRef<CreateAssignmentComponent>, private professorService: ProfessorService,
               private snackBar: MatSnackBar, private router: Router) {
@@ -52,7 +52,6 @@ export class CreateAssignmentComponent implements OnInit {
       // close  dialog
       this.professorService.createAssignment(this.corso.name, submission, this.file).subscribe(
         (res) => {
-          // @Todo -> fare la richiesta per avere anche l'assignment appena inserito
           this.dialogRef.close(true);
           this.snackBar.open('Assignment created successfully.', 'OK', {
             duration: 5000

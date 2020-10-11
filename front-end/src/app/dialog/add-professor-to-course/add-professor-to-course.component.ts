@@ -16,12 +16,14 @@ export class AddProfessorToCourseComponent implements OnInit {
   professors: ProfessorModel[];
   courseName: string;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<AddProfessorToCourseComponent>, private professorService: ProfessorService, private snackBar: MatSnackBar) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<AddProfessorToCourseComponent>,
+              private professorService: ProfessorService, private snackBar: MatSnackBar) {
     this.professors = data.professors;
     this.courseName = data.courseName;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   addProfessorToCourse(f: NgForm) {
     const professorId = f.value.professor;

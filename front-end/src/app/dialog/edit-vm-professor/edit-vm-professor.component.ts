@@ -3,7 +3,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {GroupModel} from '../../models/group.model';
 import {NgForm} from '@angular/forms';
 import {ProfessorService} from '../../services/professor.service';
-import {VmType} from '../../models/vm-type.model';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
@@ -16,14 +15,16 @@ export class EditVmProfessorComponent implements OnInit {
   group: GroupModel;
   nameButton = 'Create';
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private professorService: ProfessorService, private snackBar: MatSnackBar, private dialogRef: MatDialogRef<EditVmProfessorComponent>) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private professorService: ProfessorService, private snackBar: MatSnackBar,
+              private dialogRef: MatDialogRef<EditVmProfessorComponent>) {
     this.group = data;
     if (this.group !== undefined) {
       this.nameButton = 'Update';
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   modify(f: NgForm) {
     const groupForm = new GroupModel();
@@ -47,5 +48,4 @@ export class EditVmProfessorComponent implements OnInit {
         });
       });
   }
-
 }

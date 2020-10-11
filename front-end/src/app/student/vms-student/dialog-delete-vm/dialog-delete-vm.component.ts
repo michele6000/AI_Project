@@ -7,13 +7,13 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
   styleUrls: ['./dialog-delete-vm.component.css']
 })
 export class DialogDeleteVmComponent implements OnInit {
-
   name: string;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: string) {
     this.name = data;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
 }

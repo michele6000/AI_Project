@@ -4,10 +4,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {VmModel} from '../../../models/vm.model';
 import {StudentService} from '../../../services/student.service';
-import {CreateAssignmentComponent} from '../../../dialog/create-assignment/create-assignment.component';
 import {MatDialog} from '@angular/material/dialog';
-import {ModifyOwnerComponent} from '../../../dialog/modify-owner/modify-owner.component';
-import {AddOwnerComponent} from '../../../dialog/add-owner/add-owner.component';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {GroupModel} from '../../../models/group.model';
 
@@ -19,11 +16,9 @@ import {GroupModel} from '../../../models/group.model';
 
 // Componente padre: VmsStudentComponent
 export class VmsTableComponent implements OnInit {
-
   columnsToDisplay = [];
   columnsWithCheckbox = [];
   dataSource = new MatTableDataSource();
-
   @ViewChild(MatTable)
   table: MatTable<any>;
   @Output('edit') onEdit: EventEmitter<any> = new EventEmitter<any>();
@@ -34,10 +29,6 @@ export class VmsTableComponent implements OnInit {
   paginator: MatPaginator;
   @ViewChild(MatSort, {static: true})
   sort: MatSort;
-
-  constructor(private studentService: StudentService, private dialog: MatDialog, private snackBar: MatSnackBar) {
-  }
-
   @Input() team: GroupModel;
 
   @Input('data') set data(data) {
@@ -49,6 +40,9 @@ export class VmsTableComponent implements OnInit {
 
   @Input('columns') set columns(columns) {
     this.columnsToDisplay = columns;
+  }
+
+  constructor(private studentService: StudentService, private dialog: MatDialog, private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {

@@ -20,7 +20,9 @@ export class GroupsComponent implements OnInit, OnDestroy {
   private corso: CourseModel;
   private changeCorsoSub: Subscription;
 
-  constructor(private studentService: StudentService, private componentFactoryResolver: ComponentFactoryResolver, private router: Router, private snackBar: MatSnackBar) {}
+  constructor(private studentService: StudentService, private componentFactoryResolver: ComponentFactoryResolver, private router: Router,
+              private snackBar: MatSnackBar) {
+  }
 
   ngOnInit() {
     // in ascolto sul BehaviorSubject per cambiare le informazioni del gruppo in base al corso

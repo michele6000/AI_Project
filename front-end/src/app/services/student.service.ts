@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {CourseModel} from '../models/course.model';
 import {HttpClient} from '@angular/common/http';
 import {VmStudent} from '../models/vm-student.model';
@@ -16,9 +16,7 @@ const API_URL = '/api/API/';
   providedIn: 'root'
 })
 export class StudentService {
-
   eventsSubjectChangeCorsoSideNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
-
   courses: Observable<CourseModel[]>;
   teams: Observable<GroupModel[]>;
   private coursesSubject: BehaviorSubject<CourseModel[]>;
@@ -70,7 +68,6 @@ export class StudentService {
   proposeTeam(students: StudentModel[], courseName: string, groupName: string, timeout: Date) {
     const studentIds = students.map(s => s.id);
     studentIds.push(localStorage.getItem('id'));
-
     return this.http.post(
       API_URL + 'courses/' + courseName + '/proposeTeam?name=' + groupName + '&timestamp=' + moment(timeout).format('YYYY-MM-DD HH:mm:ss'), studentIds
     );
@@ -88,7 +85,7 @@ export class StudentService {
     return this.http.post<any>(API_URL + 'team/' + teamId + '/createVmInstance', vm);
   }
 
-  modifyConfigurationVm(vmId: number, vm: VmStudent){
+  modifyConfigurationVm(vmId: number, vm: VmStudent) {
     return this.http.post<any>(API_URL + 'vm/' + vmId + '/modifyConfiguration', vm);
   }
 
@@ -142,7 +139,7 @@ export class StudentService {
     return this.http.post<boolean>(API_URL + 'vm/' + vmId + '/delete', {});
   }
 
-  getTeamStat(teamId: number){
+  getTeamStat(teamId: number) {
     return this.http.get<any>(API_URL + 'team/' + teamId + '/usage');
   }
 
@@ -162,14 +159,14 @@ export class StudentService {
   addSolution(studentId: string, submissionId: number, solution: File) {
     const formData = new FormData();
     const solutionModel = new SolutionModel();
-    const solutionStr = new Blob([JSON.stringify(solutionModel)], { type: 'application/json'});
+    const solutionStr = new Blob([JSON.stringify(solutionModel)], {type: 'application/json'});
     formData.append('solution', solutionStr);
     formData.append('file', solution);
     return this.http.post<any>(API_URL + 'students/' + studentId + '/' + submissionId + '/addSolution', formData);
   }
 
   // /API/courses/{courseName}/professors
-  findProfessorsByCourse(courseName: string){
+  findProfessorsByCourse(courseName: string) {
     return this.http.get<ProfessorModel[]>(API_URL + 'courses/' + courseName + '/professors/');
   }
 

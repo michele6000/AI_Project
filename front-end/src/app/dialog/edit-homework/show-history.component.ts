@@ -1,10 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {ProfessorService} from '../../services/professor.service';
 import {NgForm} from '@angular/forms';
-import {SolutionModel} from "../../models/solution.model";
-import {StudentSubmissionModel} from "../../models/student-submission.model";
-import {StudentService} from "../../services/student.service";
+import {StudentSubmissionModel} from '../../models/student-submission.model';
+import {StudentService} from '../../services/student.service';
 
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
@@ -36,7 +34,6 @@ export class ShowHistoryComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
   }
 
   handleFileSelect($event: any) {
@@ -58,6 +55,6 @@ export class ShowHistoryComponent implements OnInit {
 
 
   handleShowSolution(solutionId: number) {
-    window.open('//' + API_URL_PUBLIC + 'students/solutions/getImage/'  + solutionId , '_blank');
+    window.open('//' + API_URL_PUBLIC + 'students/solutions/getImage/' + solutionId, '_blank');
   }
 }

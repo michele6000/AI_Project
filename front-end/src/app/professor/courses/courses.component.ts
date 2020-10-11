@@ -9,7 +9,6 @@ import {AuthService} from '../../auth/auth.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {from} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
-import {ModifyVmStudentComponent} from '../../dialog/modify-vm-student/modify-vm-student.component';
 import {CourseProfessorsComponent} from '../../dialog/course-professors/course-professors.component';
 import {AddProfessorToCourseComponent} from '../../dialog/add-professor-to-course/add-professor-to-course.component';
 import {RemoveProfessorFromCourseComponent} from '../../dialog/remove-professor-from-course/remove-professor-from-course.component';
@@ -25,7 +24,8 @@ export class CoursesComponent implements OnInit {
   data: CourseModel[] = [];
   id: string = null;
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute,
+              private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {

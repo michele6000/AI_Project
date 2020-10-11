@@ -17,6 +17,7 @@ export class ShowTeamMembersComponent implements OnInit {
     this.studentsInTeam = data.students;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
 }

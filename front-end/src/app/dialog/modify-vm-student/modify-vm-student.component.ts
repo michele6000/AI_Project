@@ -1,5 +1,4 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {GroupModel} from '../../models/group.model';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {VmStudent} from '../../models/vm-student.model';
@@ -19,14 +18,16 @@ export class ModifyVmStudentComponent implements OnInit {
   courseName: string;
 
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService, private dialogRef: MatDialogRef<ModifyVmStudentComponent>,  private snackBar: MatSnackBar) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService,
+              private dialogRef: MatDialogRef<ModifyVmStudentComponent>, private snackBar: MatSnackBar) {
     this.vmConfigAndLimitsPerTeam = data;
     this.courseName = this.vmConfigAndLimitsPerTeam.courseName;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
-  edit(f: NgForm){
+  edit(f: NgForm) {
     const vm = new VmStudent();
     vm.ram = f.value.ram;
     vm.cpu = f.value.vcpu;
@@ -62,6 +63,4 @@ export class ModifyVmStudentComponent implements OnInit {
       );
     }
   }
-
-
 }

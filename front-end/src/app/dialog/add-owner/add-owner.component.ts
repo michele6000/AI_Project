@@ -3,7 +3,6 @@ import {NgForm} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {GroupModel} from '../../models/group.model';
 import {StudentService} from '../../services/student.service';
-import {StudentModel} from '../../models/student.model';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
@@ -20,7 +19,8 @@ export class AddOwnerComponent implements OnInit {
     this.dataVMAndStudents = data;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   addOwner(f: NgForm) {
     const studentId = f.value.matricola;

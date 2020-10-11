@@ -13,15 +13,11 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   styleUrls: ['./student.component.css']
 })
 export class StudentComponent implements OnInit {
-
   corsi: CourseModel[] = [];
   professors: ProfessorModel[] = [];
-
   singoloCorso: CourseModel;
-
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
-
   s1: Subscription;
   professorsList = '';
 

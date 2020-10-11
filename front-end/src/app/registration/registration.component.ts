@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {NgForm} from "@angular/forms";
-import {UserModel} from "../models/user.models";
-import {AuthService} from "../auth/auth.service";
+import {NgForm} from '@angular/forms';
+import {UserModel} from '../models/user.models';
+import {AuthService} from '../auth/auth.service';
 import {Router} from '@angular/router';
 
 @Component({
@@ -10,7 +10,6 @@ import {Router} from '@angular/router';
   styleUrls: ['./registration.component.css']
 })
 export class RegistrationComponent implements OnInit {
-
   errorPw = false;
   notValidDomain = false;
   file: File;

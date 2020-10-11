@@ -18,7 +18,6 @@ const API_URL_LOCAL = 'localhost:8080/API/';
   styleUrls: ['./assignments-student.component.css']
 })
 export class AssignmentsStudentComponent implements OnInit {
-
   file: File;
   consegne: SubmissionModel[] = [];
   private courseParam: string;
@@ -37,7 +36,6 @@ export class AssignmentsStudentComponent implements OnInit {
 
   private _isExpansionIndicator(target: EventTarget): boolean {
     const expansionIndicatorClass = 'mat-expansion-indicator';
-
     return (target['classList'] && target['classList'].contains(expansionIndicatorClass));
   }
 

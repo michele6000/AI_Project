@@ -28,7 +28,7 @@ export class ReviewSolutionComponent implements OnInit {
 
   review(f: NgForm) {
     const revision = f.value.revision;
-    if (this.file !== undefined){
+    if (this.file !== undefined) {
       this.error = false;
       this.errorStr = '';
       this.professorService.reviewSolution(this.solution.matricola, this.solution.id, revision, this.file).subscribe((res) => {

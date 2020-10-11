@@ -22,7 +22,8 @@ export class CreateVmProfessorComponent implements OnInit {
     this.courseName = data;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   create(f: NgForm) {
     const vm = new VmType();

@@ -19,16 +19,16 @@ import {StatisticsVmComponent} from '../../dialog/statistics-vm/statistics-vm.co
 export class VmsComponent implements OnInit {
   data = [];
   columns = [];
-
   courseParam: string;
   corso: CourseModel;
   groupsData: GroupModel[] = [];
   groupsColumns = ['id', 'name'];
   innerGroupColumns = ['accessLink', 'owner', 'status'];
-
   hasVMType = false;
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService, private snackBar: MatSnackBar) {}
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private router: Router, private professorService: ProfessorService,
+              private snackBar: MatSnackBar) {
+  }
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];

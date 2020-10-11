@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {UserModel} from '../models/user.models';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {shareReplay, tap} from 'rxjs/operators';
@@ -118,7 +118,7 @@ export class AuthService {
     this.router.navigate(['home']);
   }
 
-  register(user: UserModel,  file: File) {
+  register(user: UserModel, file: File) {
     const email = user.email;
     let url = '';
     if (email.includes(DOMINIO_PROFESSOR)) {
@@ -128,7 +128,7 @@ export class AuthService {
     }
 
     const formData = new FormData();
-    const submissionStr = new Blob([JSON.stringify(user)], { type: 'application/json'});
+    const submissionStr = new Blob([JSON.stringify(user)], {type: 'application/json'});
     formData.append('user', submissionStr);
     formData.append('file', file);
 
