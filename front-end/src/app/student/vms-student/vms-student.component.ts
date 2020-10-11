@@ -26,7 +26,8 @@ export class VmsStudentComponent implements OnInit {
   usage: GroupModel;
   canCreateVM = false;
 
-  constructor(private dialog: MatDialog, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {}
+  constructor(private dialog: MatDialog, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {
+  }
 
   ngOnInit(): void {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
@@ -48,16 +49,18 @@ export class VmsStudentComponent implements OnInit {
               this.genericError();
             });
           this.studentService.getTeamStat(this.team.id).subscribe(
-            (teamUsage) =>{this.usage = teamUsage;},
-            error => {this.genericError()}
+            (teamUsage) => {
+              this.usage = teamUsage;
+            },
+            error => {
+              this.genericError();
+            }
           );
         }
       },
       error => {
         this.genericError();
       });
-
-
 
 
   }
@@ -160,19 +163,25 @@ export class VmsStudentComponent implements OnInit {
             const studentsNotAvailableIds = owners.map(s => s.id);
             // filtro solo gli studenti che non sono ancora owners della vm
             studentsAvailable = studentInTeam.filter(s => !studentsNotAvailableIds.includes(s.id));
-            this.dialog.open(AddOwnerComponent, {data: {vm, students: studentsAvailable}})
-              .afterClosed()
-              .subscribe(result => {
-                if (result) {
-                  this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
-                      // calcolo gli owner
-                      this.computeOwner(vms);
-                    },
-                    error => {
-                      this.genericError();
-                    });
-                }
+            if (studentsAvailable === 0) {
+              this.dialog.open(AddOwnerComponent, {data: {vm, students: studentsAvailable}})
+                .afterClosed()
+                .subscribe(result => {
+                  if (result) {
+                    this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
+                        // calcolo gli owner
+                        this.computeOwner(vms);
+                      },
+                      error => {
+                        this.genericError();
+                      });
+                  }
+                });
+            } else {
+              this.snackBar.open('You can\'t add other owners.', 'OK', {
+                duration: 5000
               });
+            }
           },
           error => {
             this.genericError();
