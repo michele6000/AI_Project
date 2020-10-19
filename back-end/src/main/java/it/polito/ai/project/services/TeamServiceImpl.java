@@ -608,10 +608,7 @@ public class TeamServiceImpl implements TeamService {
                     vmRepo.delete(vm); // elimino la vm dalla repo
                 });
 
-        teamRepo.getOne(teamId)
-                .getMembers()
-                .forEach(s -> teamRepo.getOne(teamId).removeMember(s)); //cancello tutti i membri
-
+        System.out.println(teamId);
         teamRepo.deleteById(teamId);
     }
 
