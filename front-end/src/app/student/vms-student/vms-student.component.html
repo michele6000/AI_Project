@@ -40,6 +40,6 @@
   </div>
   <mat-divider class="mt-10 mb-20"></mat-divider>
   <h2 class="mb-10 mr-20">Team VMs: </h2>
-  <app-vms-table (delete)="deleteVm($event)" (edit)="editVM($event)" (modifyOwner)="modifyOwnerVM($event)"
+  <app-vms-table *ngIf="!canCreateVM" (delete)="deleteVm($event)" (edit)="editVM($event)" (modifyOwner)="modifyOwnerVM($event)"
                  (addOwner)="addOwnerVM($event)" [columns]="columns" [data]="data" [team]="team"></app-vms-table>
 </div>

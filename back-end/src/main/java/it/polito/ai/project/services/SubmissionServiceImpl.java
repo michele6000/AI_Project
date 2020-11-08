@@ -365,7 +365,8 @@ public class SubmissionServiceImpl implements SubmissionService {
                 sol.setStatus("REQUEST_REVIEW");
                 return modelMapper.map(solutionRepo.save(sol), SolutionDTO.class);
             } catch (IOException e) {
-                throw new TeamServiceException("Error saving correction: " + file.getName());
+                sol.setStatus("REQUEST_REVIEW");
+                //throw new TeamServiceException("Error saving correction: " + file.getName());
             }
         }
         return new SolutionDTO();
