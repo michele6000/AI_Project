@@ -10,9 +10,10 @@ import {Router} from '@angular/router';
   styleUrls: ['./registration.component.css']
 })
 export class RegistrationComponent implements OnInit {
-  errorPw = false;
+  error = false;
   notValidDomain = false;
   file: File;
+  errorMessage = '';
 
   constructor(private authService: AuthService, private router: Router) {
   }
@@ -21,23 +22,29 @@ export class RegistrationComponent implements OnInit {
   }
 
   register(f: NgForm) {
-    if (f.value.password !== f.value.confirm_password) {
-      this.errorPw = true;
+    if (this.file === undefined){
+      this.errorMessage = 'You must select a profile image';
+      this.error = true;
     } else {
-      let user = new UserModel();
-      user.firstName = f.value.name;
-      user.name = f.value.surname;
-      user.username = f.value.matricola;
-      user.password = f.value.password;
-      user.email = f.value.email;
-
-      this.authService.register(user, this.file).subscribe(result => {
-        if (result === false) {
-          this.notValidDomain = true;
-        } else {
-          this.router.navigate(['home'], {queryParams: {doLogin: 'true'}});
-        }
-      });
+      if (f.value.password !== f.value.confirm_password) {
+        this.errorMessage = 'Error. Different password';
+        this.error = true;
+      } else {
+        this.error = false;
+        let user = new UserModel();
+        user.firstName = f.value.name;
+        user.name = f.value.surname;
+        user.username = f.value.matricola;
+        user.password = f.value.password;
+        user.email = f.value.email;
+        this.authService.register(user, this.file).subscribe(result => {
+          if (result === false) {
+            this.notValidDomain = true;
+          } else {
+            this.router.navigate(['home'], {queryParams: {doLogin: 'true'}});
+          }
+        });
+      }
     }
   }
 

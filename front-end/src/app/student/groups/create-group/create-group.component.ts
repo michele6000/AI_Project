@@ -56,6 +56,8 @@ export class CreateGroupComponent implements OnInit {
       }
     );
     // Recupero l'elenco delle proposte inviate / ricevute
+    // @TODO aggiornare la tabella delle proposte dopo la richiesta: ATTENZIONE AL LOOP INNESCATO TRA CREATE_GROUP E GROUP.COMPONENT
+    // this.studentService.findTeamsByStudent(localStorage.getItem('id'));
     this.studentService.teams.subscribe((teams) => {
       const groupData = teams ? teams.filter(t => t.courseName === this.course.name) : [];
       // Per ogni gruppo del corso recupero l'elenco degli studenti e lo stato

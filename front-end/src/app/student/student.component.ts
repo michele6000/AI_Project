@@ -21,7 +21,8 @@ export class StudentComponent implements OnInit {
   s1: Subscription;
   professorsList = '';
 
-  constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService, private snackBar: MatSnackBar) {
+  constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService,
+              private snackBar: MatSnackBar) {
     this.s1 = this.studentService.courses.subscribe((next) => {
         if (next) {
           this.corsi = next;
