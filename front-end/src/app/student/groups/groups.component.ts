@@ -19,6 +19,7 @@ export class GroupsComponent implements OnInit, OnDestroy {
   private courseParam: string;
   private corso: CourseModel;
   private changeCorsoSub: Subscription;
+  private componentType: number;
 
   constructor(private studentService: StudentService, private componentFactoryResolver: ComponentFactoryResolver, private router: Router,
               private snackBar: MatSnackBar) {
@@ -42,9 +43,15 @@ export class GroupsComponent implements OnInit, OnDestroy {
     // carico il component con i gruppi a seconda se lo studente fa parte di un gruppo oppure no
     this.studentService.teams.subscribe((teams) => {
       if (teams && teams.filter(t => t.status === 1 && t.courseName === this.corso.name).length > 0) {
-        this.loadComponent(1);
+        if (this.componentType !== 1) {
+          this.componentType = 1;
+          this.loadComponent(1);
+        }
       } else if (teams) {
-        this.loadComponent(2);
+        if (this.componentType !== 2) {
+          this.componentType = 2;
+          this.loadComponent(2);
+        }
       }
     }, error => {
       this.genericError();
