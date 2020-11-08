@@ -108,18 +108,24 @@ export class VmsStudentComponent implements OnInit {
     this.dialog.open(ModifyVmStudentComponent, {data: {vmConfig: vm, team: this.team}})
       .afterClosed()
       .subscribe(result => {
-        this.studentService.getVmConfiguration(vm.id).subscribe(
-          res => {
-            if (res) {
-              this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
-                  this.computeOwner(vms);
-                },
-                error => {
-                  this.genericError();
-                });
+        if (result){
+          this.studentService.findTeamsByStudent(localStorage.getItem('id'), true).subscribe(
+            resTeams => {
+              this.studentService.getVmConfiguration(vm.id).subscribe(
+                res => {
+                  if (res) {
+                    this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
+                        this.computeOwner(vms);
+                      },
+                      error => {
+                        this.genericError();
+                      });
+                  }
+                }
+              );
             }
-          }
-        );
+          );
+        }
       });
   }
 
