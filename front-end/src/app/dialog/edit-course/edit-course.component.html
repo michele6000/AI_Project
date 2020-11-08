@@ -7,7 +7,7 @@
   <form #f="ngForm" (ngSubmit)="updateCourse(f)" class="login-form">
     <mat-form-field class="dialog-position-field">
       <mat-label>Name</mat-label>
-      <input #name="ngModel" [ngModel]="course.name" matInput name="name" placeholder="Name" required type="text" value="">
+      <input #name="ngModel" [ngModel]="course.name" matInput name="name" placeholder="Name" required type="text" value="" disabled>
     </mat-form-field>
     <mat-form-field class="dialog-position-field">
       <mat-label>Identifier</mat-label>

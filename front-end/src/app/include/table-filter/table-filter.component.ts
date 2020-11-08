@@ -9,7 +9,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SolutionModel} from '../../models/solution.model';
 
-const API_URL_PUBLIC = '93.56.104.204:8080/API/';
+const API_URL_PUBLIC = '/public/API/';
 const API_URL_LOCAL = '/local/API/';
 
 @Component({

@@ -81,6 +81,7 @@ export class AuthService {
     ).pipe(
       tap((payload: any) => {
           const tkn = JSON.parse(atob(payload.token.split('.')[1]));
+          console.log(tkn);
           localStorage.setItem('token', payload.token);
           localStorage.setItem('expires_at', tkn.exp);
           localStorage.setItem('email', email);
@@ -125,6 +126,8 @@ export class AuthService {
       url = 'addProfessor';
     } else if (email.includes(DOMINIO_STUDENT)) {
       url = 'addStudent';
+    } else {
+      return of(false);
     }
 
     const formData = new FormData();

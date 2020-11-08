@@ -8,7 +8,7 @@ import {SubmissionModel} from '../../models/submission.model';
 import {from} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
 
-const API_URL_PUBLIC = '93.56.104.204:8080/API/';
+const API_URL_PUBLIC = '/public/API/';
 const API_URL_LOCAL = 'localhost:8080/API/';
 
 
@@ -133,7 +133,7 @@ export class AssignmentsStudentComponent implements OnInit {
 
   handleShowSubmission(id: number) {
     this.studentService.getSubmissionById(this.corso.name, id).subscribe((res) => {
-        window.open('//' + API_URL_LOCAL + 'courses/submissions/getImage/' + id, '_blank');
+        window.open('//' + API_URL_PUBLIC + 'courses/submissions/getImage/' + id, '_blank');
       },
       error => {
         this.genericError();
@@ -141,7 +141,7 @@ export class AssignmentsStudentComponent implements OnInit {
   }
 
   handleShowSolution(solutionId: number) {
-    window.open('//' + API_URL_LOCAL + 'students/solutions/getImage/' + solutionId, '_blank');
+    window.open('//' + API_URL_PUBLIC + 'students/solutions/getImage/' + solutionId, '_blank');
   }
 
   genericError() {

@@ -14,7 +14,7 @@ import {EvaluateSolutionComponent} from '../../dialog/evaluate-solution/evaluate
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ReviewSolutionComponent} from '../../dialog/review-solution/review-solution.component';
 
-const API_URL_PUBLIC = '93.56.104.204:8080/API/';
+const API_URL_PUBLIC = '/public/API/';
 const API_URL_LOCAL = '/local/API/';
 
 

@@ -22,30 +22,45 @@ export class RegistrationComponent implements OnInit {
   }
 
   register(f: NgForm) {
-    if (this.file === undefined){
+    if (this.file === undefined) {
       this.errorMessage = 'You must select a profile image';
       this.error = true;
-    } else {
-      if (f.value.password !== f.value.confirm_password) {
-        this.errorMessage = 'Error. Different password';
-        this.error = true;
-      } else {
-        this.error = false;
-        let user = new UserModel();
-        user.firstName = f.value.name;
-        user.name = f.value.surname;
-        user.username = f.value.matricola;
-        user.password = f.value.password;
-        user.email = f.value.email;
-        this.authService.register(user, this.file).subscribe(result => {
-          if (result === false) {
-            this.notValidDomain = true;
-          } else {
-            this.router.navigate(['home'], {queryParams: {doLogin: 'true'}});
-          }
-        });
-      }
+      return;
     }
+    if (f.value.password !== f.value.confirm_password) {
+      this.errorMessage = 'Error. Different password';
+      this.error = true;
+      return;
+    }
+
+    if (!f.value.matricola.startsWith('d') && !f.value.matricola.startsWith('s')) {
+      this.errorMessage = 'Error. Matricola should start with d or s.';
+      this.error = true;
+      return;
+    }
+
+    if ((f.value.matricola.startsWith('d') && f.value.email !== (f.value.matricola + '@polito.it'))
+    || f.value.matricola.startsWith('s') && f.value.email !== (f.value.matricola + '@studenti.polito.it')) {
+      this.errorMessage = 'Error. Email must start with dXXXXXX or sXXXXXX.';
+      this.error = true;
+      return;
+    }
+
+    this.error = false;
+    let user = new UserModel();
+    user.firstName = f.value.name;
+    user.name = f.value.surname;
+    user.username = f.value.matricola;
+    user.password = f.value.password;
+    user.email = f.value.email;
+    this.authService.register(user, this.file).subscribe(result => {
+      if (result === false) {
+        this.notValidDomain = true;
+      } else {
+        this.router.navigate(['home'], {queryParams: {doLogin: 'true'}});
+      }
+    });
+
   }
 
   handleFileSelect($event: any) {

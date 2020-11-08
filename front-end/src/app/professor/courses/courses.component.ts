@@ -148,7 +148,11 @@ export class CoursesComponent implements OnInit {
             duration: 10000
           });
         } else {
-          this.dialog.open(RemoveProfessorFromCourseComponent, {data: {professors: allProfessor, courseName: course.name}});
+          this.dialog.open(RemoveProfessorFromCourseComponent, {data: {professors: allProfessor, courseName: course.name}})
+            .afterClosed().subscribe(result => {
+            // Aggiorno tabella
+            this.professorService.findCoursesByProfessor(localStorage.getItem('id'), true);
+          });
         }
       },
       error => {
