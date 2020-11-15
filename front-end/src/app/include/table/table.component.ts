@@ -109,12 +109,13 @@ export class TableComponent implements OnInit {
     if (checked) {
       if (this.dataSource.data.length >= this.numberOfEntrySelected) {
         // gestione like gmail solo se è necessario, ovvero il numero di entri nella tabella è maggiore del size del paginator
+        const pagina = this.paginator.pageIndex;
         this.constraintMasterCheckbox = true;
         this.constraintMasterCheckboxSelectAll = true;
         this.constraintMasterCheckboxDeselectAll = false;
-        for (let i = 0; i < this.numberOfEntrySelected; i++) {
-          if (this.checkedObjects.indexOf(this.dataSource.data[i]) === -1) {
-            this.checkedObjects.push(this.dataSource.data[i]);
+        for (let i = 0 ; i < this.numberOfEntrySelected; i++) {
+          if (this.checkedObjects.indexOf(this.dataSource.data[i + (pagina * this.numberOfEntrySelected)]) === -1) {
+            this.checkedObjects.push(this.dataSource.data[i + (pagina * this.numberOfEntrySelected)]);
           }
         }
       } else {
