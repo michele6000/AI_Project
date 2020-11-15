@@ -77,7 +77,11 @@ export class TableComponent implements OnInit {
         this.columnsWithCheckbox = [...this.columnsToDisplay, 'edit'];
       }
     } else if (this.showCheckbox) {
-      this.columnsWithCheckbox = ['select', ...this.columnsToDisplay];
+      if (this.showDetails){
+        this.columnsWithCheckbox = ['select', ...this.columnsToDisplay, 'details'];
+      } else {
+        this.columnsWithCheckbox = ['select', ...this.columnsToDisplay];
+      }
     } else if (this.showDetails) {
       this.columnsWithCheckbox = [...this.columnsToDisplay, 'details'];
     } else {

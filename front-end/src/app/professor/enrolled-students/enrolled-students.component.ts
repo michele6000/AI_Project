@@ -89,7 +89,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
     res.subscribe((result: boolean[]) => {
         if (result.filter(e => !e).length > 0) {
           // Almeno una ha fallito
-          this.snackBar.open('Error deleting successfully.', 'OK', {
+          this.snackBar.open('Error deleting.', 'OK', {
             duration: 5000
           });
         } else {
@@ -186,4 +186,42 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
     location.reload();
   }
 
+  deleteTeam(selectedTeams: GroupModel[]) {
+    console.log(selectedTeams);
+    const res = from(selectedTeams).pipe(
+      concatMap(s => {
+        return this.professorService.deleteTeam(s.id);
+      }),
+      toArray()
+    );
+
+    res.subscribe((result: boolean[]) => {
+        if (result.filter(e => !e).length > 0) {
+          // Almeno una ha fallito
+          this.snackBar.open('Error deleting.', 'OK', {
+            duration: 5000
+          });
+        } else {
+          // Tutte a buon fine
+          this.snackBar.open('Team deleted successfully.', 'OK', {
+            duration: 5000
+          });
+        }
+        this.professorService.findTeamsByCourse(this.corso.name).subscribe(teams => {
+            if (teams.length > 0) {
+              this.existTeam = true;
+              this.teams = teams;
+            } else {
+              this.existTeam = false;
+              this.teams = [];
+            }
+          },
+          error => {
+            this.genericError();
+          });
+      },
+      error => {
+        this.genericError();
+      });
+  }
 }

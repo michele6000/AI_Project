@@ -230,4 +230,8 @@ export class ProfessorService {
     return this.http.get<any>(API_URL + 'team/' + teamId + '/stats');
   }
 
+  deleteTeam(teamId: number) {
+    return this.http.post(API_URL + 'team/' + teamId + '/evictTeam', {});
+  }
+
 }
