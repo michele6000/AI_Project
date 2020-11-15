@@ -182,7 +182,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         List<Solution> ReadSol = submission.getSolutions().stream()
                 .filter(sol -> sol.getStudent().getId().equals(studentId))
-                .filter(sol -> sol.getVersion() == 0 || sol.getVersion() == -1)
+//                .filter(sol -> sol.getVersion() == 0 || sol.getVersion() == -1) //todo:perche avevo messo questo controllo?...
                 .filter(sol -> sol.getSubmission().getId().equals(submissionId))
                 .collect(Collectors.toList());
         if (ReadSol.size() > 0) {
@@ -195,6 +195,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .filter(sol -> sol.getSubmission().getId().equals(submissionId))
                 .filter(sol -> sol.getVersion() != 0)
                 .filter(sol -> sol.getVersion() != -1)
+                .filter(sol -> sol.getVersion() != -2)
                 .count();
 
         solution.setSubmission(submission);
@@ -428,6 +429,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                         Solution blankSolution = new Solution();
                         blankSolution.setStatus("NOT_SUBMITTED");
                         blankSolution.setVersion(-2);
+                        blankSolution.setCreationDate(new Timestamp(new Date().getTime()));
                         blankSolution.setRevisable(false);
                         blankSolution.setStudent(student);
                         blankSolution.setSubmission(submission);

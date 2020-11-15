@@ -16,8 +16,8 @@ public class Solution {
     private Byte[] image;
     @Lob
     private Byte[] correction=null;
-    private String status = null;
-    private Long evaluation;
+    private String status = "";
+    private Long evaluation=0L;
     private int version = 0;
     private boolean isRevisable = true;
     private Timestamp creationDate;

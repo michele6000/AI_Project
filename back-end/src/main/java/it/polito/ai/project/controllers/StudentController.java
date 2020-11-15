@@ -154,7 +154,7 @@ public class StudentController {
         }
     }
 
-    @PostMapping("/{studentId}/{solutionId}/addCorrection")
+    @PostMapping("/{studentId}/{solutionId}/addCorrection") //todo: gestire messaggio e inviarlo via mail
     public SolutionDTO addCorrection(@PathVariable String studentId, @PathVariable Long solutionId, @RequestPart("file") MultipartFile file) {
         if (getCurrentRoles().contains("ROLE_STUDENT"))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to evaluate a solution!");

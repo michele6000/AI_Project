@@ -211,7 +211,7 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(courseName)
                 .getStudents()
                 .stream()
-                .map(s -> modelMapper.map(s,StudentDTO.class))
+                .map(s -> modelMapper.map(s,StudentDTO.class)) // todo: rimuovere le immagine (non mapparle)
                 .collect(Collectors.toList());
     }
 

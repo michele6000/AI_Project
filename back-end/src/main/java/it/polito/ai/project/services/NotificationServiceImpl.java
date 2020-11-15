@@ -54,7 +54,7 @@ public class NotificationServiceImpl implements NotificationService {
         emailSender.send(message);
     }
 
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 600000, initialDelay = 10000)
     public void deleteExpiredTokens() {
         List<Long> teams = new ArrayList<>();
         tokenRepo
