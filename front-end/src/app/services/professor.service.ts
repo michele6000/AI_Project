@@ -234,4 +234,8 @@ export class ProfessorService {
     return this.http.post(API_URL + 'team/' + teamId + '/evictTeam', {});
   }
 
+  deleteStudentFromTeam(teamId: number, studentId: string) {
+    return this.http.post(API_URL + 'team/' + teamId + '/' + studentId + '/deleteMember', {});
+  }
+
 }

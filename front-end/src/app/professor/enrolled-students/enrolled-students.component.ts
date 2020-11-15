@@ -164,7 +164,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   showStudentsInTeam(team: GroupModel) {
     // passo al dialog la lista di studenti nel team e il nome del team
     this.professorService.findMembersByTeamId(team.id).subscribe(students => {
-      this.dialog.open(ShowTeamMembersComponent, {data: {students, teamName: team.name}})
+      this.dialog.open(ShowTeamMembersComponent, {data: {students, teamName: team.name, teamId: team.id}})
         .afterClosed()
         .subscribe(result => {
         });
@@ -187,7 +187,6 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   }
 
   deleteTeam(selectedTeams: GroupModel[]) {
-    console.log(selectedTeams);
     const res = from(selectedTeams).pipe(
       concatMap(s => {
         return this.professorService.deleteTeam(s.id);

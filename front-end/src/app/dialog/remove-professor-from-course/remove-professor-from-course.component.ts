@@ -47,7 +47,7 @@ export class RemoveProfessorFromCourseComponent implements OnInit {
         if (result.filter(e => !e).length > 0) {
           // Almeno una ha fallito
           this.dialogRef.close(true);
-          this.snackBar.open('Error delete professors .', 'OK', {
+          this.snackBar.open('Error delete professors.', 'OK', {
             duration: 5000
           });
         } else {
