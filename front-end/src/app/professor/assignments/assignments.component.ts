@@ -46,8 +46,8 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
             resSubmissions.forEach((submission) => {
 
               // Formatto correttamente le date
-              submission.expiryString = moment(submission.expiryDate).format('L');
-              submission.releaseString = moment(submission.releaseDate).format('L');
+              submission.expiryString = moment(submission.expiryDate).format('DD/MM/YYYY');
+              submission.releaseString = moment(submission.releaseDate).format('DD/MM/YYYY');
 
               // 3 - Per ogni studente recupero getLatestSolution per questa submission
               const resultLatestSolutions = from(resStudents).pipe(

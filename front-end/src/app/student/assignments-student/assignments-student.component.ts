@@ -68,8 +68,8 @@ export class AssignmentsStudentComponent implements OnInit {
             // Per ogni Submission aggiungo alla Submission stessa l'elenco di Solutions
             //  [historySolutions] e le date formattate correttamente
             submissions.forEach((singleSubmission, key) => {
-              singleSubmission.expiryString = moment(singleSubmission.expiryDate).format('L');
-              singleSubmission.releaseString = moment(singleSubmission.releaseDate).format('L');
+              singleSubmission.expiryString = moment(singleSubmission.expiryDate).format('DD/MM/YYYY');
+              singleSubmission.releaseString = moment(singleSubmission.releaseDate).format('DD/MM/YYYY');
               singleSubmission.history = historySolutions[key];
               singleSubmission.isRevisable = true;
               historySolutions[key].forEach((solution) => {

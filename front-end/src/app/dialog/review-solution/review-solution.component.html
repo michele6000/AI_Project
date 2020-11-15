@@ -8,7 +8,7 @@
     <div class="dialog-position-field">
       <span>File correction</span>
       <button (click)="fileInput.click()" class="ml-20" mat-raised-button type="button">{{filename}}</button>
-      <input #fileInput (change)="handleFileSelect($event)" hidden id="file" type="file">
+      <input #fileInput (change)="handleFileSelect($event)" hidden id="file" type="file" accept=".pdf">
     </div>
     <mat-form-field class="w-100">
       <mat-label>Message</mat-label>

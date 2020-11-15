@@ -48,6 +48,7 @@ export class TableFilterComponent implements OnInit {
 
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
+        this.dataSource.paginator.pageSize = 15;
         this.dataSource.filterPredicate =
             (data: any, filtersJson: string) => {
                 const matchFilter = [];
