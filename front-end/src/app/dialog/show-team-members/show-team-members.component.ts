@@ -16,6 +16,7 @@ export class ShowTeamMembersComponent implements OnInit {
   teamName: string;
   teamid: number;
   studentsInTeam: StudentModel[] = [];
+  allStudentsOfCourse: StudentModel[] = [];
   columns = ['id', 'name', 'firstName'];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data, private dialogRef: MatDialogRef<ShowTeamMembersComponent>,
@@ -23,8 +24,7 @@ export class ShowTeamMembersComponent implements OnInit {
     this.teamName = data.teamName;
     this.teamid = data.teamId;
     this.studentsInTeam = data.students;
-    console.log(this.studentsInTeam);
-    console.log(this.teamid);
+    this.allStudentsOfCourse = data.allStudentsOfCourse;
   }
 
   ngOnInit(): void {
@@ -67,10 +67,27 @@ export class ShowTeamMembersComponent implements OnInit {
       });
   }
 
+  // @TODO verificare perchè il server risponde BAD REQUEST
+  addStudentToTeam(student: StudentModel) {
+    this.professorService.addStudentToTeam(this.teamid, student.id).subscribe((res) => {
+      this.dialogRef.close(true);
+      if (res){
+        this.snackBar.open('Student added to team successfully.', 'OK', {
+          duration: 5000
+        });
+      } else {
+        this.snackBar.open('Error adding student to team.', 'OK', {
+          duration: 5000
+        });
+      }
+    }, (error) => {
+      this.genericError();
+    });
+  }
+
   genericError() {
     this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
       duration: 5000
     });
-    location.reload();
   }
 }

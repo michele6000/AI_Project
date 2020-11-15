@@ -24,6 +24,7 @@ export class EditVmStudentComponent implements OnInit {
   }
 
   ngOnInit(): void {
+   
   }
 
   create(f: NgForm) {

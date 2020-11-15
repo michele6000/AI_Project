@@ -1,6 +1,7 @@
 <div class="dimension">
   <mat-card-title>Members of team "{{teamName}}"</mat-card-title>
   <mat-divider class="mt-10 mb-20"></mat-divider>
+  <app-insert (add)="addStudentToTeam($event)" [options]="allStudentsOfCourse" class="w-50"></app-insert>
       <app-table class="mt-30" (delete)="deleteStudentFromTeam($event)" [columns]="columns"
                  [data]="studentsInTeam" [showChangeStatus]="true" [showDelete]="true"></app-table>
     <br>

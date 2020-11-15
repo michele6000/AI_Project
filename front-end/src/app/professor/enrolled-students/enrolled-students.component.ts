@@ -164,10 +164,10 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   showStudentsInTeam(team: GroupModel) {
     // passo al dialog la lista di studenti nel team e il nome del team
     this.professorService.findMembersByTeamId(team.id).subscribe(students => {
-      this.dialog.open(ShowTeamMembersComponent, {data: {students, teamName: team.name, teamId: team.id}})
+      this.dialog.open(ShowTeamMembersComponent, {data: {students, teamName: team.name, teamId: team.id,
+          allStudentsOfCourse: this.students}})
         .afterClosed()
-        .subscribe(result => {
-        });
+        .subscribe(result => {});
     }, error => {
       this.genericError();
     });
