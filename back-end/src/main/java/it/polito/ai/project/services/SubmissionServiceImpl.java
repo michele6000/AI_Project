@@ -1,9 +1,11 @@
 package it.polito.ai.project.services;
 
-import it.polito.ai.project.dtos.ProfessorDTO;
 import it.polito.ai.project.dtos.SolutionDTO;
 import it.polito.ai.project.dtos.SubmissionDTO;
-import it.polito.ai.project.entities.*;
+import it.polito.ai.project.entities.Course;
+import it.polito.ai.project.entities.Solution;
+import it.polito.ai.project.entities.Student;
+import it.polito.ai.project.entities.Submission;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
 import org.modelmapper.ModelMapper;
@@ -354,9 +356,31 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public SolutionDTO addCorrection(Long solutionId, String username, MultipartFile file) {
+    public SolutionDTO addCorrection(Long solutionId, String username, MultipartFile file, Long mark, String message, String type) {
         Solution sol = solutionRepo.getOne(solutionId);
-        if (sol.getSubmission().getCourse().getProfessors().contains(profRepo.getOne(username))) {
+        if (!sol.getSubmission().getCourse().getProfessors().contains(profRepo.getOne(username))) {
+            return new SolutionDTO();
+        }
+
+        if (type.equals("evaluation")) {
+            try { // caso in cui c'è anche una correzione da parte del docente
+                Byte[] byteObjects = new Byte[file.getBytes().length];
+                int i = 0;
+                for (byte b : file.getBytes())
+                    byteObjects[i++] = b;
+                sol.setCorrection(byteObjects);
+                sol.setEvaluation(mark);
+                sol.setStatus("EVALUATED");
+                notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark + "\nProfessor message: "+message);
+
+            } catch (IOException e) { // caaso in cui il docente da un voto ma non carica una correzione ( e.g. mark = 30L)
+                sol.setEvaluation(mark);
+                sol.setStatus("EVALUATED");
+                notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark+"\nProfessor message: "+message);
+            }
+            return modelMapper.map(solutionRepo.save(sol), SolutionDTO.class);
+        }
+        if (type.equals("review")){
             try {
                 Byte[] byteObjects = new Byte[file.getBytes().length];
                 int i = 0;
@@ -364,10 +388,10 @@ public class SubmissionServiceImpl implements SubmissionService {
                     byteObjects[i++] = b;
                 sol.setCorrection(byteObjects);
                 sol.setStatus("REQUEST_REVIEW");
+                notification.sendMessage(sol.getStudent().getEmail(),"Requested review","Professor has request a review for your solution.\nProfessor message: "+message);
                 return modelMapper.map(solutionRepo.save(sol), SolutionDTO.class);
             } catch (IOException e) {
-                sol.setStatus("REQUEST_REVIEW");
-                //throw new TeamServiceException("Error saving correction: " + file.getName());
+                throw new TeamServiceException("Wrong file/missing !");
             }
         }
         return new SolutionDTO();

@@ -34,7 +34,7 @@ public interface SubmissionService {
     SolutionDTO getSolution(Long solutionId, String username);
 
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
-    SolutionDTO addCorrection(Long solutionId, String username, MultipartFile file);
+    SolutionDTO addCorrection(Long solutionId, String username, MultipartFile file, Long mark, String message, String type);
 
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
     List<SolutionDTO> getAllSolutions(Long submissionId);

@@ -154,12 +154,17 @@ public class StudentController {
         }
     }
 
-    @PostMapping("/{studentId}/{solutionId}/addCorrection") //todo: gestire messaggio e inviarlo via mail
-    public SolutionDTO addCorrection(@PathVariable String studentId, @PathVariable Long solutionId, @RequestPart("file") MultipartFile file) {
+    @PostMapping("/{studentId}/{solutionId}/addCorrection")
+    public SolutionDTO addCorrection(@PathVariable String studentId, @PathVariable Long solutionId,
+                                     @RequestPart("file") MultipartFile file,
+                                     @RequestPart("mark") Long mark,
+                                     @RequestPart("message") String message,
+                                     @RequestPart("type") String type) {
+
         if (getCurrentRoles().contains("ROLE_STUDENT"))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to evaluate a solution!");
         try {
-            return submissionService.addCorrection(solutionId,getCurrentUsername(),file);
+            return submissionService.addCorrection(solutionId,getCurrentUsername(),file,mark,message,type);
         } catch (TeamServiceException | ResponseStatusException e) {
             if (e instanceof TeamServiceException)
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

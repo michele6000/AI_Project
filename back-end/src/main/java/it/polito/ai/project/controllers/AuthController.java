@@ -55,7 +55,6 @@ public class AuthController {
     public ResponseEntity<Map<Object, Object>> signin( @Valid @RequestBody UserDTO data) {
         try {
             String username = data.getUsername();
-//            todo:check se esiste lo username!
             if (!service.checkActiveUser(username))
                 throw new BadCredentialsException("You must verify your email!");
 
@@ -77,7 +76,7 @@ public class AuthController {
             model.put("token", token);
             return ok(model);
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid username/password supplied!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong username/password");
         }
     }
 

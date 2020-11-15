@@ -127,7 +127,7 @@ public class TeamServiceImpl implements TeamService {
             Token token = new Token();
             token.setId(id);
             token.setTeamId(-1L);
-            token.setExpiryDate(new Timestamp(new Date().getTime()+60000000)); //TODO: vedere che fa
+            token.setExpiryDate(new Timestamp(new Date().getTime()+60000000));
             tokenRepo.save(token);
 
             String codedToken = Base64.getEncoder().encodeToString((token.getId()+"_"+_user.getUsername()).getBytes());
@@ -211,7 +211,10 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(courseName)
                 .getStudents()
                 .stream()
-                .map(s -> modelMapper.map(s,StudentDTO.class)) // todo: rimuovere le immagine (non mapparle)
+                .map(s -> modelMapper
+                        .typeMap(Student.class,StudentDTO.class)
+                        .addMappings(mapper -> mapper.skip(StudentDTO::setImage))
+                        .map(s))
                 .collect(Collectors.toList());
     }
 
@@ -726,7 +729,7 @@ public class TeamServiceImpl implements TeamService {
             Token token = new Token();
             token.setId(id);
             token.setTeamId(-1L);
-            token.setExpiryDate(new Timestamp(new Date().getTime()+60000000)); //TODO: vedere che fa
+            token.setExpiryDate(new Timestamp(new Date().getTime()+60000000));
             tokenRepo.save(token);
 
             String codedToken = Base64.getEncoder().encodeToString((token.getId()+"_"+_user.getUsername()).getBytes());
