@@ -192,7 +192,7 @@ export class ProfessorService {
     const evaluationStr = new Blob([JSON.stringify(evaluation)], {type: 'application/json'});
     const message = new Blob([JSON.stringify('Mark')], {type: 'application/json'});
     // const type = new Blob([JSON.stringify('evaluation')], {type: 'application/json'});
-    formData.append('message', message);
+    // formData.append('message', message);
     formData.append('mark', evaluationStr);
     formData.append('file', file);
     formData.append('type', 'evaluation');
@@ -205,7 +205,7 @@ export class ProfessorService {
     const mark = new Blob([JSON.stringify('0')], {type: 'application/json'});
     // const type = new Blob([JSON.stringify('review')], {type: 'application/json'});
     formData.append('message', reviewStr);
-    formData.append('mark', mark);
+    // formData.append('mark', mark);
     formData.append('file', file);
     formData.append('type', 'review');
     return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/addCorrection', formData);

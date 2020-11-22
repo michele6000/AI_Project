@@ -167,10 +167,10 @@ public class StudentController {
 
     @PostMapping("/{studentId}/{solutionId}/addCorrection")
     public SolutionDTO addCorrection(@PathVariable String studentId, @PathVariable Long solutionId,
-                                     @RequestPart("file") MultipartFile file,
-                                     @RequestPart("mark") Long mark,
-                                     @RequestPart("message") String message,
-                                     @RequestPart("type") String type) {
+                                     @RequestPart(name= "file", required = false) MultipartFile file,
+                                     @RequestPart(name="mark", required = false) Long mark,
+                                     @RequestPart(name="message", required = false) String message,
+                                     @RequestPart(name="type", required = false) String type) {
 
         if (getCurrentRoles().contains("ROLE_STUDENT"))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to evaluate a solution!");

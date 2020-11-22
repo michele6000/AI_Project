@@ -392,21 +392,22 @@ public class SubmissionServiceImpl implements SubmissionService {
         }
 
         if (type.equals("evaluation")) {
-            try { // caso in cui c'è anche una correzione da parte del docente
-                Byte[] byteObjects = new Byte[file.getBytes().length];
-                int i = 0;
-                for (byte b : file.getBytes())
-                    byteObjects[i++] = b;
-                sol.setCorrection(byteObjects);
-                sol.setEvaluation(mark);
-                sol.setStatus("EVALUATED");
-                notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark + "\nProfessor message: "+message);
+            if(Optional.ofNullable(file).isPresent())
+                try { // caso in cui c'è anche una correzione da parte del docente
+                    Byte[] byteObjects = new Byte[file.getBytes().length];
+                    int i = 0;
+                    for (byte b : file.getBytes())
+                        byteObjects[i++] = b;
+                    sol.setCorrection(byteObjects);
+                    sol.setEvaluation(mark);
+                    sol.setStatus("EVALUATED");
+                    notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark + "\nProfessor message: "+message);
 
-            } catch (IOException e) { // caaso in cui il docente da un voto ma non carica una correzione ( e.g. mark = 30L)
-                sol.setEvaluation(mark);
-                sol.setStatus("EVALUATED");
-                notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark+"\nProfessor message: "+message);
-            }
+                } catch (IOException e) { // caaso in cui il docente da un voto ma non carica una correzione ( e.g. mark = 30L)
+                    notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark+"\nProfessor message: "+message);
+                }
+            sol.setEvaluation(mark);
+            sol.setStatus("EVALUATED");
             return modelMapper.map(solutionRepo.save(sol), SolutionDTO.class);
         }
         if (type.equals("review")){
