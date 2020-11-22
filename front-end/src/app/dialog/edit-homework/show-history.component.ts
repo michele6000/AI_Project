@@ -4,7 +4,7 @@ import {NgForm} from '@angular/forms';
 import {StudentSubmissionModel} from '../../models/student-submission.model';
 import {StudentService} from '../../services/student.service';
 
-const API_URL_PUBLIC = '/public/API/';
+const API_URL_PUBLIC = 'http://93.56.104.204:8080/API/';
 const API_URL_LOCAL = '/local/API/';
 
 @Component({
