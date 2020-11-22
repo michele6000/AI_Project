@@ -6,16 +6,13 @@ import it.polito.ai.project.dtos.*;
 import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
-import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,7 +94,7 @@ public class TeamServiceImpl implements TeamService {
             return new StudentDTO();
 
         if (studentRepo.existsById(user.getUsername()))
-            return new StudentDTO();
+            return modelMapper.map(studentRepo.getOne(user.getUsername()),StudentDTO.class);
 
         User _user = new User();
         _user.setUsername(user.getEmail());
@@ -327,26 +324,24 @@ public class TeamServiceImpl implements TeamService {
                 "Procione.jpg", "Rinoceronte.jpg", "Scimmia.jpg", "Tigre.jpg", "Topo.jpg", "Toro.jpg");
 
         students.forEach(s -> {
+            UserDTO user = new UserDTO();
+            user.setName(s.getName());
+            user.setFirstName(s.getFirstName());
+            user.setPassword("student");
+            user.setEmail(s.getId()+"@studenti.polito.it");
+            user.setUsername(s.getId());
 
-        UserDTO user = new UserDTO();
-        user.setName(s.getName());
-        user.setFirstName(s.getFirstName());
-        user.setPassword("student");
-        user.setEmail(s.getId()+"@studenti.polito.it");
-        user.setUsername(s.getId());
+            String randomAvatar = avatars.get(new Random().nextInt(25));
 
-        String randomAvatar = avatars.get(new Random().nextInt(25));
+            Resource resource = new ClassPathResource("./templates/avatars/"+randomAvatar);
 
-        Resource resource = new ClassPathResource("./templates/avatars/"+randomAvatar);
-
-        try {
-            FileInputStream input = new FileInputStream(resource.getFile());
-            MultipartFile multipartFile = new MockMultipartFile(randomAvatar, input);
-            studentsAdded.add(addStudent(user, multipartFile));
-        } catch (IOException e) {
-            throw new TeamServiceException("Error during add students by csv operation. Student: " + user.getUsername() + " Avatar: " + randomAvatar);
-        }
-
+            try {
+                FileInputStream input = new FileInputStream(resource.getFile());
+                MultipartFile multipartFile = new MockMultipartFile(randomAvatar, input);
+                studentsAdded.add(addStudent(user, multipartFile));
+            } catch (IOException e) {
+                throw new TeamServiceException("Error during add students by csv operation. Student: " + user.getUsername() + " Avatar: " + randomAvatar);
+            }
         });
         return studentsAdded;
     }
@@ -542,11 +537,12 @@ public class TeamServiceImpl implements TeamService {
             throw new DuplicatedStudentException("Student is already a member of this team!");
 
 
-        if (!course.getStudents().contains(studentRepo.getOne(studentId))
-        ) throw new StudentNotFoundException("Student not enrolled in this course!");
+        if (!course.getStudents().contains(studentRepo.getOne(studentId)))
+            throw new StudentNotFoundException("Student not enrolled in this course!");
         course.getTeams().forEach(t -> {
                     if (t.getMembers().contains(studentRepo.getOne(studentId)))
-                        throw new DuplicatedStudentException("Student " + student.getId() + " is already member of a team (" + t.getName() + ") for this course!");
+                        throw new DuplicatedStudentException("Student " + student.getId() +
+                                " is already member of a team (" + t.getName() + ") for this course!");
                 }
         );
 
@@ -602,15 +598,15 @@ public class TeamServiceImpl implements TeamService {
         if (!teamRepo.findById(teamId).isPresent())
             throw new TeamNotFoundException("Team not found!");
 
-        teamRepo.getOne(teamId)
-                .getVMInstance()
-                .forEach(vm -> {
-                    teamRepo.getOne(teamId).getMembers().forEach(student -> student.getVms().remove(vm)); //elimino in student_vms
-                    teamRepo.getOne(teamId).getVMInstance().remove(vm); //elimino nella lista del team
-                    vmRepo.delete(vm); // elimino la vm dalla repo
-                });
+        Team team = teamRepo.getOne(teamId);
+        List<VM> vmI = team.getVMInstance();
 
-        System.out.println(teamId);
+        vmI.forEach(vm -> {
+                team.getMembers().forEach(student -> student.getVms().remove(vm)); //elimino in student_vms
+                vmRepo.delete(vm); // elimino la vm dalla repo
+            });
+
+        System.out.println("Deleting: "+ teamId);
         teamRepo.deleteById(teamId);
     }
 
@@ -642,9 +638,10 @@ public class TeamServiceImpl implements TeamService {
         if(!student.isPresent())
             return;
         team.ifPresent(_team -> {
-            if(_team.getMembers().size() == 1 || _team.getStatus() == 0)
+            if (_team.getMembers().size() == 1 || _team.getStatus() == 0) {
+                teamRepo.save(_team);
                 evictTeam(_team.getId()); // cancello tutto il team
-            else{
+            } else {
                 _team.getVMInstance().forEach(vm -> {
                     if (vm.getOwners().contains(student.get()))
                         if (vm.getOwners().size() > 1) // se non sono l'unico owner
@@ -880,7 +877,9 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public boolean checkActiveUser (String username){
-        return userRepository.getOne(username).isEnabled();
+        if (userRepository.existsByUsername(username))
+            return userRepository.getOne(username).isEnabled();
+        return false;
     }
 
     @Override

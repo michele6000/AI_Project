@@ -57,7 +57,7 @@ public class VmServiceImpl implements VmService {
         return vmRepo.findAll()
                 .stream()
                 .filter(v -> v.getTeam().equals(teamRepo.getOne(teamId)))
-                .map(v -> modelMapper.map(v, VMDTO.class))
+                .map(v -> modelMapper.typeMap(VM.class,VMDTO.class).addMappings(m -> m.skip(VMDTO::setImage)).map(v))
                 .collect(Collectors.toList())
                 ;
     }
