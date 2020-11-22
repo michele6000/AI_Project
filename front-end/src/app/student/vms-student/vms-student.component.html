@@ -23,19 +23,19 @@
     </div>
     <div>
       <h2>Team Usage </h2>
-      <p>{{"V-CPU: " + usage.limit_cpu}}</p>
-      <p>{{"V-RAM: " + usage.limit_ram }}</p>
-      <p>{{"V-HDD: " + usage.limit_hdd }}</p>
-      <p>{{"VM-Instances: " + usage.limit_instance }}</p>
-      <p>{{"VM-Active-Instances: " + usage.limit_active_instance}}</p>
+      <p>{{"V-CPU: " + (usage != undefined ? usage.limit_cpu : "")}}</p>
+      <p>{{"V-RAM: " + (usage != undefined ? usage.limit_ram : "")}}</p>
+      <p>{{"V-HDD: " + (usage != undefined ? usage.limit_hdd : "")}}</p>
+      <p>{{"VM-Instances: " + (usage != undefined ? usage.limit_instance : "")}}</p>
+      <p>{{"VM-Active-Instances: " + (usage != undefined ? usage.limit_active_instance : "")}}</p>
     </div>
     <div>
       <h2>Available resource </h2>
-      <p>{{"V-CPU: " + (team.limit_cpu - usage.limit_cpu)}}</p>
-      <p>{{"V-RAM: " + (team.limit_ram - usage.limit_ram) }}</p>
-      <p>{{"V-HDD: " + (team.limit_hdd - usage.limit_hdd) }}</p>
-      <p>{{"VM-Instances: " + (team.limit_instance - usage.limit_instance) }}</p>
-      <p>{{"VM-Active-Instances: " + (team.limit_active_instance - usage.limit_active_instance)}}</p>
+      <p>{{"V-CPU: " + (team.limit_cpu - (usage != undefined ? usage.limit_cpu : 0))}}</p>
+      <p>{{"V-RAM: " + (team.limit_ram - (usage != undefined ? usage.limit_ram : 0)) }}</p>
+      <p>{{"V-HDD: " + (team.limit_hdd - (usage != undefined ? usage.limit_hdd : 0)) }}</p>
+      <p>{{"VM-Instances: " + (team.limit_instance - (usage != undefined ? usage.limit_instance : 0)) }}</p>
+      <p>{{"VM-Active-Instances: " + (team.limit_active_instance - (usage != undefined ? usage.limit_instance : 0))}}</p>
     </div>
   </div>
   <mat-divider *ngIf="canCreateVM" class="mt-10 mb-20"></mat-divider>

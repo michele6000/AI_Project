@@ -8,7 +8,7 @@ import {SubmissionModel} from '../../models/submission.model';
 import {from} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
 
-const API_URL_PUBLIC = 'http://93.56.104.204:8080/API/';
+const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = 'localhost:8080/API/';
 
 

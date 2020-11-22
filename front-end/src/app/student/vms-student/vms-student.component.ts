@@ -82,14 +82,7 @@ export class VmsStudentComponent implements OnInit {
         if (result) {
           this.studentService.deleteVm(vm.id).subscribe(
             (res) => {
-              this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
-                this.computeOwner(vms);
-                this.snackBar.open('VM deleted successfully.', 'OK', {
-                  duration: 5000
-                });
-              }, error => {
-                this.genericError();
-              });
+              this.studentService.findTeamsByStudent(localStorage.getItem('id'), true);
             },
             (error) => {
               this.genericError();
@@ -148,7 +141,7 @@ export class VmsStudentComponent implements OnInit {
             const studentsNotAvailableIds = owners.map(s => s.id);
             // filtro solo gli studenti che non sono ancora owners della vm
             studentsAvailable = studentInTeam.filter(s => !studentsNotAvailableIds.includes(s.id));
-            if (studentsAvailable === 0) {
+            if (studentsAvailable.length > 0) {
               this.dialog.open(AddOwnerComponent, {data: {vm, students: studentsAvailable}})
                 .afterClosed()
                 .subscribe(result => {
