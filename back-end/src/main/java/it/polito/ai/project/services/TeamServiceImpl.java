@@ -6,6 +6,7 @@ import it.polito.ai.project.dtos.*;
 import it.polito.ai.project.entities.*;
 import it.polito.ai.project.exceptions.*;
 import it.polito.ai.project.repositories.*;
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -244,17 +245,15 @@ public class TeamServiceImpl implements TeamService {
                 throw new ProfessorNotFoundException("Professor not found!");
             if (!isProfessorCourse(courseName,username))
                 throw new TeamServiceException( "You are not a professor of this course!");
-            courseRepo.getOne(courseName).setEnabled(false);
-            courseRepo.getOne(courseName).getTeams().forEach(t -> t.setStatus(0));
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    courseRepo.getOne(courseName).getStudents().forEach(s ->
-                            notification.sendMessage(s.getEmail(),
-                                    "Course disabled",
-                                    "We inform you that the course " + courseName + " has been disabled."));
-                }
-            });
+            Course course = courseRepo.getOne(courseName);
+            course.setEnabled(false);
+            course.getTeams().forEach(t -> t.setStatus(0));
+            course.getStudents().forEach(s -> executor.execute(() ->
+                    notification.sendMessage(s.getEmail(),
+                    "Course disabled",
+                    "We inform you that the course " + courseName + " has been disabled.")));
+
+            courseRepo.save(course);
 
         } else throw new CourseNotFoundException("Course not found!");
     }
