@@ -58,7 +58,8 @@ export class VmsTableComponent implements OnInit {
   powerOn(element: VmModel) {
     this.studentService.powerOnVm(element.id).subscribe((res) => {
       if (res) {
-        element.status = 'poweron';
+        // element.status = 'poweron';
+        this.studentService.findTeamsByStudent(localStorage.getItem('id'), true);
       } else {
         this.snackBar.open('Quota exceeded. Too many active VMs.', 'OK', {
           duration: 5000
@@ -73,7 +74,8 @@ export class VmsTableComponent implements OnInit {
 
   powerOff(element: VmModel) {
     this.studentService.powerOffVm(element.id).subscribe((res) => {
-      element.status = 'poweroff';
+      // element.status = 'poweroff';
+      this.studentService.findTeamsByStudent(localStorage.getItem('id'), true);
     }, (error) => {
       this.snackBar.open('Can not power off this instance.', 'OK', {
         duration: 5000

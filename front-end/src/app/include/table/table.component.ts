@@ -155,13 +155,14 @@ export class TableComponent implements OnInit {
 
   delete() {
     if (this.checkedObjects.length > 0) {
-      this.dialog.open(ConfirmDeleteComponent)
+      this.dialog.open(ConfirmDeleteComponent, {restoreFocus: false})
         .afterClosed()
         .subscribe(result => {
           if (result) {
             this.onDelete.emit(this.checkedObjects);
           }
           this.checkedObjects = [];
+          this.constraintMasterCheckbox = false;
         });
     } else {
       this.snackBar.open('You must select almost one element!', 'OK', {

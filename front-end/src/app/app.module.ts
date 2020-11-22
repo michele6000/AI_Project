@@ -69,6 +69,7 @@ import {EvaluateSolutionComponent} from './dialog/evaluate-solution/evaluate-sol
 import {RemoveProfessorFromCourseComponent} from './dialog/remove-professor-from-course/remove-professor-from-course.component';
 import {StatisticsVmComponent} from './dialog/statistics-vm/statistics-vm.component';
 import {ReviewSolutionComponent} from './dialog/review-solution/review-solution.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -117,36 +118,37 @@ import {ReviewSolutionComponent} from './dialog/review-solution/review-solution.
     StatisticsVmComponent,
     ReviewSolutionComponent
   ],
-  imports: [
-    NgParticlesModule,
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatCardModule,
-    MatInputModule,
-    FormsModule,
-    HttpClientModule,
-    MatDialogModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatCheckboxModule,
-    MatIconModule,
-    MatSidenavModule,
-    MatListModule,
-    MatTabsModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatTooltipModule,
-    MatExpansionModule,
-    MatRadioModule,
-    MatSnackBarModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSelectModule
-  ],
+    imports: [
+        NgParticlesModule,
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatCardModule,
+        MatInputModule,
+        FormsModule,
+        HttpClientModule,
+        MatDialogModule,
+        MatTableModule,
+        MatSortModule,
+        MatPaginatorModule,
+        MatCheckboxModule,
+        MatIconModule,
+        MatSidenavModule,
+        MatListModule,
+        MatTabsModule,
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+        MatTooltipModule,
+        MatExpansionModule,
+        MatRadioModule,
+        MatSnackBarModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatSelectModule,
+        MatProgressSpinnerModule
+    ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, {
     provide: MAT_DATE_LOCALE,
     useValue: 'en-GB'

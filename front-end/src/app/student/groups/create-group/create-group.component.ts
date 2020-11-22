@@ -89,8 +89,8 @@ export class CreateGroupComponent implements OnInit {
     if (f.valid) {
       if ((this.selectedStudents.length + 1) < this.course.min || (this.selectedStudents.length + 1) > this.course.max) {
         this.error = true;
-        this.message = 'Vincoli creazione gruppo non rispettati. Minimo ' + this.course.min
-          + ' membri e massimo ' + this.course.max + ' membri (compreso te stesso).';
+        this.message = 'Team proposal constraints not satisfied. Minimum ' + this.course.min
+          + ' students and maximum ' + this.course.max + ' students (including yourself).';
       } else {
         this.error = false;
         this.message = '';

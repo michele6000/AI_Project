@@ -29,6 +29,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   existTeam: boolean = false;
   private changeCorsoSub: Subscription;
   filename = 'Choose file';
+  loaderDisplayed = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient,
               private professorService: ProfessorService, private snackBar: MatSnackBar, private dialog: MatDialog) {
@@ -80,6 +81,8 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   }
 
   deleteStudent(selectedStudents: StudentModel[]) {
+    this.loaderDisplayed = true;
+
     const res = from(selectedStudents).pipe(
       concatMap(s => {
         return this.professorService.deleteStudent(this.corso.name, s.id);
@@ -88,6 +91,8 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
     );
 
     res.subscribe((result: boolean[]) => {
+        this.loaderDisplayed = false;
+
         if (result.filter(e => !e).length > 0) {
           // Almeno una ha fallito
           this.snackBar.open('Error deleting.', 'OK', {
@@ -158,6 +163,13 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
             this.snackBar.open(result.length + ' students added successfully.', 'OK', {
               duration: 5000
             });
+
+            this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => {
+                this.data = students;
+              },
+              error => {
+                this.genericError();
+              });
           }
         },
         error => {
@@ -171,8 +183,12 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   showStudentsInTeam(team: GroupModel) {
     // passo al dialog la lista di studenti nel team e il nome del team
     this.professorService.findMembersByTeamId(team.id).subscribe(students => {
-      this.dialog.open(ShowTeamMembersComponent, {data: {students, teamName: team.name, teamId: team.id,
-          allStudentsOfCourse: this.students}})
+      this.dialog.open(ShowTeamMembersComponent, {
+        data: {
+          students, teamName: team.name, teamId: team.id,
+          allStudentsOfCourse: this.students
+        }
+      })
         .afterClosed()
         .subscribe(result => {
           this.professorService.findTeamsByCourse(this.corso.name).subscribe(teams => {

@@ -44,18 +44,18 @@ export class VmsStudentComponent implements OnInit {
           this.studentService.findVmsByTeam(this.team.id).subscribe(
             (vms) => {
               this.computeOwner(vms);
+              this.studentService.getTeamStat(this.team.id).subscribe(
+                (teamUsage) => {
+                  this.usage = teamUsage;
+                },
+                error => {
+                  this.genericError();
+                }
+              );
             },
             error => {
               this.genericError();
             });
-          this.studentService.getTeamStat(this.team.id).subscribe(
-            (teamUsage) => {
-              this.usage = teamUsage;
-            },
-            error => {
-              this.genericError();
-            }
-          );
         }
       },
       error => {
@@ -70,13 +70,7 @@ export class VmsStudentComponent implements OnInit {
       .afterClosed()
       .subscribe(result => {
         if (result) {
-          this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
-              // calcolo gli owner
-              this.computeOwner(vms);
-            },
-            error => {
-              this.genericError();
-            });
+          this.studentService.findTeamsByStudent(localStorage.getItem('id'), true);
         }
       });
   }
@@ -109,22 +103,7 @@ export class VmsStudentComponent implements OnInit {
       .afterClosed()
       .subscribe(result => {
         if (result){
-          this.studentService.findTeamsByStudent(localStorage.getItem('id'), true).subscribe(
-            resTeams => {
-              this.studentService.getVmConfiguration(vm.id).subscribe(
-                res => {
-                  if (res) {
-                    this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
-                        this.computeOwner(vms);
-                      },
-                      error => {
-                        this.genericError();
-                      });
-                  }
-                }
-              );
-            }
-          );
+          this.studentService.findTeamsByStudent(localStorage.getItem('id'), true);
         }
       });
   }

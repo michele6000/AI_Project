@@ -2,7 +2,7 @@
   <div class="d-flex align-items-center">
 
     <h2 class="mb-10 mr-20" *ngIf="!canCreateVM">You need to create a group first.</h2>
-    <h2 class="mb-10 mr-20" *ngIf="canCreateVM">Management option: </h2>
+    <h2 class="mb-10 mr-20" *ngIf="canCreateVM">Management option </h2>
     <button [disabled]="team == undefined || team.limit_instance == 0" class="mb-10 ml-20 float-right mr-20"
             *ngIf="canCreateVM" (click)="createVM()" color="primary" mat-raised-button>Create VM
     </button>
@@ -14,7 +14,7 @@
 
   <div class="box " *ngIf="team != undefined && team.limit_instance != 0">
     <div>
-      <h2>Team Quota: </h2>
+      <h2>Team Quota </h2>
       <p>{{"V-CPU: " + team.limit_cpu}}</p>
       <p>{{"V-RAM: " + team.limit_ram }}</p>
       <p>{{"V-HDD: " + team.limit_hdd }}</p>
@@ -22,7 +22,7 @@
       <p>{{"VM-Active-Instances: " + team.limit_active_instance}}</p>
     </div>
     <div>
-      <h2>Team Usage: </h2>
+      <h2>Team Usage </h2>
       <p>{{"V-CPU: " + usage.limit_cpu}}</p>
       <p>{{"V-RAM: " + usage.limit_ram }}</p>
       <p>{{"V-HDD: " + usage.limit_hdd }}</p>
@@ -30,7 +30,7 @@
       <p>{{"VM-Active-Instances: " + usage.limit_active_instance}}</p>
     </div>
     <div>
-      <h2>Available resource: </h2>
+      <h2>Available resource </h2>
       <p>{{"V-CPU: " + (team.limit_cpu - usage.limit_cpu)}}</p>
       <p>{{"V-RAM: " + (team.limit_ram - usage.limit_ram) }}</p>
       <p>{{"V-HDD: " + (team.limit_hdd - usage.limit_hdd) }}</p>
@@ -39,7 +39,7 @@
     </div>
   </div>
   <mat-divider *ngIf="canCreateVM" class="mt-10 mb-20"></mat-divider>
-  <h2 *ngIf="canCreateVM" class="mb-10 mr-20">Team VMs: </h2>
+  <h2 *ngIf="canCreateVM" class="mb-10 mr-20">Team VMs </h2>
   <app-vms-table *ngIf="canCreateVM" (delete)="deleteVm($event)" (edit)="editVM($event)" (modifyOwner)="modifyOwnerVM($event)"
                  (addOwner)="addOwnerVM($event)" [columns]="columns" [data]="data" [team]="team"></app-vms-table>
 </div>

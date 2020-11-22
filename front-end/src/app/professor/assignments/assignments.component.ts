@@ -7,7 +7,7 @@ import {CourseModel} from '../../models/course.model';
 import {ProfessorService} from '../../services/professor.service';
 import * as moment from 'moment';
 import {from} from 'rxjs';
-import {concatMap, toArray} from 'rxjs/operators';
+import {concatMap, mergeMap, toArray} from 'rxjs/operators';
 import {StudentSubmissionModel} from '../../models/student-submission.model';
 import {SolutionModel} from '../../models/solution.model';
 import {EvaluateSolutionComponent} from '../../dialog/evaluate-solution/evaluate-solution.component';
@@ -29,12 +29,14 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
   private courseParam: string;
   corso: CourseModel;
   show: boolean;
+  loaderDisplayed = false;
 
   constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute,
               private snackBar: MatSnackBar, private professorService: ProfessorService) {
   }
 
   loadAssignments() {
+    this.loaderDisplayed = true;
     // 1 - Recupero l'elenco di studenti del corso
     this.professorService.getEnrolledStudents(this.corso.name).subscribe(
       (resStudents) => {
@@ -51,7 +53,7 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
 
               // 3 - Per ogni studente recupero getLatestSolution per questa submission
               const resultLatestSolutions = from(resStudents).pipe(
-                concatMap(student => {
+                mergeMap(student => {
                   return this.professorService.getLatestSolution(student.id, submission.id);
                 }),
                 toArray()
@@ -73,6 +75,8 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
 
                 this.consegne = consegne;
                 this.show = consegne.length !== 0;
+
+                this.loaderDisplayed = false;
               });
 
               // 4   - Per ogni solution devo avere [EvaluateSolution] + Evaluation (colonna a parte, può essere NULL => "")
