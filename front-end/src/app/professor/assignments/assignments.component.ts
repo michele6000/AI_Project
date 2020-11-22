@@ -148,10 +148,6 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
   reviewSolution($event: SolutionModel) {
     this.dialog.open(ReviewSolutionComponent, {data: $event})
       .afterClosed()
-      .subscribe(result => {
-        if (result) {
-          this.loadAssignments();
-        }
-      });
+      .subscribe(result => {});
   }
 }

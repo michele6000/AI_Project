@@ -188,7 +188,6 @@ export class ProfessorService {
     const evaluationStr = new Blob([JSON.stringify(evaluation)], {type: 'application/json'});
     const message = new Blob([JSON.stringify('Mark')], {type: 'application/json'});
     const type = new Blob([JSON.stringify('evaluation')], {type: 'application/json'});
-    // se lo mando come number me lo sottolinea di rosso -> @TODO: Testare entrambi i casi
     formData.append('message', message);
     formData.append('mark', evaluationStr);
     formData.append('file', file);
@@ -198,10 +197,10 @@ export class ProfessorService {
 
   reviewSolution(studentId: string, solutionId: number, review: string, file: File) {
     const formData = new FormData();
-    // const reviewStr = new Blob([JSON.stringify(review)], { type: 'application/json'});
+    const reviewStr = new Blob([JSON.stringify(review)], { type: 'application/json'});
     const mark = new Blob([JSON.stringify('0')], {type: 'application/json'});
     const type = new Blob([JSON.stringify('review')], {type: 'application/json'});
-    formData.append('message', review);
+    formData.append('message', reviewStr);
     formData.append('mark', mark);
     formData.append('file', file);
     formData.append('type', type);
