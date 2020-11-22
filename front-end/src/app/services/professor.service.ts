@@ -172,9 +172,13 @@ export class ProfessorService {
     }
   }
 
+  getAllLatestSolution(submissionId: number){
+    return this.http.get<SolutionModel[]>(API_URL + 'students/' + submissionId + '/getAllLatestSolution');
+  }
+
+  // @deprecated
   getLatestSolution(studentId: string, submissionId: number) {
     if (studentId.length > 0) {
-
       return this.http.get<SolutionModel>(API_URL + 'students/' + studentId + '/' + submissionId + '/getLatestSolution');
     }
   }

@@ -51,6 +51,18 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
               submission.expiryString = moment(submission.expiryDate).format('DD/MM/YYYY');
               submission.releaseString = moment(submission.releaseDate).format('DD/MM/YYYY');
 
+              // recupero per ogni assignment tutte le submission -> l'elaborazione è spostata lato server
+              this.professorService.getAllLatestSolution(submission.id).subscribe(
+                allLastSolution => {
+                  submission.elaborati = allLastSolution;
+                  consegne.push(submission);
+                  this.consegne = consegne;
+                  this.show = consegne.length !== 0;
+                  this.loaderDisplayed = false;
+                }
+              );
+
+              /*
               // 3 - Per ogni studente recupero getLatestSolution per questa submission
               const resultLatestSolutions = from(resStudents).pipe(
                 concatMap(student => {
@@ -69,6 +81,7 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
                   latestSol.matricola = resStudents[key].id;
                   elaborati.push(latestSol);
                 });
+
                 // Aggiungo l'elenco delle latestSolutions per ogni studente alla submission
                 submission.elaborati = elaborati;
                 consegne.push(submission);
@@ -78,7 +91,7 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
 
                 this.loaderDisplayed = false;
               });
-
+              */
               // 4   - Per ogni solution devo avere [EvaluateSolution] + Evaluation (colonna a parte, può essere NULL => "")
               //        e [ShowSolution] e [StopRevision] e [ReviewSolution]
 
