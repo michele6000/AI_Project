@@ -31,14 +31,7 @@ export class ShowTeamMembersComponent implements OnInit {
   }
 
   deleteStudentFromTeam(students: StudentModel[]) {
-    // Controllo che non siano selezionati tutti i professori
-    if (students.length === this.studentsInTeam.length) {
-      this.dialogRef.close(false);
-      this.snackBar.open('You cannot remove all students from a team. You must evict the team', 'OK', {
-        duration: 5000
-      });
-      return;
-    }
+    // Permetto la cancellazione di più di uno studente anche se si va sotto al minimo
 
     const res = from(students).pipe(
       concatMap(student => {
@@ -47,8 +40,8 @@ export class ShowTeamMembersComponent implements OnInit {
       toArray()
     );
 
-    res.subscribe((result: boolean[]) => {
-        if (result.filter(e => !e).length > 0) {
+    res.subscribe((result: string[]) => {
+        if (result.filter(e => (e === '')).length > 0) {
           // Almeno una ha fallito
           this.dialogRef.close(true);
           this.snackBar.open('Error delete student from team.', 'OK', {
@@ -71,7 +64,7 @@ export class ShowTeamMembersComponent implements OnInit {
   addStudentToTeam(student: StudentModel) {
     this.professorService.addStudentToTeam(this.teamid, student.id).subscribe((res) => {
       this.dialogRef.close(true);
-      if (res){
+      if (res === null){
         this.snackBar.open('Student added to team successfully.', 'OK', {
           duration: 5000
         });
@@ -81,7 +74,9 @@ export class ShowTeamMembersComponent implements OnInit {
         });
       }
     }, (error) => {
-      this.genericError();
+      this.snackBar.open(error.error.message, 'OK', {
+        duration: 5000
+      });
     });
   }
 

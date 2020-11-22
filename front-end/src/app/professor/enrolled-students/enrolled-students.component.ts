@@ -28,6 +28,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   students: StudentModel[] = [];
   existTeam: boolean = false;
   private changeCorsoSub: Subscription;
+  filename = 'Choose file';
 
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient,
               private professorService: ProfessorService, private snackBar: MatSnackBar, private dialog: MatDialog) {
@@ -130,7 +131,13 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
 
   handleFileSelect($event: any) {
     this.file = $event.target.files[0];
-    this.fileAbsent = false;
+    if (this.file !== undefined) {
+      this.fileAbsent = false;
+      this.filename = this.file.name;
+    } else {
+      this.fileAbsent = true;
+      this.filename = 'Choose file';
+    }
   }
 
   sendFile() {
@@ -167,7 +174,20 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
       this.dialog.open(ShowTeamMembersComponent, {data: {students, teamName: team.name, teamId: team.id,
           allStudentsOfCourse: this.students}})
         .afterClosed()
-        .subscribe(result => {});
+        .subscribe(result => {
+          this.professorService.findTeamsByCourse(this.corso.name).subscribe(teams => {
+              if (teams.length > 0) {
+                this.existTeam = true;
+                this.teams = teams;
+              } else {
+                this.existTeam = false;
+                this.teams = [];
+              }
+            },
+            error => {
+              this.genericError();
+            });
+        });
     }, error => {
       this.genericError();
     });
