@@ -16,7 +16,7 @@
     <th *matHeaderCellDef mat-header-cell mat-sort-header >
       Creation Date
     </th>
-    <td *matCellDef="let element" mat-cell > {{element['creationDate'] | date:'H:m d/M/y'}} </td>
+    <td *matCellDef="let element" mat-cell > {{element['creationDate'] | date:'HH:mm d/M/y'}} </td>
   </ng-container>
 
   <ng-container matColumnDef="evaluate" >

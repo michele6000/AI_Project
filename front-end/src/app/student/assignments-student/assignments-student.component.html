@@ -25,7 +25,7 @@
       <p *ngIf="consegna.history.length < 1">No history available.</p>
       <mat-list>
         <mat-list-item *ngFor="let solution of consegna.history ">
-          Version: {{solution.version}} - Status: {{solution.status}} - Date: {{solution.creationDate | date:'H:m d/M/y'}}
+          Version: {{solution.version}} - Status: {{solution.status}} - Date: {{solution.creationDate | date:'HH:mm d/M/y'}}
           <a mat-stroked-button (click)="handleShowSolution(solution.id)" class="ml-20">Show solution</a>
           <div *ngIf="solution.evaluation!=null" class="ml-20">
             <b> Mark: {{solution.evaluation}}</b>
