@@ -49,4 +49,6 @@ public interface SubmissionService {
 
     byte[] getSolutionImage(Long solutionId);
 
+    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
+    List<SolutionDTO> getAllLastSolution(Long submissionId);
 }

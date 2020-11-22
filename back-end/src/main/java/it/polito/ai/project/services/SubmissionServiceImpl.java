@@ -349,6 +349,35 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
+    public List<SolutionDTO> getAllLastSolution(Long submissionId) {
+        if (!submissionRepo.findById(submissionId).isPresent())
+            throw new SubmissionNotFoundException("Submission not found!");
+
+        Course course = submissionRepo.getOne(submissionId).getCourse();
+
+        if (!course.isEnabled())
+            throw new CourseDisabledException("Course not enabled!");
+        // per rendere più veloce fare query con join a mano, e poi mappare come lista di oggetti ed estrarre i valori ( come a lavoro )
+        return course.getStudents()
+                .stream()
+                .map(s ->
+                    modelMapper
+                    .typeMap(Solution.class, SolutionDTO.class)
+                    .addMappings(mapper -> {
+                        mapper.skip(SolutionDTO::setImage);
+                        mapper.map(sol ->sol.getStudent().getId(),SolutionDTO::setMatricola);
+                        mapper.map(sol ->sol.getStudent().getName(),SolutionDTO::setName);
+                        mapper.map(sol ->sol.getStudent().getFirstName(),SolutionDTO::setSurname);
+                    })
+                    .map(getLastSolVersion(submissionId, s.getId()))
+                )
+                .collect(Collectors.toList())
+                ;
+
+
+    }
+
+    @Override
     public SolutionDTO getSolution(Long solutionId, String username) {
         if (!solutionRepo.findById(solutionId).isPresent())
             throw new SolutionNotFoundException("Solution not found!");
@@ -499,6 +528,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         blank.setSubmission(submissionRepo.getOne(submissionId));
         blank.setVersion(-1);
         blank.setRevisable(true);
+        blank.setEvaluation(null);
         return solutionRepo.save(blank);
     }
 

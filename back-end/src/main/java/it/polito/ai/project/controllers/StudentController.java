@@ -118,6 +118,17 @@ public class StudentController {
         }
     }
 
+    @GetMapping("/{submissionId}/getAllLatestSolution")//
+    public List<SolutionDTO> getAllLastSolution(@PathVariable Long submissionId) {
+        if (getCurrentRoles().contains("ROLE_STUDENT"))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to access this information!");
+        try {
+            return submissionService.getAllLastSolution(submissionId);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @GetMapping("/{studentId}/{solutionId}/getSolution")
     public SolutionDTO getSolution(@PathVariable String studentId, @PathVariable Long solutionId) {
         if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId))

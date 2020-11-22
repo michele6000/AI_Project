@@ -14,4 +14,7 @@ public class SolutionDTO {
     private String status;
     private boolean isRevisable; //flag
     private Timestamp creationDate;
+    private String matricola;
+    private String name;
+    private String surname;
 }
