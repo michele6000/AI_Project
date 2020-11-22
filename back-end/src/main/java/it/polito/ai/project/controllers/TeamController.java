@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,12 +103,12 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/{studentId}/addMember")
-    public void addMember(@PathVariable Long teamId, @PathVariable String studentId, @RequestParam Timestamp timestamp) {
+    public void addMember(@PathVariable Long teamId, @PathVariable String studentId) {
         List<String> students = new ArrayList<>();
         try {
             service.addMember(teamId, studentId);
             students.add(studentId);
-            notifyService.notifyTeam(service.getTeam(teamId), students, timestamp);
+            notifyService.notifyTeam(service.getTeam(teamId), students, new Timestamp(new Date().getTime()+60000000));
         } catch (TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
