@@ -17,7 +17,7 @@
   <app-table (delete)="deleteStudent($event)" [columns]="columns" [data]="data" [showDelete]="true"></app-table>
   <mat-divider class="mt-30 mb-20"></mat-divider>
   <h1 class="mt-10">Teams</h1>
-  <app-table *ngIf="existTeam" [columns]="columnsTeam" [data]="teams" (show)="showStudentsInTeam($event)" [showDetails]="true" [showCheckbox]="true" (delete)="deleteTeam($event)" [showPaginator]="false"></app-table>
+  <app-table *ngIf="existTeam" [columns]="columnsTeam" [data]="teams" (show)="showStudentsInTeam($event)" [showDetails]="true" [showCheckbox]="true" (delete)="deleteTeam($event)"></app-table>
   <p *ngIf="!existTeam">No teams created yet.</p>
 </div>
 <div class="loader-container" *ngIf="loaderDisplayed">

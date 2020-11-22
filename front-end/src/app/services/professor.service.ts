@@ -187,6 +187,7 @@ export class ProfessorService {
     const formData = new FormData();
     const evaluationStr = new Blob([JSON.stringify(evaluation)], {type: 'application/json'});
     // se lo mando come number me lo sottolinea di rosso -> @TODO: Testare entrambi i casi
+    formData.append('message', 'Mark');
     formData.append('mark', evaluationStr);
     formData.append('file', file);
     return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/addCorrection', formData);
@@ -196,6 +197,7 @@ export class ProfessorService {
     const formData = new FormData();
     // const reviewStr = new Blob([JSON.stringify(review)], { type: 'application/json'});
     formData.append('message', review);
+    formData.append('mark', '0');
     formData.append('file', file);
     return this.http.post<any>(API_URL + 'students/' + studentId + '/' + solutionId + '/addCorrection', formData);
   }
