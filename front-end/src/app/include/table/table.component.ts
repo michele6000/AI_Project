@@ -28,6 +28,7 @@ export class TableComponent implements OnInit {
   @Input() showChangeStatus: boolean;
   @Input() showCheckbox = true;
   @Input() showDetails = false;
+  @Input() showPaginator = true;
   showAddProf: boolean = false;
   showRemoveProf: boolean = false;
   @Output('delete') onDelete: EventEmitter<any[]> = new EventEmitter<any[]>();
