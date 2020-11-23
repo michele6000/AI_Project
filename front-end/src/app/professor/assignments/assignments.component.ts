@@ -45,6 +45,12 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
         this.professorService.findAssignmentsByCourse(this.corso.name).subscribe(
           (resSubmissions) => {
             const consegne = [];
+
+            if (resSubmissions.length < 1) {
+              this.show = consegne.length !== 0;
+              this.loaderDisplayed = false;
+            }
+
             resSubmissions.forEach((submission) => {
 
               // Formatto correttamente le date
@@ -128,7 +134,8 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
   showHistory(studentSub: StudentSubmissionModel) {
     this.dialog.open(ShowHistoryComponent, {data: studentSub})
       .afterClosed()
-      .subscribe(result => {});
+      .subscribe(result => {
+      });
   }
 
   createAssignment($event) {
@@ -161,6 +168,7 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
   reviewSolution($event: SolutionModel) {
     this.dialog.open(ReviewSolutionComponent, {data: $event})
       .afterClosed()
-      .subscribe(result => {});
+      .subscribe(result => {
+      });
   }
 }

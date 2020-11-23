@@ -4,6 +4,7 @@
     <button (click)="createAssignment($event)" class="ml-20 mb-10" color="primary" mat-raised-button>Create Assignment </button>
   </div>
   <mat-divider class="mt-10 mb-20"></mat-divider>
+  <p *ngIf="!show">There are no assignments yet.</p>
   <h1 *ngIf="show" >Assignments of the course:</h1>
   <mat-accordion *ngIf="show">
     <mat-expansion-panel *ngFor="let consegna of consegne" class="mb-20" >
