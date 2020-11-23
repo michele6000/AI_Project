@@ -8,6 +8,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {GroupModel} from '../../../models/group.model';
 import {forkJoin} from 'rxjs';
 import {MatDatepickerInputEvent} from '@angular/material/datepicker';
+import {ProfessorService} from "../../../services/professor.service";
 
 @Component({
   selector: 'app-create-group',
@@ -30,7 +31,7 @@ export class CreateGroupComponent implements OnInit {
   chosenTimeout: Date;
 
   constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService,
-              private snackBar: MatSnackBar) {
+              private professorService: ProfessorService, private snackBar: MatSnackBar) {
     const today = new Date();
     this.minDate = new Date();
     this.minDate.setDate(today.getDate() + 1);
@@ -47,7 +48,7 @@ export class CreateGroupComponent implements OnInit {
 
   initData() {
     // Recupero l'elenco degli studenti ancora disponibili
-    this.studentService.findAvailableStudentsByCourseName(this.course.name).subscribe((result: StudentModel[]) => {
+    this.professorService.getEnrolledStudents(this.course.name).subscribe((result: StudentModel[]) => {
         // filtro per rimuovere lo studente loggato da quelli disponibili
         this.studentsData = result.filter((s) => s.id !== localStorage.getItem('id'));
       },

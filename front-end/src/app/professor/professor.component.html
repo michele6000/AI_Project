@@ -9,7 +9,7 @@
   <mat-sidenav mode="side" opened position>
     <div>
       <mat-nav-list>
-        <mat-list-item (click)="changeCorso(corso)" *ngFor="let corso of corsi">
+        <mat-list-item (click)="navigateToCorso(corso)" *ngFor="let corso of corsi">
           {{corso.name}}
         </mat-list-item>
       </mat-nav-list>

@@ -52,6 +52,10 @@ export class ProfessorComponent implements OnInit, OnDestroy {
     });
   }
 
+  navigateToCorso(corso: CourseModel) {
+    this.router.navigate(['teacher', corso.name.toLowerCase().replace(/\s+/g, '-'), 'students']).then();
+  }
+
   changeCorso(corso: CourseModel) {
     this.singoloCorso = corso;
     this.router.navigate(['teacher', corso.name.toLowerCase().replace(/\s+/g, '-'), 'students']).then();
