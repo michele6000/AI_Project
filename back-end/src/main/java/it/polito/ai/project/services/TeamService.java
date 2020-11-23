@@ -24,7 +24,7 @@ public interface TeamService {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     List<StudentDTO> getAllStudents();
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
     List<StudentDTO> getEnrolledStudents(String courseName);
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PROFESSOR')")
@@ -105,6 +105,9 @@ public interface TeamService {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
     List<ProfessorDTO> getAllProfessors();
 
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
+    void deleteAllProposals(List<Long> teamIds);
+
     void setActive(Long id);
 
     void evictTeam(Long id);
@@ -121,5 +124,6 @@ public interface TeamService {
     boolean checkToken (String token);
 
     void enableUser(String username);
+
 
 }

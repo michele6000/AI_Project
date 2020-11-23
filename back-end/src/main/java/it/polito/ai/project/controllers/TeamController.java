@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -147,6 +145,18 @@ public class TeamController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
+    @PostMapping("/{teamId}/deleteAllProposals")
+    public boolean deleteAllProposal(@PathVariable Long teamId) {
+        try {
+            service.deleteAllProposals(Collections.singletonList(teamId));
+            return true;
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+
 
     private String getCurrentUsername() {
         return SecurityContextHolder

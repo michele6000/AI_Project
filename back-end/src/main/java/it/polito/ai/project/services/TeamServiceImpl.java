@@ -674,12 +674,23 @@ public class TeamServiceImpl implements TeamService {
         return profRepo.findAll()
                 .stream()
                 .map(professor ->
-                    modelMapper
-                            .typeMap(Professor.class,ProfessorDTO.class)
-                            .addMappings(mapper -> mapper.skip(ProfessorDTO::setImage))
-                            .map(professor)
+                        modelMapper
+                                .typeMap(Professor.class, ProfessorDTO.class)
+                                .addMappings(mapper -> mapper.skip(ProfessorDTO::setImage))
+                                .map(professor)
                 )
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteAllProposals(List<Long> teamIds) {
+        teamIds.forEach(t -> {
+            if (!teamRepo.existsById(t))
+                throw new TeamServiceException("Team not found!");
+
+            tokenRepo.findAllByTeamId(t).forEach(tk -> tokenRepo.delete(tk));
+            this.evictTeam(t);
+        });
     }
 
     @Override

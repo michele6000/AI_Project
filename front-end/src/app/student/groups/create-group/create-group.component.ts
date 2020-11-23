@@ -103,6 +103,7 @@ export class CreateGroupComponent implements OnInit {
             // Tutte a buon fine
             this.studentService.findTeamsByStudent(localStorage.getItem('id'));
             this.loaderDisplayed = false;
+            this.selectedStudents=[];
             this.snackBar.open('Team proposal created successfully.', 'OK', {
               duration: 5000
             });
