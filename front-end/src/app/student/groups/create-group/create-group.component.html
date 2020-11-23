@@ -26,6 +26,7 @@
 </div>
 <div class="mt-10">
   <p>Received group proposals</p>
-  <app-table-expandable [columns]="groupsColumns" [data]="groupsData" [innerColumns]="innerGroupColumns"
+  <button *ngIf="this.groupsData.length > 0" class="mb-20 float-right" color="warn" mat-button mat-raised-button (click)="deleteAllProposal()">Delete All Proposals</button>
+  <app-table-expandable *ngIf="this.groupsData.length > 0" [columns]="groupsColumns" [data]="groupsData" [innerColumns]="innerGroupColumns"
                         [showEdit]="false"></app-table-expandable>
 </div>

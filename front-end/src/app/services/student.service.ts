@@ -170,4 +170,7 @@ export class StudentService {
     return this.http.get<ProfessorModel[]>(API_URL + 'courses/' + courseName + '/professors/');
   }
 
+  deleteAllProposal(teamId: number) {
+    return this.http.post<boolean>(API_URL + 'team/' + teamId + '/deleteAllProposals/', {});
+  }
 }

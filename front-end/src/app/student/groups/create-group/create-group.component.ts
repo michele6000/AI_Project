@@ -6,9 +6,10 @@ import {CourseModel} from '../../../models/course.model';
 import {StudentService} from '../../../services/student.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {GroupModel} from '../../../models/group.model';
-import {forkJoin} from 'rxjs';
+import {forkJoin, from} from 'rxjs';
 import {MatDatepickerInputEvent} from '@angular/material/datepicker';
 import {ProfessorService} from "../../../services/professor.service";
+import {concatMap, toArray} from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-group',
@@ -121,6 +122,32 @@ export class CreateGroupComponent implements OnInit {
     this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
       duration: 5000
     });
-    location.reload();
+  }
+
+  deleteAllProposal() {
+    const res = from(this.groupsData).pipe(
+      concatMap(t => {
+        return this.studentService.deleteAllProposal(t.id);
+      }),
+      toArray()
+    );
+
+    res.subscribe((result: boolean[]) => {
+        if (result.filter(e => !e).length > 0) {
+          // Almeno una ha fallito
+          this.snackBar.open('Error deleting.', 'OK', {
+            duration: 5000
+          });
+        } else {
+          // Tutte a buon fine
+          this.studentService.findTeamsByStudent(localStorage.getItem('id'));
+          this.snackBar.open('Team proposals deleted successfully.', 'OK', {
+            duration: 5000
+          });
+        }
+      },
+      error => {
+        this.genericError();
+      });
   }
 }
