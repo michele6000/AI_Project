@@ -8,7 +8,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {GroupModel} from '../../../models/group.model';
 import {forkJoin, from} from 'rxjs';
 import {MatDatepickerInputEvent} from '@angular/material/datepicker';
-import {ProfessorService} from "../../../services/professor.service";
+import {ProfessorService} from '../../../services/professor.service';
 import {concatMap, toArray} from 'rxjs/operators';
 
 @Component({
