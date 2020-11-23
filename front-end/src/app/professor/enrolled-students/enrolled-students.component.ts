@@ -128,7 +128,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
         duration: 5000
       });
     }, (error) => {
-      this.snackBar.open('Error adding student. ' + error.statusText + ' ' + error.error.message, 'OK', {
+      this.snackBar.open('Error adding student. ' + error.error.message, 'OK', {
         duration: 5000
       });
     });

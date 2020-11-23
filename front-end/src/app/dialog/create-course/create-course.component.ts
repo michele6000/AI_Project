@@ -56,7 +56,11 @@ export class CreateCourseComponent implements OnInit {
 
     }, error => {
       this.error = true;
-      this.errorStr = error.statusText + ' ' + error.error.message;
+      if (error.statusText === 'Conflict') {
+        this.errorStr = error.error.message + ' already present.';
+      } else {
+        this.errorStr = error.error.message;
+      }
       this.snackBar.open('Error creating course ' + course.name, 'OK', {
         duration: 5000
       });
