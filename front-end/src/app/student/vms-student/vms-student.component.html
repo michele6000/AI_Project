@@ -1,18 +1,14 @@
 <div class="container">
   <div class="d-flex align-items-center">
-
     <h2 class="mb-10 mr-20" *ngIf="!canCreateVM">You need to create a group first.</h2>
     <h2 class="mb-10 mr-20" *ngIf="canCreateVM">Management option </h2>
     <button [disabled]="team == undefined || team.limit_instance == 0" class="mb-10 ml-20 float-right mr-20"
             *ngIf="canCreateVM" (click)="createVM()" color="primary" mat-raised-button>Create VM
     </button>
-    <h2 class="mb-10 mr-20" *ngIf="team != undefined && team.limit_instance == 0">Professor must set up the
-      configuration of your team </h2>
   </div>
+  <h2 class="mb-10 mr-20" *ngIf="team != undefined && team.limit_instance == 0">Professor must set up the configuration of your team </h2>
 
-  <mat-divider *ngIf="canCreateVM" class="mt-10 mb-20"></mat-divider>
-
-  <div class="box " *ngIf="team != undefined && team.limit_instance != 0">
+  <div class="box" *ngIf="team != undefined && team.limit_instance != 0">
     <div>
       <h2>Team Quota </h2>
       <p>{{"V-CPU: " + team.limit_cpu}}</p>

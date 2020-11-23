@@ -5,6 +5,7 @@ import {VmStudent} from '../../models/vm-student.model';
 import {NgForm} from '@angular/forms';
 import {StudentService} from '../../services/student.service';
 import {VmModel} from '../../models/vm.model';
+import {GroupModel} from '../../models/group.model';
 
 @Component({
   selector: 'app-modify-vm-student',
@@ -17,11 +18,13 @@ export class ModifyVmStudentComponent implements OnInit {
   limitError = [];
   courseName: string;
 
-
   constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService,
               private dialogRef: MatDialogRef<ModifyVmStudentComponent>, private snackBar: MatSnackBar) {
     this.vmConfigAndLimitsPerTeam = data;
     this.courseName = this.vmConfigAndLimitsPerTeam.courseName;
+    this.courseName = this.vmConfigAndLimitsPerTeam.courseName;
+    console.log("In dialog");
+    console.log(data);
   }
 
   ngOnInit(): void {
@@ -55,7 +58,7 @@ export class ModifyVmStudentComponent implements OnInit {
           this.dialogRef.close(true);
         },
         error => {
-          this.snackBar.open('Error modifying vm configuration.', 'OK', {
+          this.snackBar.open('Error modifying vm configuration. ' + error.error.message, 'OK', {
             duration: 5000
           });
           this.dialogRef.close(false);
