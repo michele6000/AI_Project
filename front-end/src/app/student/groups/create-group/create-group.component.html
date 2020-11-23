@@ -30,3 +30,6 @@
   <app-table-expandable *ngIf="this.groupsData.length > 0" [columns]="groupsColumns" [data]="groupsData" [innerColumns]="innerGroupColumns"
                         [showEdit]="false"></app-table-expandable>
 </div>
+<div class="loader-container" *ngIf="loaderDisplayed">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>

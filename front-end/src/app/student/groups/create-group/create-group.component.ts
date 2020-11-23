@@ -30,6 +30,7 @@ export class CreateGroupComponent implements OnInit {
   minDate: Date;
   maxDate: Date;
   chosenTimeout: Date;
+  loaderDisplayed = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService,
               private professorService: ProfessorService, private snackBar: MatSnackBar) {
@@ -96,10 +97,12 @@ export class CreateGroupComponent implements OnInit {
       } else {
         this.error = false;
         this.message = '';
+        this.loaderDisplayed = true;
         this.studentService.proposeTeam(this.selectedStudents, this.course.name, f.value.name, this.chosenTimeout).subscribe(
           (response) => {
             // Tutte a buon fine
             this.studentService.findTeamsByStudent(localStorage.getItem('id'));
+            this.loaderDisplayed = false;
             this.snackBar.open('Team proposal created successfully.', 'OK', {
               duration: 5000
             });
