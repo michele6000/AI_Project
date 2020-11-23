@@ -95,7 +95,7 @@ export class VmsStudentComponent implements OnInit {
     this.dialog.open(ModifyVmStudentComponent, {data: {vmConfig: vm, team: this.team}})
       .afterClosed()
       .subscribe(result => {
-        if (result){
+        if (result) {
           this.studentService.findTeamsByStudent(localStorage.getItem('id'), true);
         }
       });
@@ -109,20 +109,26 @@ export class VmsStudentComponent implements OnInit {
             const studentsNotAvailableIds = owners.map(s => s.id);
             // filtro solo gli studenti che non sono ancora owners della vm
             studentsAvailable = studentInTeam.filter(s => !studentsNotAvailableIds.includes(s.id));
-            this.dialog.open(ModifyOwnerComponent, {data: {vm, students: studentsAvailable}})
-              .afterClosed()
-              .subscribe(result => {
-                if (result) {
-                  // recupero le vm
-                  this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
-                      // calcolo gli owner
-                      this.computeOwner(vms);
-                    },
-                    error => {
-                      this.genericError();
-                    });
-                }
+            if (studentsAvailable.length > 0) {
+              this.dialog.open(ModifyOwnerComponent, {data: {vm, students: studentsAvailable}})
+                .afterClosed()
+                .subscribe(result => {
+                  if (result) {
+                    // recupero le vm
+                    this.studentService.findVmsByTeam(this.team.id).subscribe((vms) => {
+                        // calcolo gli owner
+                        this.computeOwner(vms);
+                      },
+                      error => {
+                        this.genericError();
+                      });
+                  }
+                });
+            } else {
+              this.snackBar.open('You can\'t change owner.', 'OK', {
+                duration: 5000
               });
+            }
           },
           error => {
             this.genericError();
