@@ -145,9 +145,17 @@ public class VmServiceImpl implements VmService {
             throw new TeamServiceException("You are not an owner of this VM!");
 
         if (!optionalVMEntity.get().getStatus().equals("poweroff")) return false;
-        if (vm.getRam() > optionalTeamEntity.get().getLimit_ram()) return false;
-        if (vm.getCpu() > optionalTeamEntity.get().getLimit_cpu()) return false;
-        if (vm.getHdd() > optionalTeamEntity.get().getLimit_hdd()) return false;
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getRam).sum() + vm.getRam() > optionalTeamEntity.get().getLimit_ram())
+            throw new TeamServiceException("RAM used by team is greater than quota");
+
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getCpu).sum() + vm.getCpu() > optionalTeamEntity.get().getLimit_cpu())
+            throw new TeamServiceException("CPU used by team is greater than quota");
+
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getHdd).sum() + vm.getHdd() > optionalTeamEntity.get().getLimit_hdd())
+            throw new TeamServiceException("HDD used by team is greater than quota");
+
+        if (optionalTeamEntity.get().getVMInstance().size() + 1 > optionalTeamEntity.get().getLimit_instance())
+            throw new TeamServiceException("Instance number is greater than quota");
 
         optionalVMEntity.get().setRam(vm.getRam());
         optionalVMEntity.get().setCpu(vm.getCpu());
