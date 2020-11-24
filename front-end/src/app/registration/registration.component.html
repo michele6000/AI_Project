@@ -14,27 +14,45 @@
         <mat-label>Name</mat-label>
         <input #name="ngModel" matInput name="name" ngModel placeholder="Name" required>
       </mat-form-field>
+      <mat-error *ngIf="name.invalid && name.touched" class="text-left">
+        Campo obbligatorio
+      </mat-error>
       <mat-form-field class="full-width">
         <mat-label>Surname</mat-label>
         <input #surname="ngModel" matInput name="surname" ngModel placeholder="Surname" required>
       </mat-form-field>
+      <mat-error *ngIf="surname.invalid && surname.touched" class="text-left">
+        Campo obbligatorio
+      </mat-error>
       <mat-form-field class="full-width">
         <mat-label>Matricola</mat-label>
         <input #matricola="ngModel" matInput name="matricola" ngModel placeholder="Matricola" required>
       </mat-form-field>
+      <mat-error *ngIf="matricola.invalid && matricola.touched" class="text-left">
+        Campo obbligatorio
+      </mat-error>
       <mat-form-field class="full-width">
         <mat-label>Password</mat-label>
         <input #password="ngModel" matInput name="password" ngModel placeholder="Password" required type="password">
       </mat-form-field>
+      <mat-error *ngIf="password.invalid && password.touched" class="text-left">
+        Password obbligatoria
+      </mat-error>
       <mat-form-field class="full-width">
         <mat-label>Confirm password</mat-label>
         <input #confirm_password="ngModel" matInput name="confirm_password" ngModel placeholder="Confirm Password"
                required type="password">
       </mat-form-field>
+      <mat-error *ngIf="confirm_password.invalid && confirm_password.touched" class="text-left">
+        Conferma password obbligatoria
+      </mat-error>
       <mat-form-field class="full-width">
         <mat-label>Email</mat-label>
         <input #email="ngModel" email matInput name="email" ngModel placeholder="Mail" required type="email">
       </mat-form-field>
+      <mat-error *ngIf="email.invalid && email.touched" class="text-left mb-10">
+        Email non valida
+      </mat-error>
 
       <div class="dialog-position-field">
         <span>Photo Content</span>

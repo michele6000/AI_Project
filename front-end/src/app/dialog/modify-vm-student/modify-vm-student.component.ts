@@ -21,9 +21,8 @@ export class ModifyVmStudentComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService,
               private dialogRef: MatDialogRef<ModifyVmStudentComponent>, private snackBar: MatSnackBar) {
     this.vmConfigAndLimitsPerTeam = data;
-    this.courseName = this.vmConfigAndLimitsPerTeam.courseName;
-    this.courseName = this.vmConfigAndLimitsPerTeam.courseName;
-    console.log("In dialog");
+    this.courseName = this.vmConfigAndLimitsPerTeam.team.courseName;
+    console.log('In dialog');
     console.log(data);
   }
 

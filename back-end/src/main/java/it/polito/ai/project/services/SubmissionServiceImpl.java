@@ -184,7 +184,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         List<Solution> ReadSol = submission.getSolutions().stream()
                 .filter(sol -> sol.getStudent().getId().equals(studentId))
-//                .filter(sol -> sol.getVersion() == 0 || sol.getVersion() == -1) //todo:perche avevo messo questo controllo?...
+                .filter(sol -> sol.getVersion() == 0 || sol.getVersion() == -1) //todo:perche avevo messo questo controllo?...
                 .filter(sol -> sol.getSubmission().getId().equals(submissionId))
                 .collect(Collectors.toList());
         if (ReadSol.size() > 0) {

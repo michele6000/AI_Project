@@ -28,20 +28,20 @@ export class RegistrationComponent implements OnInit {
       return;
     }
     if (f.value.password !== f.value.confirm_password) {
-      this.errorMessage = 'Error. Different password';
+      this.errorMessage = 'Different password';
       this.error = true;
       return;
     }
 
     if (!f.value.matricola.startsWith('d') && !f.value.matricola.startsWith('s')) {
-      this.errorMessage = 'Error. Matricola should start with d or s.';
+      this.errorMessage = 'Matricola should start with d or s.';
       this.error = true;
       return;
     }
 
     if ((f.value.matricola.startsWith('d') && f.value.email !== (f.value.matricola + '@polito.it'))
     || f.value.matricola.startsWith('s') && f.value.email !== (f.value.matricola + '@studenti.polito.it')) {
-      this.errorMessage = 'Error. Email must start with dXXXXXX or sXXXXXX.';
+      this.errorMessage = 'Email must start with dXXXXXX or sXXXXXX.';
       this.error = true;
       return;
     }

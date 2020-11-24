@@ -31,11 +31,12 @@
       <p>{{"V-RAM: " + (team.limit_ram - (usage != undefined ? usage.limit_ram : 0)) }}</p>
       <p>{{"V-HDD: " + (team.limit_hdd - (usage != undefined ? usage.limit_hdd : 0)) }}</p>
       <p>{{"VM-Instances: " + (team.limit_instance - (usage != undefined ? usage.limit_instance : 0)) }}</p>
-      <p>{{"VM-Active-Instances: " + (team.limit_active_instance - (usage != undefined ? usage.limit_instance : 0))}}</p>
+      <p>{{"VM-Active-Instances: " + (team.limit_active_instance - (usage != undefined ? usage.limit_active_instance : 0))}}</p>
     </div>
   </div>
   <mat-divider *ngIf="canCreateVM" class="mt-10 mb-20"></mat-divider>
   <h2 *ngIf="canCreateVM" class="mb-10 mr-20">Team VMs </h2>
-  <app-vms-table *ngIf="canCreateVM" (delete)="deleteVm($event)" (edit)="editVM($event)" (modifyOwner)="modifyOwnerVM($event)"
+  <app-vms-table *ngIf="canCreateVM && data.length > 0" (delete)="deleteVm($event)" (edit)="editVM($event)" (modifyOwner)="modifyOwnerVM($event)"
                  (addOwner)="addOwnerVM($event)" [columns]="columns" [data]="data" [team]="team"></app-vms-table>
+  <p *ngIf="canCreateVM && data.length === 0">No VM created yet.</p>
 </div>

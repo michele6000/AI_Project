@@ -11,6 +11,7 @@ mat-sidenav-container{ margin: 0px; height: calc(100% - 128px); }
 .align-items-center {align-items: center;}
 .full-width {width: 100%;}
 .text-center {text-align: center !important;}
+.text-left {text-align: left;}
 .text-right {text-align: right;}
 .margin-auto {margin: 0 auto;}
 .float-right {float: right;}

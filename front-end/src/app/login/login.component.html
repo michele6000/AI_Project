@@ -8,21 +8,17 @@
       <mat-form-field class="w-100">
         <mat-label>Email</mat-label>
         <input #email="ngModel" email matInput name="email" ngModel placeholder="Email" required type="email" value="">
-        <mat-error *ngIf="email.invalid">
-          Email non valida
-        </mat-error>
-        <mat-error *ngIf="email.dirty && email.touched">
-          Email obbligatoria
-        </mat-error>
       </mat-form-field>
-      <br>
+      <mat-error *ngIf="email.invalid && email.touched" class="mb-10">
+        Email non valida
+      </mat-error>
       <mat-form-field class="w-100">
         <mat-label>Password</mat-label>
         <input #password="ngModel" matInput name="password" ngModel required type="password" value="">
-        <mat-error *ngIf="password.dirty && password.touched">
-          Password obbligatoria
-        </mat-error>
       </mat-form-field>
+      <mat-error *ngIf="password.invalid && password.touched">
+        Password obbligatoria
+      </mat-error>
       <mat-card-actions class="float-right mb-0">
         <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit" style="margin-right: 20px">Login</button>
         <button [routerLink]="['/home']" mat-button mat-dialog-close>Cancel</button>

@@ -19,14 +19,16 @@ const API_URL_LOCAL = 'localhost:8080/API/';
 })
 export class AssignmentsStudentComponent implements OnInit {
   file: File;
+  files: File[] = [];
   consegne: SubmissionModel[] = [];
   private courseParam: string;
   private corso: CourseModel;
   hasConsegne = false;
   imageToShow: any;
   filename = 'Choose file';
+  filenames = [];
 
-  expandPanel(matExpansionPanel, event): void {
+  /*expandPanel(matExpansionPanel, event): void {
     event.stopPropagation(); // Preventing event bubbling
 
     if (!this._isExpansionIndicator(event.target)) {
@@ -37,7 +39,7 @@ export class AssignmentsStudentComponent implements OnInit {
   private _isExpansionIndicator(target: EventTarget): boolean {
     const expansionIndicatorClass = 'mat-expansion-indicator';
     return (target['classList'] && target['classList'].contains(expansionIndicatorClass));
-  }
+  }*/
 
   constructor(private studentService: StudentService, private router: Router, private snackBar: MatSnackBar) {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
@@ -79,6 +81,7 @@ export class AssignmentsStudentComponent implements OnInit {
               });
               // Aggiungo la Submission aggiornata all'array
               consegne.push(singleSubmission);
+              this.filenames[singleSubmission.id] = 'Choose file';
             });
             // Aggiorno l'array di Submission ottenuto per popolare la vista
             this.consegne = consegne;
@@ -99,18 +102,18 @@ export class AssignmentsStudentComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  handleFileSelect($event: any) {
-    this.file = $event.target.files[0];
-    if (this.file !== undefined) {
-      this.filename = this.file.name;
+  handleFileSelect($event: any, id) {
+    this.files[id] = $event.target.files[0];
+    if (this.files[id] !== undefined) {
+      this.filenames[id] = this.files[id].name;
     } else {
-      this.filename = 'Choose file';
+      this.filenames[id] = 'Choose file';
     }
   }
 
   uploadSolution(id: number) {
-    if (this.file !== undefined) {
-      this.studentService.addSolution(localStorage.getItem('id'), id, this.file).subscribe(
+    if (this.files[id] !== undefined) {
+      this.studentService.addSolution(localStorage.getItem('id'), id, this.files[id]).subscribe(
         (res) => {
           this.snackBar.open('Solution uploaded successfully.', 'OK', {
             duration: 5000
@@ -131,7 +134,8 @@ export class AssignmentsStudentComponent implements OnInit {
     }
   }
 
-  handleShowSubmission(id: number) {
+  handleShowSubmission(id: number, e) {
+    e.stopPropagation();
     this.studentService.getSubmissionById(this.corso.name, id).subscribe((res) => {
         window.open('//' + API_URL_PUBLIC + 'courses/submissions/getImage/' + id, '_blank');
       },

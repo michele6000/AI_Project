@@ -92,7 +92,14 @@ export class VmsStudentComponent implements OnInit {
   }
 
   editVM(vm: VmModel) {
-    this.dialog.open(ModifyVmStudentComponent, {data: {vmConfig: vm, team: this.team}})
+    const teamAndLimit = new GroupModel();
+    teamAndLimit.id = this.team.id;
+    teamAndLimit.courseName = this.team.courseName;
+    teamAndLimit.limit_cpu = this.team.limit_cpu - (this.usage !== undefined ? this.usage.limit_cpu : 0) + vm.cpu;
+    teamAndLimit.limit_ram = this.team.limit_ram - (this.usage !== undefined ? this.usage.limit_ram : 0) + vm.ram;
+    teamAndLimit.limit_hdd = this.team.limit_hdd - (this.usage !== undefined ? this.usage.limit_hdd : 0) + vm.hdd;
+
+    this.dialog.open(ModifyVmStudentComponent, {data: {vmConfig: vm, team: teamAndLimit}})
       .afterClosed()
       .subscribe(result => {
         if (result) {

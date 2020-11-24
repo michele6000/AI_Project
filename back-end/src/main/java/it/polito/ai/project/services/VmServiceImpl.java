@@ -145,10 +145,10 @@ public class VmServiceImpl implements VmService {
             throw new TeamServiceException("You are not an owner of this VM!");
 
         if (!optionalVMEntity.get().getStatus().equals("poweroff")) return false;
-        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getRam).sum() + vm.getRam() > optionalTeamEntity.get().getLimit_ram())
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getRam).sum() + vm.getRam() - optionalVMEntity.get().getRam() > optionalTeamEntity.get().getLimit_ram())
             throw new TeamServiceException("RAM used by team is greater than quota");
 
-        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getCpu).sum() + vm.getCpu() > optionalTeamEntity.get().getLimit_cpu())
+        if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getCpu).sum() + vm.getCpu() - optionalVMEntity.get().getCpu() > optionalTeamEntity.get().getLimit_cpu())
             throw new TeamServiceException("CPU used by team is greater than quota");
 
         if (optionalTeamEntity.get().getVMInstance().stream().mapToInt(VM::getHdd).sum() + vm.getHdd() > optionalTeamEntity.get().getLimit_hdd())

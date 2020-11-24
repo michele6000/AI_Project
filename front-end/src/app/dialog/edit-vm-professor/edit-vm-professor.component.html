@@ -8,17 +8,17 @@
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>Number of V-CPU</mat-label>
-      <input #vcpu="ngModel" matInput name="vcpu" ngModel [ngModel]="group.limit_cpu" placeholder="Number of V-CPU" required type="text" value="">
+      <input #vcpu="ngModel" matInput name="vcpu" ngModel [ngModel]="group.limit_cpu" placeholder="Number of V-CPU" required min="1" type="number" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>RAM (size in MB)</mat-label>
-      <input #ram="ngModel" matInput name="ram" ngModel [ngModel]="group.limit_ram" placeholder="RAM" required type="text" value="">
+      <input #ram="ngModel" matInput name="ram" ngModel [ngModel]="group.limit_ram" placeholder="RAM" required min="1" type="number" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
       <mat-label>Disk (size in MB)</mat-label>
-      <input #disk="ngModel" matInput name="disk" ngModel [ngModel]="group.limit_hdd" placeholder="Disk" required type="text" value="">
+      <input #disk="ngModel" matInput name="disk" ngModel [ngModel]="group.limit_hdd" placeholder="Disk" required min="1" type="number" value="">
     </mat-form-field>
     <br>
     <mat-form-field class="dialog-position-field">
