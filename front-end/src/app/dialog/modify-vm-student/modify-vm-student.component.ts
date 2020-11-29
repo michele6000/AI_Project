@@ -22,8 +22,6 @@ export class ModifyVmStudentComponent implements OnInit {
               private dialogRef: MatDialogRef<ModifyVmStudentComponent>, private snackBar: MatSnackBar) {
     this.vmConfigAndLimitsPerTeam = data;
     this.courseName = this.vmConfigAndLimitsPerTeam.team.courseName;
-    console.log('In dialog');
-    console.log(data);
   }
 
   ngOnInit(): void {

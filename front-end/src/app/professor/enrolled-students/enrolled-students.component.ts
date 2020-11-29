@@ -164,6 +164,9 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
               duration: 5000
             });
 
+            this.fileAbsent = true;
+            this.filename = 'Choose file';
+
             this.professorService.getEnrolledStudents(this.corso.name).subscribe((students) => {
                 this.data = students;
               },
