@@ -67,42 +67,7 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
                   this.loaderDisplayed = false;
                 }
               );
-
-              /*
-              // 3 - Per ogni studente recupero getLatestSolution per questa submission
-              const resultLatestSolutions = from(resStudents).pipe(
-                concatMap(student => {
-                  return this.professorService.getLatestSolution(student.id, submission.id);
-                }),
-                toArray()
-              );
-
-              // resultLatestSolutions contiene un unico Observable
-              resultLatestSolutions.subscribe((latestSolutions: any[]) => {
-                // latestSolutions contiene, per ogni studente, l'ultima soluzione
-                const elaborati = [];
-                latestSolutions.forEach((latestSol, key) => {
-                  latestSol.name = resStudents[key].firstName;
-                  latestSol.surname = resStudents[key].name;
-                  latestSol.matricola = resStudents[key].id;
-                  elaborati.push(latestSol);
-                });
-
-                // Aggiungo l'elenco delle latestSolutions per ogni studente alla submission
-                submission.elaborati = elaborati;
-                consegne.push(submission);
-
-                this.consegne = consegne;
-                this.show = consegne.length !== 0;
-
-                this.loaderDisplayed = false;
-              });
-              */
-              // 4   - Per ogni solution devo avere [EvaluateSolution] + Evaluation (colonna a parte, può essere NULL => "")
-              //        e [ShowSolution] e [StopRevision] e [ReviewSolution]
-
-              // 4.1 - Togliere da getLatestSolution setStatus(REVISITED), se Solution non esiste ritornare SolutionDTO vuoto
-              // 5   - Dialog per ogni studente per visualizzare getHistorySolutions
+              consegne.sort((a, b) => moment(a.releaseDate).diff(b.releaseDate, 'days'));
             });
           },
           (error) => {
