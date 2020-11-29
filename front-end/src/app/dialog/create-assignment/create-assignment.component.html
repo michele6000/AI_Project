@@ -7,6 +7,15 @@
   <form #f="ngForm" (ngSubmit)="createAssignment(f)" class="login-form">
 
     <mat-form-field class="w-100">
+      <mat-label>Expiry Date</mat-label>
+      <input (dateChange)="expiryChoseValue($event)" [disabled]="!canChoseExpiryDate" [matDatepicker]="expiryPicker"
+             [min]="minExpiryDate"
+             matInput name="expiryDate" ngModel required>
+      <mat-datepicker-toggle [for]="expiryPicker" matSuffix></mat-datepicker-toggle>
+      <mat-datepicker #expiryPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
       <mat-label>Release Date</mat-label>
       <input (dateChange)="releaseChoseValue($event)" [matDatepicker]="releasePicker" [max]="" [min]="minDate"
              matInput name="releaseDate" ngModel required>
@@ -14,13 +23,6 @@
       <mat-datepicker #releasePicker></mat-datepicker>
     </mat-form-field>
 
-    <mat-form-field class="w-100">
-      <mat-label>Expiry Date</mat-label>
-      <input (dateChange)="expiryChoseValue($event)" [disabled]="!canChoseExpiryDate" [matDatepicker]="expiryPicker" [min]="minExpiryDate"
-             matInput name="expiryDate" ngModel required>
-      <mat-datepicker-toggle [for]="expiryPicker" matSuffix></mat-datepicker-toggle>
-      <mat-datepicker #expiryPicker></mat-datepicker>
-    </mat-form-field>
 
     <div class="dialog-position-field">
       <span>Assignment Content</span>

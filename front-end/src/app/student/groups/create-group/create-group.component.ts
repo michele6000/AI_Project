@@ -109,7 +109,9 @@ export class CreateGroupComponent implements OnInit {
             });
           },
           (error) => {
-            this.snackBar.open('Error creating team proposal, try again.', 'OK', {
+            this.loaderDisplayed = false;
+            this.selectedStudents=[];
+            this.snackBar.open(error.error.message, 'OK', {
               duration: 5000
             });
           }

@@ -116,7 +116,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         return courseRepo
                 .getOne(courseName)
                 .getSubmissions().stream()
-                .sorted(Comparator.comparing(Submission::getExpiryDate))
+                .sorted(Comparator.comparing(Submission::getReleaseDate).thenComparing(Submission::getContent))
                 .map(s -> modelMapper
                         .typeMap(Submission.class, SubmissionDTO.class)
                         .addMappings(mapper -> mapper.skip(SubmissionDTO::setImage))
@@ -401,11 +401,10 @@ public class SubmissionServiceImpl implements SubmissionService {
                     sol.setCorrection(byteObjects);
                     sol.setEvaluation(mark);
                     sol.setStatus("EVALUATED");
-                    notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark + "\nProfessor message: "+message);
-
                 } catch (IOException e) { // caaso in cui il docente da un voto ma non carica una correzione ( e.g. mark = 30L)
-                    notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark+"\nProfessor message: "+message);
+                    throw new TeamServiceException("Error decoding file! Operation aborted");
                 }
+            notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark+"\nProfessor message: "+message);
             sol.setEvaluation(mark);
             sol.setStatus("EVALUATED");
             return modelMapper.map(solutionRepo.save(sol), SolutionDTO.class);
@@ -418,7 +417,10 @@ public class SubmissionServiceImpl implements SubmissionService {
                     byteObjects[i++] = b;
                 sol.setCorrection(byteObjects);
                 sol.setStatus("REQUEST_REVIEW");
-                notification.sendMessage(sol.getStudent().getEmail(),"Requested review","Professor has request a review for your solution.\nProfessor message: "+message);
+                notification.sendMessage(sol.getStudent().getEmail(),"Requested review","Professor has request a review for your solution.\n" +
+                        "\nSolution_id = " + sol.getId() + " - Version: " + sol.getVersion() +
+                        "\nSubmission = " + sol.getSubmission().getContent() +
+                        "\nProfessor message: "+message);
                 return modelMapper.map(solutionRepo.save(sol), SolutionDTO.class);
             } catch (IOException e) {
                 throw new TeamServiceException("Wrong file/missing !");

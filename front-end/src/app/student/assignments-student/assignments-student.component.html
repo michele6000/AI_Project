@@ -6,7 +6,7 @@
     <mat-expansion-panel class="mb-20" #expansionPanel *ngFor="let consegna of consegne">
       <mat-expansion-panel-header>
         <mat-panel-title style="margin-top: 9px !important;">
-          <b>{{consegna.content}}</b> &nbsp; - Expiry date: {{consegna.expiryString}} - Release date: {{consegna.releaseString}}
+          <b>{{consegna.content}}</b>&nbsp;-&nbsp;Release date: {{consegna.releaseString}}&nbsp;-&nbsp;Expiry date: {{consegna.expiryString}}
         </mat-panel-title>
         <mat-panel-description>
           <button (click)="handleShowSubmission(consegna.id, $event)" class="submissionButton" mat-stroked-button color="primary" type="button">Show submission</button>
