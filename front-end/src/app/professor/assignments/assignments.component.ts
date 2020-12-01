@@ -98,7 +98,7 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
   }
 
   showHistory(studentSub: StudentSubmissionModel) {
-    this.dialog.open(ShowHistoryComponent, {data: studentSub})
+    this.dialog.open(ShowHistoryComponent, {data: studentSub, autoFocus: false})
       .afterClosed()
       .subscribe(result => {
       });
