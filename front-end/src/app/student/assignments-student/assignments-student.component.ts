@@ -81,6 +81,10 @@ export class AssignmentsStudentComponent implements OnInit {
               });
               // Aggiungo la Submission aggiornata all'array
               consegne.push(singleSubmission);
+
+              consegne.sort((a, b) => moment(a.releaseDate).diff(b.releaseDate, 'days'));
+              // consegne.sort((a, b) => a.content.compareTo(b.content));
+
               this.filenames[singleSubmission.id] = 'Choose file';
             });
             // Aggiorno l'array di Submission ottenuto per popolare la vista
