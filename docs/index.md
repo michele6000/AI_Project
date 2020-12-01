@@ -46,32 +46,63 @@ Access data:
 | Username | Password | Role |
 | ------ | ------ | ------ |
 s000001@studenti.polito.it | student | ROLE_STUDENT
-s000002@studenti.polito.it | student | ROLE_STUDENT
-s000003@studenti.polito.it | student | ROLE_STUDENT
-s000004@studenti.polito.it | student | ROLE_STUDENT
-s000005@studenti.polito.it | student | ROLE_STUDENT
-s000006@studenti.polito.it | student | ROLE_STUDENT
-s000007@studenti.polito.it | student | ROLE_STUDENT
-s000008@studenti.polito.it | student | ROLE_STUDENT
-s000009@studenti.polito.it | student | ROLE_STUDENT
-s000010@studenti.polito.it | student | ROLE_STUDENT
-s000011@studenti.polito.it | student | ROLE_STUDENT
-s000012@studenti.polito.it | student | ROLE_STUDENT
-s000013@studenti.polito.it | student | ROLE_STUDENT
-s000014@studenti.polito.it | student | ROLE_STUDENT
-s000015@studenti.polito.it | student | ROLE_STUDENT
-s000016@studenti.polito.it | student | ROLE_STUDENT
-s000017@studenti.polito.it | student | ROLE_STUDENT
-s000018@studenti.polito.it | student | ROLE_STUDENT
-s000019@studenti.polito.it | student | ROLE_STUDENT
-s000020@studenti.polito.it | student | ROLE_STUDENT
-s000021@studenti.polito.it | student | ROLE_STUDENT
-s000022@studenti.polito.it | student | ROLE_STUDENT
-s000023@studenti.polito.it | student | ROLE_STUDENT
-s000024@studenti.polito.it | student | ROLE_STUDENT
-s000025@studenti.polito.it | student | ROLE_STUDENT
-s000026@studenti.polito.it | student | ROLE_STUDENT
-s000027@studenti.polito.it | student | ROLE_STUDENT
-s000028@studenti.polito.it | student | ROLE_STUDENT
-s000029@studenti.polito.it | student | ROLE_STUDENT
+... | ... | ...
 s000030@studenti.polito.it | student | ROLE_STUDENT
+
+| Username | Password | Role |
+| ------ | ------ | ------ |
+d000001@polito.it | admin | ROLE_PROFESSOR
+d000002@polito.it | admin | ROLE_PROFESSOR
+
+### Database configuration
+The database include the following courses:
+| Course Name | VM Type ID | Acronimous | Group (min-max) |
+| ------ | ------ | ------ | ------ |
+| Applicazioni Internet | 1 | AI2020 | 1-4 |
+| Programmazione di Sistema | 2 | PDS2020 | 1-4 |
+| Sicurezza dei Sistemi Informatici | 3 | SIC2020 | 1-2 |
+
+Each professor is assigned to some courses, as described below.
+
+| Course Name | ProfessorID |
+| ------ | ------ |
+| Applicazioni Internet | d000001 |
+| Applicazioni Internet | d000002 |
+| Programmazione di Sistema | d000001 |
+| Programmazione di Sistema | d000002 |
+| Sicurezza dei Sistemi Informatici | d000001 |
+
+In each of these courses are enrolled all the thirty students showen in upside table.
+
+Database include also this active team for course "AI2020" :
+| ID | Name | Status | CPU Limit | HDD Limit | RAM Limit | Instances Limit | Active Instances Limit |
+| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
+| 4 | Reset | Active | 1000 | 1000 | 1000 | 4 | 2 |
+| 5 | GameOfCosa | Pending | | | | | |
+| 6 | GameOfCosa2 | Pending | | | | | |
+
+Here is list of students for each team
+| TeamID | StudentID |
+| ------ | ------ |
+| 4 | s000001 |
+| 4 | s000002 |
+| 4 | s000003 |
+| 4 | s000004 |
+| 5 | s000028 |
+| 5 | s000029 |
+| 5 | s000030 |
+| 6 | s000028 |
+| 6 | s000029 |
+| 6 | s000030 |
+
+For team 438 - Reset there are also these VMs:
+| ID | Owner | CPU | HDD | RAM | Status |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+| 101 | s000002 | 2 | 256 | 512 | PowerOn |
+
+These assignments are available in database for course "AI2020" :
+| ID | Content | Image | Relase Date | Expiry Date |
+| ------ | ------ | ------ | ------ | ------ |
+| 7 | Esercitazione 1 | [BLOB] | 01/12/2020 | 28/12/2020 |
+| 38 | Esercitazione 2 | [BLOB] | 02/12/2020 | 29/12/2020 |
+| 69 | Esercitazione 3 | [BLOB] | 03/12/2020 | 31/12/2020 |
