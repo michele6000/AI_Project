@@ -17,6 +17,7 @@ export class EvaluateSolutionComponent implements OnInit {
   errorStr = '';
   filename: string = 'Choose File';
   file: File;
+  message: string;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: SolutionModel, private professorService: ProfessorService,
               private dialogRef: MatDialogRef<EvaluateSolutionComponent>, private snackBar: MatSnackBar) {
@@ -28,13 +29,14 @@ export class EvaluateSolutionComponent implements OnInit {
 
   evaluate(f: NgForm) {
     const evaluation = f.value.evaluation;
+    const message = f.value.message;
     if (evaluation < 1 || evaluation > 31) {
       this.error = true;
       this.errorStr = 'Error. Range of evaluation: 1 - 31';
     } else {
       this.error = false;
 
-      this.professorService.evaluateSolution(this.solution.matricola, this.solution.id, evaluation, this.file).subscribe((res) => {
+      this.professorService.evaluateSolution(this.solution.matricola, this.solution.id, evaluation, message, this.file).subscribe((res) => {
         this.snackBar.open('Solution evaluated successfully.', 'OK', {
           duration: 5000
         });

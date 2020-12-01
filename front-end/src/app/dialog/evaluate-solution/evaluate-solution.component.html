@@ -14,6 +14,10 @@
       <mat-label>Evaluation</mat-label>
       <input matInput min="1" max="31" type="number" required [ngModel]="evaluation" name="evaluation">
     </mat-form-field>
+    <mat-form-field class="w-100">
+      <mat-label>Message</mat-label>
+      <input matInput type="text" [ngModel]="message" name="message">
+    </mat-form-field>
   <mat-card-actions class="mt-10 float-right">
       <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Evaluate</button>
       <button mat-button mat-dialog-close>Dismiss</button>
