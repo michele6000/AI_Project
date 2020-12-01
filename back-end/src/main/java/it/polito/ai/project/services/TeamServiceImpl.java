@@ -731,7 +731,7 @@ public class TeamServiceImpl implements TeamService {
         userRepo.save(_user);
         profRepo.save(_professor);
 
-        executor.execute(() -> {
+//        executor.execute(() -> {
             String id = UUID.randomUUID().toString();
             Token token = new Token();
             token.setId(id);
@@ -745,7 +745,7 @@ public class TeamServiceImpl implements TeamService {
                 "Activate your Teams account",
                 "Username: " + user.getUsername() + " password: " + user.getPassword() + "\n"+
                         "Click here to activate your account: http://localhost:8080/auth/verifyEmail/"+codedToken);
-        });
+//        });
 
 
         return modelMapper.map(_professor,ProfessorDTO.class);

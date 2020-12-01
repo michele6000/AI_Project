@@ -46,8 +46,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendMessage(String address, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(address);
-        message.setTo(this.address);
+//        message.setTo(address);
+        message.setTo("micheleluigi.greco@aslcittaditorino.it");
         message.setSubject(subject);
         message.setText(body);
         emailSender.send(message);
