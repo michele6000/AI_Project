@@ -62,12 +62,13 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
                 allLastSolution => {
                   submission.elaborati = allLastSolution;
                   consegne.push(submission);
+                  consegne.sort((a, b) => moment(a.releaseDate).diff(b.releaseDate, 'days'));
+                  // consegne.sort((a, b) => a.content.compareTo(b.content));
                   this.consegne = consegne;
                   this.show = consegne.length !== 0;
                   this.loaderDisplayed = false;
                 }
               );
-              consegne.sort((a, b) => moment(a.releaseDate).diff(b.releaseDate, 'days'));
             });
           },
           (error) => {
