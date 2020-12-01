@@ -51,10 +51,14 @@ public interface VmService {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     TeamDTO setTeamLimit(TeamDTO team);
 
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    TeamDTO getTeamUsage(Long teamId);
+
     TeamDTO retriveTeamFromVm (Long vmId);
 
     VMDTO getVMConfig(Long vmId);
 
     @Deprecated
     byte[] getVmImage(Long vmId);
+
 }

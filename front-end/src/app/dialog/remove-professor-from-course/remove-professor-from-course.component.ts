@@ -18,7 +18,8 @@ export class RemoveProfessorFromCourseComponent implements OnInit {
   columns = ['id', 'name', 'firstName'];
 
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<RemoveProfessorFromCourseComponent>, private professorService: ProfessorService, private snackBar: MatSnackBar) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<RemoveProfessorFromCourseComponent>,
+              private professorService: ProfessorService, private snackBar: MatSnackBar) {
     this.professors = data.professors;
     this.courseName = data.courseName;
   }
@@ -26,10 +27,8 @@ export class RemoveProfessorFromCourseComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  deleteProfessor(professors: any[]) {
-
+  deleteProfessor(professors: ProfessorModel[]) {
     // Controllo che non siano selezionati tutti i professori
-
     if (professors.length === this.professors.length) {
       this.snackBar.open('You cannot remove all professors from a course.', 'OK', {
         duration: 5000
@@ -45,19 +44,29 @@ export class RemoveProfessorFromCourseComponent implements OnInit {
     );
 
     res.subscribe((result: boolean[]) => {
-      if (result.filter(e => !e).length > 0) {
-        // Almeno una ha fallito
-        this.dialogRef.close(true);
-        this.snackBar.open('Error delete professors .', 'OK', {
-          duration: 5000
-        });
-      } else {
-        // Tutte a buon fine
-        this.dialogRef.close(true);
-        this.snackBar.open('Professor removed succesfully.', 'OK', {
-          duration: 5000
-        });
-      }
+        if (result.filter(e => !e).length > 0) {
+          // Almeno una ha fallito
+          this.dialogRef.close(true);
+          this.snackBar.open('Error delete professors.', 'OK', {
+            duration: 5000
+          });
+        } else {
+          // Tutte a buon fine
+          this.dialogRef.close(true);
+          this.snackBar.open('Professor removed succesfully.', 'OK', {
+            duration: 5000
+          });
+        }
+      },
+      error => {
+        this.genericError();
+      });
+  }
+
+  genericError() {
+    this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+      duration: 5000
     });
+    location.reload();
   }
 }

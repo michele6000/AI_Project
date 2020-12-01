@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +21,7 @@ import javax.transaction.Transactional;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,6 +68,12 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private TaskExecutor executor;
 
+    @Autowired
+    private TokenRepository tokenRepo;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Override
     public boolean addCourse(CourseDTO course) {
@@ -89,7 +94,7 @@ public class TeamServiceImpl implements TeamService {
             return new StudentDTO();
 
         if (studentRepo.existsById(user.getUsername()))
-            return new StudentDTO();
+            return modelMapper.map(studentRepo.getOne(user.getUsername()),StudentDTO.class);
 
         User _user = new User();
         _user.setUsername(user.getEmail());
@@ -114,11 +119,22 @@ public class TeamServiceImpl implements TeamService {
 
         userRepo.save(_user);
         studentRepo.save(_student);
-        executor.execute(() -> notification.sendMessage(
-                user.getEmail(),
-                "New Registration",
-                "Username: " + user.getUsername() + " password: " + user.getPassword()
-        ));
+
+        executor.execute(() -> {
+            String id = UUID.randomUUID().toString();
+            Token token = new Token();
+            token.setId(id);
+            token.setTeamId(-1L);
+            token.setExpiryDate(new Timestamp(new Date().getTime()+60000000));
+            tokenRepo.save(token);
+
+            String codedToken = Base64.getEncoder().encodeToString((token.getId()+"_"+_user.getUsername()).getBytes());
+            notification.sendMessage(
+                    user.getEmail(),
+                    "Activate your Teams account",
+                    "Username: " + user.getUsername() + " password: " + user.getPassword() + "\n"+
+                            "Click here to activate your account: http://localhost:8080/auth/verifyEmail/"+codedToken);
+        });
 
         return modelMapper.map(_student,StudentDTO.class);
     }
@@ -193,7 +209,10 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(courseName)
                 .getStudents()
                 .stream()
-                .map(s -> modelMapper.map(s,StudentDTO.class))
+                .map(s -> modelMapper
+                        .typeMap(Student.class,StudentDTO.class)
+                        .addMappings(mapper -> mapper.skip(StudentDTO::setImage))
+                        .map(s))
                 .collect(Collectors.toList());
     }
 
@@ -223,17 +242,15 @@ public class TeamServiceImpl implements TeamService {
                 throw new ProfessorNotFoundException("Professor not found!");
             if (!isProfessorCourse(courseName,username))
                 throw new TeamServiceException( "You are not a professor of this course!");
-            courseRepo.getOne(courseName).setEnabled(false);
-            courseRepo.getOne(courseName).getTeams().forEach(t -> t.setStatus(0));
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    courseRepo.getOne(courseName).getStudents().forEach(s ->
-                            notification.sendMessage(s.getEmail(),
-                                    "Course disabled",
-                                    "We inform you that the course " + courseName + " has been disabled."));
-                }
-            });
+            Course course = courseRepo.getOne(courseName);
+            course.setEnabled(false);
+            course.getTeams().forEach(t -> t.setStatus(0));
+            course.getStudents().forEach(s -> executor.execute(() ->
+                    notification.sendMessage(s.getEmail(),
+                    "Course disabled",
+                    "We inform you that the course " + courseName + " has been disabled.")));
+
+            courseRepo.save(course);
 
         } else throw new CourseNotFoundException("Course not found!");
     }
@@ -307,26 +324,24 @@ public class TeamServiceImpl implements TeamService {
                 "Procione.jpg", "Rinoceronte.jpg", "Scimmia.jpg", "Tigre.jpg", "Topo.jpg", "Toro.jpg");
 
         students.forEach(s -> {
+            UserDTO user = new UserDTO();
+            user.setName(s.getName());
+            user.setFirstName(s.getFirstName());
+            user.setPassword("student");
+            user.setEmail(s.getId()+"@studenti.polito.it");
+            user.setUsername(s.getId());
 
-        UserDTO user = new UserDTO();
-        user.setName(s.getName());
-        user.setFirstName(s.getFirstName());
-        user.setPassword("student");
-        user.setEmail(s.getId()+"@studenti.polito.it");
-        user.setUsername(s.getId());
+            String randomAvatar = avatars.get(new Random().nextInt(25));
 
-        String randomAvatar = avatars.get(new Random().nextInt(25));
+            Resource resource = new ClassPathResource("./templates/avatars/"+randomAvatar);
 
-        Resource resource = new ClassPathResource("./templates/avatars/"+randomAvatar);
-
-        try {
-            FileInputStream input = new FileInputStream(resource.getFile());
-            MultipartFile multipartFile = new MockMultipartFile(randomAvatar, input);
-            studentsAdded.add(addStudent(user, multipartFile));
-        } catch (IOException e) {
-            throw new TeamServiceException("Error during add students by csv operation. Student: " + user.getUsername() + " Avatar: " + randomAvatar);
-        }
-
+            try {
+                FileInputStream input = new FileInputStream(resource.getFile());
+                MultipartFile multipartFile = new MockMultipartFile(randomAvatar, input);
+                studentsAdded.add(addStudent(user, multipartFile));
+            } catch (IOException e) {
+                throw new TeamServiceException("Error during add students by csv operation. Student: " + user.getUsername() + " Avatar: " + randomAvatar);
+            }
         });
         return studentsAdded;
     }
@@ -458,6 +473,9 @@ public class TeamServiceImpl implements TeamService {
         if (membersIds.size() > membersIds.stream().distinct().count())
             throw new DuplicatedStudentException("Duplicated members in team proposal!");
 
+        if (teamRepo.findAll().stream().map(Team::getName).collect(Collectors.toList()).contains(name))
+            throw new TeamServiceException("This team name is not available!");
+
         for (String m : membersIds) {
             if (!studentRepo.findById(m).isPresent())
                 throw new StudentNotFoundException("Student not found!");
@@ -519,11 +537,12 @@ public class TeamServiceImpl implements TeamService {
             throw new DuplicatedStudentException("Student is already a member of this team!");
 
 
-        if (!course.getStudents().contains(studentRepo.getOne(studentId))
-        ) throw new StudentNotFoundException("Student not enrolled in this course!");
+        if (!course.getStudents().contains(studentRepo.getOne(studentId)))
+            throw new StudentNotFoundException("Student not enrolled in this course!");
         course.getTeams().forEach(t -> {
                     if (t.getMembers().contains(studentRepo.getOne(studentId)))
-                        throw new DuplicatedStudentException("Student " + student.getId() + " is already member of a team (" + t.getName() + ") for this course!");
+                        throw new DuplicatedStudentException("Student " + student.getId() +
+                                " is already member of a team (" + t.getName() + ") for this course!");
                 }
         );
 
@@ -576,21 +595,18 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void evictTeam(Long teamId) {
-        if (!teamRepo.findById(teamId).isPresent()) throw new TeamNotFoundException("Team not found!");
+        if (!teamRepo.findById(teamId).isPresent())
+            throw new TeamNotFoundException("Team not found!");
 
-        teamRepo
-                .getOne(teamId)
-                .getVMInstance()
-                .forEach(vm -> {
-                    teamRepo.getOne(teamId).getMembers().forEach(student -> student.getVms().remove(vm)); //elimino in student_vms
-                    teamRepo.getOne(teamId).getVMInstance().remove(vm); //elimino nella lista del team
-                    vmRepo.delete(vm); // elimino la vm dalla repo
-                });
+        Team team = teamRepo.getOne(teamId);
+        List<VM> vmI = team.getVMInstance();
 
-        teamRepo
-                .getOne(teamId)
-                .getMembers()
-                .forEach(s -> teamRepo.getOne(teamId).removeMember(s)); //cancello tutti i membri
+        vmI.forEach(vm -> {
+                team.getMembers().forEach(student -> student.getVms().remove(vm)); //elimino in student_vms
+                vmRepo.delete(vm); // elimino la vm dalla repo
+            });
+
+        System.out.println("Deleting: "+ teamId);
         teamRepo.deleteById(teamId);
     }
 
@@ -622,9 +638,10 @@ public class TeamServiceImpl implements TeamService {
         if(!student.isPresent())
             return;
         team.ifPresent(_team -> {
-            if(_team.getMembers().size() == 1 || _team.getStatus() == 0)
+            if (_team.getMembers().size() == 1 || _team.getStatus() == 0) {
+                teamRepo.save(_team);
                 evictTeam(_team.getId()); // cancello tutto il team
-            else{
+            } else {
                 _team.getVMInstance().forEach(vm -> {
                     if (vm.getOwners().contains(student.get()))
                         if (vm.getOwners().size() > 1) // se non sono l'unico owner
@@ -657,12 +674,23 @@ public class TeamServiceImpl implements TeamService {
         return profRepo.findAll()
                 .stream()
                 .map(professor ->
-                    modelMapper
-                            .typeMap(Professor.class,ProfessorDTO.class)
-                            .addMappings(mapper -> mapper.skip(ProfessorDTO::setImage))
-                            .map(professor)
+                        modelMapper
+                                .typeMap(Professor.class, ProfessorDTO.class)
+                                .addMappings(mapper -> mapper.skip(ProfessorDTO::setImage))
+                                .map(professor)
                 )
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteAllProposals(List<Long> teamIds) {
+        teamIds.forEach(t -> {
+            if (!teamRepo.existsById(t))
+                throw new TeamServiceException("Team not found!");
+
+            tokenRepo.findAllByTeamId(t).forEach(tk -> tokenRepo.delete(tk));
+            this.evictTeam(t);
+        });
     }
 
     @Override
@@ -682,6 +710,7 @@ public class TeamServiceImpl implements TeamService {
         _user.setUsername(user.getEmail());
         _user.setPassword(passwordEncoder.encode(user.getPassword()));
         _user.setRoles(Collections.singletonList("ROLE_PROFESSOR"));
+        _user.setActive_user(false);
 
         Professor _professor = new Professor();
         _professor.setId(user.getUsername());
@@ -702,11 +731,21 @@ public class TeamServiceImpl implements TeamService {
         userRepo.save(_user);
         profRepo.save(_professor);
 
-        executor.execute(() -> notification.sendMessage(
+//        executor.execute(() -> {
+            String id = UUID.randomUUID().toString();
+            Token token = new Token();
+            token.setId(id);
+            token.setTeamId(-1L);
+            token.setExpiryDate(new Timestamp(new Date().getTime()+60000000));
+            tokenRepo.save(token);
+
+            String codedToken = Base64.getEncoder().encodeToString((token.getId()+"_"+_user.getUsername()).getBytes());
+            notification.sendMessage(
                 user.getEmail(),
-                "New Registration",
-                "Username: " + user.getUsername() + " password: " + user.getPassword()
-        ));
+                "Activate your Teams account",
+                "Username: " + user.getUsername() + " password: " + user.getPassword() + "\n"+
+                        "Click here to activate your account: http://localhost:8080/auth/verifyEmail/"+codedToken);
+//        });
 
 
         return modelMapper.map(_professor,ProfessorDTO.class);
@@ -719,9 +758,7 @@ public class TeamServiceImpl implements TeamService {
             throw new CourseNotFoundException("Course not found!");
         }
 
-        Optional<Professor> optionalProfessorEntity = profRepo.findById(
-                professorId
-        );
+        Optional<Professor> optionalProfessorEntity = profRepo.findById(professorId);
 
         if (!optionalProfessorEntity.isPresent()) {
             throw new ProfessorNotFoundException("Professor not found!");
@@ -847,6 +884,26 @@ public class TeamServiceImpl implements TeamService {
     private boolean isProfessorCourse(String courseName, String profId) {
         return courseRepo.getOne(courseName).getProfessors()
                 .contains(profRepo.getOne(profId));
+    }
+
+    @Override
+    public boolean checkActiveUser (String username){
+        if (userRepository.existsByUsername(username))
+            return userRepository.getOne(username).isEnabled();
+        return false;
+    }
+
+    @Override
+    public boolean checkToken (String token){
+        if (!tokenRepo.existsById(token))
+            return false;
+        tokenRepo.deleteById(token);
+        return true;
+    }
+
+    @Override
+    public void enableUser(String username) {
+        userRepository.getOne(username).setActive_user(true);
     }
 
 }

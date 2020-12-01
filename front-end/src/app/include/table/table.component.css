@@ -1,5 +1,5 @@
-table, mat-paginator {
-  width: 80%
-}
+table, mat-paginator {width: 80%}
 button.delete{margin-left:10px;}
 .icon-delete{font-size:16pt; padding-left: 5px;}
+.centered{display: table;margin: auto;}
+.here{text-decoration: underline; color: #4285f4;}

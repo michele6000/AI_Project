@@ -3,14 +3,15 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .fill-remaining-space {flex: 1 1 auto;}
-.pointer {cursor: pointer;}
 .mb-0 {margin-bottom: 0 !important;}
 mat-sidenav-container{ margin: 0px; height: calc(100% - 128px); }
+.mat-drawer.mat-drawer-side{z-index: 1!important;}
 .container {margin: 18px 5%;}
 .d-flex {display: flex;}
 .align-items-center {align-items: center;}
 .full-width {width: 100%;}
 .text-center {text-align: center !important;}
+.text-left {text-align: left;}
 .text-right {text-align: right;}
 .margin-auto {margin: 0 auto;}
 .float-right {float: right;}
@@ -37,3 +38,5 @@ mat-sidenav-container{ margin: 0px; height: calc(100% - 128px); }
 .mat-radio-button ~ .mat-radio-button {margin-left: 16px;}
 .color-green {color: green;}
 .color-red {color: red;}
+.font-size-1rem{font-size: 1rem;}
+.loader-container {position:fixed;top:0;left:0;right:0;bottom:0;display: flex;justify-content: center;align-items: center;background-color: #CCCCCC80;z-index: 9;}

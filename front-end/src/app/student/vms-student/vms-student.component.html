@@ -1,15 +1,42 @@
 <div class="container">
   <div class="d-flex align-items-center">
-
-  <h2 class="mb-10 mr-20" *ngIf="!canCreateVM">You need to create a group first.</h2>
-  <h2 class="mb-10 mr-20" *ngIf="canCreateVM">Management option: </h2>
-  <button [disabled]="team == undefined || team.limit_instance == 0" class="mb-10 ml-20 float-right mr-20" *ngIf="canCreateVM" (click)="createVM()"  color="primary" mat-raised-button>Create VM</button>
-  <h2 class="mb-10 mr-20" *ngIf="team != undefined && team.limit_instance == 0">Professor must set up the configuration of your team </h2>
+    <h2 class="mb-10 mr-20" *ngIf="!canCreateVM">You need to create a group first.</h2>
+    <h2 class="mb-10 mr-20" *ngIf="canCreateVM">Management option </h2>
+    <button [disabled]="team == undefined || team.limit_instance == 0" class="mb-10 ml-20 float-right mr-20"
+            *ngIf="canCreateVM" (click)="createVM()" color="primary" mat-raised-button>Create VM
+    </button>
   </div>
+  <h2 class="mb-10 mr-20" *ngIf="team != undefined && team.limit_instance == 0">Professor must set up the configuration of your team </h2>
 
-  <mat-divider class="mt-10 mb-20"></mat-divider>
-  <h2 class="mb-10 mr-20">Team VMs: </h2>
-
-  <app-vms-table (delete)="deleteVm($event)" (edit)="editVM($event)" (modifyOwner)="modifyOwnerVM($event)"
+  <div class="box" *ngIf="team != undefined && team.limit_instance != 0">
+    <div>
+      <h2>Team Quota </h2>
+      <p>{{"V-CPU: " + team.limit_cpu}}</p>
+      <p>{{"V-RAM: " + team.limit_ram }}</p>
+      <p>{{"V-HDD: " + team.limit_hdd }}</p>
+      <p>{{"VM-Instances: " + team.limit_instance }}</p>
+      <p>{{"VM-Active-Instances: " + team.limit_active_instance}}</p>
+    </div>
+    <div>
+      <h2>Team Usage </h2>
+      <p>{{"V-CPU: " + (usage != undefined ? usage.limit_cpu : "")}}</p>
+      <p>{{"V-RAM: " + (usage != undefined ? usage.limit_ram : "")}}</p>
+      <p>{{"V-HDD: " + (usage != undefined ? usage.limit_hdd : "")}}</p>
+      <p>{{"VM-Instances: " + (usage != undefined ? usage.limit_instance : "")}}</p>
+      <p>{{"VM-Active-Instances: " + (usage != undefined ? usage.limit_active_instance : "")}}</p>
+    </div>
+    <div>
+      <h2>Available resource </h2>
+      <p>{{"V-CPU: " + (team.limit_cpu - (usage != undefined ? usage.limit_cpu : 0))}}</p>
+      <p>{{"V-RAM: " + (team.limit_ram - (usage != undefined ? usage.limit_ram : 0)) }}</p>
+      <p>{{"V-HDD: " + (team.limit_hdd - (usage != undefined ? usage.limit_hdd : 0)) }}</p>
+      <p>{{"VM-Instances: " + (team.limit_instance - (usage != undefined ? usage.limit_instance : 0)) }}</p>
+      <p>{{"VM-Active-Instances: " + (team.limit_active_instance - (usage != undefined ? usage.limit_active_instance : 0))}}</p>
+    </div>
+  </div>
+  <mat-divider *ngIf="canCreateVM" class="mt-10 mb-20"></mat-divider>
+  <h2 *ngIf="canCreateVM" class="mb-10 mr-20">Team VMs </h2>
+  <app-vms-table *ngIf="canCreateVM && data.length > 0" (delete)="deleteVm($event)" (edit)="editVM($event)" (modifyOwner)="modifyOwnerVM($event)"
                  (addOwner)="addOwnerVM($event)" [columns]="columns" [data]="data" [team]="team"></app-vms-table>
+  <p *ngIf="canCreateVM && data.length === 0">No VM created yet.</p>
 </div>

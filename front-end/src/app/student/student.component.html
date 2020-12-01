@@ -1,9 +1,9 @@
 <app-logged-header (toggleMenu)="toggleMenu()"></app-logged-header>
 <mat-toolbar>
-  {{singoloCorso ? singoloCorso.name + " - Professor(s): " + professorsList : ''}}
+  {{singoloCorso ? singoloCorso.name + " - Professor(s): " + professorsList : 'No courses available yet.'}}
   <span class="fill-remaining-space"></span>
 </mat-toolbar>
-<mat-sidenav-container>
+<mat-sidenav-container *ngIf="singoloCorso !== undefined">
   <mat-sidenav mode="side" opened position>
     <div class="container">
       <mat-nav-list>

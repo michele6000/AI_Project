@@ -3,9 +3,8 @@ import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {Observable} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {StudentModel} from '../../models/student.model';
-import {map, startWith} from "rxjs/operators";
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {map, startWith} from 'rxjs/operators';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-insert',

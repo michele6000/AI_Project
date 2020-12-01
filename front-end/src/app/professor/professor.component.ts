@@ -2,9 +2,10 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatSidenav} from '@angular/material/sidenav';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CourseModel} from '../models/course.model';
-import {ProfessorService} from "../services/professor.service";
-import {AuthService} from "../auth/auth.service";
-import {Subscription} from "rxjs";
+import {ProfessorService} from '../services/professor.service';
+import {AuthService} from '../auth/auth.service';
+import {Subscription} from 'rxjs';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-professor',
@@ -14,21 +15,22 @@ import {Subscription} from "rxjs";
 export class ProfessorComponent implements OnInit, OnDestroy {
   corsi: CourseModel[] = [];
   singoloCorso: CourseModel;
-
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
-
   s1: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService, private professorService: ProfessorService) {
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService, private professorService: ProfessorService, private snackBar: MatSnackBar) {
     this.s1 = this.professorService.courses.subscribe((next) => {
-      if (next) {
-        this.corsi = next;
-        this.checkUrl();
-      } else {
-        this.corsi = [];
-      }
-    });
+        if (next) {
+          this.corsi = next;
+          this.checkUrl();
+        } else {
+          this.corsi = [];
+        }
+      },
+      error => {
+        this.genericError();
+      });
   }
 
   ngOnDestroy() {
@@ -46,15 +48,18 @@ export class ProfessorComponent implements OnInit, OnDestroy {
         this.changeCorso(course[0]);
       } else if (this.corsi.length > 0) {
         this.router.navigate(['teacher', this.corsi[0].name.toLowerCase().replace(/\s+/g, '-')]);
-      } else {
-        console.log('Nessun corso!');
       }
     });
+  }
+
+  navigateToCorso(corso: CourseModel) {
+    this.router.navigate(['teacher', corso.name.toLowerCase().replace(/\s+/g, '-'), 'students']).then();
   }
 
   changeCorso(corso: CourseModel) {
     this.singoloCorso = corso;
     this.router.navigate(['teacher', corso.name.toLowerCase().replace(/\s+/g, '-'), 'students']).then();
+    // BehaviorSubject utilizzato per notificare il cambio di un corso nella sidenav
     this.professorService.eventsSubjectChangeCorsoSideNav.next();
   }
 
@@ -64,5 +69,12 @@ export class ProfessorComponent implements OnInit, OnDestroy {
 
   manageCourses() {
     localStorage.setItem('url_teacher', this.router.routerState.snapshot.url);
+  }
+
+  genericError() {
+    this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+      duration: 5000
+    });
+    location.reload();
   }
 }

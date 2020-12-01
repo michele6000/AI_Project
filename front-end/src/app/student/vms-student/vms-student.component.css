@@ -1,0 +1,5 @@
+.box div {
+  width: 350px;
+  display: inline-block;
+  text-align: left;
+}

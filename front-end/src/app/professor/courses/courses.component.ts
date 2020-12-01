@@ -9,7 +9,6 @@ import {AuthService} from '../../auth/auth.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {from} from 'rxjs';
 import {concatMap, toArray} from 'rxjs/operators';
-import {ModifyVmStudentComponent} from '../../dialog/modify-vm-student/modify-vm-student.component';
 import {CourseProfessorsComponent} from '../../dialog/course-professors/course-professors.component';
 import {AddProfessorToCourseComponent} from '../../dialog/add-professor-to-course/add-professor-to-course.component';
 import {RemoveProfessorFromCourseComponent} from '../../dialog/remove-professor-from-course/remove-professor-from-course.component';
@@ -25,7 +24,8 @@ export class CoursesComponent implements OnInit {
   data: CourseModel[] = [];
   id: string = null;
 
-  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute, private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {
+  constructor(private dialog: MatDialog, private router: Router, private activeRoute: ActivatedRoute,
+              private professorService: ProfessorService, private authService: AuthService, private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
@@ -124,19 +124,20 @@ export class CoursesComponent implements OnInit {
         this.professorService.findAllProsessorByCourse(course.name).subscribe(
           allProfessorOfCourse => {
             let professorsAfterIntersection;
-
             const professorsIds = allProfessorOfCourse.map(p => p.id);
-
             // filtro solo i professori che non sono già prof di quel corso
             professorsAfterIntersection = allProfessors.filter(p => !professorsIds.includes(p.id));
             this.dialog.open(AddProfessorToCourseComponent, {data: {professors: professorsAfterIntersection, courseName: course.name}});
           }
         );
+      },
+      error => {
+        this.genericError();
       }
     );
   }
 
-  // @Todo -> finire implementazione -> Attenzione perche possono essere piu di un professore da rimuovere
+  // Attenzione perche possono essere piu di un professore da rimuovere
   removeProfFromCourse(course: CourseModel) {
     // 1) recupero tutti i prof di quel corso
     // 2) li passo al dialog
@@ -147,18 +148,36 @@ export class CoursesComponent implements OnInit {
             duration: 10000
           });
         } else {
-          this.dialog.open(RemoveProfessorFromCourseComponent, {data: {professors: allProfessor, courseName: course.name}});
+          this.dialog.open(RemoveProfessorFromCourseComponent, {data: {professors: allProfessor, courseName: course.name}})
+            .afterClosed().subscribe(result => {
+            // Aggiorno tabella
+            this.professorService.findCoursesByProfessor(localStorage.getItem('id'), true);
+          });
         }
+      },
+      error => {
+        this.genericError();
       });
   }
 
   showCourseProfessor(course: CourseModel) {
     // al dialog passo il professore e il corso
     this.professorService.findAllProsessorByCourse(course.name).subscribe(result => {
-      this.dialog.open(CourseProfessorsComponent, {data: {professors: result, courseName: course.name}})
-        .afterClosed()
-        .subscribe(res => {
-        });
-    });
+        this.dialog.open(CourseProfessorsComponent, {data: {professors: result, courseName: course.name}})
+          .afterClosed()
+          .subscribe(res => {
+          });
+      },
+      error => {
+        this.genericError();
+      });
   }
+
+  genericError() {
+    this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+      duration: 5000
+    });
+    location.reload();
+  }
+
 }

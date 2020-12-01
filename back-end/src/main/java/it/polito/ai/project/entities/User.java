@@ -25,6 +25,7 @@ public class User implements UserDetails {
     @Id
     private String username; //matricola, quindi ID
     private String password;
+    private boolean active_user = false;
 
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -65,6 +66,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return active_user;
     }
+
 }

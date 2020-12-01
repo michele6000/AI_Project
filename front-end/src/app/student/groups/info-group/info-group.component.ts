@@ -20,15 +20,11 @@ export class InfoGroupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
-
     // Recupero i parametri del corso
     this.course = this.studentService.findCourseByNameUrl(this.courseParam);
-
     this.studentService.teams.subscribe((teams) => {
       this.team = teams.filter(t => t.status === 1 && t.courseName === this.course.name)[0];
-
       // Recupero l'elenco di studenti dato il team ID
       this.studentService.findMembersByTeamId(this.team.id).subscribe((students) => {
         this.data = students;

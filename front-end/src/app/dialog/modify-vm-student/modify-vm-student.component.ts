@@ -1,11 +1,11 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {GroupModel} from '../../models/group.model';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {VmStudent} from '../../models/vm-student.model';
 import {NgForm} from '@angular/forms';
 import {StudentService} from '../../services/student.service';
 import {VmModel} from '../../models/vm.model';
+import {GroupModel} from '../../models/group.model';
 
 @Component({
   selector: 'app-modify-vm-student',
@@ -18,15 +18,16 @@ export class ModifyVmStudentComponent implements OnInit {
   limitError = [];
   courseName: string;
 
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService, private dialogRef: MatDialogRef<ModifyVmStudentComponent>,  private snackBar: MatSnackBar) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel, private studentService: StudentService,
+              private dialogRef: MatDialogRef<ModifyVmStudentComponent>, private snackBar: MatSnackBar) {
     this.vmConfigAndLimitsPerTeam = data;
-    this.courseName = this.vmConfigAndLimitsPerTeam.courseName;
+    this.courseName = this.vmConfigAndLimitsPerTeam.team.courseName;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
-  edit(f: NgForm){
+  edit(f: NgForm) {
     const vm = new VmStudent();
     vm.ram = f.value.ram;
     vm.cpu = f.value.vcpu;
@@ -51,17 +52,15 @@ export class ModifyVmStudentComponent implements OnInit {
           this.snackBar.open('Vm configuration modified successfully.', 'OK', {
             duration: 5000
           });
-          this.dialogRef.close(res);
+          this.dialogRef.close(true);
         },
         error => {
-          this.snackBar.open('Error modifying vm configuration.', 'OK', {
+          this.snackBar.open('Error modifying vm configuration. ' + error.error.message, 'OK', {
             duration: 5000
           });
-          this.dialogRef.close(error);
+          this.dialogRef.close(false);
         }
       );
     }
   }
-
-
 }

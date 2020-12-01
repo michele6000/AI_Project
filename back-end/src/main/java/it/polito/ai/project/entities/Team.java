@@ -1,6 +1,8 @@
 package it.polito.ai.project.entities;
 
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ public class Team {
     @JoinColumn(name = "VMType_id")
     private VMType vmType;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team",cascade = CascadeType.DETACH)
     private List<VM> VMInstance = new ArrayList<>() ;
 
     @ManyToOne
@@ -54,6 +56,8 @@ public class Team {
             joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> confirmedStudents = new ArrayList<>();
+
+
 
     public void setCourse(Course course) {
         if (course != null) {

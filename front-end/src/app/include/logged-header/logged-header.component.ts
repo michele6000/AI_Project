@@ -1,8 +1,8 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {AuthService} from '../../auth/auth.service';
 import {Router} from '@angular/router';
-import {DomSanitizer} from "@angular/platform-browser";
-import {Observable, Observer} from "rxjs";
+import {DomSanitizer} from '@angular/platform-browser';
+import {Observable, Observer} from 'rxjs';
 
 const API_URL_PUBLIC = '/public/auth/';
 const API_URL_LOCAL = '/local/auth/';
@@ -29,7 +29,7 @@ export class LoggedHeaderComponent implements OnInit {
     this.authService.user.subscribe(next => {
       if (next != null) {
         this.email = next.email;
-        this.username = this.email.split("@")[0];
+        this.username = this.email.split('@')[0];
         this.isLoggedIn = true;
         this.title = 'Teams';
         this.ImgUrl = next.image;
@@ -61,7 +61,8 @@ export class LoggedHeaderComponent implements OnInit {
     return Observable.create((observer: Observer<string>) => {
       let img = new Image();
       img.crossOrigin = 'Anonymous';
-      img.src = url;  img.src = url;
+      img.src = url;
+      img.src = url;
       if (!img.complete) {
         img.onload = () => {
           observer.next(this.getBase64Image(img));
@@ -78,13 +79,13 @@ export class LoggedHeaderComponent implements OnInit {
   }
 
   getBase64Image(img: HTMLImageElement) {
-    var canvas = document.createElement("canvas");
+    var canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
-    var ctx = canvas.getContext("2d");
+    var ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0);
-    var dataURL = canvas.toDataURL("image/png");
-    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    var dataURL = canvas.toDataURL('image/png');
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
   }
 
 }

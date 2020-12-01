@@ -3,7 +3,6 @@ import {NgForm} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {GroupModel} from '../../models/group.model';
 import {StudentService} from '../../services/student.service';
-import {StudentModel} from '../../models/student.model';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
@@ -23,18 +22,17 @@ export class AddOwnerComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  // addVmOwner(vmId: number, ownerId: string) {
   addOwner(f: NgForm) {
     const studentId = f.value.matricola;
     this.studentService.addVmOwner(this.dataVMAndStudents.vm.id, studentId).subscribe(
       res => {
-        this.dialogRef.close(res);
+        this.dialogRef.close(true);
         this.snackBar.open('Owner added successfully.', 'OK', {
           duration: 5000
         });
       },
       error => {
-        this.dialogRef.close(error);
+        this.dialogRef.close(false);
         this.snackBar.open('Error adding owner.', 'OK', {
           duration: 5000
         });

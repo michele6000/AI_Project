@@ -164,7 +164,7 @@ public class CourseController {
         try {
             if (service.addStudentToCourse(student.getId(), courseName))
                 return true;
-            else throw new ResponseStatusException(HttpStatus.CONFLICT, courseName + " " + student.getId());
+            else throw new ResponseStatusException(HttpStatus.CONFLICT, "Impossible to add student: "+ student.getId() + " at course: "+courseName);
 
         } catch (CourseNotFoundException | StudentNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Course: " + courseName + " StudentID: " + student.getId() + " Error: " + e.getMessage());
@@ -360,20 +360,5 @@ public class CourseController {
                 .getName()
                 .split("@")[0];
     }
-
-
-    /* DEPRECATED END-POINTS */
-    @Deprecated
-    @GetMapping("/{courseName}/getLastSubmission")
-    public SubmissionDTO getLastSubmission(@PathVariable String courseName) {
-        try {
-            return submissionService.getLastSubmission(courseName, getCurrentUsername());
-        } catch (TeamServiceException e) {
-            if (e instanceof CourseNotFoundException || e instanceof SubmissionNotFoundException)
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-    }
-
 
 }

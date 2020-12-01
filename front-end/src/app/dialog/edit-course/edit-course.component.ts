@@ -20,11 +20,9 @@ export class EditCourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
   }
 
   updateCourse(f: NgForm) {
-    this.course.name = f.value.name;
     this.course.acronymous = f.value.identifier;
     this.course.min = f.value.min;
     this.course.max = f.value.max;
@@ -32,11 +30,12 @@ export class EditCourseComponent implements OnInit {
     this.professorService.updateCourse(this.course).subscribe(
       res => {
         if (res) {
-          this.dialogRef.close();
+          this.dialogRef.close(true);
           this.snackBar.open('Course update successfully', 'OK', {
             duration: 5000
           });
         } else {
+          this.dialogRef.close(false);
           this.snackBar.open('Error updating course', 'OK', {
             duration: 5000
           });

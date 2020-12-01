@@ -1,6 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {VmModel} from '../../../models/vm.model';
 
 @Component({
   selector: 'app-dialog-delete-vm',
@@ -8,11 +7,10 @@ import {VmModel} from '../../../models/vm.model';
   styleUrls: ['./dialog-delete-vm.component.css']
 })
 export class DialogDeleteVmComponent implements OnInit {
+  name: string;
 
-  vm: VmModel;
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data: VmModel) {
-    this.vm = data;
+  constructor(@Inject(MAT_DIALOG_DATA) public data: string) {
+    this.name = data;
   }
 
   ngOnInit(): void {

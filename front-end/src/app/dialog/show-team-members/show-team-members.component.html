@@ -1,9 +1,9 @@
-<div class="dimensioni">
+<div class="dimension">
   <mat-card-title>Members of team "{{teamName}}"</mat-card-title>
   <mat-divider class="mt-10 mb-20"></mat-divider>
-    <ul>
-      <li class="mb-10" *ngFor="let student of studentsInTeam">{{student.id}} - {{student.name}} {{student.firstName}}</li>
-    </ul>
+  <app-insert (add)="addStudentToTeam($event)" [options]="allStudentsOfCourse" class="w-50"></app-insert>
+      <app-table class="mt-30" (delete)="deleteStudentFromTeam($event)" [columns]="columns"
+                 [data]="studentsInTeam" [showChangeStatus]="true" [showDelete]="true"></app-table>
     <br>
     <mat-card-actions class="float-right">
       <button mat-button mat-dialog-close>Close</button>

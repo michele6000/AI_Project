@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">
 <!--  <img s logo poli -->
-  <mat-icon (click)="toggleForMenuClick()" *ngIf="isLoggedIn" class="pointer">menu</mat-icon>
-  <span class="pointer title" routerLink="/teacher">{{title}}</span>
+  <mat-icon (click)="toggleForMenuClick()" *ngIf="isLoggedIn" class="cursor-pointer">menu</mat-icon>
+  <span class="cursor-pointer title" routerLink="/teacher">{{title}}</span>
   <img src="../../../assets/polito.png" style="width: 110px;" class="ml-40" />
   <span class="fill-remaining-space"></span>
   <p *ngIf="isLoggedIn" class="position mb-0" style="font-size: 15px">Welcome back, {{username}}</p>

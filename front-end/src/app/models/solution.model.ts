@@ -6,4 +6,5 @@ export class SolutionModel {
   revisable: boolean;
   matricola: string;
   image: any[];
+  creationDate: string;
 }

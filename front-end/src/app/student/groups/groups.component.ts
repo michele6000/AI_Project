@@ -5,7 +5,8 @@ import {CreateGroupComponent} from './create-group/create-group.component';
 import {StudentService} from '../../services/student.service';
 import {CourseModel} from '../../models/course.model';
 import {Router} from '@angular/router';
-import {Subscription} from "rxjs";
+import {Subscription} from 'rxjs';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-groups',
@@ -18,16 +19,20 @@ export class GroupsComponent implements OnInit, OnDestroy {
   private courseParam: string;
   private corso: CourseModel;
   private changeCorsoSub: Subscription;
+  private componentType: number;
 
-  constructor(private studentService: StudentService, private componentFactoryResolver: ComponentFactoryResolver,
-              private router: Router) {
+  constructor(private studentService: StudentService, private componentFactoryResolver: ComponentFactoryResolver, private router: Router,
+              private snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
     // in ascolto sul BehaviorSubject per cambiare le informazioni del gruppo in base al corso
     this.changeCorsoSub = this.studentService.eventsSubjectChangeCorsoSideNav.subscribe(next => {
-      this.computeGroup();
-    });
+        this.computeGroup();
+      },
+      error => {
+        this.genericError();
+      });
   }
 
   computeGroup() {
@@ -38,10 +43,18 @@ export class GroupsComponent implements OnInit, OnDestroy {
     // carico il component con i gruppi a seconda se lo studente fa parte di un gruppo oppure no
     this.studentService.teams.subscribe((teams) => {
       if (teams && teams.filter(t => t.status === 1 && t.courseName === this.corso.name).length > 0) {
-        this.loadComponent(1);
+        if (this.componentType !== 1) {
+          this.componentType = 1;
+          this.loadComponent(1);
+        }
       } else if (teams) {
-        this.loadComponent(2);
+        if (this.componentType !== 2) {
+          this.componentType = 2;
+          this.loadComponent(2);
+        }
       }
+    }, error => {
+      this.genericError();
     });
   }
 
@@ -64,6 +77,13 @@ export class GroupsComponent implements OnInit, OnDestroy {
     if (this.changeCorsoSub) {
       this.changeCorsoSub.unsubscribe();
     }
+  }
+
+  genericError() {
+    this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+      duration: 5000
+    });
+    location.reload();
   }
 
 }

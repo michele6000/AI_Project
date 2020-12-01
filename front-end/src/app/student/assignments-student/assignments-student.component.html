@@ -4,18 +4,18 @@
   <mat-divider *ngIf="hasConsegne" class="mt-10 mb-20"></mat-divider>
   <mat-accordion>
     <mat-expansion-panel class="mb-20" #expansionPanel *ngFor="let consegna of consegne">
-      <mat-expansion-panel-header (click)="expandPanel(expansionPanel, $event)">
+      <mat-expansion-panel-header>
         <mat-panel-title style="margin-top: 9px !important;">
-          <b>{{consegna.content}}</b> &nbsp; - Expiry date: {{consegna.expiryString}} - Release date: {{consegna.releaseString}}
+          <b>{{consegna.content}}</b>&nbsp;-&nbsp;Release date: {{consegna.releaseString}}&nbsp;-&nbsp;Expiry date: {{consegna.expiryString}}
         </mat-panel-title>
         <mat-panel-description>
-          <button (click)="handleShowSubmission(consegna.id)" class="submissionButton" mat-raised-button color="primary" type="button">Show submission</button>
+          <button (click)="handleShowSubmission(consegna.id, $event)" class="submissionButton" mat-stroked-button color="primary" type="button">Show submission</button>
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <input #fileInput (change)="handleFileSelect($event)" hidden accept="application/pdf" id="file" type="file">
+      <input #fileInput (change)="handleFileSelect($event, consegna.id)" hidden accept="application/pdf" id="file" type="file">
 
       <div *ngIf="consegna.isRevisable">
-        <button (click)="fileInput.click()"  mat-raised-button type="button">{{filename}}</button>
+        <button (click)="fileInput.click()"  mat-raised-button type="button">{{filenames[consegna.id]}}</button>
         <button (click)="uploadSolution(consegna.id)" class="ml-10" color="primary" mat-button mat-raised-button>Upload solution</button>
       </div>
 
@@ -25,7 +25,7 @@
       <p *ngIf="consegna.history.length < 1">No history available.</p>
       <mat-list>
         <mat-list-item *ngFor="let solution of consegna.history ">
-          Version: {{solution.version}} - Status: {{solution.status}}
+          Version: {{solution.version}} - Status: {{solution.status}} - Date: {{solution.creationDate | date:'HH:mm d/M/y'}}
           <a mat-stroked-button (click)="handleShowSolution(solution.id)" class="ml-20">Show solution</a>
           <div *ngIf="solution.evaluation!=null" class="ml-20">
             <b> Mark: {{solution.evaluation}}</b>

@@ -6,17 +6,20 @@
       <mat-icon class="mr-20 cursor-default" matTooltip="Choose CSV file with students' list" matTooltipPosition="left">
         info
       </mat-icon>
-      <button (click)="fileInput.click()" mat-raised-button type="button">Choose File</button>
+      <button (click)="fileInput.click()" mat-raised-button type="button">{{filename}}</button>
       <input #fileInput (change)="handleFileSelect($event)" accept=".csv" hidden id="file" type="file">
-      <button (click)="sendFile()" [disabled]="fileAbsent" class="ml-20" color="primary" mat-raised-button>Upload
+      <button (click)="sendFile()" [disabled]="fileAbsent" class="ml-20" color="primary" mat-raised-button>Enroll and Add
       </button>
     </div>
   </div>
   <mat-divider class="mt-10 mb-20"></mat-divider>
-  <h1>Enrolled students:</h1>
+  <h1>Enrolled students</h1>
   <app-table (delete)="deleteStudent($event)" [columns]="columns" [data]="data" [showDelete]="true"></app-table>
   <mat-divider class="mt-30 mb-20"></mat-divider>
-  <h1 class="mt-10">Teams:</h1>
-  <app-table *ngIf="existTeam" [columns]="columnsTeam" [data]="teams" (show)="showStudentsInTeam($event)" [showDetails]="true" [showCheckbox]="false"></app-table>
-  <p *ngIf="!existTeam">Nessun team ancora creato</p>
+  <h1 class="mt-10">Teams</h1>
+  <app-table *ngIf="existTeam" [showDelete]="true" [columns]="columnsTeam" [data]="teams" (show)="showStudentsInTeam($event)" [showDetails]="true" [showCheckbox]="true" (delete)="deleteTeam($event)"></app-table>
+  <p *ngIf="!existTeam">No teams created yet.</p>
+</div>
+<div class="loader-container" *ngIf="loaderDisplayed">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
 </div>

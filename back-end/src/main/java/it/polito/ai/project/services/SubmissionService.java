@@ -34,6 +34,9 @@ public interface SubmissionService {
     SolutionDTO getSolution(Long solutionId, String username);
 
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
+    SolutionDTO addCorrection(Long solutionId, String username, MultipartFile file, Long mark, String message, String type);
+
+    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
     List<SolutionDTO> getAllSolutions(Long submissionId);
 
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
@@ -46,18 +49,6 @@ public interface SubmissionService {
 
     byte[] getSolutionImage(Long solutionId);
 
-    /* DEPRECATED */
-
-    @Deprecated
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
-    boolean evaluateLastSolution(String studentId, Long submissionId, Long evaluation, String profId);
-
-    @Deprecated
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN','ROLE_PROFESSOR')")
-    SubmissionDTO getLastSubmission(String courseName, String username);
-
-    @Deprecated
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
-    String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId);
-
+    List<SolutionDTO> getAllLastSolution(Long submissionId);
 }

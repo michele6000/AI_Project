@@ -6,7 +6,6 @@ import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.repositories.StudentRepository;
 import it.polito.ai.project.repositories.TeamRepository;
 import it.polito.ai.project.repositories.TokenRepository;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -47,14 +46,14 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendMessage(String address, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(address);
-        message.setTo(this.address);
+//        message.setTo(address);
+        message.setTo("micheleluigi.greco@aslcittaditorino.it");
         message.setSubject(subject);
         message.setText(body);
         emailSender.send(message);
     }
 
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 600000, initialDelay = 10000)
     public void deleteExpiredTokens() {
         List<Long> teams = new ArrayList<>();
         tokenRepo
@@ -71,11 +70,23 @@ public class NotificationServiceImpl implements NotificationService {
     public boolean confirm(String token, String username) {
         everythingOk.set(false);
 
+        Long teamId = tokenRepo.getOne(token).getTeamId();
+
+        if (studentRepo
+                .getOne(username)
+                .getTeams()
+                .stream()
+                .filter(t -> t.getCourse().equals(teamRepo.getOne(teamId).getCourse()))
+                .anyMatch(t -> t.getStatus() == 1)) {
+
+            checkOtherPropose(username, teamId);
+            return false;
+        }
+
         //token not existent
         if (!tokenRepo.findById(token).isPresent())
             return false;
 
-        Long teamId = tokenRepo.getOne(token).getTeamId();
 
         //token expired
         if (tokenRepo.findAllByExpiryDateBefore(new Timestamp(new Date().getTime()))
@@ -87,6 +98,8 @@ public class NotificationServiceImpl implements NotificationService {
         }
 
         tokenRepo.deleteById(token);
+        checkOtherPropose(username, teamId);
+
 
         if (tokenRepo.findAllByTeamId(teamId).size() == 0) {
             try {
@@ -101,6 +114,17 @@ public class NotificationServiceImpl implements NotificationService {
         teamRepo.getOne(teamId).getPendentStudents().remove(studentRepo.getOne(username));
         teamRepo.getOne(teamId).getConfirmedStudents().add(studentRepo.getOne(username));
         return false;
+    }
+
+    private void checkOtherPropose(String username, Long teamId) {
+        teamRepo.findAll()
+                .stream()
+                .filter(t -> t.getMembers().contains(studentRepo.getOne(username)))
+                .filter(t -> t.getCourse().equals(teamRepo.getOne(teamId).getCourse()))
+                .filter(t -> t.getStatus() == 0)
+                .filter(t -> !t.getId().equals(teamId))
+                .distinct()
+                .forEach(t -> teamService.evictTeam(t.getId()));
     }
 
     @Override
@@ -137,11 +161,11 @@ public class NotificationServiceImpl implements NotificationService {
             tokenRepo.save(token);
             String address = m + "@studenti.polito.it";
             String body =
-                    "CONFIRM participation to the team: " +
+                    "CONFIRM participation to: '"+dto.getName()+"' " +
                             URL_BASE +
                             "/notifications/confirm/" +
                             id + "?id=" + m +
-                            "\nREJECT participation to the team: " +
+                            "\nREJECT participation to: '"+dto.getName()+"' " +
                             URL_BASE +
                             "/notifications/reject/" +
                             id + "?id=" + m;

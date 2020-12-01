@@ -18,7 +18,6 @@ public class Course {
 
 
     @ManyToOne
-//  @JoinColumn(name = "VMType_id") //TODO:chiedere a malnati
     private VMType vmType;
 
     @ManyToMany(mappedBy = "courses")

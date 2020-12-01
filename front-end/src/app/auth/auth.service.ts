@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {UserModel} from '../models/user.models';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {shareReplay, tap} from 'rxjs/operators';
@@ -81,6 +81,7 @@ export class AuthService {
     ).pipe(
       tap((payload: any) => {
           const tkn = JSON.parse(atob(payload.token.split('.')[1]));
+          console.log(tkn);
           localStorage.setItem('token', payload.token);
           localStorage.setItem('expires_at', tkn.exp);
           localStorage.setItem('email', email);
@@ -94,15 +95,6 @@ export class AuthService {
 
           // this.isUserLoggedIn = true;
           this.userSubject.next(this.localUser);
-          /*
-          this.setSession(payload, email);
-          let user : UserModule = new UserModule();
-          user.email = email;
-          user.accessToken = payload.accessToken;
-          user.isLogged = true;
-          this.userSubject.next(user);
-          this.userLogged.emit(true);
-          */
         },
         (error: any) => {
           this.userSubject.next(null);
@@ -122,22 +114,24 @@ export class AuthService {
 
   logout() {
     this.clearStorage();
-
     this.userSubject.next(null);
+    this.tokenExpiredSubject.next(null);
     this.router.navigate(['home']);
   }
 
-  register(user: UserModel,  file: File) {
+  register(user: UserModel, file: File) {
     const email = user.email;
     let url = '';
     if (email.includes(DOMINIO_PROFESSOR)) {
       url = 'addProfessor';
     } else if (email.includes(DOMINIO_STUDENT)) {
       url = 'addStudent';
+    } else {
+      return of(false);
     }
 
     const formData = new FormData();
-    const submissionStr = new Blob([JSON.stringify(user)], { type: 'application/json'});
+    const submissionStr = new Blob([JSON.stringify(user)], {type: 'application/json'});
     formData.append('user', submissionStr);
     formData.append('file', file);
 

@@ -3,6 +3,7 @@ package it.polito.ai.project.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Data
@@ -13,10 +14,14 @@ public class Solution {
 
     @Lob
     private Byte[] image;
-    private String status = null;
-    private Long evaluation;
-    private int version = 0; //0 non ancora consegnato, 1 prima consegna, incrementato per ogni nuova versione
+    @Lob
+    private Byte[] correction=null;
+    private String status = "";
+    private Long evaluation=0L;
+    private int version = 0;
     private boolean isRevisable = true;
+    private Timestamp creationDate;
+
 
     @ManyToOne
     @JoinColumn(name = "student_id")

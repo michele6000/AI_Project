@@ -8,6 +8,7 @@ import it.polito.ai.project.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,14 +37,6 @@ public class StudentController {
         return students;
     }
 
-//  @PostMapping({ "", "/" })
-//  public StudentDTO addStudent(@RequestBody StudentDTO dto) {
-//    if (!service.addStudent(dto)) throw new ResponseStatusException(
-//            HttpStatus.CONFLICT,
-//            dto.getId()
-//    ); else return ModelHelper.enrich(dto);
-//  }
-
     @GetMapping("/{id}")
     public StudentDTO getOne(@PathVariable String id) {
         Optional<StudentDTO> student = service.getStudent(id);
@@ -55,7 +48,6 @@ public class StudentController {
             return ModelHelper.enrich(studentDTO);
         }
     }
-
 
     @GetMapping("/{id}/courses")
     public List<CourseDTO> getCourses(@PathVariable String id) {
@@ -126,6 +118,17 @@ public class StudentController {
         }
     }
 
+    @GetMapping("/{submissionId}/getAllLatestSolution")//
+    public List<SolutionDTO> getAllLastSolution(@PathVariable Long submissionId) {
+        if (getCurrentRoles().contains("ROLE_STUDENT"))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to access this information!");
+        try {
+            return submissionService.getAllLastSolution(submissionId);
+        } catch (TeamServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @GetMapping("/{studentId}/{solutionId}/getSolution")
     public SolutionDTO getSolution(@PathVariable String studentId, @PathVariable Long solutionId) {
         if (getCurrentRoles().contains("ROLE_STUDENT") && !isMe(studentId))
@@ -157,10 +160,30 @@ public class StudentController {
             return submissionService.evaluateSolution(solutionId, evaluation, getCurrentUsername());
         } catch (TeamServiceException | ResponseStatusException e) {
             if (e instanceof TeamServiceException)
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-            else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            else throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
+    @PostMapping("/{studentId}/{solutionId}/addCorrection")
+    public SolutionDTO addCorrection(@PathVariable String studentId, @PathVariable Long solutionId,
+                                     @RequestPart(name= "file", required = false) MultipartFile file,
+                                     @RequestPart(name="mark", required = false) Long mark,
+                                     @RequestPart(name="message", required = false) String message,
+                                     @RequestPart(name="type", required = false) String type) {
+
+        if (getCurrentRoles().contains("ROLE_STUDENT"))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to evaluate a solution!");
+        try {
+            return submissionService.addCorrection(solutionId,getCurrentUsername(),file,mark,message,type);
+        } catch (TeamServiceException | ResponseStatusException e) {
+            if (e instanceof TeamServiceException)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            else throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+
 
     @PostMapping("/{studentId}/{submissionId}/addSolution") //
     public SolutionDTO addSolution(@PathVariable String studentId, @PathVariable Long submissionId,
@@ -195,46 +218,11 @@ public class StudentController {
                 .getAuthentication()
                 .getAuthorities()
                 .stream()
-                .map(a -> a.getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
     }
 
     private boolean isMe(String id) {
-        return (
-                id.equals(getCurrentUsername()) ||
-                        !getCurrentRoles().contains("ROLE_STUDENT")
-        );
+        return (id.equals(getCurrentUsername()) ||  !getCurrentRoles().contains("ROLE_STUDENT"));
     }
-
-
-    /* DEPRECATED END-POINTS */
-
-    @Deprecated
-    @PostMapping("/{studentId}/{submissionId}/evaluateLatestSolution")
-    public boolean evaluateLastSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestParam Long evaluation) {
-//    if (!getCurrentRoles().contains("ROLE_PROFESSOR"))  throw new ResponseStatusException(
-//            HttpStatus.FORBIDDEN,
-//            "You are not allowed to evaluate a solution!"
-//    );
-        try {
-            return submissionService.evaluateLastSolution(studentId, submissionId, evaluation, getCurrentUsername());
-        } catch (TeamServiceException | ResponseStatusException e) {
-            if (e instanceof TeamServiceException)
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-            else throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
-        }
-    }
-
-    @Deprecated
-    @PostMapping("/{studentId}/{submissionId}/updateSolution")
-    public String updateSolution(@PathVariable String studentId, @PathVariable Long submissionId, @RequestBody SolutionDTO sol) {
-        if (!isMe(studentId))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to add a solution!");
-        try {
-            return submissionService.updateSolution(submissionId, sol, studentId);
-        } catch (TeamServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-
 }

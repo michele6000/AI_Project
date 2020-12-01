@@ -1,7 +1,6 @@
 package it.polito.ai.project.services;
 
 import it.polito.ai.project.dtos.SolutionDTO;
-import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.SubmissionDTO;
 import it.polito.ai.project.entities.Course;
 import it.polito.ai.project.entities.Solution;
@@ -13,14 +12,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -76,7 +74,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new TeamServiceException("You are not a professor of this course!");
         }
 
-        try{
+        try {
             Byte[] byteObjects = new Byte[submissionFile.getBytes().length];
             int i = 0;
             for (byte b : submissionFile.getBytes())
@@ -118,8 +116,12 @@ public class SubmissionServiceImpl implements SubmissionService {
         return courseRepo
                 .getOne(courseName)
                 .getSubmissions().stream()
-                .sorted(Comparator.comparing(Submission::getExpiryDate))
-                .map(s -> modelMapper.map(s, SubmissionDTO.class)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(Submission::getReleaseDate).thenComparing(Submission::getContent))
+                .map(s -> modelMapper
+                        .typeMap(Submission.class, SubmissionDTO.class)
+                        .addMappings(mapper -> mapper.skip(SubmissionDTO::setImage))
+                        .map(s)).collect(Collectors.toList()
+                );
     }
 
     @Override
@@ -131,7 +133,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new SubmissionNotFoundException("Submission not found!");
 
         if (!profRepo.findById(studentId).isPresent()) { //a student is requiring submission
-            if(getLastSolVersion(submissionId,studentId).isRevisable())
+            if (getLastSolVersion(submissionId, studentId).isRevisable())
                 if (studentRepo.getOne(studentId).getSolutions().stream()
                         .filter(solution -> solution.getVersion() >= 0)
                         .noneMatch(sol -> sol.getSubmission().getId().equals(submissionId))) {
@@ -140,8 +142,8 @@ public class SubmissionServiceImpl implements SubmissionService {
                             .filter(sol -> sol.getStudent().getId().equals(studentId))
                             .filter(sol -> sol.getVersion() == -1)
                             .filter(sol -> sol.getSubmission().getId().equals(submissionId))
-                            .collect(Collectors.toList() );
-                    if (ReadSol.size() > 0){
+                            .collect(Collectors.toList());
+                    if (ReadSol.size() > 0) {
                         submissionRepo.getOne(submissionId).getSolutions().remove(ReadSol.get(0));
                         solutionRepo.delete(ReadSol.get(0));
                     }
@@ -168,7 +170,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (submission.getExpiryDate().before(new Date()))
             throw new SubmissionExpiredException("This submission expired! You cannot submit solutions now.");
 
-        if (!getLastSolVersion(submissionId,studentId).isRevisable())
+        if (!getLastSolVersion(submissionId, studentId).isRevisable())
             throw new NotRevisableException("Professor has stopped review! You cannot submit any solutions.");
 
         if (studentId.length() == 0 || !studentRepo.findById(studentId).isPresent())
@@ -182,10 +184,10 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         List<Solution> ReadSol = submission.getSolutions().stream()
                 .filter(sol -> sol.getStudent().getId().equals(studentId))
-                .filter(sol -> sol.getVersion() == 0 || sol.getVersion() == -1)
+                .filter(sol -> sol.getVersion() == 0 || sol.getVersion() == -1) //todo:perche avevo messo questo controllo?...
                 .filter(sol -> sol.getSubmission().getId().equals(submissionId))
-                .collect(Collectors.toList() );
-        if (ReadSol.size() > 0){
+                .collect(Collectors.toList());
+        if (ReadSol.size() > 0) {
             submission.getSolutions().remove(ReadSol.get(0));
             solutionRepo.delete(ReadSol.get(0));
         }
@@ -195,6 +197,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .filter(sol -> sol.getSubmission().getId().equals(submissionId))
                 .filter(sol -> sol.getVersion() != 0)
                 .filter(sol -> sol.getVersion() != -1)
+                .filter(sol -> sol.getVersion() != -2)
                 .count();
 
         solution.setSubmission(submission);
@@ -202,8 +205,9 @@ public class SubmissionServiceImpl implements SubmissionService {
         solution.setRevisable(true);
         solution.setStudent(student);
         solution.setVersion((int) (version + 1L));
+        solution.setCreationDate(new Timestamp(new Date().getTime()));
 
-        try{
+        try {
             Byte[] byteObjects = new Byte[solutionFile.getBytes().length];
             int i = 0;
             for (byte b : solutionFile.getBytes())
@@ -217,7 +221,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         solution = solutionRepo.save(solution);
         student.addSolution(solution);
 
-        return modelMapper.map(solution,SolutionDTO.class);
+        return modelMapper.map(solution, SolutionDTO.class);
     }
 
 
@@ -317,14 +321,14 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public byte[] getSubmissionImage( Long submissionId) {
+    public byte[] getSubmissionImage(Long submissionId) {
         if (!submissionRepo.findById(submissionId).isPresent())
             throw new SubmissionNotFoundException("Submission not found!");
 
         Byte[] image = submissionRepo.getOne(submissionId).getImage();
-        int j=0;
+        int j = 0;
         byte[] bytes = new byte[image.length];
-        for(Byte b: image)
+        for (Byte b : image)
             bytes[j++] = b;
 
         return bytes;
@@ -336,25 +340,93 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new SolutionNotFoundException("Solution not found!");
 
         Byte[] image = solutionRepo.getOne(solutionId).getImage();
-        int j=0;
+        int j = 0;
         byte[] bytes = new byte[image.length];
-        for(Byte b: image)
+        for (Byte b : image)
             bytes[j++] = b;
 
         return bytes;
     }
 
     @Override
+    public List<SolutionDTO> getAllLastSolution(Long submissionId) {
+        if (!submissionRepo.findById(submissionId).isPresent())
+            throw new SubmissionNotFoundException("Submission not found!");
+
+        Course course = submissionRepo.getOne(submissionId).getCourse();
+
+        if (!course.isEnabled())
+            throw new CourseDisabledException("Course not enabled!");
+        // per rendere più veloce fare query con join a mano, e poi mappare come lista di oggetti ed estrarre i valori ( come a lavoro )
+        return course.getStudents()
+                .stream()
+                .map(s ->
+                    modelMapper
+                    .typeMap(Solution.class, SolutionDTO.class)
+                    .addMappings(mapper -> {
+                        mapper.skip(SolutionDTO::setImage);
+                        mapper.map(sol ->sol.getStudent().getId(),SolutionDTO::setMatricola);
+                        mapper.map(sol ->sol.getStudent().getName(),SolutionDTO::setName);
+                        mapper.map(sol ->sol.getStudent().getFirstName(),SolutionDTO::setSurname);
+                    })
+                    .map(getLastSolVersion(submissionId, s.getId()))
+                )
+                .collect(Collectors.toList())
+                ;
+
+
+    }
+
+    @Override
     public SolutionDTO getSolution(Long solutionId, String username) {
         if (!solutionRepo.findById(solutionId).isPresent())
             throw new SolutionNotFoundException("Solution not found!");
+        return modelMapper.map(solutionRepo.getOne(solutionId), SolutionDTO.class);
+    }
 
+    @Override
+    public SolutionDTO addCorrection(Long solutionId, String username, MultipartFile file, Long mark, String message, String type) {
         Solution sol = solutionRepo.getOne(solutionId);
+        if (!sol.getSubmission().getCourse().getProfessors().contains(profRepo.getOne(username))) {
+            return new SolutionDTO();
+        }
 
-        if (sol.getSubmission().getCourse().getProfessors().contains(profRepo.getOne(username)))
-            sol.setStatus("REVISED");
-
-        return modelMapper.map(sol, SolutionDTO.class);
+        if (type.equals("evaluation")) {
+            if(Optional.ofNullable(file).isPresent())
+                try { // caso in cui c'è anche una correzione da parte del docente
+                    Byte[] byteObjects = new Byte[file.getBytes().length];
+                    int i = 0;
+                    for (byte b : file.getBytes())
+                        byteObjects[i++] = b;
+                    sol.setCorrection(byteObjects);
+                    sol.setEvaluation(mark);
+                    sol.setStatus("EVALUATED");
+                } catch (IOException e) { // caaso in cui il docente da un voto ma non carica una correzione ( e.g. mark = 30L)
+                    throw new TeamServiceException("Error decoding file! Operation aborted");
+                }
+            notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark+"\nProfessor message: "+message);
+            sol.setEvaluation(mark);
+            sol.setStatus("EVALUATED");
+            return modelMapper.map(solutionRepo.save(sol), SolutionDTO.class);
+        }
+        if (type.equals("review")){
+            try {
+                Byte[] byteObjects = new Byte[file.getBytes().length];
+                int i = 0;
+                for (byte b : file.getBytes())
+                    byteObjects[i++] = b;
+                sol.setCorrection(byteObjects);
+                sol.setStatus("REQUEST_REVIEW");
+                notification.sendMessage(sol.getStudent().getEmail(),"Requested review","Professor has request a review for your solution.\n" +
+                        "\nSolution_id = " + sol.getId() + " - Version: " + sol.getVersion() +
+                        "\nSubmission = " + sol.getSubmission().getContent() +
+                        "\nProfessor message: "+message);
+                return modelMapper.map(solutionRepo.save(sol), SolutionDTO.class);
+            } catch (IOException e) {
+                throw new TeamServiceException("Wrong file/missing !");
+            }
+        }
+        return new SolutionDTO();
     }
 
     @Override
@@ -374,41 +446,46 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (!course.isEnabled())
             throw new CourseDisabledException("Course not enabled!");
 
-        return modelMapper.map(getLastSolVersion(submissionId, studentId), SolutionDTO.class);
+        return modelMapper
+                .typeMap(Solution.class,SolutionDTO.class)
+                .addMappings(mapper -> mapper.skip(SolutionDTO::setImage))
+                .map(getLastSolVersion(submissionId, studentId)
+                );
 
     }
 
     /* ----------- PRIVATE METHODS ------------ */
 
 
-    @Scheduled(fixedRate = 24*60*60*1000) // una volta al giorno + appena avvio il programma
+    @Scheduled(fixedRate = 24 * 60 * 60 * 1000) // una volta al giorno + appena avvio il programma
     public void passiveSolutionAfterSubmissionExpiryDate() {
         AtomicBoolean found = new AtomicBoolean(false);
 
-        submissionRepo.findAll().forEach( submission -> {
+        submissionRepo.findAll().forEach(submission -> {
             // Per ogni submission
-            if(submission.getExpiryDate().before(new Date())) // se è scaduta
+            if (submission.getExpiryDate().before(new Date())) // se è scaduta
                 submission.getCourse().getStudents().forEach(student -> {
                     // per ogni studente del corso
                     found.set(false);
                     if (student.getSolutions().stream()
                             .filter(solution -> solution.getSubmission().equals(submission)) //submission corrente
-                            .anyMatch(solution -> solution.getVersion() != -1 && solution.getVersion() != 0 )) // cioè ha sottomesso qualcosa
+                            .anyMatch(solution -> solution.getVersion() != -1 && solution.getVersion() != 0)) // cioè ha sottomesso qualcosa
                         found.set(true);
-                    if (!found.get()){
+                    if (!found.get()) {
                         // student didn't send a solution
                         List<Solution> ReadSol = student.getSolutions().stream()
                                 .filter(sol -> sol.getSubmission().equals(submission))
                                 .filter(sol -> sol.getVersion() != -2) // se è stata già processata in passato
                                 .filter(sol -> sol.getVersion() == 0 || sol.getVersion() == -1) // se è letta oppure non letta
-                                .collect(Collectors.toList() );
-                        if (ReadSol.size() > 0){
+                                .collect(Collectors.toList());
+                        if (ReadSol.size() > 0) {
                             submission.getSolutions().remove(ReadSol.get(0));
                             solutionRepo.delete(ReadSol.get(0)); // elimino la solution fittizia
                         }
                         Solution blankSolution = new Solution();
                         blankSolution.setStatus("NOT_SUBMITTED");
                         blankSolution.setVersion(-2);
+                        blankSolution.setCreationDate(new Timestamp(new Date().getTime()));
                         blankSolution.setRevisable(false);
                         blankSolution.setStudent(student);
                         blankSolution.setSubmission(submission);
@@ -431,6 +508,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     private void createNewSol(String username, Long submissionId) {
         Solution sol = new Solution();
         sol.setStatus("READ");
+        sol.setCreationDate(new Timestamp(new Date().getTime()));
         sol.setRevisable(true);
         sol.setVersion(0);
         sol.setStudent(studentRepo.getOne(username));
@@ -448,77 +526,13 @@ public class SubmissionServiceImpl implements SubmissionService {
             return solution.get();
         Solution blank = new Solution();
         blank.setStatus("NOT_READ");
+        blank.setCreationDate(new Timestamp(new Date().getTime()));
         blank.setStudent(studentRepo.getOne(studentId));
         blank.setSubmission(submissionRepo.getOne(submissionId));
         blank.setVersion(-1);
         blank.setRevisable(true);
+        blank.setEvaluation(null);
         return solutionRepo.save(blank);
-    }
-
-
-
-    /* ----------- DEPRECATED METHODS ------------ */
-
-    @Deprecated
-    @Override
-    public SubmissionDTO getLastSubmission(String courseName, String username) {
-
-        if (!courseRepo.findById(courseName).isPresent()) throw new CourseNotFoundException(
-                "Course not found!"
-        );
-
-        if (!courseRepo.getOne(courseName).isEnabled()) throw new CourseDisabledException(
-                "Course not enabled!"
-        );
-
-        Optional<SubmissionDTO> optSubmission = courseRepo
-                .getOne(courseName)
-                .getSubmissions()
-                .stream()
-                .map(s -> modelMapper.map(s, SubmissionDTO.class))
-                .max(Comparator.comparing(SubmissionDTO::getReleaseDate));
-
-//
-        if (optSubmission.isPresent()) {
-            /*if (!profRepo.findById(username).isPresent()) { //a student is requiring submission
-                if (studentRepo.getOne(username).getSolutions().stream().noneMatch(sol -> sol.getSubmission().getId()
-                        .equals(optSubmission.get().getId()))) {
-                    //no solution for this submission and this student-->create an empty solution with status "READ"
-
-                }
-            }*/
-            return optSubmission.get();
-        } else throw new SubmissionNotFoundException("There are no submissions for this course!");
-    }
-
-    @Deprecated
-    @Override
-    public boolean evaluateLastSolution(String studentId, Long submissionId, Long evaluation, String profId) {
-
-        try {
-            SolutionDTO sol = getLastSolution(studentId, submissionId, profId);
-            if (!isProfessorCourseSubmission(submissionId, profId))
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not a professor of this course!");
-            solutionRepo.getOne(sol.getId()).setEvaluation(evaluation);
-            solutionRepo.getOne(sol.getId()).setStatus("EVALUATED");
-            executor.execute(() -> notification.sendMessage(
-                    studentRepo.getOne(studentId).getEmail(),
-                    "Evaluation",
-                    "The professor has evaluated your solution.\nSolution_id = " + sol.getId() +
-                            "\n Final score: " + evaluation
-            ));
-
-            return true;
-        } catch (TeamServiceException e) {
-            throw e;
-        }
-
-    }
-
-    @Deprecated
-    @Override
-    public String updateSolution(Long submissionId, SolutionDTO solutionDTO, String studentId) {
-        return "DEPRECATED";
     }
 
 }

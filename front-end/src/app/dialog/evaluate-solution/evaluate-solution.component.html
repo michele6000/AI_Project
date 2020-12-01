@@ -1,13 +1,22 @@
-<div class="dimensioni">
+<div class="dimension">
   <mat-card-title>Evaluate Solution</mat-card-title>
   <mat-divider class="mt-10 mb-20"></mat-divider>
   <mat-error *ngIf="error" class="mt-10-center mb-10">
     {{errorStr}}
   </mat-error>
   <form #f="ngForm" (ngSubmit)="evaluate(f)">
+    <div class="dialog-position-field">
+      <span>File correction</span>
+      <button (click)="fileInput.click()" class="ml-20" mat-raised-button type="button">{{filename}}</button>
+      <input #fileInput (change)="handleFileSelect($event)" hidden id="file" type="file">
+    </div>
     <mat-form-field class="w-100">
       <mat-label>Evaluation</mat-label>
       <input matInput min="1" max="31" type="number" required [ngModel]="evaluation" name="evaluation">
+    </mat-form-field>
+    <mat-form-field class="w-100">
+      <mat-label>Message</mat-label>
+      <input matInput type="text" [ngModel]="message" name="message">
     </mat-form-field>
   <mat-card-actions class="mt-10 float-right">
       <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button>Evaluate</button>
