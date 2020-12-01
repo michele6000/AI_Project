@@ -1,5 +1,4 @@
 # Teams
-
 Welcome to Teams, in this file we'll show standard configuration steps.
 Usefull links: [GitHub Repository](https://github.com/michele6000/AI_Project), [DockerHub font-end Repository](https://hub.docker.com/r/michele6000/front-end/tags), [DockerHub back-end Repository](https://hub.docker.com/r/michele6000/back-end/tags),  [DockerHub ai-project-db Repository](https://hub.docker.com/r/michele6000/ai-project-db/tags)
 
@@ -40,6 +39,9 @@ We recommend using the first procedure, to reduce waiting times due to local cod
 
 # Basic scenario
 Both build procedures are configured in such a way as to load the files present in the ./mariadb-files folder, which already contains registered users, enabled courses, submissions, solutions, etc.
+
+Homepage: http://93.56.104.204:4200/home
+API doc: http://93.56.104.204:8080/docs/api.html
 
 Access data:
 
