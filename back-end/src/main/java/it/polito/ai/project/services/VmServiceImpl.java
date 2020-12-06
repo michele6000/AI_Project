@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -239,6 +240,9 @@ public class VmServiceImpl implements VmService {
             throw new TeamNotFoundException("Team not found!");
         }
 
+        if (!optionalVMEntity.get().getOwners().contains(studentRepo.getOne(getCurrentUsername())))
+            throw new TeamServiceException("You are not an owner of this VM!");
+
 
         Long team = optionalVMEntity.get().getTeam().getId();
         Long type = optionalVMEntity.get().getVmType().getId();
@@ -264,6 +268,8 @@ public class VmServiceImpl implements VmService {
         if (!optionalVMEntity.isPresent()) {
             throw new VmNotFoundException("Vm not found!");
         }
+        if (!optionalVMEntity.get().getOwners().contains(studentRepo.getOne(getCurrentUsername())))
+            throw new TeamServiceException("You are not an owner of this VM!");
 
         if (optionalVMEntity.get().getStatus().equals("poweron")) {
             optionalVMEntity.get().setStatus("poweroff");
@@ -431,5 +437,13 @@ public class VmServiceImpl implements VmService {
         if(!vmRepo.findById(vmId).isPresent())
             throw new TeamServiceException("Vm not found!");
         return modelMapper.map(vmRepo.getOne(vmId).getTeam(),TeamDTO.class);
+    }
+
+    private String getCurrentUsername() {
+        return SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName()
+                .split("@")[0];
     }
 }
