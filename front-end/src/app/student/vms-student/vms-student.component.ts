@@ -85,7 +85,9 @@ export class VmsStudentComponent implements OnInit {
               this.studentService.findTeamsByStudent(localStorage.getItem('id'), true);
             },
             (error) => {
-              this.genericError();
+              this.snackBar.open('Error deleting vm. ' + error.error.message, 'OK', {
+                duration: 5000
+              });
             });
         }
       });
@@ -209,6 +211,6 @@ export class VmsStudentComponent implements OnInit {
     this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
       duration: 5000
     });
-    location.reload();
+    setTimeout(location.reload, 5000);
   }
 }

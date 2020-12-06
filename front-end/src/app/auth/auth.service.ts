@@ -154,7 +154,6 @@ export class AuthService {
       this.clearStorage();
       this.userSubject.next(null);
 
-      // @todo Valutare altra soluzione
       this.tokenExpiredSubject.next(true);
       this.tokenExpiredSubject.next(false);
 

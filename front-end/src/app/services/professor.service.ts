@@ -17,7 +17,10 @@ const API_URL = '/api/API/';
 })
 export class ProfessorService {
   // private dataStore: {courses: CourseModel[]} = {courses: null};
+  // Al change del corso nella sideNav, chi è in ascolto riceve il nuovo valore
+  // (e fa quindi le richieste es. elenco studenti)
   eventsSubjectChangeCorsoSideNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
+
   courses: Observable<CourseModel[]>;
   students: Observable<StudentModel[]>;
   private coursesSubject: BehaviorSubject<CourseModel[]>;

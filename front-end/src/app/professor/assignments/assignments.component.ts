@@ -75,7 +75,7 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
             this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
               duration: 5000
             });
-            location.reload();
+            setTimeout(location.reload, 5000);
           }
         );
 
