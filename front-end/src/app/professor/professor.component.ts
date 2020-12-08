@@ -19,7 +19,8 @@ export class ProfessorComponent implements OnInit, OnDestroy {
   sidenav: MatSidenav;
   s1: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService, private professorService: ProfessorService, private snackBar: MatSnackBar) {
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService,
+              private professorService: ProfessorService, private snackBar: MatSnackBar) {
     this.s1 = this.professorService.courses.subscribe((next) => {
         if (next) {
           this.corsi = next;

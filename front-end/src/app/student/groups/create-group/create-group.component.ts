@@ -62,7 +62,7 @@ export class CreateGroupComponent implements OnInit {
     this.studentService.teams.subscribe((teams) => {
       this.groupsData = [];
       const groupData = teams ? teams.filter(t => t.courseName === this.course.name) : [];
-      // Per ogni gruppo del corso recupero l'elenco degli studenti e lo stato
+      // Per ogni gruppo del corso recupero l'elenco degli studenti e lo stato (confirmed o pendent)
       groupData.forEach((t) => {
         forkJoin(
           {
@@ -70,6 +70,7 @@ export class CreateGroupComponent implements OnInit {
             confirmed: this.studentService.findConfirmedStudentsByTeamId(t.id),
           }
         ).subscribe((res) => {
+            // Merge dei 2 array in uno solo (t.members) settando anche lo stato (confirmed/pendent)
             t.members = [];
             res.confirmed.forEach((c) => {
               c.status = 'Confirmed';
@@ -103,7 +104,7 @@ export class CreateGroupComponent implements OnInit {
             // Tutte a buon fine
             this.studentService.findTeamsByStudent(localStorage.getItem('id'));
             this.loaderDisplayed = false;
-            this.selectedStudents=[];
+            this.selectedStudents = [];
             this.snackBar.open('Team proposal created successfully.', 'OK', {
               duration: 5000
             });

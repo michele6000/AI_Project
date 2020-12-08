@@ -140,6 +140,10 @@ export class ProfessorService {
     }
   }
 
+  enrollManyStudent(courseName: string, formData: FormData) {
+    return this.http.post('/api/API/courses/' + courseName + '/enrollMany', formData);
+  }
+
   /* TEAMS */
   findTeamsByCourse(courseName: string) {
     if (courseName.length > 0) {

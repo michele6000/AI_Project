@@ -1,5 +1,5 @@
 <div class="w-80 container">
-  <p *ngIf="!hasConsegne">There are no assignments available for this course.</p>
+  <h2 *ngIf="!hasConsegne">There are no assignments available for this course.</h2>
   <h2 *ngIf="hasConsegne" class="mb-10 mr-20">Assignments</h2>
   <mat-divider *ngIf="hasConsegne" class="mt-10 mb-20"></mat-divider>
   <mat-accordion>

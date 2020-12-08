@@ -9,11 +9,12 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 export class StatisticsVmComponent implements OnInit {
 
   statistics: any[];
+  teamName: string;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data) {
-    this.statistics = data.genericResponse.split('\n');
+    this.statistics = data.statistics.genericResponse.split('\n');
+    this.teamName = data.teamName;
     // rimuovo la scritta "current usage"
-    // @todo Cambiare API
     this.statistics.splice(0, 1);
   }
 

@@ -77,7 +77,7 @@ export class EditVmProfessorComponent implements OnInit {
     }
 
     if (!valid) {
-      message = message + res.join(', ') + messageNext + '.' + 'Team usage is ' + resUsage.join(', ');
+      message = message + res.join(', ') + messageNext + '.' + 'Team usage: ' + resUsage.join(', ');
       this.snackBar.open(message, 'OK', {
         duration: 10000
       });

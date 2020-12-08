@@ -109,7 +109,7 @@ export class VmsComponent implements OnInit {
     // 2) apertura dialog a cui passo le statistiche
     this.professorService.findStatisticsByTeam(element.id).subscribe(
       statistics => {
-        this.dialog.open(StatisticsVmComponent, {data: statistics});
+        this.dialog.open(StatisticsVmComponent, {data: {statistics, teamName: element.name}});
       },
       error => {
         this.genericError();
