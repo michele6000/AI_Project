@@ -15,6 +15,8 @@ const API_URL_LOCAL = '/local/auth/';
 })
 export class LoggedHeaderComponent implements OnInit {
   email = '';
+  name = '';
+  firstName = '';
   username = '';
   isLoggedIn = false;
   image: any;
@@ -33,6 +35,8 @@ export class LoggedHeaderComponent implements OnInit {
         this.isLoggedIn = true;
         this.title = 'Teams';
         this.ImgUrl = next.image;
+        this.name = next.name;
+        this.firstName = next.firstName;
 
       } else {
         this.email = '';
