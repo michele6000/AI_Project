@@ -25,6 +25,7 @@ export class AssignmentsStudentComponent implements OnInit {
   hasConsegne = false;
   filename = 'Choose file';
   filenames = [];
+  loaderDisplayed = false;
 
   constructor(private studentService: StudentService, private router: Router, private snackBar: MatSnackBar) {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
@@ -33,6 +34,7 @@ export class AssignmentsStudentComponent implements OnInit {
   }
 
   initData() {
+    this.loaderDisplayed = true;
     // Recupero l'elenco di Submissions (i laboratori che il prof pubblica) per questo corso
     this.studentService.findSubmissions(this.corso.name).subscribe(
       (submissions) => {
@@ -74,12 +76,15 @@ export class AssignmentsStudentComponent implements OnInit {
             if (consegne.length > 0) {
               this.hasConsegne = true;
             }
+            this.loaderDisplayed = false;
           },
           error => {
+            this.loaderDisplayed = false;
             this.genericError();
           });
       },
       (error) => {
+        this.loaderDisplayed = false;
         this.genericError();
       }
     );

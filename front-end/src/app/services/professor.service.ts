@@ -33,6 +33,11 @@ export class ProfessorService {
     this.students = this.studentsSubject.asObservable();
   }
 
+  logoutProfessor() {
+    this.studentsSubject.next(null);
+    this.coursesSubject.next(null);
+  }
+
   /* COURSES */
   createCourse(course: CourseModel) {
     return this.http.post(

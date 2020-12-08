@@ -62,6 +62,7 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
         });
       },
       (error) => {
+        this.loaderDisplayed = false;
         this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
           duration: 5000
         });

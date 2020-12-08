@@ -42,7 +42,7 @@ export class AuthService {
       this.loginRetrieveDatas();
       // TODO: Verificare, serve per riportare alla pagina corretta in base al ruolo dell'utente
       // dopo che vengono richiesti i dati
-      this.loginRedirect();
+      // this.loginRedirect();
     } else {
       this.userSubject.next(null);
     }
@@ -108,12 +108,17 @@ export class AuthService {
     localStorage.removeItem('email');
     localStorage.removeItem('id');
     localStorage.removeItem('roles');
+    localStorage.removeItem('image');
   }
 
   logout() {
     this.clearStorage();
     this.userSubject.next(null);
     this.tokenExpiredSubject.next(null);
+
+    this.studentService.logoutStudent();
+    this.professorService.logoutProfessor();
+
     this.router.navigate(['home']);
   }
 
