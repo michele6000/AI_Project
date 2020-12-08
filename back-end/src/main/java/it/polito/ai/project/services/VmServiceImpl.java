@@ -190,7 +190,7 @@ public class VmServiceImpl implements VmService {
             optionalVMEntity.get().getOwners().remove(studentMe);
             return true;
         }
-        return false;
+        throw new VmNotFoundException("You can not modified this VM!");
     }
 
     @Override
