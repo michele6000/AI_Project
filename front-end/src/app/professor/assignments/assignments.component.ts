@@ -6,8 +6,6 @@ import {CreateAssignmentComponent} from '../../dialog/create-assignment/create-a
 import {CourseModel} from '../../models/course.model';
 import {ProfessorService} from '../../services/professor.service';
 import * as moment from 'moment';
-import {from} from 'rxjs';
-import {concatMap, mergeMap, toArray} from 'rxjs/operators';
 import {StudentSubmissionModel} from '../../models/student-submission.model';
 import {SolutionModel} from '../../models/solution.model';
 import {EvaluateSolutionComponent} from '../../dialog/evaluate-solution/evaluate-solution.component';
@@ -37,48 +35,37 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
 
   loadAssignments() {
     this.loaderDisplayed = true;
-    // 1 - Recupero l'elenco di studenti del corso
-    this.professorService.getEnrolledStudents(this.corso.name).subscribe(
-      (resStudents) => {
-
-        // 2 - Ottengo l'elenco di consegne per questo corso
-        this.professorService.findAssignmentsByCourse(this.corso.name).subscribe(
-          (resSubmissions) => {
-            const consegne = [];
-
-            if (resSubmissions.length < 1) {
+    // 1 - Ottengo l'elenco di consegne per il corso in questione
+    this.professorService.findAssignmentsByCourse(this.corso.name).subscribe(
+      (resSubmissions) => {
+        const consegne = [];
+        if (resSubmissions.length < 1) {
+          this.show = consegne.length !== 0;
+          this.loaderDisplayed = false;
+        }
+        // 2 - Per ogni assignment recupero tutte le solution
+        resSubmissions.forEach((submission) => {
+          // Formatto correttamente le date
+          submission.expiryString = moment(submission.expiryDate).format('DD/MM/YYYY');
+          submission.releaseString = moment(submission.releaseDate).format('DD/MM/YYYY');
+          // recupero per ogni assignment tutte le solution -> l'elaborazione è spostata lato server
+          this.professorService.getAllLatestSolution(submission.id).subscribe(
+            allLastSolution => {
+              submission.elaborati = allLastSolution;
+              consegne.push(submission);
+              consegne.sort((a, b) => moment(a.releaseDate).diff(b.releaseDate, 'days'));
+              this.consegne = consegne;
               this.show = consegne.length !== 0;
               this.loaderDisplayed = false;
             }
-
-            resSubmissions.forEach((submission) => {
-
-              // Formatto correttamente le date
-              submission.expiryString = moment(submission.expiryDate).format('DD/MM/YYYY');
-              submission.releaseString = moment(submission.releaseDate).format('DD/MM/YYYY');
-
-              // recupero per ogni assignment tutte le submission -> l'elaborazione è spostata lato server
-              this.professorService.getAllLatestSolution(submission.id).subscribe(
-                allLastSolution => {
-                  submission.elaborati = allLastSolution;
-                  consegne.push(submission);
-                  consegne.sort((a, b) => moment(a.releaseDate).diff(b.releaseDate, 'days'));
-                  // consegne.sort((a, b) => a.content.compareTo(b.content));
-                  this.consegne = consegne;
-                  this.show = consegne.length !== 0;
-                  this.loaderDisplayed = false;
-                }
-              );
-            });
-          },
-          (error) => {
-            this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
-              duration: 5000
-            });
-            location.reload();
-          }
-        );
-
+          );
+        });
+      },
+      (error) => {
+        this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
+          duration: 5000
+        });
+        setTimeout(location.reload, 5000);
       }
     );
   }
@@ -87,15 +74,13 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
     this.show = false;
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
     this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
-
     if (this.corso.name.length === 0) {
       return;
     }
     this.loadAssignments();
   }
 
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 
   showHistory(studentSub: StudentSubmissionModel) {
     this.dialog.open(ShowHistoryComponent, {data: studentSub, autoFocus: false})
@@ -108,7 +93,7 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
     this.dialog.open(CreateAssignmentComponent, {restoreFocus: false})
       .afterClosed()
       .subscribe(result => {
-        // Dopo aver creato l'assignment aggiorno la tabella (se non è click su cancel)
+        // Dopo aver creato l'assignment aggiorno la tabella (se non è click su cancel nel dialog)
         if (result) {
           this.loadAssignments();
         }
@@ -121,7 +106,7 @@ export class AssignmentsComponent implements OnInit, OnDestroy {
 
   evaluateSolution($event: SolutionModel) {
     // restoreFocus: false
-    //  per non riportare il focus sul bottone dopo la chiusura della dialog
+    // per non riportare il focus sul bottone dopo la chiusura della dialog
     this.dialog.open(EvaluateSolutionComponent, {data: $event, restoreFocus: false})
       .afterClosed()
       .subscribe(result => {

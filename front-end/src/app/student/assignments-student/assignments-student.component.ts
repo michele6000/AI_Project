@@ -11,7 +11,6 @@ import {concatMap, toArray} from 'rxjs/operators';
 const API_URL_PUBLIC = '93.56.104.204:8080/API/';
 const API_URL_LOCAL = 'localhost:8080/API/';
 
-
 @Component({
   selector: 'app-assignments-student',
   templateUrl: './assignments-student.component.html',
@@ -24,22 +23,8 @@ export class AssignmentsStudentComponent implements OnInit {
   private courseParam: string;
   private corso: CourseModel;
   hasConsegne = false;
-  imageToShow: any;
   filename = 'Choose file';
   filenames = [];
-
-  /*expandPanel(matExpansionPanel, event): void {
-    event.stopPropagation(); // Preventing event bubbling
-
-    if (!this._isExpansionIndicator(event.target)) {
-      matExpansionPanel.close(); // Here's the magic
-    }
-  }
-
-  private _isExpansionIndicator(target: EventTarget): boolean {
-    const expansionIndicatorClass = 'mat-expansion-indicator';
-    return (target['classList'] && target['classList'].contains(expansionIndicatorClass));
-  }*/
 
   constructor(private studentService: StudentService, private router: Router, private snackBar: MatSnackBar) {
     this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
@@ -66,7 +51,6 @@ export class AssignmentsStudentComponent implements OnInit {
             // contiene, per ogni Submission (laboratorio), un array di solutions
             // con corrispondenza chiave-chiave rispetto all'array di submissions
             // per ogni lab, ci saranno l'elenco delle soluzioni per lo studente loggato
-
             // Per ogni Submission aggiungo alla Submission stessa l'elenco di Solutions
             //  [historySolutions] e le date formattate correttamente
             submissions.forEach((singleSubmission, key) => {
@@ -81,10 +65,8 @@ export class AssignmentsStudentComponent implements OnInit {
               });
               // Aggiungo la Submission aggiornata all'array
               consegne.push(singleSubmission);
-
               consegne.sort((a, b) => moment(a.releaseDate).diff(b.releaseDate, 'days'));
               // consegne.sort((a, b) => a.content.compareTo(b.content));
-
               this.filenames[singleSubmission.id] = 'Choose file';
             });
             // Aggiorno l'array di Submission ottenuto per popolare la vista
@@ -156,6 +138,6 @@ export class AssignmentsStudentComponent implements OnInit {
     this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
       duration: 5000
     });
-    location.reload();
+    setTimeout(location.reload, 5000);
   }
 }

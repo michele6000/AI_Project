@@ -116,7 +116,7 @@ export class CoursesComponent implements OnInit {
 
   addProfToCourse(course: CourseModel) {
     // 1) cerco tutti i professori della piattaforma
-    // 2) cerco i prof gia di quel corso
+    // 2) cerco i prof già di quel corso
     // 3) filtro
     // 4) add prof to course
     this.professorService.findAllProfessor().subscribe(
@@ -177,7 +177,7 @@ export class CoursesComponent implements OnInit {
     this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
       duration: 5000
     });
-    location.reload();
+    setTimeout(location.reload, 5000);
   }
 
 }

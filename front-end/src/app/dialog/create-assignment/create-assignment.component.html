@@ -5,7 +5,13 @@
     Error
   </mat-error>
   <form #f="ngForm" (ngSubmit)="createAssignment(f)" class="login-form">
-
+    <mat-form-field class="w-100">
+      <mat-label>Release Date</mat-label>
+      <input (dateChange)="releaseChoseValue($event)" [matDatepicker]="releasePicker" [max]="" [min]="minDate"
+             matInput name="releaseDate" ngModel required>
+      <mat-datepicker-toggle [for]="releasePicker" matSuffix></mat-datepicker-toggle>
+      <mat-datepicker #releasePicker></mat-datepicker>
+    </mat-form-field>
     <mat-form-field class="w-100">
       <mat-label>Expiry Date</mat-label>
       <input (dateChange)="expiryChoseValue($event)" [disabled]="!canChoseExpiryDate" [matDatepicker]="expiryPicker"
@@ -14,27 +20,15 @@
       <mat-datepicker-toggle [for]="expiryPicker" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #expiryPicker></mat-datepicker>
     </mat-form-field>
-
-    <mat-form-field class="w-100">
-      <mat-label>Release Date</mat-label>
-      <input (dateChange)="releaseChoseValue($event)" [matDatepicker]="releasePicker" [max]="" [min]="minDate"
-             matInput name="releaseDate" ngModel required>
-      <mat-datepicker-toggle [for]="releasePicker" matSuffix></mat-datepicker-toggle>
-      <mat-datepicker #releasePicker></mat-datepicker>
-    </mat-form-field>
-
-
     <div class="dialog-position-field">
       <span>Assignment Content</span>
       <button (click)="fileInput.click()" class="ml-20" mat-raised-button type="button">{{filename}}</button>
       <input #fileInput (change)="handleFileSelect($event)" accept="application/pdf" hidden
              id="file" type="file">
     </div>
-
     <mat-error *ngIf="chosenExpiryDate < chosenReleaseDate && !errorExpiryDate" class="mt-10">
-      Expiry date must be > than release date
+      Expiry date must be greater than release date
     </mat-error>
-
     <mat-card-actions class="float-right mb-0">
       <button [disabled]="!f.valid" color="primary" mat-button mat-raised-button type="submit">Create</button>
       <button mat-button mat-dialog-close>Cancel</button>

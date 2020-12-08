@@ -16,7 +16,10 @@ const API_URL = '/api/API/';
   providedIn: 'root'
 })
 export class StudentService {
+  // Al change del corso nella sideNav, chi è in ascolto riceve il nuovo valore
+  // (e fa quindi le richieste es. teams)
   eventsSubjectChangeCorsoSideNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
+
   courses: Observable<CourseModel[]>;
   teams: Observable<GroupModel[]>;
   private coursesSubject: BehaviorSubject<CourseModel[]>;

@@ -1,8 +1,8 @@
 <div *ngIf="corso.name.length > 0" class="container">
   <div class="d-flex align-items-center">
-    <h2 *ngIf="!hasVMType" class="mb-10 mr-20">Set VM Type</h2>
-    <h2 *ngIf="hasVMType" class="mb-10 mr-20">VM Type already setted</h2>
-    <button *ngIf="!hasVMType" (click)="createVM()" class="mb-10 ml-20" color="primary" mat-raised-button>+ Create VM Type</button>
+    <h2 *ngIf="!hasVMType" class="mb-10 mr-20">Set VM Model</h2>
+    <h2 *ngIf="hasVMType" class="mb-10 mr-20">VM Model already setted</h2>
+    <button *ngIf="!hasVMType" (click)="createVM()" class="mb-10 ml-20" color="primary" mat-raised-button>+ Create VM Model</button>
   </div>
   <mat-divider class="mt-10 mb-20"></mat-divider>
   <div *ngIf="hasVMType">

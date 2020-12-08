@@ -28,7 +28,7 @@
 
   <ng-container *ngIf="showStatistics" matColumnDef="statistics">
     <th *matHeaderCellDef mat-header-cell class="text-center">
-      Statistics
+      Current Usage
     </th>
     <td *matCellDef="let element" mat-cell class="text-center">
       <mat-icon (click)="statistics($event, element)" class="cursor-pointer">insert_chart</mat-icon>

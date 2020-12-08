@@ -34,7 +34,6 @@ export class AuthService {
     this.tokenExpiredSubject = new BehaviorSubject<boolean>(false);
     this.tokenExpired = this.tokenExpiredSubject.asObservable();
     if (localStorage.getItem('token')) {
-      // this.isUserLoggedIn = true;
       const tkn = JSON.parse(atob(localStorage.getItem('token').split('.')[1]));
       this.localUser.email = localStorage.getItem('email');
       this.localUser.roles = tkn.roles;
@@ -81,7 +80,6 @@ export class AuthService {
     ).pipe(
       tap((payload: any) => {
           const tkn = JSON.parse(atob(payload.token.split('.')[1]));
-          console.log(tkn);
           localStorage.setItem('token', payload.token);
           localStorage.setItem('expires_at', tkn.exp);
           localStorage.setItem('email', email);
@@ -154,7 +152,6 @@ export class AuthService {
       this.clearStorage();
       this.userSubject.next(null);
 
-      // @todo Valutare altra soluzione
       this.tokenExpiredSubject.next(true);
       this.tokenExpiredSubject.next(false);
 

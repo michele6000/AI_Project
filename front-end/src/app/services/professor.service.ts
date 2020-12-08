@@ -17,7 +17,10 @@ const API_URL = '/api/API/';
 })
 export class ProfessorService {
   // private dataStore: {courses: CourseModel[]} = {courses: null};
+  // Al change del corso nella sideNav, chi è in ascolto riceve il nuovo valore
+  // (e fa quindi le richieste es. elenco studenti)
   eventsSubjectChangeCorsoSideNav: BehaviorSubject<void> = new BehaviorSubject<void>(null);
+
   courses: Observable<CourseModel[]>;
   students: Observable<StudentModel[]>;
   private coursesSubject: BehaviorSubject<CourseModel[]>;
@@ -135,6 +138,10 @@ export class ProfessorService {
     if (courseName.length > 0 && studentId.length > 0) {
       return this.http.post(API_URL + 'courses/' + courseName + '/enrollOne', {id: studentId});
     }
+  }
+
+  enrollManyStudent(courseName: string, formData: FormData) {
+    return this.http.post('/api/API/courses/' + courseName + '/enrollMany', formData);
   }
 
   /* TEAMS */

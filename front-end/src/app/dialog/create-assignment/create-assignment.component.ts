@@ -48,8 +48,6 @@ export class CreateAssignmentComponent implements OnInit {
       submission.releaseDate = this.chosenReleaseDate;
       submission.expiryDate = this.chosenExpiryDate;
       submission.content = this.file.name;
-
-      // close  dialog
       this.professorService.createAssignment(this.corso.name, submission, this.file).subscribe(
         (res) => {
           this.dialogRef.close(true);

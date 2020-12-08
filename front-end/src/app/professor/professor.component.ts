@@ -19,7 +19,8 @@ export class ProfessorComponent implements OnInit, OnDestroy {
   sidenav: MatSidenav;
   s1: Subscription;
 
-  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService, private professorService: ProfessorService, private snackBar: MatSnackBar) {
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService,
+              private professorService: ProfessorService, private snackBar: MatSnackBar) {
     this.s1 = this.professorService.courses.subscribe((next) => {
         if (next) {
           this.corsi = next;
@@ -75,6 +76,6 @@ export class ProfessorComponent implements OnInit, OnDestroy {
     this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
       duration: 5000
     });
-    location.reload();
+    setTimeout(location.reload, 5000);
   }
 }

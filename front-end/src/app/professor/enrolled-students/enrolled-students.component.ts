@@ -37,7 +37,6 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
     this.changeCorsoSub = this.professorService.eventsSubjectChangeCorsoSideNav.subscribe(next => {
       this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
       this.corso = this.professorService.findCourseByNameUrl(this.courseParam);
-
       if (this.corso.name.length > 0) {
         // recupero gli studenti iscritti al corso
         this.professorService.getEnrolledStudents(this.corso.name).subscribe(
@@ -62,6 +61,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
         }
       );
 
+      // recupero tutti i teams di quel corso
       this.professorService.findTeamsByCourse(this.corso.name).subscribe(teams => {
           if (teams.length > 0) {
             this.existTeam = true;
@@ -148,11 +148,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   sendFile() {
     const formData: FormData = new FormData();
     formData.append('file', new Blob([this.file], {type: 'text/csv'}), this.file.name);
-    const headers = {
-      'Content-Type': 'multipart/form-data'
-    };
-    this.http.post('/api/API/courses/' + this.corso.name + '/enrollMany', formData)
-      .subscribe(
+    this.professorService.enrollManyStudent(this.corso.name, formData).subscribe(
         (result: boolean[]) => {
           if (result.filter((r) => !r).length > 0) {
             // Almeno un caricamento fallito
@@ -184,7 +180,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   }
 
   showStudentsInTeam(team: GroupModel) {
-    // passo al dialog la lista di studenti nel team e il nome del team
+    // passo al dialog la lista di studenti nel team, il nome e l'id del team e la lista degli studenti del corso
     this.professorService.findMembersByTeamId(team.id).subscribe(students => {
       this.dialog.open(ShowTeamMembersComponent, {
         data: {
@@ -222,7 +218,7 @@ export class EnrolledStudentsComponent implements OnInit, OnDestroy {
     this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
       duration: 5000
     });
-    location.reload();
+    setTimeout(location.reload, 5000);
   }
 
   deleteTeam(selectedTeams: GroupModel[]) {

@@ -109,7 +109,7 @@ export class VmsComponent implements OnInit {
     // 2) apertura dialog a cui passo le statistiche
     this.professorService.findStatisticsByTeam(element.id).subscribe(
       statistics => {
-        this.dialog.open(StatisticsVmComponent, {data: statistics});
+        this.dialog.open(StatisticsVmComponent, {data: {statistics, teamName: element.name}});
       },
       error => {
         this.genericError();
@@ -121,6 +121,6 @@ export class VmsComponent implements OnInit {
     this.snackBar.open('Failed to communicate with server, try again.', 'OK', {
       duration: 5000
     });
-    location.reload();
+    setTimeout(location.reload, 5000);
   }
 }
