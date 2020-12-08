@@ -34,28 +34,30 @@ export class VmsStudentComponent implements OnInit {
     this.corso = this.studentService.findCourseByNameUrl(this.courseParam);
     // Recupero il team al quale appartiene lo studente
     this.studentService.teams.subscribe((teams) => {
-        // prendo i team attivi e che fanno parte di quel corso
-        const filteredActiveTeams = teams.filter(t => t.status === 1 && t.courseName === this.corso.name);
-        if (filteredActiveTeams.length > 0) {
-          // attivo il pulsante createVM nella vista
-          this.canCreateVM = true;
-          this.team = filteredActiveTeams[0];
-          // Recupero le VM del team
-          this.studentService.findVmsByTeam(this.team.id).subscribe(
-            (vms) => {
-              this.computeOwner(vms);
-              this.studentService.getTeamStat(this.team.id).subscribe(
-                (teamUsage) => {
-                  this.usage = teamUsage;
-                },
-                error => {
-                  this.genericError();
-                }
-              );
-            },
-            error => {
-              this.genericError();
-            });
+        if (teams) {
+          // prendo i team attivi e che fanno parte di quel corso
+          const filteredActiveTeams = teams.filter(t => t.status === 1 && t.courseName === this.corso.name);
+          if (filteredActiveTeams.length > 0) {
+            // attivo il pulsante createVM nella vista
+            this.canCreateVM = true;
+            this.team = filteredActiveTeams[0];
+            // Recupero le VM del team
+            this.studentService.findVmsByTeam(this.team.id).subscribe(
+              (vms) => {
+                this.computeOwner(vms);
+                this.studentService.getTeamStat(this.team.id).subscribe(
+                  (teamUsage) => {
+                    this.usage = teamUsage;
+                  },
+                  error => {
+                    this.genericError();
+                  }
+                );
+              },
+              error => {
+                this.genericError();
+              });
+          }
         }
       },
       error => {

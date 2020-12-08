@@ -31,6 +31,7 @@ export class CreateGroupComponent implements OnInit {
   maxDate: Date;
   chosenTimeout: Date;
   loaderDisplayed = false;
+  private changeCorsoSub;
 
   constructor(private route: ActivatedRoute, private router: Router, private studentService: StudentService,
               private professorService: ProfessorService, private snackBar: MatSnackBar) {
@@ -42,10 +43,15 @@ export class CreateGroupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
-    // Recupero i parametri del corso
-    this.course = this.studentService.findCourseByNameUrl(this.courseParam);
-    this.initData();
+    this.changeCorsoSub = this.studentService.eventsSubjectChangeCorsoSideNav.subscribe(next => {
+        this.courseParam = this.router.routerState.snapshot.url.split('/')[2];
+        // Recupero i parametri del corso
+        this.course = this.studentService.findCourseByNameUrl(this.courseParam);
+        this.initData();
+      },
+      error => {
+        this.genericError();
+      });
   }
 
   initData() {

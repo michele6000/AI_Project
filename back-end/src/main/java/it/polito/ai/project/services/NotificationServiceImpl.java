@@ -63,7 +63,9 @@ public class NotificationServiceImpl implements NotificationService {
                             tokenRepo.delete(t);
                         }
                 );
-        teams.stream().distinct().forEach(teamService::evictTeam);
+        teams.stream().distinct()
+                .filter(t->!t.equals(-1L))
+                .forEach(teamService::evictTeam);
     }
 
     @Override

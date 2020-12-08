@@ -209,10 +209,22 @@ public class TeamServiceImpl implements TeamService {
                 .getOne(courseName)
                 .getStudents()
                 .stream()
-                .map(s -> modelMapper
-                        .typeMap(Student.class,StudentDTO.class)
-                        .addMappings(mapper -> mapper.skip(StudentDTO::setImage))
-                        .map(s))
+                .map(s -> {
+                            StudentDTO tmp = modelMapper
+                                    .typeMap(Student.class, StudentDTO.class)
+                                    .addMappings(mapper -> mapper.skip(StudentDTO::setImage))
+                                    .map(s);
+                            List<String> teamName = s.getTeams().stream()
+                                    .filter(t -> t.getCourse().getName().equals(courseName))
+                                    .map(Team::getName)
+                                    .collect(Collectors.toList());
+                            if (teamName.size() == 1)
+                                tmp.setGroup(teamName.get(0));
+                            else
+                                tmp.setGroup("No team");
+                            return tmp;
+
+                        })
                 .collect(Collectors.toList());
     }
 
@@ -893,6 +905,7 @@ public class TeamServiceImpl implements TeamService {
         return false;
     }
 
+
     @Override
     public boolean checkToken (String token){
         if (!tokenRepo.existsById(token))
@@ -904,6 +917,16 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void enableUser(String username) {
         userRepository.getOne(username).setActive_user(true);
+    }
+
+    @Override
+    public UserDTO getUser(String username) {
+        System.out.println(username);
+        if (studentRepo.existsById(username))
+            return modelMapper.map(studentRepo.getOne(username), UserDTO.class);
+        if (profRepo.existsById(username))
+            return modelMapper.map(profRepo.getOne(username), UserDTO.class);
+        throw new TeamServiceException("Student does not exist!");
     }
 
 }

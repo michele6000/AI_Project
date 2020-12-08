@@ -14,8 +14,11 @@ export class RouteGuardService implements CanActivate {
     const rolesStr = localStorage.getItem('roles');
     const roles = rolesStr ? rolesStr.split(',') : [];
 
-    if (!this.authService.isLoggedIn() || roles.filter((r) => r === expectedRole).length < 1) {
+    if (!this.authService.isLoggedIn()) {
       this.router.navigate(['home'], {queryParams: {doLogin: 'true'}});
+      return false;
+    } else if (roles.filter((r) => r === expectedRole).length < 1) {
+      this.authService.logout();
       return false;
     }
     return true;

@@ -48,7 +48,7 @@ export class ProfessorComponent implements OnInit, OnDestroy {
       if (course.length > 0) {
         this.changeCorso(course[0]);
       } else if (this.corsi.length > 0) {
-        this.router.navigate(['teacher', this.corsi[0].name.toLowerCase().replace(/\s+/g, '-')]);
+        this.router.navigate(['teacher', this.corsi[0].name.toLowerCase().replace(/\s+/g, '-'), 'students']);
       }
     });
   }
@@ -59,7 +59,6 @@ export class ProfessorComponent implements OnInit, OnDestroy {
 
   changeCorso(corso: CourseModel) {
     this.singoloCorso = corso;
-    this.router.navigate(['teacher', corso.name.toLowerCase().replace(/\s+/g, '-'), 'students']).then();
     // BehaviorSubject utilizzato per notificare il cambio di un corso nella sidenav
     this.professorService.eventsSubjectChangeCorsoSideNav.next();
   }

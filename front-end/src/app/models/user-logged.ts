@@ -3,4 +3,6 @@ export interface UserLogged {
   email: string;
   roles: string[];
   image: any;
+  firstName: string;
+  name: string;
 }

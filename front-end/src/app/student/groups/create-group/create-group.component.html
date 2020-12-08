@@ -25,7 +25,7 @@
   </form>
 </div>
 <div class="mt-20">
-  <h2>Received group proposals</h2>
+  <h2 *ngIf="this.groupsData.length > 0">Received group proposals</h2>
   <button *ngIf="this.groupsData.length > 0" class="mb-20 float-right" color="warn" mat-button mat-raised-button (click)="deleteAllProposal()">Delete All Proposals</button>
   <app-table-expandable *ngIf="this.groupsData.length > 0" [columns]="groupsColumns" [data]="groupsData" [innerColumns]="innerGroupColumns"
                         [showEdit]="false"></app-table-expandable>

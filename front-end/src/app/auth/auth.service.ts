@@ -21,7 +21,7 @@ export class AuthService {
 
   user: Observable<UserLogged>;
   localUser: UserLogged = {
-    id: null, email: undefined, roles: [], image: null
+    id: null, email: undefined, roles: [], image: null, firstName: null, name: null
   };
   tokenExpired: Observable<boolean> = new Observable<boolean>();
   private userSubject: BehaviorSubject<UserLogged>;
@@ -39,10 +39,12 @@ export class AuthService {
       this.localUser.roles = tkn.roles;
       this.localUser.id = localStorage.getItem('email').split('@')[0];
       this.localUser.image = localStorage.getItem('image');
+      this.localUser.name = localStorage.getItem('name');
+      this.localUser.firstName = localStorage.getItem('firstName');
       this.loginRetrieveDatas();
       // TODO: Verificare, serve per riportare alla pagina corretta in base al ruolo dell'utente
       // dopo che vengono richiesti i dati
-      this.loginRedirect();
+      // this.loginRedirect();
     } else {
       this.userSubject.next(null);
     }
@@ -86,10 +88,14 @@ export class AuthService {
           localStorage.setItem('id', email.split('@')[0]);
           localStorage.setItem('roles', tkn.roles);
           localStorage.setItem('image', payload.image);
+          localStorage.setItem('name', payload.name);
+          localStorage.setItem('firstName', payload.firstName);
 
           this.localUser.roles = tkn.roles;
           this.localUser.id = email.split('@')[0];
           this.localUser.email = email;
+          this.localUser.name = payload.name;
+          this.localUser.firstName = payload.firstName;
 
           // this.isUserLoggedIn = true;
           this.userSubject.next(this.localUser);
@@ -108,12 +114,19 @@ export class AuthService {
     localStorage.removeItem('email');
     localStorage.removeItem('id');
     localStorage.removeItem('roles');
+    localStorage.removeItem('image');
+    localStorage.removeItem('firstName');
+    localStorage.removeItem('name');
   }
 
   logout() {
     this.clearStorage();
     this.userSubject.next(null);
     this.tokenExpiredSubject.next(null);
+
+    this.studentService.logoutStudent();
+    this.professorService.logoutProfessor();
+
     this.router.navigate(['home']);
   }
 

@@ -3,6 +3,7 @@ package it.polito.ai.project.controllers;
 import it.polito.ai.project.dtos.ProfessorDTO;
 import it.polito.ai.project.dtos.StudentDTO;
 import it.polito.ai.project.dtos.UserDTO;
+import it.polito.ai.project.exceptions.TeamServiceException;
 import it.polito.ai.project.repositories.StudentRepository;
 import it.polito.ai.project.security.jwt.JwtTokenProvider;
 import it.polito.ai.project.services.CustomUserDetailsService;
@@ -70,12 +71,14 @@ public class AuthController {
                             .map(GrantedAuthority::getAuthority)
                             .collect(Collectors.toList())
             );
-
+            UserDTO user = service.getUser(username.split("@")[0]);
             Map<Object, Object> model = new HashMap<>();
             model.put("username", username);
             model.put("token", token);
+            model.put("name",user.getName());
+            model.put("firstName",user.getFirstName());
             return ok(model);
-        } catch (AuthenticationException e) {
+        } catch (AuthenticationException | TeamServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong username/password");
         }
     }
@@ -92,9 +95,7 @@ public class AuthController {
     }
 
     @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void showImage(@RequestParam("id") String username, HttpServletResponse response, HttpServletRequest request)
-            throws ServletException, IOException {
-
+    public void showImage(@RequestParam("id") String username, HttpServletResponse response) {
         try {
             response.addHeader("Access-Control-Allow-Origin", "*");
             response.setContentType("image/jpeg");
@@ -103,7 +104,6 @@ public class AuthController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error retrieving image!");
         }
-
     }
 
 

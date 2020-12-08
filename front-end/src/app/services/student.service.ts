@@ -33,6 +33,11 @@ export class StudentService {
     this.teams = this.teamsSubject.asObservable();
   }
 
+  logoutStudent() {
+    this.teamsSubject.next(null);
+    this.coursesSubject.next(null);
+  }
+
   findCoursesByStudent(studentId: string, refresh = false) {
     if (this.coursesSubject.value !== undefined || refresh) {
       this.http.get<CourseModel[]>(API_URL + 'students/' + studentId + '/courses')
