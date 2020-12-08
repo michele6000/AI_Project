@@ -19,7 +19,7 @@ import {ShowTeamMembersComponent} from '../../dialog/show-team-members/show-team
 export class EnrolledStudentsComponent implements OnInit, OnDestroy {
   teams: GroupModel[] = [];
   corso: CourseModel;
-  columns = ['email', 'firstName', 'name', 'id'];
+  columns = ['email', 'firstName', 'name', 'group', 'id'];
   columnsTeam = ['id', 'name', 'status'];
   data: StudentModel[] = [];
   fileAbsent = true;
