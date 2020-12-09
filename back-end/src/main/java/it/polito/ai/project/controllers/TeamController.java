@@ -112,7 +112,6 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/evictTeam")
-    //TODO: chi può farlo oltre al professore? Può essere usata dallo studente per annullare vecchie proposte, ma come?
     public void evictTeam(@PathVariable Long teamId) {
         try {
             if (!getCurrentRoles().contains("ROLE_PROFESSOR"))

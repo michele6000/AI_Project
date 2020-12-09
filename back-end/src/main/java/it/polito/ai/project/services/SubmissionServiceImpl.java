@@ -184,7 +184,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         List<Solution> ReadSol = submission.getSolutions().stream()
                 .filter(sol -> sol.getStudent().getId().equals(studentId))
-                .filter(sol -> sol.getVersion() == 0 || sol.getVersion() == -1) //todo:perche avevo messo questo controllo?...
+                .filter(sol -> sol.getVersion() == 0 || sol.getVersion() == -1)
                 .filter(sol -> sol.getSubmission().getId().equals(submissionId))
                 .collect(Collectors.toList());
         if (ReadSol.size() > 0) {
@@ -357,7 +357,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         if (!course.isEnabled())
             throw new CourseDisabledException("Course not enabled!");
-        // per rendere più veloce fare query con join a mano, e poi mappare come lista di oggetti ed estrarre i valori ( come a lavoro )
+        // per rendere più veloce si potrebbe fare una query con join a mano, e poi mappare come lista di oggetti ed estrarre i valori
         return course.getStudents()
                 .stream()
                 .map(s ->
@@ -407,6 +407,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             notification.sendMessage(sol.getStudent().getEmail(), "New evaluations available", "Assignment: " + sol.getSubmission().getContent() + "\nMark: " + mark+"\nProfessor message: "+message);
             sol.setEvaluation(mark);
             sol.setStatus("EVALUATED");
+            sol.setRevisable(false);
             return modelMapper.map(solutionRepo.save(sol), SolutionDTO.class);
         }
         if (type.equals("review")){
@@ -417,6 +418,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                     byteObjects[i++] = b;
                 sol.setCorrection(byteObjects);
                 sol.setStatus("REQUEST_REVIEW");
+                sol.setRevisable(true);
                 notification.sendMessage(sol.getStudent().getEmail(),"Requested review","Professor has request a review for your solution.\n" +
                         "\nSolution_id = " + sol.getId() + " - Version: " + sol.getVersion() +
                         "\nSubmission = " + sol.getSubmission().getContent() +

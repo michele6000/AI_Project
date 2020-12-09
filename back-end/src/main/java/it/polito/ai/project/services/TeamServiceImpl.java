@@ -618,7 +618,7 @@ public class TeamServiceImpl implements TeamService {
                 vmRepo.delete(vm); // elimino la vm dalla repo
             });
 
-        System.out.println("Deleting: "+ teamId);
+//        System.out.println("Deleting: "+ teamId);
         teamRepo.deleteById(teamId);
     }
 
@@ -921,7 +921,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public UserDTO getUser(String username) {
-        System.out.println(username);
+//        System.out.println(username);
         if (studentRepo.existsById(username))
             return modelMapper.map(studentRepo.getOne(username), UserDTO.class);
         if (profRepo.existsById(username))
