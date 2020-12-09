@@ -17,4 +17,5 @@ public class StudentDTO extends RepresentationModel<StudentDTO> {
 
     private String email;
     private Byte[] image;
+    private String group;
 }
