@@ -1,6 +1,6 @@
 <app-logged-header (toggleMenu)="toggleMenu()"></app-logged-header>
 <mat-toolbar>
-  {{singoloCorso ? singoloCorso.name : 'Non sono presenti corsi'}}
+  {{singoloCorso ? singoloCorso.name : 'No courses available yet.'}}
   <span class="fill-remaining-space"></span>
   <button (click)="manageCourses()" color="primary" mat-raised-button routerLink="/teacher/courses">Manage Courses
   </button>

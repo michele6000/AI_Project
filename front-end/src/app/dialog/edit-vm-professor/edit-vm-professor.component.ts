@@ -58,12 +58,12 @@ export class EditVmProfessorComponent implements OnInit {
     if (f.value.disk < this.usage.limit_hdd) {
       valid = false;
       res.push('HDD');
-      resUsage.push('HDD: ' + this.usage.limit_hdd);
+      resUsage.push('HDD: ' + this.usage.limit_hdd + ' MB');
     }
     if (f.value.ram < this.usage.limit_ram) {
       valid = false;
       res.push('RAM');
-      resUsage.push('RAM: ' + this.usage.limit_ram);
+      resUsage.push('RAM: ' + this.usage.limit_ram + ' MB');
     }
     if (f.value.maxVm < this.usage.limit_instance) {
       valid = false;

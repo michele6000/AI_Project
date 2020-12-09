@@ -41,7 +41,7 @@ export class RegistrationComponent implements OnInit {
 
     if ((f.value.matricola.startsWith('d') && f.value.email !== (f.value.matricola + '@polito.it'))
     || f.value.matricola.startsWith('s') && f.value.email !== (f.value.matricola + '@studenti.polito.it')) {
-      this.errorMessage = 'Email must start with dXXXXXX or sXXXXXX.';
+      this.errorMessage = 'Email must start with dXXXXXX or sXXXXXX and it must belong to a university domain.';
       this.error = true;
       return;
     }
